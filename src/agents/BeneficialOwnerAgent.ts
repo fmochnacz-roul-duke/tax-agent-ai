@@ -569,9 +569,12 @@ async function runAgent(
 
     const response = await llm.generateWithTools(messagesWithFindings, tools);
 
-    // Plain text response — model answered without tools
+    // Plain text response — model answered without calling terminate.
+    // This happens when the model writes its conclusion as prose instead of
+    // using the terminate tool. We treat it as a final answer and save the report.
     if (response.type === 'text') {
       console.log('\nAgent responded directly:\n', response.content);
+      saveReport(input, response.content, memory.getFindings(), outputPath);
       return;
     }
 
