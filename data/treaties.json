@@ -1,0 +1,1048 @@
+{
+  "_meta": {
+    "description": "Polish WHT treaty lookup database — EU27 + key non-EU countries",
+    "sources": [
+      "MoF treaty list (podatki.gov.pl, last updated 27 Jan 2026)",
+      "OECD MLI Poland positions (beps-mli-position-poland.pdf)",
+      "OECD MLI signatories & parties (12 Jan 2026)",
+      "Professional legal commentary — rates marked verified:false pending treaty PDF check"
+    ],
+    "domestic_rates_percent": {
+      "dividend": 19,
+      "interest": 20,
+      "royalty": 20
+    },
+    "rate_note": "All treaty rates below are unverified (verified:false) — populated from professional articles and legal commentary. Each must be confirmed against the official treaty text (DzU reference) before use in a tax opinion."
+  },
+
+  "austria": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Austria DTC (2004, Protocol 2008)",
+    "dz_u": "2005 poz. 1921; Protocol 2008",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Austria post-ratif notification 28-08-2023; PPT applies.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Austria DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Austria DTC",
+        "verified": false,
+        "note": "0% per 2008 Protocol; original treaty had 5%."
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Austria DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "belgium": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Belgium DTC (2001, Protocol 2014)",
+    "dz_u": "2004 poz. 2139; Protocol 2014",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["ART8_RESERVED", "POST_RATIF_NOTIF"],
+    "mli_note": "Art. 8 MLI reserved (treaty has its own holding period). Post-ratif notifications 25-11-2021; 29-09-2025.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Belgium DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 5,
+        "treaty_article": "Art. 11(2) Poland–Belgium DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Belgium DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "bulgaria": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Bulgaria DTC (1994)",
+    "dz_u": "1995 poz. 679",
+    "mli_ppt_applies": "YES",
+    "mli_flags": [],
+    "mli_note": "PPT applies; synthesized text confirmed.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 10,
+        "reduced_threshold": 0,
+        "standard_rate": 10,
+        "treaty_article": "Art. 10(2) Poland–Bulgaria DTC",
+        "verified": false,
+        "note": "Flat 10% — old treaty with no threshold distinction. Verify Art. 10."
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Bulgaria DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Bulgaria DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "croatia": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Croatia DTC (1994)",
+    "dz_u": "1996 poz. 370",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Croatia post-ratif notification 02-10-2024.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Croatia DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Croatia DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Croatia DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "cyprus": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Cyprus DTC (1992, Protocol 2012)",
+    "dz_u": "1993 poz. 523; Protocol 2012",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["ART8_RESERVED"],
+    "mli_note": "Art. 8 MLI reserved (treaty already has holding period). PPT applies.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 0,
+        "reduced_threshold": 10,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Cyprus DTC as amended by 2012 Protocol",
+        "verified": false,
+        "note": "0% rate introduced by 2012 Protocol for ≥10% holdings. Verify threshold and holding period."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Cyprus DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Cyprus DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "czech republic": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Czech Republic DTC (2011)",
+    "dz_u": "1994 poz. 189; new treaty 2012 poz. 991",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Czech MLI position in non-standard format. Post-ratif notification 16-08-2024 (not consolidated).",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Czech Republic DTC (2011)",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Czech Republic DTC (2011)",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Czech Republic DTC (2011)",
+        "verified": false
+      }
+    }
+  },
+
+  "denmark": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Denmark DTC (2001, Protocol 2009)",
+    "dz_u": "2003 poz. 368; Protocol 2009",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["ART8_RESERVED", "POST_RATIF_NOTIF"],
+    "mli_note": "Art. 8 MLI reserved (treaty has own holding period). Post-ratif notifications 29-06-2021; 07-09-2023.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 0,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Denmark DTC",
+        "verified": false,
+        "note": "0% rate per Protocol 2009 aligning with EU Parent-Subsidiary Directive. Verify threshold."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Denmark DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Denmark DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "estonia": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Estonia DTC (1994)",
+    "dz_u": "1995 poz. 388",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Estonia Art. 35(1)(b) notification 01-06-2022 (shorter entry-into-effect period).",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Estonia DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Estonia DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Estonia DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "finland": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Finland DTC (2009)",
+    "dz_u": "1979 poz. 84; 1995 poz. 517; 2010 poz. 205",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "CAUTION: Finland post-ratif notification 11-12-2025 (very recent — content unknown; verify if it affects Poland treaty).",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Finland DTC (2009)",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Finland DTC (2009)",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Finland DTC (2009)",
+        "verified": false
+      }
+    }
+  },
+
+  "france": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–France DTC (1975)",
+    "dz_u": "1977 poz. 5",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF", "SYNTH_PL_ONLY"],
+    "mli_note": "CAUTION: France post-ratif notifications 22-09-2020 and 13-11-2024 — synthesized text may be outdated. Verify via OECD.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–France DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–France DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–France DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "germany": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Germany DTC (2003)",
+    "dz_u": "2005 poz. 90; Mutual agreements 2015, 2020",
+    "mli_ppt_applies": "NO",
+    "mli_flags": ["EXCLUDED_BY_POLAND"],
+    "mli_note": "CRITICAL: Poland explicitly excluded Germany from MLI CTAs. Germany IS an MLI Party (Apr 2021, Art.35(7)(b) notification Jun 2025). Poland's opt-out is the sole reason PPT does not apply. No bilateral substitute for PPT currently in the treaty. Analyse treaty text only.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Germany DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Germany DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Germany DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "greece": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Greece DTC (1987)",
+    "dz_u": "1991 poz. 524",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["EXISTING_ANTIABUSE", "POST_RATIF_NOTIF"],
+    "mli_note": "Arts. 11(7) & 12(7) = existing anti-abuse provision per Art. 7(2) MLI. Greece post-ratif notification 02-10-2024.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 10,
+        "reduced_threshold": 25,
+        "standard_rate": 19,
+        "treaty_article": "Art. 10(2) Poland–Greece DTC",
+        "verified": false,
+        "note": "Old 1987 treaty; standard rate 19% is unusually high — confirm against treaty text."
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Greece DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Greece DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "hungary": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Hungary DTC (1992, Protocol 2000)",
+    "dz_u": "1995 poz. 602; 2002 poz. 946; 2021 poz. 1310",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Hungary post-ratif notification 02-10-2024. PPT applies.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 10,
+        "reduced_threshold": 0,
+        "standard_rate": 10,
+        "treaty_article": "Art. 10(2) Poland–Hungary DTC",
+        "verified": false,
+        "note": "Flat 10% — old treaty with no qualifying-holding threshold. Verify Art. 10."
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Hungary DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Hungary DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "ireland": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Ireland DTC (1995)",
+    "dz_u": "1996 poz. 129; 2019 poz. 1733",
+    "mli_ppt_applies": "YES",
+    "mli_flags": [],
+    "mli_note": "PPT applies; synthesized text confirmed.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 0,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Ireland DTC",
+        "verified": false,
+        "note": "0% for qualifying holding; 15% otherwise. Verify threshold and holding period."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Ireland DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 0,
+        "treaty_article": "Art. 12(2) Poland–Ireland DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "italy": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Italy DTC (1985)",
+    "dz_u": "1989 poz. 374; 2019 poz. 597; 2022 poz. 1572",
+    "mli_ppt_applies": "NO",
+    "mli_flags": ["NOT_RATIFIED"],
+    "mli_note": "CRITICAL: Italy signed MLI 07-06-2017 but has NOT ratified as of Jan 2026 — nearly 9 years. MLI PPT does not apply. Use 1985 treaty text. Monitor for ratification.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 10,
+        "reduced_threshold": 0,
+        "standard_rate": 10,
+        "treaty_article": "Art. 10(2) Poland–Italy DTC",
+        "verified": false,
+        "note": "Flat 10%; 1985 treaty does not differentiate by shareholding level. Verify Art. 10."
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Italy DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Italy DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "latvia": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Latvia DTC (1993)",
+    "dz_u": "1995 poz. 285",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Latvia post-ratif notification 20-04-2021.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Latvia DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Latvia DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Latvia DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "lithuania": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Lithuania DTC (1994)",
+    "dz_u": "1995 poz. 277",
+    "mli_ppt_applies": "YES",
+    "mli_flags": [],
+    "mli_note": "PPT applies; synthesized text confirmed.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Lithuania DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Lithuania DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Lithuania DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "luxembourg": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Luxembourg DTC (1995, Protocol 2012)",
+    "dz_u": "1996 poz. 527; 2013 poz. 964; 2019 poz. 1244",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["ART8_RESERVED", "SYNTH_PL_ONLY"],
+    "mli_note": "Art. 8 MLI reserved (treaty already has holding period). Synthesized text published in Polish only.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 0,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Luxembourg DTC as amended by 2012 Protocol",
+        "verified": false,
+        "note": "VERIFY: 2012 Protocol likely introduced 0% rate at ≥25% (EU P-S Directive alignment). Original 1995 treaty had 5%/15% at ≥25%. Confirm from DzU 2013 poz. 964 protocol text."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Luxembourg DTC",
+        "verified": false,
+        "note": "VERIFY: original treaty had 5%; 2012 Protocol may have reduced to 0%."
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Luxembourg DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "malta": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Malta DTC (1994, Protocols 2011 & 2020)",
+    "dz_u": "1995 poz. 256; 2011 poz. 1661; 2022 poz. 534",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["EXISTING_ANTIABUSE", "ART8_RESERVED", "POST_RATIF_NOTIF"],
+    "mli_note": "Arts. 10(6) 11(8) 12(7) = existing anti-abuse. Art. 8 MLI reserved. Post-ratif notification 02-10-2024.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 0,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Malta DTC as amended",
+        "verified": false,
+        "note": "0% rate introduced by 2011 Protocol. Verify threshold."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Malta DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Malta DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "netherlands": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Netherlands DTC (2002, Protocol 2020)",
+    "dz_u": "2003 poz. 2120; 2022 poz. 906",
+    "mli_ppt_applies": "VERIFY",
+    "mli_flags": ["VERIFY_MATCHING_DB", "POST_RATIF_NOTIF"],
+    "mli_note": "CAUTION: Both Parties; Poland listed as CTA; but NO synthesized text after 6+ years — strongly suggests Netherlands excluded Poland treaty from its own CTAs. Treat PPT=NO until confirmed via OECD MLI Matching Database. Post-ratif notifications: 25-11-2021; 29-09-2025.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 10,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Netherlands DTC (2002)",
+        "verified": false,
+        "note": "2020 Protocol may have modified rates. Verify Art. 10 of the 2020 Protocol (DzU 2022 poz. 906)."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Netherlands DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Netherlands DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "portugal": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Portugal DTC (1995)",
+    "dz_u": "1998 poz. 304; 2017 poz. 1101; 2020 poz. 993",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["ART8_RESERVED", "POST_RATIF_NOTIF"],
+    "mli_note": "Art. 8 MLI reserved (Art. 10(3) already has holding period). Post-ratif notification 06-03-2023.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 10,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Portugal DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Portugal DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Portugal DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "romania": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Romania DTC (1994)",
+    "dz_u": "1995 poz. 530",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Romania Art. 35(7)(b) notification 10-01-2025.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Romania DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Romania DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Romania DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "slovakia": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Slovakia DTC (1994, Protocol 2013)",
+    "dz_u": "1996 poz. 131; 2014 poz. 1046",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["ART8_RESERVED", "POST_RATIF_NOTIF"],
+    "mli_note": "Art. 8 MLI reserved. Post-ratif notification 02-10-2024.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 10,
+        "treaty_article": "Art. 10(2) Poland–Slovakia DTC as amended by 2013 Protocol",
+        "verified": false,
+        "note": "2013 Protocol may have changed rates. Verify Art. 10."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Slovakia DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Slovakia DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "slovenia": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Slovenia DTC (1996)",
+    "dz_u": "1998 poz. 198",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Slovenia post-ratif notification 23-03-2023.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Slovenia DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Slovenia DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Slovenia DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "spain": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Spain DTC (1979)",
+    "dz_u": "1982 poz. 127",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF", "SYNTH_PL_ONLY"],
+    "mli_note": "Spain Art. 35(7)(b) notification 26-05-2025. Synthesized text in Polish only.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Spain DTC",
+        "verified": false,
+        "note": "1979 treaty — very old. Verify whether mutual agreement procedures have modified rates."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Spain DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Spain DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "sweden": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Sweden DTC (2004)",
+    "dz_u": "2006 poz. 193; 2017 poz. 2177",
+    "mli_ppt_applies": "VERIFY",
+    "mli_flags": ["VERIFY_MATCHING_DB"],
+    "mli_note": "CAUTION: Both Parties since 2018; Poland CTA ✓; no synthesized text after 6+ years — strongly suggests Sweden excluded Poland treaty from its own CTAs. Treat PPT=NO until confirmed via OECD MLI Matching Database.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Sweden DTC (2004)",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Sweden DTC (2004)",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Sweden DTC (2004)",
+        "verified": false
+      }
+    }
+  },
+
+  "united kingdom": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–United Kingdom DTC (2006)",
+    "dz_u": "2006 poz. 1840",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["EXISTING_ANTIABUSE", "ART8_RESERVED", "POST_RATIF_NOTIF"],
+    "mli_note": "Arts. 10(6) 11(8) 12(7) 21(4) = existing anti-abuse. Art. 8 MLI reserved. Post-ratif notification 31-05-2024.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 0,
+        "reduced_threshold": 25,
+        "standard_rate": 10,
+        "treaty_article": "Art. 10(2) Poland–UK DTC (2006)",
+        "verified": false,
+        "note": "VERIFY: 0% for qualifying companies; 10% standard. Confirm threshold and definition of qualifying company under Art. 10."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–UK DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–UK DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "switzerland": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Switzerland DTC (1991, Protocol 2010)",
+    "dz_u": "1993 poz. 92; 2011 poz. 1533; 2021 poz. 262",
+    "mli_ppt_applies": "VERIFY",
+    "mli_flags": ["VERIFY_MATCHING_DB", "ART8_RESERVED", "POST_RATIF_NOTIF"],
+    "mli_note": "CAUTION: Both Parties since 2019; Poland CTA ✓; no synthesized text — likely Switzerland excluded Poland treaty (bilateral approach preferred). Art. 8 MLI reserved. Post-ratif notification 16-12-2022. Treat PPT=NO until confirmed via OECD MLI Matching Database.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Switzerland DTC as amended by 2010 Protocol",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Switzerland DTC",
+        "verified": false,
+        "note": "0% per 2010 Protocol; original treaty had higher rate."
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Switzerland DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "norway": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Norway DTC (2009, Protocol 2012)",
+    "dz_u": "1979 poz. 157; 2010 poz. 899; Protocol 2012",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["ART8_RESERVED"],
+    "mli_note": "Art. 8 MLI reserved (treaty already has holding period). PPT applies.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 0,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Norway DTC (2009)",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Norway DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Norway DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "united states": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–USA DTC (1974)",
+    "dz_u": "1976 poz. 178",
+    "mli_ppt_applies": "NO",
+    "mli_flags": [],
+    "mli_note": "USA is NOT an MLI signatory — PPT does not apply. 2013 renegotiation still pending US Senate ratification. The 1974 treaty governs.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 10,
+        "standard_rate": 15,
+        "treaty_article": "Art. 11(2) Poland–USA DTC (1974)",
+        "verified": false,
+        "note": "1974 treaty; very old. 5% for ≥10% direct holdings; 15% otherwise. Verify from treaty text."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 12(1) Poland–USA DTC (1974)",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 13(2) Poland–USA DTC (1974)",
+        "verified": false
+      }
+    }
+  },
+
+  "canada": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Canada DTC (2012)",
+    "dz_u": "1990 poz. 216; new treaty 2013 poz. 1371",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["EXISTING_ANTIABUSE", "POST_RATIF_NOTIF"],
+    "mli_note": "Arts. 10(6) 11(8) 12(8) = existing anti-abuse per Art. 7(2) MLI. Post-ratif notifications 08-10-2020; 16-12-2022.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Canada DTC (2012)",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Canada DTC (2012)",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Canada DTC (2012)",
+        "verified": false,
+        "note": "Rates may vary by royalty type (cultural vs. industrial). 10% is conservative. Verify Art. 12."
+      }
+    }
+  },
+
+  "japan": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Japan DTC (1980)",
+    "dz_u": "1983 poz. 60",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Japan post-ratif notification 20-06-2023. PPT applies.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 10,
+        "reduced_threshold": 0,
+        "standard_rate": 10,
+        "treaty_article": "Art. 10(2) Poland–Japan DTC",
+        "verified": false,
+        "note": "Flat 10% — 1980 treaty; verify whether reduced-rate holding-period provision exists."
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Japan DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Japan DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "singapore": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Singapore DTC (2012)",
+    "dz_u": "1994 poz. 139; new treaty 2014 poz. 443",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["EXISTING_ANTIABUSE", "ART8_RESERVED", "POST_RATIF_NOTIF"],
+    "mli_note": "Arts. 10(8) 11(8) 12(7) = existing anti-abuse. Art. 8 MLI reserved. Post-ratif notification 11-08-2021.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 0,
+        "reduced_threshold": 25,
+        "standard_rate": 10,
+        "treaty_article": "Art. 10(2) Poland–Singapore DTC (2012)",
+        "verified": false,
+        "note": "VERIFY: 0% for qualifying companies holding ≥25%. Confirm from 2012 treaty text."
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–Singapore DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–Singapore DTC",
+        "verified": false,
+        "note": "Rate varies by royalty type; 5% is indicative. Verify Art. 12."
+      }
+    }
+  },
+
+  "united arab emirates": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–UAE DTC (1993, Protocol 2013)",
+    "dz_u": "1994 poz. 373; 2015 poz. 312; 2019 poz. 2022",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["EXISTING_ANTIABUSE"],
+    "mli_note": "Art. 23A = existing anti-abuse provision. Letter exchanges 2023 & 2025. UAE = confirmed CTAs in force.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 5,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–UAE DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 0,
+        "treaty_article": "Art. 11(2) Poland–UAE DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 5,
+        "treaty_article": "Art. 12(2) Poland–UAE DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "australia": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Australia DTC (1991)",
+    "dz_u": "1992 poz. 177",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["POST_RATIF_NOTIF"],
+    "mli_note": "Australia post-ratif notifications 02-10-2020; 29-09-2025. PPT applies.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 15,
+        "reduced_threshold": 0,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Australia DTC",
+        "verified": false,
+        "note": "Flat 15% — 1991 treaty. Verify whether a lower rate for substantial holdings was introduced."
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–Australia DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Australia DTC",
+        "verified": false
+      }
+    }
+  },
+
+  "india": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–India DTC (1989, Protocol 2013)",
+    "dz_u": "1990 poz. 46; 2014 poz. 1337",
+    "mli_ppt_applies": "YES",
+    "mli_flags": ["EXISTING_ANTIABUSE"],
+    "mli_note": "Art. 28A = existing anti-abuse provision per Art. 7(2) MLI.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 10,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–India DTC",
+        "verified": false
+      },
+      "interest": {
+        "rate": 10,
+        "treaty_article": "Art. 11(2) Poland–India DTC",
+        "verified": false
+      },
+      "royalty": {
+        "rate": 15,
+        "treaty_article": "Art. 12(2) Poland–India DTC",
+        "verified": false,
+        "note": "15% is the general rate; verify whether any type-specific lower rates apply."
+      }
+    }
+  }
+}
