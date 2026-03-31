@@ -396,6 +396,86 @@ function buildTaskString(input: AgentInput): string {
   );
 }
 
+// ── OUTPUT HELPERS ────────────────────────────────────────────────────────────
+//
+// Phase 3: save a structured JSON report to disk after every run.
+//
+// resolveOutputPath() — decides where to write the report:
+//   - If --output <path> is on the command line, use that path.
+//   - Otherwise generate reports/<entity_slug>_<YYYY-MM-DD>.json automatically.
+//
+// parseFindings() — every tool result in memory is stored as a JSON string.
+//   We parse each one back to an object so the report is fully machine-readable.
+//
+// saveReport() — creates the output directory if needed, then writes the file.
+
+function resolveOutputPath(input: AgentInput): string {
+  const args = process.argv.slice(2);
+  const flag = args.indexOf('--output');
+
+  if (flag !== -1 && flag + 1 < args.length) {
+    // Explicit path supplied by the user
+    return path.resolve(args[flag + 1]);
+  }
+
+  // Auto-generate: strip non-alphanumeric chars from entity name to make a safe
+  // filename, then append today's date.
+  const slug = input.entity_name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')   // replace runs of non-word chars with _
+    .replace(/^_|_$/g, '');        // trim leading/trailing underscores
+
+  const date = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+  return path.resolve('reports', `${slug}_${date}.json`);
+}
+
+function ensureDir(filePath: string): void {
+  // path.dirname() extracts the directory portion of the path.
+  // fs.mkdirSync with recursive: true creates all missing parent directories
+  // and does nothing if the directory already exists — safe to call every time.
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+}
+
+// parseFindings() converts the memory findings map from
+//   { key: "<json string>" }  →  { key: { ... parsed object ... } }
+// so the report does not contain strings-within-strings.
+// If a value somehow isn't valid JSON, it is kept as-is.
+function parseFindings(findings: Record<string, string>): Record<string, unknown> {
+  const parsed: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(findings)) {
+    try {
+      parsed[key] = JSON.parse(value) as unknown;
+    } catch {
+      parsed[key] = value;
+    }
+  }
+  return parsed;
+}
+
+function saveReport(
+  input: AgentInput,
+  conclusion: string,
+  findings: Record<string, string>,
+  outputPath: string
+): void {
+  const report = {
+    generated_at: new Date().toISOString(),
+    // Spread the input fields at the top level so the report is self-contained
+    // — a reader doesn't need to know the original JSON file to understand it.
+    entity_name:             input.entity_name,
+    country:                 input.country,
+    income_type:             input.income_type,
+    shareholding_percentage: input.shareholding_percentage,
+    ...(input.substance_notes ? { substance_notes: input.substance_notes } : {}),
+    conclusion,
+    findings: parseFindings(findings),
+  };
+
+  ensureDir(outputPath);
+  fs.writeFileSync(outputPath, JSON.stringify(report, null, 2), 'utf-8');
+  console.log(`\nReport saved → ${outputPath}`);
+}
+
 // ── AGENT LOOP ────────────────────────────────────────────────────────────────
 //
 // The loop is domain-agnostic. It receives:
@@ -404,6 +484,7 @@ function buildTaskString(input: AgentInput): string {
 //   - the tool definitions (Actions)
 //   - a WhtEnvironment instance (Environment)
 //   - a Memory instance
+//   - outputPath and input (for saving the report on termination)
 //
 // It knows nothing about WHT — it only orchestrates the GAME components.
 
@@ -413,6 +494,8 @@ async function runAgent(
   tools: Tool[],
   env: WhtEnvironment,
   memory: Memory,
+  input: AgentInput,
+  outputPath: string,
   maxIterations: number = 12
 ): Promise<void> {
   console.log('\n' + '='.repeat(70));
@@ -479,6 +562,9 @@ async function runAgent(
         }
 
         console.log('='.repeat(70) + '\n');
+
+        // Phase 3: save the report to disk
+        saveReport(input, answer, findings, outputPath);
         return;
       }
 
@@ -557,6 +643,12 @@ async function runAgent(
   }
 
   console.log('\n[AGENT STOPPED] Maximum iterations reached.');
+  saveReport(
+    input,
+    '[INCOMPLETE — agent reached maximum iterations without a final answer]',
+    memory.getFindings(),
+    outputPath
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -565,9 +657,13 @@ async function runAgent(
 
 async function main(): Promise<void> {
   // Phase 2: read the task from a structured JSON file passed via --input.
-  // This replaces the hardcoded task string from Phase 1.
   const input = parseInput();
   const task = buildTaskString(input);
+
+  // Phase 3: resolve where the report will be written.
+  // Default: reports/<entity_slug>_<date>.json
+  // Override: npm run tax:agent -- --input <file> --output <path>
+  const outputPath = resolveOutputPath(input);
 
   // ── E: ENVIRONMENT ────────────────────────────────────────────────────────
   // Change simulate: false when real data sources are connected.
@@ -583,7 +679,7 @@ async function main(): Promise<void> {
   // Tools (A)
   const tools = buildWhtTools();
 
-  await runAgent(systemPrompt, task, tools, env, memory);
+  await runAgent(systemPrompt, task, tools, env, memory, input, outputPath);
 }
 
 main();

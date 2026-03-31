@@ -70,9 +70,14 @@ npm run tax:agent -- --input data/example_input.json  ← runs the WHT agent end
 - 52 tests passing.
 - Usage: `npm run tax:agent -- --input data/orange_polska_royalty.json`
 
-### Phase 3 — Real output
-- Structured JSON report saved to file (the `memory.getFindings()` block is already there).
-- Optional: PDF/Word export.
+### Phase 3 — Real output ✓ COMPLETE
+- `resolveOutputPath()` — auto-generates `reports/<entity_slug>_<date>.json`; `--output <path>` overrides.
+- `parseFindings()` — parses tool result strings back to objects so the report is fully machine-readable.
+- `saveReport()` — creates the `reports/` directory if needed, writes JSON with `generated_at`, input fields, `conclusion`, and `findings`.
+- Report saved on both `terminate` (full answer) and `maxIterations` (partial, with incomplete flag).
+- `reports/` added to `.gitignore`.
+- Usage: `npm run tax:agent -- --input data/orange_polska_royalty.json`
+- Override: `npm run tax:agent -- --input data/orange_polska_royalty.json --output path/to/report.json`
 
 ### Phase 4 — Broader agent coverage
 - **Refine business substance test** — current `checkEntitySubstance` returns generic simulated data.
