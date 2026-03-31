@@ -1,0 +1,26 @@
+{
+  "name": "tax-agent-ai",
+  "version": "1.0.0",
+  "description": "AI agent for withholding tax and beneficial owner analysis",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "module1:prompting": "ts-node src/module1/ProgrammaticPrompting.ts",
+    "module1:agent": "ts-node src/module1/AgentLoop.ts",
+    "module2:tools": "ts-node src/module2/FunctionCallingExample.ts",
+    "tax:agent": "ts-node src/agents/BeneficialOwnerAgent.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "openai": "^6.33.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}
