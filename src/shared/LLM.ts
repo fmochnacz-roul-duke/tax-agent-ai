@@ -10,6 +10,43 @@ export interface Tool {
   parameters: Record<string, unknown>;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Tool factory helpers
+//
+// Common tools that every agent needs should not be re-typed per agent.
+// These factory methods are the equivalent of the course's ToolRegistry
+// built-ins — a light version without the full registry abstraction.
+//
+// Where the AgentLanguage abstraction would slot in:
+//   An AgentLanguage implementation would own these definitions and inject
+//   them automatically. Since we are using FunctionCallingLanguage exclusively,
+//   we expose them as plain static helpers instead.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ToolFactory = {
+  // The terminate tool signals the end of the agent loop.
+  // The model passes its complete conclusion as the `answer` argument.
+  terminate(): Tool {
+    return {
+      name: 'terminate',
+      description:
+        'Call this tool when you have gathered all necessary information ' +
+        'and are ready to deliver your final answer. ' +
+        'Pass your complete conclusion as the answer argument.',
+      parameters: {
+        type: 'object',
+        properties: {
+          answer: {
+            type: 'string',
+            description: 'Your complete final answer and conclusion',
+          },
+        },
+        required: ['answer'],
+      },
+    };
+  },
+};
+
 export interface ToolCall {
   id: string;
   name: string;
