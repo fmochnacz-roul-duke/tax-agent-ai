@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 2 complete — real CLI input, agent runs live treaty data.
+**Phase:** Phases 2, 3 complete. Agent fixes applied. Ready for Phase 4.
 **Date of last session:** 2026-03-31
-**Branch:** phase2/cli-input (ready to merge)
+**Branch:** master (all work merged and pushed)
 
 ---
 
@@ -11,14 +11,51 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Read SESSION.md and let's continue where we left off."
+> "Let's start where we've stopped — it's time to build Phase 4."
 
 Then verify the environment is healthy:
 ```
-npm run build    ← zero errors
-npm test         ← 35/35 passing
-npm run tax:agent -- --input data/example_input.json  ← runs the WHT agent end-to-end
+npm run build                                                     ← zero errors
+npm test                                                          ← 52/52 passing
+npm run tax:agent -- --input data/orange_polska_royalty.json      ← runs end-to-end in ~5 iterations
 ```
+
+---
+
+## What Was Done — Session 2026-03-31 (Phases 2, 3, fixes)
+
+### Phase 2 — Real input
+- `AgentInput` interface + `validateInput()` + `buildTaskString()` in BeneficialOwnerAgent.ts
+- `parseInput()` reads `--input <file>` from CLI; clean error on missing flag
+- `data/example_input.json` — Alpine Holdings demo; `data/orange_polska_royalty.json` — Orange S.A. real case
+- `WhtEnvironment` switched to `simulate: false`
+
+### New tools added
+- `analyse_dempe` — DEMPE/BEPS 8–10 for royalties (Art. 12 scope warning included)
+- `check_directive_exemption` — EU I&R Directive 2003/49/EC → Art. 21 CIT (0% path)
+- `check_pay_and_refund` — Art. 26 §2c CIT; PLN 2M threshold; Opinion vs. WH-OS relief
+- `AgentInput.annual_payment_pln` field added for Pay and Refund input
+
+### Phase 3 — Real output
+- `resolveOutputPath()` — auto-generates `reports/<slug>_<date>.json`; `--output` flag overrides
+- `parseFindings()` — parses tool result strings back to objects
+- `saveReport()` — saves on `terminate`, `maxIterations`, and plain-text exit
+- `reports/` gitignored
+
+### Agent fixes (post first test run)
+- `buildTaskString()` — shareholding now always included (with Directive label for non-dividends)
+- Duplicate tool call guard — blocks identical re-calls, returns reminder to model
+- Findings summary prefix changed to `ESTABLISHED FINDINGS — do not repeat...`
+- Persona strengthened with loop-prevention instruction
+- Goals updated: Directive goal names the shareholding source; BO goal names `check_entity_substance`
+- `maxIterations` raised from 12 → 20
+- Plain-text exit now saves report (was silent before)
+- Result: 12 looping iterations → 5 clean iterations; correct 0% Directive conclusion
+
+### README rewrite
+- Reframed as Module 1 of Tax OS / MBA diploma project (AI and Digital Transformation)
+- Author, research context, Tax OS four-layer architecture, roadmap, limitations all documented
+- Module1/2/3 reframed as technical appendix / visible reasoning chain
 
 ---
 
@@ -79,13 +116,21 @@ npm run tax:agent -- --input data/example_input.json  ← runs the WHT agent end
 - Usage: `npm run tax:agent -- --input data/orange_polska_royalty.json`
 - Override: `npm run tax:agent -- --input data/orange_polska_royalty.json --output path/to/report.json`
 
-### Phase 4 — Broader agent coverage
-- **Refine business substance test** — current `checkEntitySubstance` returns generic simulated data.
-  Define concrete substance criteria (employees, office, board, income flow) with scoring/risk tiers.
-  Align with Art. 26 Polish CIT Act beneficial owner criteria and MLI PPT substance guidelines.
-- Add domestic exemption check (Art. 22 CIT Act — participation exemption).
-- Add confidence score to conclusion.
-- Verify Art. 12 scope for the 1975 Poland–France DTC (does it cover brand/technology licence fees?).
+### Phase 4 — Substance test refinement (NEXT)
+**Start here next session.**
+
+Current `checkEntitySubstance` returns hardcoded Alpine Holdings data regardless of input entity.
+The agent ran the Orange S.A. case and got back Luxembourg premises + German parent — misleading.
+
+Work to do:
+1. **Define concrete substance criteria** aligned with:
+   - Art. 26 Polish CIT Act (beneficial owner: own benefit, economic risk, decision-making, not conduit)
+   - MLI PPT substance requirements (genuine activity, local board, no pass-through obligation)
+   - OECD TP Guidelines Ch. VI DEMPE substance (for royalty cases)
+2. **Build a scoring/risk-tier model**: STRONG / ADEQUATE / WEAK / CONDUIT
+3. **Make simulated data entity-aware** — different profiles for operating companies vs. holding vehicles vs. IP holdcos
+4. **Add confidence score** to the final conclusion (HIGH / MEDIUM / LOW based on verified vs. simulated findings)
+5. Verify Art. 12 scope for 1975 Poland–France DTC against the official DzU text
 
 ### Phase 5 — Document ingestion (Python)
 - Accept DDQ as text/PDF input instead of hardcoded substance data.
