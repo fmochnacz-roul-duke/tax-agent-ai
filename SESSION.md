@@ -1,7 +1,7 @@
 # Session State
 
 ## Current Status
-**Phase:** Setup complete — ready to start Module 1
+**Phase:** Module 1 complete — ready to start Module 2
 **Date of last session:** 2026-03-31
 
 ---
@@ -27,26 +27,31 @@
   - Example 1: basic prompt (beneficial owner definition)
   - Example 2: structured JSON output (Poland-Germany treaty rates)
   - Example 3: multi-turn memory (WHT audit challenges)
+- [x] Built and ran `AgentLoop.ts` — agent loop working end-to-end
+  - Plain-text action format (THOUGHT / ACTION / FINAL ANSWER)
+  - Parser extracts structured data from LLM responses
+  - Simulated tools: check_treaty, get_treaty_rate, check_beneficial_owner_criteria, check_entity_substance, check_mli_ppt
+  - Agent ran 6 iterations and reached a correct WHT conclusion autonomously
+  - Identified key limitation: tool results are hardcoded — not auditable (to be fixed in Module 2 with real APIs)
 
 ---
 
 ## What Comes Next
 
 ### Immediate next steps (start of next session):
-1. `AgentLoop.ts` — build the full agent loop (Module 1, Part 2)
-   - Loop: think → parse action → execute → store result → repeat
-   - Apply to WHT: agent analyses an entity for beneficial owner status
-2. Merge `module1/prompting` into `master` when agent loop is complete
-3. Start `module2/tools` branch for function calling
+1. Start `module2/tools` branch
+2. Build `FunctionCallingExample.ts` — teach the LLM to call real TypeScript functions
+3. Replace simulated tool stubs in AgentLoop with real function calls
+4. Goal: agent conclusions become auditable (cited sources, treaty articles)
 
-### Module 1 plan:
-- Exercise A: Basic prompting (send a message, get a response)
-- Exercise B: Structured output (get JSON back from the LLM)
-- Exercise C: Quasi-Agent (sequential prompts with memory)
-- Apply to WHT: agent that asks about an entity and reasons about tax treaty rules
+### Module 2 plan:
+- Exercise A: Basic function calling (define a function, let the LLM call it)
+- Exercise B: Multi-tool orchestration (LLM picks the right tool)
+- Apply to WHT: replace hardcoded stubs with real treaty/MLI lookups
 
 ### Open questions / decisions pending:
-- None
+- Data sources for treaty rates: OECD database vs. scraped treaty PDFs vs. static lookup table
+- Whether to add source citations to tool results (recommended for auditability)
 
 ---
 
