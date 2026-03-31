@@ -46,20 +46,22 @@ const WHT_GOALS: Goal[] = [
   {
     name: 'Check EU Directive exemption',
     description:
-      'For interest and royalty payments: determine whether the EU Interest and ' +
-      'Royalties Directive (2003/49/EC, transposed as Art. 21 Polish CIT Act) ' +
-      'provides a 0% WHT exemption. Requires: EU member state recipient, ≥25% ' +
-      'shareholding held for ≥2 uninterrupted years, and no artificial arrangement. ' +
-      'The Directive does NOT cover dividends — use the Parent-Subsidiary Directive ' +
-      '(Art. 22 CIT) for those. If conditions are met, 0% supersedes the treaty rate.',
+      'For interest and royalty payments: call check_directive_exemption using ' +
+      'the shareholding_percentage stated in the task (e.g. "holds X%") and the ' +
+      'holding period from the substance notes. Determines whether the EU Interest ' +
+      'and Royalties Directive (2003/49/EC, Art. 21 Polish CIT Act) provides a 0% ' +
+      'WHT exemption. Requires: EU member state recipient, ≥25% shareholding held ' +
+      'for ≥2 uninterrupted years. If conditions are met, 0% supersedes the treaty ' +
+      'rate. The Directive does NOT cover dividends.',
     priority: 7,
   },
   {
     name: 'Assess beneficial owner status',
     description:
-      'Evaluate whether the entity meets the four criteria for beneficial owner ' +
-      'status: receives income for own benefit, bears economic risk, has ' +
-      'decision-making power, and is not a conduit entity.',
+      'Call check_entity_substance to obtain substance facts, then evaluate whether ' +
+      'the entity meets the four beneficial owner criteria: (1) receives income for ' +
+      'own benefit, (2) bears economic risk, (3) has decision-making power, ' +
+      '(4) is not a conduit. Flag conduit_risk HIGH as a treaty benefit denial risk.',
     priority: 7,
   },
   {
@@ -99,7 +101,10 @@ const WHT_PERSONA =
   'You are a Polish withholding tax (WHT) analysis agent working for an ' +
   'in-house tax team. Your role is to analyse payment transactions and ' +
   'determine the correct WHT treatment. Always cite treaty articles and ' +
-  'data sources in your final answer. Never guess — use only tool results.';
+  'data sources in your final answer. Never guess — use only tool results. ' +
+  'Work systematically: check the ESTABLISHED FINDINGS block before every tool ' +
+  'call — if a finding already covers the information you need, do not call ' +
+  'that tool again. Call terminate as soon as all applicable goals are addressed.';
 
 // ── A: TOOLS (definitions only — implementations are in WhtEnvironment) ───────
 
@@ -286,7 +291,11 @@ interface AgentInput {
   country: string;
   income_type: 'dividend' | 'interest' | 'royalty';
   shareholding_percentage: number;
-  substance_notes?: string;   // ? means the field is optional
+  substance_notes?: string;
+  // annual_payment_pln: used by check_pay_and_refund to determine whether the
+  // PLN 2,000,000 threshold is exceeded. Pass 0 (or omit) if unknown — the
+  // tool will apply a conservative assumption (threshold exceeded).
+  annual_payment_pln?: number;
 }
 
 // validateInput() narrows an unknown value to AgentInput.
@@ -331,12 +340,21 @@ function validateInput(raw: unknown): AgentInput {
     throw new Error('substance_notes must be a string when provided.');
   }
 
+  const { annual_payment_pln } = obj;
+  if (
+    annual_payment_pln !== undefined &&
+    (typeof annual_payment_pln !== 'number' || annual_payment_pln < 0)
+  ) {
+    throw new Error('annual_payment_pln must be a non-negative number when provided.');
+  }
+
   return {
     entity_name,
     country,
     income_type: income_type as AgentInput['income_type'],
     shareholding_percentage,
     substance_notes: substance_notes as string | undefined,
+    annual_payment_pln: annual_payment_pln as number | undefined,
   };
 }
 
@@ -379,19 +397,34 @@ function parseInput(): AgentInput {
 // that the agent loop receives as its first user message.
 // The agent never sees the raw JSON — it sees this prose description.
 function buildTaskString(input: AgentInput): string {
+  // Shareholding is always included — for dividends it determines the treaty rate
+  // threshold; for interest/royalties it determines EU Directive eligibility.
   const shareClause =
     input.income_type === 'dividend'
       ? `, holding ${input.shareholding_percentage}% of the capital of the paying company`
-      : '';
+      : ` (the recipient holds ${input.shareholding_percentage}% of the Polish company's` +
+        ` capital — use this figure for the EU Interest and Royalties Directive` +
+        ` shareholding threshold check)`;
+
+  // Annual payment amount: tells the agent what to pass to check_pay_and_refund.
+  // If omitted or 0, the tool applies a conservative assumption (threshold exceeded).
+  const paymentClause =
+    input.annual_payment_pln !== undefined
+      ? ` Estimated annual payment: PLN ${input.annual_payment_pln.toLocaleString()}` +
+        (input.annual_payment_pln === 0
+          ? ' (amount unknown — pass 0 to check_pay_and_refund for conservative assumption).'
+          : '.')
+      : ' Annual payment amount unknown — pass 0 to check_pay_and_refund.';
 
   const substanceClause = input.substance_notes
-    ? ` Additional context on entity substance: ${input.substance_notes}`
+    ? ` Additional context: ${input.substance_notes}`
     : '';
 
   return (
     `Analyse whether ${input.entity_name}, registered in ${input.country}${shareClause}, ` +
     `qualifies as the beneficial owner of a ${input.income_type} payment from a Polish ` +
     `company. Determine the correct Polish withholding tax rate and assess MLI/PPT risk.` +
+    paymentClause +
     substanceClause
   );
 }
@@ -496,7 +529,7 @@ async function runAgent(
   memory: Memory,
   input: AgentInput,
   outputPath: string,
-  maxIterations: number = 12
+  maxIterations: number = 20
 ): Promise<void> {
   console.log('\n' + '='.repeat(70));
   console.log('BENEFICIAL OWNER AGENT');
@@ -506,8 +539,11 @@ async function runAgent(
 
   const llm = new LLM();
 
+  // Tracks every tool call made so far as "name:argsJSON".
+  // Used to detect and skip exact duplicate calls — a common LLM loop pattern.
+  const calledTools = new Set<string>();
+
   // Initialise conversation memory with the system prompt and task.
-  // The findings summary starts empty and grows as tool results come in.
   memory.addMessage(Message.system(systemPrompt));
   memory.addMessage(Message.user(task));
 
@@ -516,14 +552,18 @@ async function runAgent(
     console.log(`ITERATION ${iteration}`);
     console.log('─'.repeat(70));
 
-    // Inject the findings summary as a user message before each LLM call.
-    // This gives the model a clean, up-to-date summary of what has been
-    // established — without it needing to re-read the full conversation.
+    // Inject the findings summary before each LLM call with a clear header that
+    // instructs the model not to repeat tool calls already listed here.
     const findingsSummary = memory.buildFindingsSummary();
     const messagesWithFindings: Message[] = findingsSummary
       ? [
           ...memory.getMessages(),
-          Message.user(findingsSummary + 'Continue working through your goals.'),
+          Message.user(
+            'ESTABLISHED FINDINGS — do not repeat tool calls for these topics:\n' +
+            findingsSummary +
+            '\nContinue working through any remaining goals. ' +
+            'Call terminate when all applicable goals are addressed.'
+          ),
         ]
       : memory.getMessages();
 
@@ -540,6 +580,27 @@ async function runAgent(
 
     for (const call of response.calls) {
       console.log(`\n  [TOOL CALL] ${call.name}(${JSON.stringify(call.arguments)})`);
+
+      // ── duplicate guard ───────────────────────────────────────────────────
+      // If the model calls the same tool with identical arguments a second time,
+      // return a reminder instead of executing — prevents runaway loops.
+      // terminate is exempt: we always want to honour a stop signal.
+      if (call.name !== 'terminate') {
+        const callKey = `${call.name}:${JSON.stringify(call.arguments)}`;
+        if (calledTools.has(callKey)) {
+          console.log(`  [SKIPPED] Duplicate — result already in findings.`);
+          memory.addMessage(Message.tool(
+            JSON.stringify({
+              note: 'This tool was already called with these exact arguments. ' +
+                    'The result is already in the ESTABLISHED FINDINGS. ' +
+                    'Do not call it again — proceed to the next goal or call terminate.',
+            }),
+            call.id
+          ));
+          continue;
+        }
+        calledTools.add(callKey);
+      }
 
       // ── terminate ────────────────────────────────────────────────────────
       if (call.name === 'terminate') {
