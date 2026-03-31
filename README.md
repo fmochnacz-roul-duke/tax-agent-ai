@@ -2,7 +2,7 @@
 
 A learning project with two parallel goals:
 
-1. **Learning goal** — work through the [TypeScript AI Agents Course](https://github.com/juleswhite/typescript-ai-agents-course) (Jules White) module by module
+1. **Learning goal** — work through different AI courses on Coursera, drafting my diploma project for my MBA studies.
 2. **Business goal** — apply every lesson to a real finance use case: a **Beneficial Owner Analysis Agent** for Polish withholding tax (WHT) purposes
 
 ---
