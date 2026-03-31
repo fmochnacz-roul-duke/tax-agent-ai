@@ -58,10 +58,18 @@ const WHT_GOALS: Goal[] = [
   {
     name: 'Assess beneficial owner status',
     description:
-      'Call check_entity_substance to obtain substance facts, then evaluate whether ' +
-      'the entity meets the four beneficial owner criteria: (1) receives income for ' +
-      'own benefit, (2) bears economic risk, (3) has decision-making power, ' +
-      '(4) is not a conduit. Flag conduit_risk HIGH as a treaty benefit denial risk.',
+      'Call check_entity_substance to obtain a structured substance profile aligned ' +
+      'with Art. 4a pkt 29 CIT (MF Objaśnienia podatkowe z 3 lipca 2025 r.). ' +
+      'The result includes: (a) substance_tier — STRONG/ADEQUATE/WEAK/CONDUIT; ' +
+      '(b) bo_preliminary — preliminary result for each of the three cumulative BO conditions; ' +
+      '(c) conduit_indicators — specific red flags (pass-through obligation, rapid forwarding, etc.). ' +
+      'Assess all three conditions: ' +
+      '(1) own benefit — entity receives income for its own account and exercises economic dominion; ' +
+      '(2) not conduit — no contractual OR factual obligation to forward the payment upstream; ' +
+      '(3) genuine activity — genuine business in country of residence (holding companies: lower ' +
+      'threshold per MF Objaśnienia §2.3.1 applies). ' +
+      'The BO test is BINARY — report PASS or FAIL for each condition. ' +
+      'A FAIL on any single condition is sufficient to deny treaty/directive benefits.',
     priority: 7,
   },
   {
@@ -152,8 +160,13 @@ function buildWhtTools(): Tool[] {
     {
       name: 'check_entity_substance',
       description:
-        'Returns known facts about the entity\'s economic substance: employees, ' +
-        'office, board activity, and income flow. Used to assess conduit risk.',
+        'Returns a structured economic substance profile aligned with the Polish ' +
+        'BO test (Art. 4a pkt 29 CIT, MF Objaśnienia podatkowe z 3 lipca 2025 r.). ' +
+        'Output includes: substance_factors (employees, office, management independence, ' +
+        'own assets, operating costs, capital financing), conduit_indicators (pass-through ' +
+        'obligation, rapid forwarding, nominal margin, capital insufficiency), ' +
+        'substance_tier (STRONG/ADEQUATE/WEAK/CONDUIT), and bo_preliminary — a preliminary ' +
+        'pass/fail result for each of the three cumulative BO conditions with supporting notes.',
       parameters: {
         type: 'object',
         properties: {
@@ -296,6 +309,11 @@ interface AgentInput {
   // PLN 2,000,000 threshold is exceeded. Pass 0 (or omit) if unknown — the
   // tool will apply a conservative assumption (threshold exceeded).
   annual_payment_pln?: number;
+  // related_party: whether the recipient is a related party under Art. 11a CIT.
+  // When provided, the agent passes this value directly to check_pay_and_refund
+  // instead of having to infer it from substance_notes.
+  // If omitted, the agent must determine related-party status from context.
+  related_party?: boolean;
 }
 
 // validateInput() narrows an unknown value to AgentInput.
@@ -348,13 +366,19 @@ function validateInput(raw: unknown): AgentInput {
     throw new Error('annual_payment_pln must be a non-negative number when provided.');
   }
 
+  const { related_party } = obj;
+  if (related_party !== undefined && typeof related_party !== 'boolean') {
+    throw new Error('related_party must be a boolean (true or false) when provided.');
+  }
+
   return {
     entity_name,
     country,
     income_type: income_type as AgentInput['income_type'],
     shareholding_percentage,
-    substance_notes: substance_notes as string | undefined,
-    annual_payment_pln: annual_payment_pln as number | undefined,
+    substance_notes:    substance_notes    as string  | undefined,
+    annual_payment_pln: annual_payment_pln as number  | undefined,
+    related_party:      related_party      as boolean | undefined,
   };
 }
 
@@ -416,6 +440,14 @@ function buildTaskString(input: AgentInput): string {
           : '.')
       : ' Annual payment amount unknown — pass 0 to check_pay_and_refund.';
 
+  // Related party clause: when explicitly provided, the agent passes this value
+  // directly to check_pay_and_refund instead of inferring it from substance_notes.
+  const relatedPartyClause =
+    input.related_party !== undefined
+      ? ` The recipient IS${input.related_party ? '' : ' NOT'} a related party under ` +
+        `Art. 11a CIT — use this for check_pay_and_refund.`
+      : ' Related-party status must be determined from context for check_pay_and_refund.';
+
   const substanceClause = input.substance_notes
     ? ` Additional context: ${input.substance_notes}`
     : '';
@@ -425,6 +457,7 @@ function buildTaskString(input: AgentInput): string {
     `qualifies as the beneficial owner of a ${input.income_type} payment from a Polish ` +
     `company. Determine the correct Polish withholding tax rate and assess MLI/PPT risk.` +
     paymentClause +
+    relatedPartyClause +
     substanceClause
   );
 }
@@ -485,21 +518,83 @@ function parseFindings(findings: Record<string, string>): Record<string, unknown
   return parsed;
 }
 
+// computeReportConfidence — inspects the findings collected during the run and
+// derives an overall data quality level for the report.
+//
+// Logic:
+//   - If substance data is simulated (confidence === 'LOW' in the substance result)
+//     → LOW. Phase 4 will always land here until Phase 5 connects real DDQs.
+//   - If all substance is real but some treaty rates are unverified → MEDIUM.
+//   - If everything is verified → HIGH.
+//
+// The function accepts Record<string, string> — the raw findings map — and returns
+// a union type so TypeScript enforces that only 'HIGH', 'MEDIUM', or 'LOW' can
+// come back.
+function computeReportConfidence(
+  findings: Record<string, string>
+): 'HIGH' | 'MEDIUM' | 'LOW' {
+  // Check the substance result first — if it is simulated the whole report is LOW.
+  // We use a try/catch because JSON.parse can throw if the string is malformed.
+  const substanceRaw = findings['entity_substance'];
+  if (substanceRaw !== undefined) {
+    try {
+      const parsed = JSON.parse(substanceRaw) as Record<string, unknown>;
+      if (parsed['confidence'] === 'LOW') return 'LOW';
+    } catch {
+      // If we can't parse it at all, treat as LOW to be conservative.
+      return 'LOW';
+    }
+  }
+
+  // If substance is fine, check whether treaty rates are verified.
+  const rateRaw = findings['wht_rate'];
+  if (rateRaw !== undefined) {
+    try {
+      const parsed = JSON.parse(rateRaw) as Record<string, unknown>;
+      if (parsed['verified'] === false) return 'MEDIUM';
+    } catch {
+      return 'MEDIUM';
+    }
+  }
+
+  return 'HIGH';
+}
+
 function saveReport(
   input: AgentInput,
   conclusion: string,
   findings: Record<string, string>,
   outputPath: string
 ): void {
+  const dataConfidence = computeReportConfidence(findings);
+
+  // Map each confidence level to a human-readable note.
+  // Record<'HIGH' | 'MEDIUM' | 'LOW', string> is a TypeScript object type where
+  // the keys must be exactly those three strings — it prevents typos.
+  const confidenceNotes: Record<'HIGH' | 'MEDIUM' | 'LOW', string> = {
+    HIGH:
+      'All data verified. This report is suitable for internal decision-making.',
+    MEDIUM:
+      'Treaty rates have not been verified against official treaty texts. ' +
+      'Verify before relying on these conclusions for filing or client advice.',
+    LOW:
+      'Substance data is simulated and treaty rates are unverified. ' +
+      'This report is for analysis purposes only — not suitable for filing ' +
+      'or client advice without professional verification and real DDQ data.',
+  };
+
   const report = {
-    generated_at: new Date().toISOString(),
+    generated_at:      new Date().toISOString(),
     // Spread the input fields at the top level so the report is self-contained
     // — a reader doesn't need to know the original JSON file to understand it.
     entity_name:             input.entity_name,
     country:                 input.country,
     income_type:             input.income_type,
     shareholding_percentage: input.shareholding_percentage,
+    ...(input.related_party !== undefined ? { related_party: input.related_party } : {}),
     ...(input.substance_notes ? { substance_notes: input.substance_notes } : {}),
+    data_confidence:      dataConfidence,
+    data_confidence_note: confidenceNotes[dataConfidence],
     conclusion,
     findings: parseFindings(findings),
   };
@@ -507,6 +602,7 @@ function saveReport(
   ensureDir(outputPath);
   fs.writeFileSync(outputPath, JSON.stringify(report, null, 2), 'utf-8');
   console.log(`\nReport saved → ${outputPath}`);
+  console.log(`Data confidence: ${dataConfidence} — ${confidenceNotes[dataConfidence]}`);
 }
 
 // ── AGENT LOOP ────────────────────────────────────────────────────────────────

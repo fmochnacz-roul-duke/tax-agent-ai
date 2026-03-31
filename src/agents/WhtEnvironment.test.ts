@@ -67,15 +67,87 @@ test('getTreatyRate: unknown combination returns an error field', () => {
   assert.ok(result['error'], 'should return an error for unknown combination');
 });
 
-// ── checkEntitySubstance ──────────────────────────────────────────────────────
+// ── checkEntitySubstance — Phase 4 entity-aware profiles ─────────────────────
+//
+// Phase 4 introduced entity-specific substance profiles structured around the
+// three-condition BO test from Art. 4a pkt 29 CIT and MF Objaśnienia 2025.
+//
+// Tests cover: Orange S.A. (STRONG), Alpine Holdings S.A. (WEAK/FAIL),
+// and the conservative unknown-entity fallback (CONDUIT/UNCERTAIN).
 
-test('checkEntitySubstance: returns substance data with source field', () => {
+test('checkEntitySubstance: Orange S.A. — substance_tier is STRONG', () => {
+  const result = parse(env.checkEntitySubstance('Orange S.A.', 'France'));
+
+  assert.equal(result['entity'],         'Orange S.A.');
+  assert.equal(result['country'],        'France');
+  assert.equal(result['entity_type'],    'large_operating_company');
+  assert.equal(result['substance_tier'], 'STRONG');
+  assert.ok(result['source'], 'should include a source field');
+});
+
+test('checkEntitySubstance: Orange S.A. — all three BO conditions PASS', () => {
+  const result = parse(env.checkEntitySubstance('Orange S.A.', 'France'));
+  const bo = result['bo_preliminary'] as Record<string, unknown>;
+
+  assert.equal((bo['condition_1_own_benefit']      as Record<string, unknown>)['result'], 'PASS');
+  assert.equal((bo['condition_2_not_conduit']      as Record<string, unknown>)['result'], 'PASS');
+  assert.equal((bo['condition_3_genuine_activity'] as Record<string, unknown>)['result'], 'PASS');
+  assert.equal(bo['overall'], 'PASS');
+});
+
+test('checkEntitySubstance: Orange S.A. — no conduit red flags present', () => {
+  const result = parse(env.checkEntitySubstance('Orange S.A.', 'France'));
+  const indicators = result['conduit_indicators'] as Record<string, Record<string, unknown>>;
+
+  assert.equal(indicators['pass_through_obligation']['present'], false);
+  assert.equal(indicators['rapid_forwarding']['present'],        false);
+  assert.equal(indicators['nominal_margin']['present'],          false);
+});
+
+test('checkEntitySubstance: Alpine Holdings S.A. — substance_tier is WEAK', () => {
   const result = parse(env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
 
-  assert.equal(result['entity'], 'Alpine Holdings S.A.');
-  assert.equal(result['country'], 'Luxembourg');
-  assert.ok(result['conduit_risk'], 'should include a conduit_risk assessment');
-  assert.ok(result['source'],       'should include a source field');
+  assert.equal(result['entity'],         'Alpine Holdings S.A.');
+  assert.equal(result['country'],        'Luxembourg');
+  assert.equal(result['entity_type'],    'holding_company');
+  assert.equal(result['substance_tier'], 'WEAK');
+});
+
+test('checkEntitySubstance: Alpine Holdings S.A. — condition_2_not_conduit FAILS', () => {
+  const result = parse(env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
+  const bo = result['bo_preliminary'] as Record<string, Record<string, unknown>>;
+
+  assert.equal(bo['condition_2_not_conduit']['result'], 'FAIL');
+  assert.equal(bo['overall'], 'FAIL');
+});
+
+test('checkEntitySubstance: Alpine Holdings S.A. — pass-through red flag is present', () => {
+  const result = parse(env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
+  const indicators = result['conduit_indicators'] as Record<string, Record<string, unknown>>;
+
+  assert.equal(indicators['pass_through_obligation']['present'], true);
+  assert.equal(indicators['rapid_forwarding']['present'],        true);
+});
+
+test('checkEntitySubstance: unknown entity — conservative CONDUIT tier returned', () => {
+  const result = parse(env.checkEntitySubstance('Unknown Corp Ltd', 'Cayman Islands'));
+
+  assert.equal(result['entity_type'],    'unknown');
+  assert.equal(result['substance_tier'], 'CONDUIT');
+
+  const bo = result['bo_preliminary'] as Record<string, unknown>;
+  assert.equal(bo['overall'], 'UNCERTAIN');
+});
+
+test('checkEntitySubstance: all profiles include confidence field', () => {
+  const orange  = parse(env.checkEntitySubstance('Orange S.A.',          'France'));
+  const alpine  = parse(env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
+  const unknown = parse(env.checkEntitySubstance('Unknown Corp Ltd',      'Cayman Islands'));
+
+  // All simulated profiles are LOW confidence — real data requires DDQ (Phase 5)
+  assert.equal(orange['confidence'],  'LOW');
+  assert.equal(alpine['confidence'],  'LOW');
+  assert.equal(unknown['confidence'], 'LOW');
 });
 
 // ── checkMliPpt ───────────────────────────────────────────────────────────────
