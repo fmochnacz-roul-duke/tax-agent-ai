@@ -1,73 +1,109 @@
 # Session State
 
 ## Current Status
-**Phase:** Module 2 complete — function calling agent working
+**Phase:** Modules 1–3 complete. Product-grade agent foundation built. Ready for real data sources.
 **Date of last session:** 2026-03-31
+**Branch:** master (all work merged and pushed)
 
 ---
 
-## What Was Done This Session (2026-03-31)
-
-- [x] Created project at `C:\Users\fmoch\projects\tax-agent-ai\`
-- [x] Initialized npm project with TypeScript, ts-node, OpenAI SDK, dotenv
-- [x] Created `tsconfig.json` — strict TypeScript config
-- [x] Created `.env` with OpenAI API key and model (gpt-4o-mini)
-- [x] Created `.gitignore` — excludes `.env` and `node_modules`
-- [x] Created `src/shared/Message.ts` — Message class with factory methods
-- [x] Created `src/shared/LLM.ts` — LLM class wrapping OpenAI API
-- [x] Created `src/shared/index.ts` — re-exports for clean imports
-- [x] Created `CLAUDE.md` — project context
-- [x] Created `SESSION.md` — this file
-- [x] Created `src/module1/CLAUDE.md` — module 1 context
-- [x] Initialized Git repo
-- [x] Created GitHub repo: https://github.com/fmochnacz-roul-duke/tax-agent-ai
-- [x] First commit on `master` (project scaffold)
-- [x] Created branch `module1/prompting`
-- [x] Built and ran `ProgrammaticPrompting.ts` — all 3 examples working
-  - Example 1: basic prompt (beneficial owner definition)
-  - Example 2: structured JSON output (Poland-Germany treaty rates)
-  - Example 3: multi-turn memory (WHT audit challenges)
-- [x] Built and ran `AgentLoop.ts` — agent loop working end-to-end
-  - Plain-text action format (THOUGHT / ACTION / FINAL ANSWER)
-  - Parser extracts structured data from LLM responses
-  - Simulated tools: check_treaty, get_treaty_rate, check_beneficial_owner_criteria, check_entity_substance, check_mli_ppt
-  - Agent ran 6 iterations and reached a correct WHT conclusion autonomously
-  - Identified key limitation: tool results are hardcoded — not auditable (to be fixed in Module 2 with real APIs)
-
----
-
-## What Was Done — Module 2 (2026-03-31)
-
-- [x] Created branch `module2/tools`
-- [x] Extended `shared/Message.ts` — added `tool` role and `StoredToolCall` type
-- [x] Extended `shared/LLM.ts` — added `generateWithTools()`, `Tool`, `ToolCall`, `LLMResponse` types
-- [x] Built `module2/FunctionCallingExample.ts` — single round-trip demo with 2 tools
-  - Learned: assistant message must carry raw `tool_calls` structure (not plain text)
-  - Fixed `StoredToolCall` round-trip so API accepts `tool` result messages
-- [x] Built `module2/AgentLoopFunctionCalling.ts` — full agent class with `registerTool()` / `run()`
-  - `terminate` tool replaces `FINAL ANSWER:` text convention
-  - `Map<string, ToolFunction>` replaces `switch` statement
-  - Model parallelised independent tool calls automatically (2 calls in Iteration 1)
-  - Tool results include `source` field — first step toward auditability
-
-## What Comes Next
-
-### Immediate next steps (start of next session):
-- Module 3 (course): whatever comes after function calling in Jules White's course
-- Business layer: consider replacing simulated tool data with real sources
-  - OECD treaty database or static lookup table for treaty rates
-  - OECD MLI deposited positions (public data)
-
-### Open questions / decisions pending:
-- Data sources for treaty rates: OECD database vs. scraped treaty PDFs vs. static lookup table
-- Whether to build a `BeneficialOwnerAgent.ts` that wires Module 2 patterns to a proper CLI
-
----
-
-## How to Continue Tomorrow
+## How to Resume Next Session
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
 > "Read SESSION.md and let's continue where we left off."
 
-Claude will read this file and pick up exactly here.
+Then run to verify the environment is healthy:
+```
+npm run build    ← should produce zero errors
+npm test         ← should show 21/21 passing
+npm run tax:agent  ← should run the WHT agent end-to-end
+```
+
+---
+
+## What Was Done — Session 2026-03-31
+
+### Module 2: Function Calling
+- Extended `shared/Message.ts` — added `tool` role and `StoredToolCall` type
+- Extended `shared/LLM.ts` — added `generateWithTools()`, `ToolFactory`, type exports
+- Built `module2/FunctionCallingExample.ts` — single round-trip function calling demo
+  - Key bug found and fixed: assistant message must carry `tool_calls` structure (not plain text)
+  - `StoredToolCall` round-trip pattern enables the API to accept subsequent tool result messages
+- Built `module2/AgentLoopFunctionCalling.ts` — agent class with `registerTool()` / Map dispatch
+
+### Module 3: GAME Framework
+- Applied GAME framework retrospectively to the agent
+- Added `shared/Goal.ts` — Goal interface + `buildSystemPrompt()` (priority-sorted)
+- Added `shared/Memory.ts` — conversation history + structured findings store
+- Added `agents/WhtEnvironment.ts` — all tool implementations; `simulate: true/false` switch
+- Rebuilt `agents/BeneficialOwnerAgent.ts` — full GAME separation, domain-agnostic loop
+
+### Unit Testing
+- Added `node:test` (built-in, no dependencies) with `"types": ["node"]` in tsconfig
+- 21 tests across 3 files — all green, zero API calls, ~1.7s total
+- Tests cover: `WhtEnvironment` (all methods + edge cases), `Memory` (findings + copy safety),
+  `buildSystemPrompt` (priority sorting, persona inclusion)
+
+### README
+- Built `module3/ReadmeAgent.ts` — GAME agent that reads source files and generates README
+  - Learned: model needs explicit instruction in persona to use terminate() not plain text
+  - Agent draft was structurally correct but too generic — reviewed and replaced with final version
+- Committed `README.md` to repo — project now has proper GitHub documentation
+
+### Housekeeping
+- CLAUDE.md was not updated during the session (oversight) — updated at session close
+- Established branch discipline: always branch, always merge before starting next feature
+
+---
+
+## What Comes Next — Roadmap Toward a Real Tax Tool
+
+### Phase 1 — Real data sources (highest priority)
+Replace the three simulated tools with real lookups. Each is independent and can be done separately.
+
+| Tool | Replacement source | Notes |
+|---|---|---|
+| `check_treaty` | Polish MoF treaty list (static JSON lookup table) | ~85 treaties — maintainable manually |
+| `get_treaty_rate` | OECD treaty database or parsed treaty PDFs | Start with a static table for top 10 countries |
+| `check_mli_ppt` | OECD MLI deposited positions (public, scrapeable) | Poland's positions are fixed — small static file |
+
+Suggested first step: build a `data/treaties.json` static file for Poland's 10 most common
+treaty partners (LU, NL, DE, CY, MT, IE, AT, CH, SE, GB) and wire `WhtEnvironment` to read it.
+
+### Phase 2 — Real input
+- Replace hardcoded task string with a CLI prompt or structured input form
+- Accept: entity name, country, income type, shareholding %, known substance facts
+- Consider a simple JSON input file: `npm run tax:agent -- --input entity.json`
+
+### Phase 3 — Real output
+- Structured JSON report (machine-readable, for downstream systems)
+- The `memory.getFindings()` block is already there — just format and save it
+- Optional: PDF/Word export of the analysis
+
+### Phase 4 — Broader coverage
+- Extend beyond Luxembourg to the top 10 treaty partners
+- Add `royalty` income type (currently only dividend and interest are handled)
+- Add domestic exemption check (Polish CIT Act Art. 22 — participation exemption)
+
+### Phase 5 — Document ingestion
+- Accept due diligence questionnaire as a text/PDF input instead of hardcoded substance data
+- Parse treaty PDFs directly for rate lookups (longer term)
+
+---
+
+## Open Questions / Decisions Pending
+- Data source for treaty rates: static JSON table (fast, maintainable for top 10 countries)
+  vs. OECD API (comprehensive but complex)
+- Whether to add a confidence score to the agent's conclusion
+- Whether to build a minimal web UI or keep it CLI-only
+
+---
+
+## Key Architecture Decisions Made This Session
+- GAME framework is the design pattern for all future agents
+- `WhtEnvironment` is the isolation boundary — simulate→live is one flag change
+- Unit tests on pure components only (no LLM) — fast, cheap, reliable
+- `node:test` (built-in) for testing — no extra dependencies
+- AgentLanguage abstraction: decision was NOT to implement the full abstraction
+  (we are FunctionCallingLanguage-only; the class hierarchy would be premature)
