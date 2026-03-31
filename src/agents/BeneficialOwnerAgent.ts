@@ -1,4 +1,6 @@
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
 import { LLM, Message, Tool, ToolFactory } from '../shared';
 import { Goal, buildSystemPrompt } from '../shared/Goal';
 import { Memory } from '../shared/Memory';
@@ -137,6 +139,137 @@ function buildWhtTools(): Tool[] {
     // ToolFactory.terminate() — no need to type this out per agent
     ToolFactory.terminate(),
   ];
+}
+
+// ── INPUT PARSING ─────────────────────────────────────────────────────────────
+//
+// Phase 2: accept structured JSON input from the command line instead of a
+// hardcoded task string.
+//
+// Usage:
+//   npm run tax:agent -- --input data/example_input.json
+//
+// The JSON file must match the AgentInput interface below.
+// validateInput() checks every field and exits with a clear error if invalid.
+// buildTaskString() turns the structured input into the natural-language
+// task string that the agent loop receives.
+
+// AgentInput — the TypeScript type that mirrors the JSON schema.
+// 'dividend' | 'interest' | 'royalty' is a union type: only these three string
+// values are allowed for income_type. TypeScript enforces this at compile time.
+interface AgentInput {
+  entity_name: string;
+  country: string;
+  income_type: 'dividend' | 'interest' | 'royalty';
+  shareholding_percentage: number;
+  substance_notes?: string;   // ? means the field is optional
+}
+
+// validateInput() narrows an unknown value to AgentInput.
+// We receive JSON.parse() output as type `unknown` (we don't know its shape yet).
+// Each check confirms a field exists and has the right type, then TypeScript knows
+// the final object satisfies the interface.
+function validateInput(raw: unknown): AgentInput {
+  if (typeof raw !== 'object' || raw === null) {
+    throw new Error('Input file must contain a JSON object.');
+  }
+
+  // Cast to a record so we can access properties by name.
+  // Record<string, unknown> means: an object whose keys are strings and whose
+  // values are still unknown (we haven't checked them yet).
+  const obj = raw as Record<string, unknown>;
+
+  const { entity_name, country, income_type, shareholding_percentage, substance_notes } = obj;
+
+  if (typeof entity_name !== 'string' || entity_name.trim() === '') {
+    throw new Error('entity_name must be a non-empty string.');
+  }
+  if (typeof country !== 'string' || country.trim() === '') {
+    throw new Error('country must be a non-empty string.');
+  }
+
+  const validTypes = ['dividend', 'interest', 'royalty'] as const;
+  // 'as const' tells TypeScript to treat the array as a tuple of literal types,
+  // not just string[]. That lets .includes() accept 'dividend' | 'interest' | 'royalty'.
+  if (!validTypes.includes(income_type as (typeof validTypes)[number])) {
+    throw new Error(`income_type must be one of: ${validTypes.join(', ')}.`);
+  }
+
+  if (
+    typeof shareholding_percentage !== 'number' ||
+    shareholding_percentage < 0 ||
+    shareholding_percentage > 100
+  ) {
+    throw new Error('shareholding_percentage must be a number between 0 and 100.');
+  }
+
+  if (substance_notes !== undefined && typeof substance_notes !== 'string') {
+    throw new Error('substance_notes must be a string when provided.');
+  }
+
+  return {
+    entity_name,
+    country,
+    income_type: income_type as AgentInput['income_type'],
+    shareholding_percentage,
+    substance_notes: substance_notes as string | undefined,
+  };
+}
+
+// parseInput() reads process.argv looking for --input <file>.
+// process.argv is the array of command-line tokens: the first two entries are
+// always 'node' and the script path, so we slice(2) to get the user's flags.
+function parseInput(): AgentInput {
+  const args = process.argv.slice(2);
+  const flag = args.indexOf('--input');
+
+  if (flag === -1 || flag + 1 >= args.length) {
+    console.error('Error: --input flag is required.');
+    console.error('Usage:   npm run tax:agent -- --input <path-to-json>');
+    console.error('Example: npm run tax:agent -- --input data/example_input.json');
+    process.exit(1);
+  }
+
+  // path.resolve() converts a relative path (e.g. data/example_input.json)
+  // to an absolute path based on the current working directory.
+  const filePath = path.resolve(args[flag + 1]);
+
+  let raw: unknown;
+  try {
+    raw = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  } catch (err) {
+    console.error(`Error reading input file: ${filePath}`);
+    console.error(String(err));
+    process.exit(1);
+  }
+
+  try {
+    return validateInput(raw);
+  } catch (err) {
+    console.error(`Invalid input file: ${String(err)}`);
+    process.exit(1);
+  }
+}
+
+// buildTaskString() converts structured input into the natural-language task
+// that the agent loop receives as its first user message.
+// The agent never sees the raw JSON — it sees this prose description.
+function buildTaskString(input: AgentInput): string {
+  const shareClause =
+    input.income_type === 'dividend'
+      ? `, holding ${input.shareholding_percentage}% of the capital of the paying company`
+      : '';
+
+  const substanceClause = input.substance_notes
+    ? ` Additional context on entity substance: ${input.substance_notes}`
+    : '';
+
+  return (
+    `Analyse whether ${input.entity_name}, registered in ${input.country}${shareClause}, ` +
+    `qualifies as the beneficial owner of a ${input.income_type} payment from a Polish ` +
+    `company. Determine the correct Polish withholding tax rate and assess MLI/PPT risk.` +
+    substanceClause
+  );
 }
 
 // ── AGENT LOOP ────────────────────────────────────────────────────────────────
@@ -279,9 +412,15 @@ async function runAgent(
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
+  // Phase 2: read the task from a structured JSON file passed via --input.
+  // This replaces the hardcoded task string from Phase 1.
+  const input = parseInput();
+  const task = buildTaskString(input);
+
   // ── E: ENVIRONMENT ────────────────────────────────────────────────────────
   // Change simulate: false when real data sources are connected.
-  const env = new WhtEnvironment({ simulate: true });
+  // checkEntitySubstance stays simulated permanently until Phase 5.
+  const env = new WhtEnvironment({ simulate: false });
 
   // ── M: MEMORY ─────────────────────────────────────────────────────────────
   const memory = new Memory();
@@ -292,16 +431,7 @@ async function main(): Promise<void> {
   // Tools (A)
   const tools = buildWhtTools();
 
-  await runAgent(
-    systemPrompt,
-    'Analyse whether Alpine Holdings S.A., a Luxembourg-registered holding ' +
-    'company that holds 25% of the capital of Pol-Ops Sp. z o.o. (Poland), ' +
-    'qualifies as the beneficial owner of a dividend to be paid by Pol-Ops. ' +
-    'Determine the correct Polish WHT rate.',
-    tools,
-    env,
-    memory
-  );
+  await runAgent(systemPrompt, task, tools, env, memory);
 }
 
 main();

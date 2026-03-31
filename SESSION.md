@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 1 complete — live treaty data wired into the agent.
+**Phase:** Phase 2 complete — real CLI input, agent runs live treaty data.
 **Date of last session:** 2026-03-31
-**Branch:** master (all work merged and pushed)
+**Branch:** phase2/cli-input (ready to merge)
 
 ---
 
@@ -17,7 +17,7 @@ Then verify the environment is healthy:
 ```
 npm run build    ← zero errors
 npm test         ← 35/35 passing
-npm run tax:agent  ← runs the WHT agent end-to-end (still simulate mode for substance)
+npm run tax:agent -- --input data/example_input.json  ← runs the WHT agent end-to-end
 ```
 
 ---
@@ -60,10 +60,12 @@ npm run tax:agent  ← runs the WHT agent end-to-end (still simulate mode for su
 
 ## Roadmap — What Comes Next
 
-### Phase 2 — Real input
-- Replace hardcoded task string in BeneficialOwnerAgent.ts with CLI prompt or structured JSON input.
-- Accept: entity name, country, income type, shareholding %, substance facts.
-- Suggested: `npm run tax:agent -- --input entity.json`
+### Phase 2 — Real input ✓ COMPLETE
+- `AgentInput` interface + `validateInput()` + `buildTaskString()` added to BeneficialOwnerAgent.ts.
+- `parseInput()` reads `--input <file>` from process.argv; exits cleanly with usage hint if missing.
+- `data/example_input.json` is the demo case (Alpine Holdings S.A., Luxembourg, dividend, 25%).
+- `WhtEnvironment` switched to `simulate: false` — live treaty data active.
+- Usage: `npm run tax:agent -- --input data/example_input.json`
 
 ### Phase 3 — Real output
 - Structured JSON report saved to file (the `memory.getFindings()` block is already there).
