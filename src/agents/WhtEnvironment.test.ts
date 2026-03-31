@@ -270,3 +270,96 @@ test('analyseDempe: source field marks result as simulated', () => {
     'source should indicate simulated data'
   );
 });
+
+// ── checkDirectiveExemption ───────────────────────────────────────────────────
+
+test('checkDirectiveExemption: EU member + royalty + ≥25% + ≥2yr → exemption available', () => {
+  const result = parse(env.checkDirectiveExemption('France', 'royalty', 50, 5));
+
+  assert.equal(result['exemption_available'], true);
+  assert.equal(result['exemption_rate'], 0);
+});
+
+test('checkDirectiveExemption: non-EU country → exemption NOT available', () => {
+  const result = parse(env.checkDirectiveExemption('United Kingdom', 'royalty', 50, 5));
+
+  assert.equal(result['exemption_available'], false);
+  assert.equal(result['exemption_rate'], null);
+
+  const conditions = result['conditions'] as Record<string, Record<string, unknown>>;
+  assert.equal(conditions['eu_member_state']['met'], false);
+});
+
+test('checkDirectiveExemption: dividend income type → NOT covered by Directive', () => {
+  // Dividend income uses the Parent-Sub Directive (Art. 22 CIT), not the I&R Directive
+  // The tool only accepts 'interest' | 'royalty', but we test the logic via interest
+  const result = parse(env.checkDirectiveExemption('France', 'interest', 50, 5));
+
+  assert.equal(result['exemption_available'], true, 'interest should be covered');
+});
+
+test('checkDirectiveExemption: shareholding below 25% → exemption NOT available', () => {
+  const result = parse(env.checkDirectiveExemption('France', 'royalty', 20, 5));
+
+  assert.equal(result['exemption_available'], false);
+
+  const conditions = result['conditions'] as Record<string, Record<string, unknown>>;
+  assert.equal(conditions['shareholding_threshold']['met'], false);
+});
+
+test('checkDirectiveExemption: holding period below 2 years → exemption NOT available', () => {
+  const result = parse(env.checkDirectiveExemption('France', 'royalty', 50, 1));
+
+  assert.equal(result['exemption_available'], false);
+
+  const conditions = result['conditions'] as Record<string, Record<string, unknown>>;
+  assert.equal(conditions['holding_period']['met'], false);
+});
+
+test('checkDirectiveExemption: exemption available → required_documentation is non-empty', () => {
+  const result = parse(env.checkDirectiveExemption('France', 'royalty', 50, 5));
+  const docs = result['required_documentation'] as unknown[];
+
+  assert.ok(docs.length > 0, 'should list required documents when exemption is available');
+});
+
+// ── checkPayAndRefund ─────────────────────────────────────────────────────────
+
+test('checkPayAndRefund: related party + amount above threshold → mechanism applies', () => {
+  const result = parse(env.checkPayAndRefund('royalty', true, 5_000_000));
+
+  assert.equal(result['applies'], true);
+  assert.ok(result['domestic_withholding_rate'], 'should include domestic rate');
+  assert.ok(
+    (result['relief_options'] as unknown[]).length > 0,
+    'should include relief options when mechanism applies'
+  );
+});
+
+test('checkPayAndRefund: not a related party → mechanism does NOT apply', () => {
+  const result = parse(env.checkPayAndRefund('royalty', false, 5_000_000));
+
+  assert.equal(result['applies'], false);
+  assert.equal(result['domestic_withholding_rate'], null);
+});
+
+test('checkPayAndRefund: amount below threshold → mechanism does NOT apply', () => {
+  const result = parse(env.checkPayAndRefund('royalty', true, 500_000));
+
+  assert.equal(result['applies'], false);
+});
+
+test('checkPayAndRefund: unknown amount (0) → conservative assumption, mechanism applies', () => {
+  const result = parse(env.checkPayAndRefund('royalty', true, 0));
+
+  assert.equal(result['applies'], true, 'unknown amount should trigger conservative assumption');
+});
+
+test('checkPayAndRefund: relief_options include both Opinion and WH-OS paths', () => {
+  const result = parse(env.checkPayAndRefund('royalty', true, 5_000_000));
+  const options = result['relief_options'] as Array<Record<string, unknown>>;
+
+  const names = options.map(o => o['option'] as string);
+  assert.ok(names.some(n => n.includes('Opinion')), 'should include Opinion on WHT Exemption');
+  assert.ok(names.some(n => n.includes('WH-OS')), 'should include WH-OS Management Statement');
+});

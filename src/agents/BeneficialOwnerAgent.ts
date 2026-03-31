@@ -44,6 +44,17 @@ const WHT_GOALS: Goal[] = [
     priority: 8,
   },
   {
+    name: 'Check EU Directive exemption',
+    description:
+      'For interest and royalty payments: determine whether the EU Interest and ' +
+      'Royalties Directive (2003/49/EC, transposed as Art. 21 Polish CIT Act) ' +
+      'provides a 0% WHT exemption. Requires: EU member state recipient, ≥25% ' +
+      'shareholding held for ≥2 uninterrupted years, and no artificial arrangement. ' +
+      'The Directive does NOT cover dividends — use the Parent-Subsidiary Directive ' +
+      '(Art. 22 CIT) for those. If conditions are met, 0% supersedes the treaty rate.',
+    priority: 7,
+  },
+  {
     name: 'Assess beneficial owner status',
     description:
       'Evaluate whether the entity meets the four criteria for beneficial owner ' +
@@ -70,6 +81,17 @@ const WHT_GOALS: Goal[] = [
       'Determine whether the MLI Principal Purpose Test applies and whether the ' +
       'entity\'s substance profile creates a risk of treaty benefit denial.',
     priority: 6,
+  },
+  {
+    name: 'Check Pay and Refund compliance',
+    description:
+      'Determine whether the Polish Pay and Refund mechanism (Art. 26 §2c CIT Act) ' +
+      'applies: it is triggered when the recipient is a related party and total ' +
+      'payments exceed PLN 2,000,000 in the tax year. If triggered, the Polish payer ' +
+      'must withhold at the full domestic rate (20% royalties/interest, 19% dividends) ' +
+      'and the recipient claims a refund — unless the payer holds a valid Opinion on ' +
+      'WHT Exemption (Art. 26b CIT) or submits a WH-OS management statement.',
+    priority: 4,
   },
 ];
 
@@ -147,6 +169,66 @@ function buildWhtTools(): Tool[] {
           residence_country: { type: 'string', description: 'Country of residence' },
         },
         required: ['residence_country'],
+      },
+    },
+    {
+      name: 'check_directive_exemption',
+      description:
+        'Checks whether the EU Interest and Royalties Directive (2003/49/EC, ' +
+        'Art. 21 Polish CIT Act) provides a 0% WHT exemption. Applies to interest ' +
+        'and royalties only — not dividends. Call this for every interest or royalty ' +
+        'scenario where the recipient is in an EU member state.',
+      parameters: {
+        type: 'object',
+        properties: {
+          residence_country: {
+            type: 'string',
+            description: 'Country of residence of the recipient',
+          },
+          income_type: {
+            type: 'string',
+            enum: ['interest', 'royalty'],
+            description: 'Type of income — Directive covers interest and royalties only',
+          },
+          shareholding_percentage: {
+            type: 'number',
+            description: 'Percentage of the payer\'s share capital held by the recipient',
+          },
+          holding_years: {
+            type: 'number',
+            description: 'Number of years the shareholding has been held uninterruptedly',
+          },
+        },
+        required: ['residence_country', 'income_type', 'shareholding_percentage', 'holding_years'],
+      },
+    },
+    {
+      name: 'check_pay_and_refund',
+      description:
+        'Checks whether the Polish Pay and Refund mechanism (Art. 26 §2c CIT Act) ' +
+        'applies. Triggered when the recipient is a related party and total payments ' +
+        'exceed PLN 2,000,000 in the tax year. Returns the domestic withholding rate ' +
+        'that must be applied upfront and the two relief options (Opinion on WHT ' +
+        'Exemption vs. WH-OS statement). Pass annual_payment_pln = 0 if amount is ' +
+        'unknown — a conservative assumption (threshold exceeded) will be applied.',
+      parameters: {
+        type: 'object',
+        properties: {
+          income_type: {
+            type: 'string',
+            enum: ['dividend', 'interest', 'royalty'],
+            description: 'Type of income',
+          },
+          related_party: {
+            type: 'boolean',
+            description: 'Whether the recipient is a related party under Art. 11a CIT',
+          },
+          annual_payment_pln: {
+            type: 'number',
+            description: 'Estimated total annual payments in PLN. Pass 0 if unknown.',
+          },
+        },
+        required: ['income_type', 'related_party', 'annual_payment_pln'],
       },
     },
     {
@@ -441,6 +523,25 @@ async function runAgent(
               args['ip_type'] as string
             );
             memory.recordFinding('dempe_analysis', result);
+            break;
+
+          case 'check_directive_exemption':
+            result = env.checkDirectiveExemption(
+              args['residence_country'] as string,
+              args['income_type'] as string,
+              args['shareholding_percentage'] as number,
+              args['holding_years'] as number
+            );
+            memory.recordFinding('directive_exemption', result);
+            break;
+
+          case 'check_pay_and_refund':
+            result = env.checkPayAndRefund(
+              args['income_type'] as string,
+              args['related_party'] as boolean,
+              args['annual_payment_pln'] as number
+            );
+            memory.recordFinding('pay_and_refund', result);
             break;
 
           default:

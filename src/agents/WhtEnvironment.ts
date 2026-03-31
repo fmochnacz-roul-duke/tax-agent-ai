@@ -356,6 +356,176 @@ export class WhtEnvironment {
     });
   }
 
+  // ── checkDirectiveExemption ───────────────────────────────────────────────────
+  //
+  // Checks whether the EU Interest and Royalties Directive (Council Directive
+  // 2003/49/EC), transposed into Art. 21 of the Polish CIT Act, provides a
+  // 0% WHT exemption on the payment.
+  //
+  // The Directive covers interest and royalties only — dividends are governed
+  // by the separate Parent-Subsidiary Directive (90/435/EEC → Art. 22 CIT).
+  //
+  // Four conditions must ALL be met:
+  //   1. Recipient is resident in an EU member state
+  //   2. Income type is interest or royalty
+  //   3. Recipient holds ≥25% of the payer's shares (or vice-versa, or common parent)
+  //   4. Shareholding has been held for ≥2 uninterrupted years
+  //
+  // Anti-avoidance: Art. 5 of the Directive allows denial for artificial
+  // arrangements. In practice this is co-extensive with the MLI PPT — a PPT
+  // failure will also cause the Directive exemption to be denied.
+  checkDirectiveExemption(
+    residenceCountry: string,
+    incomeType: string,
+    shareholdingPercentage: number,
+    holdingYears: number
+  ): string {
+    // EU-27 member states (as of 2026)
+    const EU27 = new Set([
+      'austria', 'belgium', 'bulgaria', 'croatia', 'cyprus',
+      'czech republic', 'czechia', 'denmark', 'estonia', 'finland',
+      'france', 'germany', 'greece', 'hungary', 'ireland', 'italy',
+      'latvia', 'lithuania', 'luxembourg', 'malta', 'netherlands',
+      'poland', 'portugal', 'romania', 'slovakia', 'slovenia',
+      'spain', 'sweden',
+    ]);
+
+    const country = residenceCountry.toLowerCase();
+    const isEU             = EU27.has(country);
+    const typeIsCovered    = incomeType === 'interest' || incomeType === 'royalty';
+    const shareholdingMet  = shareholdingPercentage >= 25;
+    const holdingMet       = holdingYears >= 2;
+    const exemptionAvailable = isEU && typeIsCovered && shareholdingMet && holdingMet;
+
+    return JSON.stringify({
+      directive:    'EU Interest and Royalties Directive 2003/49/EC',
+      legal_basis:  'Art. 21 Polish CIT Act',
+      conditions: {
+        eu_member_state: {
+          required: true,
+          met:      isEU,
+          value:    residenceCountry,
+        },
+        income_type_covered: {
+          required: true,
+          met:      typeIsCovered,
+          value:    incomeType,
+          note:     'Directive covers interest and royalties only — dividends fall under the Parent-Subsidiary Directive (Art. 22 CIT)',
+        },
+        shareholding_threshold: {
+          required:  true,
+          met:       shareholdingMet,
+          value:     `${shareholdingPercentage}%`,
+          threshold: '25%',
+        },
+        holding_period: {
+          required:  true,
+          met:       holdingMet,
+          value:     `${holdingYears} year(s)`,
+          threshold: '2 uninterrupted years',
+        },
+      },
+      exemption_available: exemptionAvailable,
+      exemption_rate:      exemptionAvailable ? 0 : null,
+      anti_avoidance_note:
+        'Art. 5 of the Directive allows Poland to deny the exemption for artificial ' +
+        'arrangements. This test is co-extensive with the MLI PPT: a PPT failure ' +
+        'will simultaneously deny the Directive exemption.',
+      required_documentation: exemptionAvailable
+        ? [
+            'Tax Residency Certificate of the recipient (current year)',
+            'Proof of shareholding ≥25% held for ≥2 uninterrupted years (share register extract or notarial statement)',
+            'Beneficial owner declaration signed by the recipient',
+          ]
+        : [],
+      source: 'Simulated — verify holding period and shareholding structure against company register and intercompany agreements',
+    });
+  }
+
+  // ── checkPayAndRefund ─────────────────────────────────────────────────────────
+  //
+  // Checks whether the Polish "Pay and Refund" mechanism (Art. 26 §2c CIT Act,
+  // in force since 2019, reinforced 2022) applies to this payment.
+  //
+  // The mechanism applies when ALL of:
+  //   - The recipient is a related party (Art. 11a CIT definition)
+  //   - Total payments of this type to this recipient exceed PLN 2,000,000
+  //     in the tax year
+  //
+  // Effect: the Polish payer must withhold at the full domestic rate first
+  // (20% for royalties/interest, 19% for dividends), then the recipient
+  // claims a refund of the excess over the applicable treaty/directive rate.
+  //
+  // Two relief options avoid the cash-flow drag:
+  //   1. Opinion on WHT Exemption (Art. 26b CIT) — from KAS; valid 36 months
+  //   2. WH-OS Management Statement (Art. 26 §7a CIT) — personal liability
+  //
+  // Pass annual_payment_pln = 0 if the amount is unknown — the method will
+  // apply a conservative assumption (threshold exceeded).
+  checkPayAndRefund(
+    incomeType: string,
+    relatedParty: boolean,
+    annualPaymentPln: number
+  ): string {
+    const THRESHOLD_PLN = 2_000_000;
+
+    // Domestic WHT rates that apply when Pay and Refund is triggered
+    const domesticRate: Record<string, number> = {
+      royalty:  20,
+      interest: 20,
+      dividend: 19,
+    };
+    const rate = domesticRate[incomeType] ?? 20;
+
+    // Conservative: unknown amount (0) is treated as exceeding the threshold
+    const exceedsThreshold =
+      annualPaymentPln === 0 || annualPaymentPln > THRESHOLD_PLN;
+    const applies = relatedParty && exceedsThreshold;
+
+    return JSON.stringify({
+      mechanism:   'Pay and Refund (Art. 26 §2c Polish CIT Act)',
+      applies:     applies,
+      threshold_pln: THRESHOLD_PLN,
+      conditions: {
+        related_party:      { required: true, met: relatedParty },
+        exceeds_threshold:  {
+          required:  true,
+          met:       exceedsThreshold,
+          value_pln: annualPaymentPln === 0
+            ? 'unknown — conservative assumption applied'
+            : annualPaymentPln,
+          threshold: 'PLN 2,000,000 per recipient per tax year',
+        },
+      },
+      domestic_withholding_rate: applies ? `${rate}%` : null,
+      mechanism_description: applies
+        ? `Polish payer must withhold at the domestic rate of ${rate}% on the full ` +
+          'payment. Recipient claims a refund of the excess over the applicable ' +
+          'treaty or Directive rate. Significant cash-flow drag — use a relief option.'
+        : 'Pay and Refund does not apply — payment is below PLN 2,000,000 or recipient is not a related party.',
+      relief_options: applies
+        ? [
+            {
+              option:              'Opinion on WHT Exemption',
+              legal_basis:         'Art. 26b Polish CIT Act',
+              effect:              'Payer applies reduced treaty/directive rate without upfront withholding',
+              issuing_authority:   'Head of National Revenue Administration (KAS)',
+              validity:            '36 months from date of issue',
+              processing_time:     'Approx. 6 months — apply well in advance of first payment',
+            },
+            {
+              option:      'WH-OS Management Statement',
+              legal_basis: 'Art. 26 §7a Polish CIT Act',
+              effect:      'Management declares under penalty of perjury that all conditions for the reduced rate are met',
+              risk:        'Personal criminal and financial liability of signatories if declaration proves incorrect',
+              validity:    '2 months from date of statement — must be renewed for each payment period',
+            },
+          ]
+        : [],
+      source: 'Simulated — verify payment amounts against intercompany licence agreements and actual invoices',
+    });
+  }
+
   // ── checkMliPpt ──────────────────────────────────────────────────────────────
   //
   // Returns: does the MLI Principal Purpose Test (Article 7) apply to this treaty?
