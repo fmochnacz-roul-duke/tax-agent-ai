@@ -63,18 +63,24 @@ npm run tax:agent -- --input data/example_input.json  ← runs the WHT agent end
 ### Phase 2 — Real input ✓ COMPLETE
 - `AgentInput` interface + `validateInput()` + `buildTaskString()` added to BeneficialOwnerAgent.ts.
 - `parseInput()` reads `--input <file>` from process.argv; exits cleanly with usage hint if missing.
-- `data/example_input.json` is the demo case (Alpine Holdings S.A., Luxembourg, dividend, 25%).
+- `data/example_input.json` is the Alpine Holdings demo (Luxembourg, dividend, 25%).
+- `data/orange_polska_royalty.json` is the first real-world test case (Orange S.A., France, royalty, 50.67%).
 - `WhtEnvironment` switched to `simulate: false` — live treaty data active.
-- Usage: `npm run tax:agent -- --input data/example_input.json`
+- Three new tools added this session: `analyse_dempe`, `check_directive_exemption`, `check_pay_and_refund`.
+- 52 tests passing.
+- Usage: `npm run tax:agent -- --input data/orange_polska_royalty.json`
 
 ### Phase 3 — Real output
 - Structured JSON report saved to file (the `memory.getFindings()` block is already there).
 - Optional: PDF/Word export.
 
 ### Phase 4 — Broader agent coverage
+- **Refine business substance test** — current `checkEntitySubstance` returns generic simulated data.
+  Define concrete substance criteria (employees, office, board, income flow) with scoring/risk tiers.
+  Align with Art. 26 Polish CIT Act beneficial owner criteria and MLI PPT substance guidelines.
 - Add domestic exemption check (Art. 22 CIT Act — participation exemption).
 - Add confidence score to conclusion.
-- Extend royalty income analysis.
+- Verify Art. 12 scope for the 1975 Poland–France DTC (does it cover brand/technology licence fees?).
 
 ### Phase 5 — Document ingestion (Python)
 - Accept DDQ as text/PDF input instead of hardcoded substance data.
