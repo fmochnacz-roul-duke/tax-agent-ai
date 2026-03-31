@@ -5,11 +5,13 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --noEmit",
+    "test": "node --require ts-node/register --test src/**/*.test.ts",
     "module1:prompting": "ts-node src/module1/ProgrammaticPrompting.ts",
     "module1:agent": "ts-node src/module1/AgentLoop.ts",
     "module2:tools": "ts-node src/module2/FunctionCallingExample.ts",
     "module2:agent": "ts-node src/module2/AgentLoopFunctionCalling.ts",
-    "tax:agent": "ts-node src/agents/BeneficialOwnerAgent.ts"
+    "tax:agent": "ts-node src/agents/BeneficialOwnerAgent.ts",
+    "module3:readme": "ts-node src/module3/ReadmeAgent.ts"
   },
   "keywords": [],
   "author": "",
