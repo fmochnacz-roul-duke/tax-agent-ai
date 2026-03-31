@@ -18,18 +18,26 @@
 - [x] Created `src/shared/index.ts` — re-exports for clean imports
 - [x] Created `CLAUDE.md` — project context
 - [x] Created `SESSION.md` — this file
-- [ ] Created `src/module1/CLAUDE.md` — module 1 context (next)
-- [ ] Initialized Git repo
-- [ ] Created GitHub repo and pushed first commit
+- [x] Created `src/module1/CLAUDE.md` — module 1 context
+- [x] Initialized Git repo
+- [x] Created GitHub repo: https://github.com/fmochnacz-roul-duke/tax-agent-ai
+- [x] First commit on `master` (project scaffold)
+- [x] Created branch `module1/prompting`
+- [x] Built and ran `ProgrammaticPrompting.ts` — all 3 examples working
+  - Example 1: basic prompt (beneficial owner definition)
+  - Example 2: structured JSON output (Poland-Germany treaty rates)
+  - Example 3: multi-turn memory (WHT audit challenges)
 
 ---
 
 ## What Comes Next
 
 ### Immediate next steps (start of next session):
-1. Create `src/module1/CLAUDE.md` with lesson context
-2. Initialize Git + create GitHub repo + first commit
-3. Start Module 1 — `ProgrammaticPrompting.ts`
+1. `AgentLoop.ts` — build the full agent loop (Module 1, Part 2)
+   - Loop: think → parse action → execute → store result → repeat
+   - Apply to WHT: agent analyses an entity for beneficial owner status
+2. Merge `module1/prompting` into `master` when agent loop is complete
+3. Start `module2/tools` branch for function calling
 
 ### Module 1 plan:
 - Exercise A: Basic prompting (send a message, get a response)
