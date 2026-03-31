@@ -52,6 +52,19 @@ const WHT_GOALS: Goal[] = [
     priority: 7,
   },
   {
+    name: 'DEMPE analysis for royalties',
+    description:
+      'When the income is a royalty: determine which entity controls the ' +
+      'Development, Enhancement, Maintenance, Protection, and Exploitation ' +
+      '(DEMPE) of the intangible (OECD BEPS Actions 8–10). The entity that ' +
+      'controls DEMPE functions and bears the associated economic risk is the ' +
+      'true economic owner of the IP and entitled to the royalty as beneficial owner. ' +
+      'Also verify that the applicable treaty contains a royalties article (Art. 12) ' +
+      'and that the payment falls within its definition — if not, the income falls ' +
+      'to Business Profits (Art. 7) and Poland has no withholding right.',
+    priority: 9,
+  },
+  {
     name: 'Assess MLI / PPT risk',
     description:
       'Determine whether the MLI Principal Purpose Test applies and whether the ' +
@@ -134,6 +147,35 @@ function buildWhtTools(): Tool[] {
           residence_country: { type: 'string', description: 'Country of residence' },
         },
         required: ['residence_country'],
+      },
+    },
+    {
+      name: 'analyse_dempe',
+      description:
+        'Performs a DEMPE analysis (Development, Enhancement, Maintenance, ' +
+        'Protection, Exploitation) to assess whether the recipient entity ' +
+        'economically owns the intangible and is entitled to the royalty as ' +
+        'beneficial owner (OECD BEPS Actions 8–10, TP Guidelines Ch. VI). ' +
+        'Also flags whether the applicable treaty Art. 12 covers the payment — ' +
+        'call this tool for every royalty income scenario before get_treaty_rate.',
+      parameters: {
+        type: 'object',
+        properties: {
+          entity_name: {
+            type: 'string',
+            description: 'Name of the entity claiming the royalty',
+          },
+          country: {
+            type: 'string',
+            description: 'Country of residence of the entity',
+          },
+          ip_type: {
+            type: 'string',
+            enum: ['brand', 'technology', 'patent', 'software', 'know_how', 'mixed'],
+            description: 'Type of intangible property being licensed',
+          },
+        },
+        required: ['entity_name', 'country', 'ip_type'],
       },
     },
     // ToolFactory.terminate() — no need to type this out per agent
@@ -390,6 +432,15 @@ async function runAgent(
           case 'check_mli_ppt':
             result = env.checkMliPpt(args['residence_country'] as string);
             memory.recordFinding('mli_ppt_status', result);
+            break;
+
+          case 'analyse_dempe':
+            result = env.analyseDempe(
+              args['entity_name'] as string,
+              args['country'] as string,
+              args['ip_type'] as string
+            );
+            memory.recordFinding('dempe_analysis', result);
             break;
 
           default:

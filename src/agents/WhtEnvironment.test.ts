@@ -212,3 +212,61 @@ test('live: checkMliPpt Netherlands — VERIFY treated conservatively as NO', ()
   assert.equal(result['mli_ppt_status'], 'VERIFY');
   assert.ok(result['caution'], 'should include a caution message');
 });
+
+// ── analyseDempe ──────────────────────────────────────────────────────────────
+//
+// analyseDempe() is always simulated (no live mode) — it requires due diligence
+// documentation that is not yet wired in (Phase 5).
+// Tests verify the DEMPE structure and the Art. 12 scope warning are present.
+
+test('analyseDempe: returns all five DEMPE function keys', () => {
+  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+  const functions = result['dempe_functions'] as Record<string, unknown>;
+
+  assert.ok(functions['development'], 'should include development function');
+  assert.ok(functions['enhancement'], 'should include enhancement function');
+  assert.ok(functions['maintenance'], 'should include maintenance function');
+  assert.ok(functions['protection'],  'should include protection function');
+  assert.ok(functions['exploitation'],'should include exploitation function');
+});
+
+test('analyseDempe: returns control_test and risk_bearing fields', () => {
+  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+
+  assert.ok(result['control_test'],  'should include control_test');
+  assert.ok(result['risk_bearing'],  'should include risk_bearing');
+});
+
+test('analyseDempe: beneficial_owner_dempe field is present', () => {
+  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+
+  assert.ok(result['beneficial_owner_dempe'], 'should include beneficial_owner_dempe conclusion');
+});
+
+test('analyseDempe: art12_scope_warning is present and mentions Art. 7', () => {
+  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+  const warning = result['art12_scope_warning'] as string;
+
+  assert.ok(warning, 'should include art12_scope_warning');
+  assert.ok(
+    warning.includes('Art. 7'),
+    'warning should mention Art. 7 Business Profits fallback'
+  );
+});
+
+test('analyseDempe: echoes entity_name, country, and ip_type in output', () => {
+  const result = parse(env.analyseDempe('Test Corp', 'Germany', 'technology'));
+
+  assert.equal(result['entity'],  'Test Corp');
+  assert.equal(result['country'], 'Germany');
+  assert.equal(result['ip_type'], 'technology');
+});
+
+test('analyseDempe: source field marks result as simulated', () => {
+  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+
+  assert.ok(
+    (result['source'] as string).toLowerCase().includes('simulated'),
+    'source should indicate simulated data'
+  );
+});

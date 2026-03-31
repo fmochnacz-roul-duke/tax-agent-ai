@@ -307,6 +307,55 @@ export class WhtEnvironment {
     });
   }
 
+  // ── analyseDempe ─────────────────────────────────────────────────────────────
+  //
+  // DEMPE = Development, Enhancement, Maintenance, Protection, Exploitation.
+  // This is the OECD BEPS Actions 8–10 framework for determining which entity
+  // economically owns an intangible and is therefore entitled to the income it
+  // generates (OECD Transfer Pricing Guidelines, Ch. VI, 2022).
+  //
+  // For WHT purposes, the entity that controls DEMPE functions and bears the
+  // associated economic risk is the beneficial owner of the royalty.
+  // If it merely holds IP title without controlling DEMPE, it is a conduit.
+  //
+  // The method also flags the Art. 12 scope question: some older treaties
+  // (pre-1977 OECD Model) omit the royalties article entirely, meaning the
+  // payment falls to Art. 7 Business Profits — no Polish WHT without a PE.
+  //
+  // Stays simulated permanently — real DEMPE analysis requires due diligence
+  // documentation (DDQs, TP files, functional analyses). Phase 5 will replace
+  // this with Python document ingestion.
+  analyseDempe(entityName: string, country: string, ipType: string): string {
+    return JSON.stringify({
+      entity:   entityName,
+      country:  country,
+      ip_type:  ipType,
+      dempe_functions: {
+        development:  'Entity directs IP development strategy and controls R&D investment decisions at group level',
+        enhancement:  'Entity manages global brand/technology enhancement; local entities implement under central governance',
+        maintenance:  'Entity holds IP registrations; maintenance budget and renewal decisions made centrally',
+        protection:   'Entity enforces IP rights; trademark and patent litigation managed by group legal team',
+        exploitation: 'Entity signs licence agreements with subsidiaries; sets royalty rates and licence terms centrally',
+      },
+      control_test:
+        'PASS — entity makes all key DEMPE decisions; local subsidiaries are operational ' +
+        'executors without independent IP decision-making authority',
+      risk_bearing:
+        'MODERATE — entity bears IP development and obsolescence risk; exploitation risk ' +
+        'partially passed to licensees via fixed royalty rates regardless of local profitability',
+      beneficial_owner_dempe:
+        'STRONG — entity performs and controls DEMPE functions and does not automatically ' +
+        'pass royalty income upstream; beneficial owner claim is substantiated from a DEMPE perspective',
+      art12_scope_warning:
+        'CRITICAL: verify that the applicable treaty contains an Art. 12 royalties article ' +
+        'AND that its definition of "royalties" covers this payment type. ' +
+        'Treaties predating the 1977 OECD Model Convention may omit Art. 12 entirely. ' +
+        'If absent or inapplicable, income falls to Art. 7 Business Profits — ' +
+        'Poland has no withholding right unless the recipient has a Polish permanent establishment.',
+      source: 'Simulated DEMPE analysis — real analysis requires TP documentation and DDQ (Phase 5)',
+    });
+  }
+
   // ── checkMliPpt ──────────────────────────────────────────────────────────────
   //
   // Returns: does the MLI Principal Purpose Test (Article 7) apply to this treaty?
