@@ -1,7 +1,7 @@
 # Session State
 
 ## Current Status
-**Phase:** Module 1 complete — ready to start Module 2
+**Phase:** Module 2 complete — function calling agent working
 **Date of last session:** 2026-03-31
 
 ---
@@ -36,22 +36,31 @@
 
 ---
 
+## What Was Done — Module 2 (2026-03-31)
+
+- [x] Created branch `module2/tools`
+- [x] Extended `shared/Message.ts` — added `tool` role and `StoredToolCall` type
+- [x] Extended `shared/LLM.ts` — added `generateWithTools()`, `Tool`, `ToolCall`, `LLMResponse` types
+- [x] Built `module2/FunctionCallingExample.ts` — single round-trip demo with 2 tools
+  - Learned: assistant message must carry raw `tool_calls` structure (not plain text)
+  - Fixed `StoredToolCall` round-trip so API accepts `tool` result messages
+- [x] Built `module2/AgentLoopFunctionCalling.ts` — full agent class with `registerTool()` / `run()`
+  - `terminate` tool replaces `FINAL ANSWER:` text convention
+  - `Map<string, ToolFunction>` replaces `switch` statement
+  - Model parallelised independent tool calls automatically (2 calls in Iteration 1)
+  - Tool results include `source` field — first step toward auditability
+
 ## What Comes Next
 
 ### Immediate next steps (start of next session):
-1. Start `module2/tools` branch
-2. Build `FunctionCallingExample.ts` — teach the LLM to call real TypeScript functions
-3. Replace simulated tool stubs in AgentLoop with real function calls
-4. Goal: agent conclusions become auditable (cited sources, treaty articles)
-
-### Module 2 plan:
-- Exercise A: Basic function calling (define a function, let the LLM call it)
-- Exercise B: Multi-tool orchestration (LLM picks the right tool)
-- Apply to WHT: replace hardcoded stubs with real treaty/MLI lookups
+- Module 3 (course): whatever comes after function calling in Jules White's course
+- Business layer: consider replacing simulated tool data with real sources
+  - OECD treaty database or static lookup table for treaty rates
+  - OECD MLI deposited positions (public data)
 
 ### Open questions / decisions pending:
 - Data sources for treaty rates: OECD database vs. scraped treaty PDFs vs. static lookup table
-- Whether to add source citations to tool results (recommended for auditability)
+- Whether to build a `BeneficialOwnerAgent.ts` that wires Module 2 patterns to a proper CLI
 
 ---
 
