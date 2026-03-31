@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** Phases 2, 3 complete. Agent fixes applied. Ready for Phase 4.
+**Phase:** Phase 4 complete. Ready for Phase 5 or treaty rate verification.
 **Date of last session:** 2026-03-31
-**Branch:** master (all work merged and pushed)
+**Branch:** master (all work merged)
 
 ---
 
@@ -116,23 +116,27 @@ npm run tax:agent -- --input data/orange_polska_royalty.json      ← runs end-t
 - Usage: `npm run tax:agent -- --input data/orange_polska_royalty.json`
 - Override: `npm run tax:agent -- --input data/orange_polska_royalty.json --output path/to/report.json`
 
-### Phase 4 — Substance test refinement (NEXT)
-**Start here next session.**
+### Phase 4 — Substance test refinement ✓ COMPLETE
 
-Current `checkEntitySubstance` returns hardcoded Alpine Holdings data regardless of input entity.
-The agent ran the Orange S.A. case and got back Luxembourg premises + German parent — misleading.
+- `buildEntityProfile()` private method: entity-aware simulation for known entities.
+  - Orange S.A. (France) → large_operating_company, STRONG tier, all 3 BO conditions PASS.
+  - Alpine Holdings S.A. (Luxembourg) → holding_company, WEAK tier, condition (ii) FAIL (factual pass-through).
+  - Unknown entity → conservative CONDUIT fallback, all conditions UNCERTAIN.
+- `checkEntitySubstance` now returns `SubstanceResult` with:
+  - `substance_factors` — 6 universal MF Objaśnienia §2.3 criteria
+  - `conduit_indicators` — 4 red flags per MF Objaśnienia §2.2.1
+  - `substance_tier`: STRONG / ADEQUATE / WEAK / CONDUIT
+  - `bo_preliminary` — per-condition result + overall for Art. 4a pkt 29 CIT 3-condition test
+  - `confidence`: LOW / MEDIUM / HIGH
+- `AgentInput.related_party?: boolean` — explicit flag for check_pay_and_refund.
+- `computeReportConfidence()` — derives LOW/MEDIUM/HIGH from findings; `data_confidence`
+  and `data_confidence_note` added to every saved report.
+- Art. 12(3) scope note added to France entry in treaties.json.
+- 59 tests passing (8 new substance tests).
+- Alpine Holdings case: 4 clean iterations, correct FAIL conclusion, confidence LOW.
+- Orange S.A. case: 3 clean iterations, correct 0% Directive conclusion, confidence MEDIUM.
 
-Work to do:
-1. **Define concrete substance criteria** aligned with:
-   - Art. 26 Polish CIT Act (beneficial owner: own benefit, economic risk, decision-making, not conduit)
-   - MLI PPT substance requirements (genuine activity, local board, no pass-through obligation)
-   - OECD TP Guidelines Ch. VI DEMPE substance (for royalty cases)
-2. **Build a scoring/risk-tier model**: STRONG / ADEQUATE / WEAK / CONDUIT
-3. **Make simulated data entity-aware** — different profiles for operating companies vs. holding vehicles vs. IP holdcos
-4. **Add confidence score** to the final conclusion (HIGH / MEDIUM / LOW based on verified vs. simulated findings)
-5. Verify Art. 12 scope for 1975 Poland–France DTC against the official DzU text
-
-### Phase 5 — Document ingestion (Python)
+### Phase 5 — Document ingestion (Python) (NEXT)
 - Accept DDQ as text/PDF input instead of hardcoded substance data.
 - Python component (e.g. FastAPI microservice) that the TypeScript agent calls as a tool.
 
