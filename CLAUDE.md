@@ -3,7 +3,7 @@
 ## What This Project Is
 
 A project with two parallel goals:
-1. **Learning goal** — work through the TypeScript AI Agents Course (Jules White) step by step
+1. **Learning goal** — work through different AI courses from Vanderbilt University (by Jules White) step by step
 2. **Business goal** — build a real Beneficial Owner Analysis Agent for Polish withholding tax (WHT) purposes
 
 The project has graduated from pure learning exercise to a product-grade agent foundation.
