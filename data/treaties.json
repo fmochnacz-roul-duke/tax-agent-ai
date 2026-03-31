@@ -294,7 +294,8 @@
       "royalty": {
         "rate": 10,
         "treaty_article": "Art. 12(2) Poland–France DTC",
-        "verified": false
+        "verified": false,
+        "note": "SCOPE VERIFICATION REQUIRED: Art. 12(3) of the 1975 DTC defines 'royalties' as payments for use of copyright, patent, trademark, design, model, plan, secret formula or process, or for use of industrial/commercial/scientific equipment, or for information concerning industrial/commercial/scientific experience. Brand licence fees (Orange trademark) likely fall within 'trademark' or 'design/model'. Technology licence fees may qualify as 'secret process' or 'know-how'. Verify against original DzU 1977 poz. 5 text — 1975 treaties sometimes have narrower definitions than post-1977 OECD Model. If payment falls outside Art. 12 definition, it falls to Art. 7 Business Profits with no Polish WHT absent a Polish PE."
       }
     }
   },

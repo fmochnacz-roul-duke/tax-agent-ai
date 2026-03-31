@@ -3,5 +3,6 @@
   "country": "Luxembourg",
   "income_type": "dividend",
   "shareholding_percentage": 25,
-  "substance_notes": "Entity has 2 employees, a leased office in Luxembourg City, and a board that meets quarterly."
+  "related_party": true,
+  "substance_notes": "Entity has 2 employees, a leased office in Luxembourg City, and a board that meets quarterly. Dividend income is passed to the German parent within 30 days of receipt."
 }
