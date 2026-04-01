@@ -1,7 +1,7 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 6 complete (Python DDQ extraction service). Merged to master, pushed to GitHub. Phase 7 (FactChecker Persona Agent via Gemini) is next.
+**Phase:** Phase 7 complete (FactCheckerAgent — Gemini + Google Search grounding). All phases 1–7 done. 86/86 tests passing. On master, pushed to GitHub.
 **Date of last session:** 2026-04-01
 **Branch:** master
 
@@ -172,10 +172,21 @@ npm run tax:agent -- --input data/orange_polska_royalty.json      ← uses real 
 - **74 tests passing** — all substance/DEMPE tests updated to `async/await`, all green.
 - Backward compatible — `DDQ_SERVICE_URL` not set → simulation as before.
 
-### Phase 7 — FactChecker Persona Agent (NEXT)
-- Gemini Custom Gem configured as a FactChecker persona.
-- Multi-agent pattern: WHT agent calls FactChecker via a `call_agent` tool.
-- FactChecker cross-checks DDQ substance claims against public records (company filings, OECD data).
+### Phase 7 — FactChecker Agent (Gemini + Google Search) ✓ COMPLETE
+- **`src/agents/FactCheckerAgent.ts`** — specialist agent using Gemini REST API with `google_search` tool.
+  - `verify(entityName, country, claims[])` → `FactCheckResult`
+  - Triangulation Rule: 2+ sources = VERIFIED, 1 = UNVERIFIED, 0 = CONTRADICTED
+  - Adapted from WHT Substance Verifier persona: scope narrowed to 5 WHT-relevant fact categories
+  - Output is strict JSON (machine-readable, stored in WHT agent findings)
+  - 3-strategy JSON extraction: raw → markdown fence → first-to-last brace
+  - Graceful fallback to INCONCLUSIVE simulation when GEMINI_API_KEY is absent
+- **`fact_check_substance` tool** added to WHT agent — calls FactCheckerAgent from the tool dispatch.
+  - Agent calls it after `check_entity_substance` when source indicates real DDQ data (not simulated)
+  - Result stored as `fact_check_result` finding, triggers `selectLlm` switch to powerful tier
+- **`computeReportConfidence`** updated: fact-check CONFIRMS → can upgrade to HIGH; UNDERMINES → unconditionally LOW
+- **`WhtEnvironment.factCheckSubstance`** — validates params, delegates to FactCheckerAgent, returns JSON string
+- **86 tests passing** (8 new FactCheckerAgent tests + 4 factCheckSubstance environment tests)
+- To activate: set `GEMINI_API_KEY=...` and `GEMINI_MODEL=gemini-2.0-flash` in `.env`
 
 ### Unresolved: treaty rate verification
 - All 36 entries in treaties.json have `verified: false`.
