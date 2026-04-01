@@ -5,6 +5,7 @@ import { LLM, Message, Tool, ToolFactory } from '../shared';
 import { Goal, buildSystemPrompt } from '../shared/Goal';
 import { Memory } from '../shared/Memory';
 import { WhtEnvironment } from './WhtEnvironment';
+import { EntityRegistry } from '../server/EntityRegistry';
 
 dotenv.config();
 
@@ -1155,7 +1156,14 @@ async function main(): Promise<void> {
 
   // Phase 8: runWhtAnalysis() owns GAME setup and the agent loop.
   // The CLI passes a no-op onEvent — console.log already happens inside runAgent.
-  await runWhtAnalysis(input, ddqText, outputPath, (_event) => { /* logged by emit() */ });
+  const report = await runWhtAnalysis(input, ddqText, outputPath, (_event) => { /* logged by emit() */ });
+
+  // Phase 11: save to the entity registry after every completed analysis.
+  // The CLI creates its own EntityRegistry instance (not the server singleton).
+  // Both write to the same data/registry.json file.
+  const registry = new EntityRegistry();
+  registry.save(report, outputPath);
+  console.log(`[Registry] Entry saved for ${input.entity_name} (${input.country})`);
 }
 
 main();

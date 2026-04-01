@@ -3,6 +3,7 @@ dist/
 .env
 *.env.local
 reports/
+data/registry.json
 
 # RAG knowledge base — generated files (re-created by npm run rag:build)
 # Source files in data/knowledge_base/sources/ ARE tracked (they are the canonical texts)

@@ -56,8 +56,8 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 | 8 | Conversational web UI, SSE streaming | ✅ v0.8.0 |
 | 10 | Substance interview — 5-question chat, any entity | ✅ v0.10.0 |
 | **9** | **Legal knowledge RAG + tax taxonomy** | ✅ v0.9.0 |
-| 11 | Entity registry and profile persistence | Planned |
-| 12 | Treaty rate verification + human review workflow | Planned |
+| **11** | **Entity registry — JSON persistence, audit trail** | ✅ v0.11.0 |
+| 12 | Treaty rate verification + human review workflow | Next |
 | 13 | Third-party vendor workflow | Planned |
 | 14 | Batch payment processing | Planned |
 | 15+ | Tax AI OS (Pillar Two, TP, PE, CbCR) | Vision |
@@ -75,7 +75,7 @@ npm start
 npm run tax:agent -- --input data/orange_polska_royalty.json
 
 # Tests
-npm test         # 143/143 tests, ~3s, no API calls
+npm test         # 169/169 tests, ~3s, no API calls
 npm run build    # TypeScript type-check
 ```
 

@@ -14,6 +14,7 @@ Express Server (src/server/index.ts)
     │
     ├── InputExtractor          ← Free-text → AgentInput (fast model)
     ├── SubstanceInterviewer    ← 5-question substance chat state machine
+    ├── EntityRegistry          ← JSON registry; saved after every analysis
     │
     ▼
 BeneficialOwnerAgent (src/agents/BeneficialOwnerAgent.ts)
@@ -127,8 +128,9 @@ Express.js with four endpoints:
 | `POST /session/:id/confirm` | Start `runWhtAnalysis()` in background |
 | `GET /session/:id/stream` | SSE stream — live agent events |
 | `GET /session/:id/report` | Completed WhtReport JSON |
+| `GET /registry` | All past analyses (EntityRegistry entries, newest-first) |
 
-Session state machine: `collecting` → `interviewing` → `ready` → `running` → `done`
+Session state machine: `chatting` → `interviewing` → `running` → `complete` / `error`
 
 ---
 
@@ -159,6 +161,7 @@ After all answers are collected, `SubstanceExtractor.ts` converts the compiled D
 | `src/server/InputExtractor.ts` | Free-text → AgentInput via LLM |
 | `src/server/SubstanceInterviewer.ts` | 5-question interview state machine |
 | `src/server/SubstanceExtractor.ts` | DDQ text → SubstanceResult via LLM |
+| `src/server/EntityRegistry.ts` | JSON entity registry — upsert, audit trail, `getRegistry()` singleton |
 | `src/shared/LLM.ts` | generate(), generateWithTools(), LLM.fast/powerful, ToolFactory |
 | `src/shared/Memory.ts` | Conversation history + findings store |
 | `data/treaties.json` | Treaty database: 36 countries, rates, MLI flags |

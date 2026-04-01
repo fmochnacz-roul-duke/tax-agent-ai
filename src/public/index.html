@@ -415,6 +415,115 @@
     }
 
     .hidden { display: none !important; }
+
+    /* ── Registry panel ──────────────────────────────────────────────────────── */
+    #registry-panel {
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      max-height: 280px;
+      transition: max-height 0.2s ease;
+    }
+
+    #registry-panel.collapsed { max-height: 38px; overflow: hidden; }
+
+    #registry-header {
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--text-dim);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    #registry-header:hover { color: var(--text); }
+
+    #registry-toggle { font-size: 10px; transition: transform 0.2s; }
+    #registry-panel.collapsed #registry-toggle { transform: rotate(-90deg); }
+
+    #registry-count {
+      margin-left: auto;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 10px;
+    }
+
+    #registry-body {
+      overflow-y: auto;
+      padding: 4px 8px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    #registry-body::-webkit-scrollbar { width: 4px; }
+    #registry-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .reg-entry {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .reg-entry:hover { border-color: var(--accent); }
+
+    .reg-entity {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .reg-meta {
+      color: var(--text-dim);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .reg-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+
+    .reg-badge {
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    /* Substance tier colours */
+    .tier-STRONG   { background: #14532d; color: #4ade80; }
+    .tier-ADEQUATE { background: #1c3d22; color: #86efac; }
+    .tier-WEAK     { background: #451a03; color: #fb923c; }
+    .tier-CONDUIT  { background: #450a0a; color: #f87171; }
+
+    /* BO outcome */
+    .bo-PASS      { background: #14532d; color: #4ade80; }
+    .bo-FAIL      { background: #450a0a; color: #f87171; }
+    .bo-UNCERTAIN { background: #1c2460; color: #93b4ff; }
+
+    /* Review status */
+    .rev-draft      { background: var(--surface); color: var(--text-dim); border: 1px solid var(--border); }
+    .rev-reviewed   { background: #1c2e6b; color: #93b4ff; }
+    .rev-signed_off { background: #14532d; color: #4ade80; }
+
+    /* Income type */
+    .inc-dividend  { background: #1c2e6b; color: #93b4ff; }
+    .inc-interest  { background: #1c2e1c; color: #86efac; }
+    .inc-royalty   { background: #2a1c40; color: #d0a0f0; }
   </style>
 </head>
 <body>
@@ -471,6 +580,20 @@
     <div id="progress-log">
       <div class="log-entry" style="color: var(--text-dim); font-size: 11px; padding: 8px;">
         Agent progress will appear here once analysis starts.
+      </div>
+    </div>
+
+    <!-- Phase 11: Past Analyses registry panel -->
+    <div id="registry-panel" class="collapsed">
+      <div id="registry-header" onclick="toggleRegistry()">
+        <span id="registry-toggle">▾</span>
+        PAST ANALYSES
+        <span id="registry-count">0</span>
+      </div>
+      <div id="registry-body">
+        <div style="color: var(--text-dim); font-size: 11px; padding: 4px 2px;">
+          No past analyses yet.
+        </div>
       </div>
     </div>
   </div>
@@ -730,6 +853,8 @@ function openStream() {
       analysisRunning = false;
       eventSource.close();
       eventSource = null;
+      // Phase 11: refresh the registry panel to show the newly saved entry
+      loadRegistry();
     }
   };
 
@@ -802,9 +927,78 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+// ── Registry panel ─────────────────────────────────────────────────────────────
+
+function toggleRegistry() {
+  const panel = document.getElementById('registry-panel');
+  panel.classList.toggle('collapsed');
+}
+
+// loadRegistry() fetches GET /registry and re-renders the panel.
+// Called on page load and after each analysis completes so the list stays fresh.
+async function loadRegistry() {
+  try {
+    const res  = await fetch('/registry');
+    const data = await res.json();
+    renderRegistry(data.entries || []);
+  } catch {
+    // Server not reachable — leave the panel as-is
+  }
+}
+
+function renderRegistry(entries) {
+  const body  = document.getElementById('registry-body');
+  const count = document.getElementById('registry-count');
+
+  count.textContent = String(entries.length);
+
+  if (entries.length === 0) {
+    body.innerHTML = '<div style="color: var(--text-dim); font-size: 11px; padding: 4px 2px;">No past analyses yet.</div>';
+    return;
+  }
+
+  body.innerHTML = entries.map(e => {
+    // Format the date as YYYY-MM-DD
+    const date = e.updated_at ? e.updated_at.slice(0, 10) : '';
+
+    // Substance tier badge (only if present)
+    const tierBadge = e.substance_tier
+      ? `<span class="reg-badge tier-${escapeHtml(e.substance_tier)}">${escapeHtml(e.substance_tier)}</span>`
+      : '';
+
+    // BO overall badge
+    const boBadge = e.bo_overall
+      ? `<span class="reg-badge bo-${escapeHtml(e.bo_overall)}">BO: ${escapeHtml(e.bo_overall)}</span>`
+      : '';
+
+    // Confidence badge
+    const confBadge = `<span class="reg-badge badge-${escapeHtml(e.data_confidence)}">${escapeHtml(e.data_confidence)}</span>`;
+
+    // Income type badge
+    const incBadge = `<span class="reg-badge inc-${escapeHtml(e.income_type)}">${escapeHtml(e.income_type)}</span>`;
+
+    // Review status badge
+    const revBadge = `<span class="reg-badge rev-${escapeHtml(e.review_status)}">${escapeHtml(e.review_status.replace('_', ' '))}</span>`;
+
+    return `
+      <div class="reg-entry" title="${escapeHtml(e.conclusion_summary)}">
+        <div class="reg-entity">${escapeHtml(e.entity_name)}</div>
+        <div class="reg-meta">
+          <span>${escapeHtml(e.country)}</span>
+          <span style="color: var(--border);">·</span>
+          <span>${date}</span>
+        </div>
+        <div class="reg-badges">
+          ${incBadge}${confBadge}${tierBadge}${boBadge}${revBadge}
+        </div>
+      </div>`;
+  }).join('');
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────────
 
 initSession();
+loadRegistry();
 </script>
 
 </body>

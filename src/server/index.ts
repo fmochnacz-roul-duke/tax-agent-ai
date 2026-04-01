@@ -29,6 +29,7 @@ import * as dotenv from 'dotenv';
 import { AgentInput, AgentEvent, WhtReport, runWhtAnalysis } from '../agents/BeneficialOwnerAgent';
 import { InputExtractor } from './InputExtractor';
 import { SubstanceInterviewer, InterviewState } from './SubstanceInterviewer';
+import { getRegistry } from './EntityRegistry';
 
 dotenv.config();
 
@@ -183,6 +184,10 @@ app.post('/session/:id/message', async (req: Request, res: Response) => {
       .then((report: WhtReport) => {
         session.report = report;
         session.status = 'complete';
+        // Phase 11: save to the entity registry after every completed analysis.
+        // getRegistry() returns the server-lifetime singleton so all sessions
+        // share the same registry file (data/registry.json).
+        getRegistry().save(report, outputPath);
         broadcastEvent(session, { type: 'report_saved', message: 'Analysis complete.', data: { report } });
         for (const client of session.sseClients) client.end();
         session.sseClients = [];
@@ -317,6 +322,18 @@ app.get('/session/:id/report', (req: Request, res: Response) => {
   }
 
   res.json(session.report);
+});
+
+// ── GET /registry — list all past analyses ───────────────────────────────────
+//
+// Returns the full registry as JSON: { entries: RegistryEntry[] }.
+// Entries are sorted newest-updated-first.
+//
+// Used by the web UI "Past Analyses" panel.  No authentication — suitable
+// for local/single-team use.  A future phase can add role-based access here.
+app.get('/registry', (_req: Request, res: Response) => {
+  const entries = getRegistry().listAll();
+  res.json({ entries });
 });
 
 // ── Start server ──────────────────────────────────────────────────────────────

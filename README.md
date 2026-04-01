@@ -127,6 +127,7 @@ The agent loop is domain-agnostic — it contains no WHT logic. All domain knowl
 | `analyse_dempe` | Live (DDQ service) / Simulated | OECD BEPS Actions 8–10 functional analysis |
 | `check_entity_substance` | Live (DDQ service) / Simulated | Art. 4a pkt 29 CIT three-condition BO test |
 | `fact_check_substance` | Live (Gemini + Google Search) / Simulated | Triangulation of DDQ claims against public records |
+| `consult_legal_sources` | Live (RAG) | Retrieves exact statutory text from embedded CIT Act / MF Objaśnienia knowledge base |
 | `terminate` | Built-in | Structured stop signal — no text parsing |
 
 Treaty data: 36 countries (EU-27 + UK, Switzerland, Norway, USA, Canada, Japan, Singapore, UAE, Australia, India). All rates marked `verified: false` — populated from professional commentary, pending confirmation against treaty PDFs.
@@ -235,7 +236,7 @@ npm run ddq:service     # starts FastAPI service on port 8000 (requires Python 3
 # Type-check (zero errors required before any commit)
 npm run build
 
-# Unit tests — 140 tests, no API calls, ~2s
+# Unit tests — 169 tests, no API calls, ~2s
 npm test
 ```
 
@@ -245,9 +246,10 @@ npm test
 
 - **All treaty rates `verified: false`** — built from professional commentary; verify against official treaty PDFs before production use
 - **VERIFY cases** (Netherlands, Sweden, Switzerland) — MLI PPT conservatively treated as not applying, with a caution message
-- **Substance/DEMPE are simulated** when no DDQ file is provided — reports correctly flagged as `LOW` confidence
+- **Substance quality depends on interview answers** — the 5-question interview gives `MEDIUM` confidence at best; full DDQ upload (Phase 6) gives higher confidence; substance is CONDUIT-default until the interview completes
 - **Art. 12 scope** for older treaties (e.g. 1975 Poland–France DTC) requires manual verification — agent flags this explicitly
 - **In-memory sessions** — web UI sessions are not persisted; restart the server and sessions are lost
+- **Entity registry is local** — `data/registry.json` is not shared across deployments; suitable for single-team use
 
 ---
 
@@ -264,9 +266,10 @@ npm test
 | 7 | FactChecker Persona Agent — Gemini + Google Search grounding, multi-agent call_agent pattern | ✓ Complete |
 | 8 | Conversational web UI — Express, InputExtractor, SSE streaming, chat interface | ✓ Complete |
 | 10 | Substance interview — 5-question chat, TypeScript LLM extractor, any entity assessed | ✓ Complete |
-| 9 | RAG — MF Objaśnienia 2025, OECD TP Guidelines Ch. VI, EU Directives | Next |
-| 11 | Entity registry — persist interview results, avoid re-analysis, audit trail | Next |
-| 12+ | Treaty rate verification; third-party vendor workflow; Pillar Two module; TP screening | Future |
+| 9 | Legal knowledge RAG — tax taxonomy, MF Objaśnienia 2025, CIT Act provisions | ✓ Complete |
+| 11 | Entity registry — JSON persistence, audit trail, "Past Analyses" panel in web UI | ✓ Complete |
+| 12 | Treaty rate verification + human review workflow | Next |
+| 13+ | Third-party vendor workflow; Pillar Two module; TP screening; batch processing | Future |
 
 ---
 
