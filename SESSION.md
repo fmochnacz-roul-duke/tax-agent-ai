@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 5 complete (MATE improvements). Branch `feature/mate-improvements` open — merge to master before starting Phase 6.
-**Date of last session:** 2026-03-31
-**Branch:** feature/mate-improvements
+**Phase:** Phase 6 complete (Python DDQ extraction service). Merged to master, pushed to GitHub. Phase 7 (FactChecker Persona Agent via Gemini) is next.
+**Date of last session:** 2026-04-01
+**Branch:** master
 
 ---
 
@@ -11,13 +11,19 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's continue — Phase 5 is on branch feature/mate-improvements, merge it and start Phase 6."
+> "Let's continue — Phase 6 is done, start Phase 7 (FactChecker Persona Agent)."
 
 Then verify the environment is healthy:
 ```
 npm run build                                                     ← zero errors
-npm test                                                          ← 52/52 passing
-npm run tax:agent -- --input data/orange_polska_royalty.json      ← runs end-to-end in ~5 iterations
+npm test                                                          ← 74/74 passing
+npm run tax:agent -- --input data/orange_polska_royalty.json      ← runs end-to-end (simulation mode)
+
+# To run with live DDQ (requires Python service):
+pip install -r python/requirements.txt
+npm run ddq:service                                               ← starts service on port 8000
+# In .env: DDQ_SERVICE_URL=http://localhost:8000
+npm run tax:agent -- --input data/orange_polska_royalty.json      ← uses real DDQ extraction
 ```
 
 ---
@@ -136,9 +142,40 @@ npm run tax:agent -- --input data/orange_polska_royalty.json      ← runs end-t
 - Alpine Holdings case: 4 clean iterations, correct FAIL conclusion, confidence LOW.
 - Orange S.A. case: 3 clean iterations, correct 0% Directive conclusion, confidence MEDIUM.
 
-### Phase 5 — Document ingestion (Python) (NEXT)
-- Accept DDQ as text/PDF input instead of hardcoded substance data.
-- Python component (e.g. FastAPI microservice) that the TypeScript agent calls as a tool.
+### Phase 5 — MATE improvements ✓ COMPLETE
+- `LLM.fast()` / `LLM.powerful()` tier factories; `selectLlm()` in agent loop.
+- `OPENAI_MODEL_FAST` / `OPENAI_MODEL_POWERFUL` env vars; backward-compatible.
+- Environment-level parameter validation for all tools (invalid enum, out-of-range numbers, empty strings).
+- 74 tests passing (15 new validation tests).
+
+### Phase 6 — Python DDQ Extraction Service ✓ COMPLETE
+- **Python/FastAPI microservice** (`python/service/`) with two endpoints:
+  - `POST /substance` — reads DDQ text, extracts SubstanceResult via OpenAI structured outputs
+  - `POST /dempe` — reads DDQ text, extracts DempeResult via OpenAI structured outputs
+- **Pydantic models** (`python/service/models.py`) mirror TypeScript interfaces exactly;
+  passed as `response_format` to OpenAI so the LLM output is schema-guaranteed.
+- **LLM extraction** (`python/service/extractor.py`) uses `client.beta.chat.completions.parse()`
+  with the Pydantic model — returns a typed SubstanceResult / DempeResult, never raw JSON.
+- **System prompts** reference exact MF Objaśnienia §2.2.1 / §2.3 criteria and DEMPE framework.
+- **TypeScript changes:**
+  - `WhtEnvironmentOptions`: + `ddqServiceUrl?` and `ddqText?` fields
+  - `checkEntitySubstance` and `analyseDempe` → `async`, call HTTP when service is configured;
+    graceful fallback to simulation if service is down or not configured
+  - `AgentInput`: + `ddq_path?: string` — path to a DDQ text file in the input JSON
+  - `parseInput()` — returns `{ input, ddqText }` (loads DDQ file when `ddq_path` is set)
+  - Agent loop dispatch → `await` the two async tool methods
+- **Sample DDQ** (`data/ddqs/orange_sa_ddq.txt`) — realistic 10-section questionnaire for
+  Orange S.A. covering all 6 substance factors, all DEMPE functions, and BO conditions.
+- **`orange_polska_royalty.json`** — updated with `"ddq_path": "data/ddqs/orange_sa_ddq.txt"`.
+- **`.env.example`** — documents `DDQ_SERVICE_URL` with setup instructions.
+- **`npm run ddq:service`** — starts the Python service via `python/run.py`.
+- **74 tests passing** — all substance/DEMPE tests updated to `async/await`, all green.
+- Backward compatible — `DDQ_SERVICE_URL` not set → simulation as before.
+
+### Phase 7 — FactChecker Persona Agent (NEXT)
+- Gemini Custom Gem configured as a FactChecker persona.
+- Multi-agent pattern: WHT agent calls FactChecker via a `call_agent` tool.
+- FactChecker cross-checks DDQ substance claims against public records (company filings, OECD data).
 
 ### Unresolved: treaty rate verification
 - All 36 entries in treaties.json have `verified: false`.
