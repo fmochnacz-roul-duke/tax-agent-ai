@@ -3,7 +3,7 @@
 ## Current Status
 **Phase:** Phase 11 COMPLETE — Entity Registry (JSON persistence + audit trail + web UI panel).
 **Date of last session:** 2026-04-02
-**Branch:** feature/phase11-entity-registry (ready to merge)
+**Branch:** master (feature/phase11-entity-registry merged, tagged v0.11.0)
 
 ### Phase 11 summary (this session)
 - `src/server/EntityRegistry.ts` — EntityRegistry class + extractSubstanceFields() helper + getRegistry() singleton
@@ -24,7 +24,7 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Phase 11 is merged. Let's start Phase 12 — Treaty rate verification + human review workflow."
+> "Phase 11 is merged and tagged v0.11.0. Let's start Phase 12 — Treaty rate verification + human review workflow."
 
 Verify environment:
 ```
