@@ -435,3 +435,118 @@ test('checkPayAndRefund: relief_options include both Opinion and WH-OS paths', (
   assert.ok(names.some(n => n.includes('Opinion')), 'should include Opinion on WHT Exemption');
   assert.ok(names.some(n => n.includes('WH-OS')), 'should include WH-OS Management Statement');
 });
+
+// ── Parameter validation — safety layer (MATE principle E) ───────────────────
+//
+// The agent loop validates user input at the CLI boundary (validateInput in
+// BeneficialOwnerAgent.ts), but the LLM can still fabricate out-of-range values
+// when calling tools. The Environment is the last line of defence — it must
+// return a structured error rather than silently processing bad inputs.
+//
+// These tests confirm that every validation guard returns an object with an
+// 'error' field (no exception thrown) so the agent loop can surface it cleanly.
+
+test('getTreatyRate: invalid income_type returns error', () => {
+  const result = parse(env.getTreatyRate('Luxembourg', 'withholding', 25));
+
+  assert.ok(result['error'], 'invalid income_type should return an error field');
+  assert.ok(
+    (result['error'] as string).includes('dividend, interest, royalty'),
+    'error should list valid types'
+  );
+});
+
+test('getTreatyRate: shareholding above 100 returns error', () => {
+  const result = parse(env.getTreatyRate('Luxembourg', 'dividend', 150));
+
+  assert.ok(result['error'], 'shareholding > 100 should return an error field');
+});
+
+test('getTreatyRate: negative shareholding returns error', () => {
+  const result = parse(env.getTreatyRate('Luxembourg', 'dividend', -5));
+
+  assert.ok(result['error'], 'negative shareholding should return an error field');
+});
+
+test('checkDirectiveExemption: dividend income_type returns directive-scope error', () => {
+  const result = parse(env.checkDirectiveExemption('France', 'dividend', 50, 5));
+
+  assert.ok(result['error'], 'dividend should return an error (Directive covers interest/royalty only)');
+  assert.ok(
+    (result['error'] as string).includes('Parent-Subsidiary'),
+    'error should redirect to the Parent-Subsidiary Directive'
+  );
+});
+
+test('checkDirectiveExemption: negative holding_years returns error', () => {
+  const result = parse(env.checkDirectiveExemption('France', 'royalty', 50, -1));
+
+  assert.ok(result['error'], 'negative holding_years should return an error field');
+});
+
+test('checkDirectiveExemption: shareholding above 100 returns error', () => {
+  const result = parse(env.checkDirectiveExemption('France', 'royalty', 110, 5));
+
+  assert.ok(result['error'], 'shareholding > 100 should return an error field');
+});
+
+test('checkPayAndRefund: invalid income_type returns error', () => {
+  const result = parse(env.checkPayAndRefund('fee', true, 5_000_000));
+
+  assert.ok(result['error'], 'invalid income_type should return an error field');
+});
+
+test('checkPayAndRefund: negative annual_payment returns error', () => {
+  const result = parse(env.checkPayAndRefund('royalty', true, -1000));
+
+  assert.ok(result['error'], 'negative annual_payment_pln should return an error field');
+});
+
+test('checkEntitySubstance: empty entity_name returns error', () => {
+  const result = parse(env.checkEntitySubstance('', 'France'));
+
+  assert.ok(result['error'], 'empty entity_name should return an error field');
+});
+
+test('checkEntitySubstance: whitespace-only entity_name returns error', () => {
+  const result = parse(env.checkEntitySubstance('   ', 'France'));
+
+  assert.ok(result['error'], 'whitespace entity_name should return an error field');
+});
+
+test('analyseDempe: invalid ip_type returns error', () => {
+  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'copyright'));
+
+  assert.ok(result['error'], 'invalid ip_type should return an error field');
+  assert.ok(
+    (result['error'] as string).includes('brand, technology, patent'),
+    'error should list valid ip_type values'
+  );
+});
+
+// Also confirm that validation errors do NOT fire for valid inputs
+// (regression guard — prevents over-strict validation that blocks legitimate calls)
+
+test('getTreatyRate: valid inputs do NOT return error (regression guard)', () => {
+  const result = parse(env.getTreatyRate('Luxembourg', 'dividend', 25));
+
+  assert.equal(result['error'], undefined, 'valid call should not produce an error field');
+});
+
+test('checkDirectiveExemption: valid inputs do NOT return error (regression guard)', () => {
+  const result = parse(env.checkDirectiveExemption('France', 'royalty', 50, 5));
+
+  assert.equal(result['error'], undefined, 'valid call should not produce an error field');
+});
+
+test('checkPayAndRefund: valid inputs do NOT return error (regression guard)', () => {
+  const result = parse(env.checkPayAndRefund('royalty', true, 5_000_000));
+
+  assert.equal(result['error'], undefined, 'valid call should not produce an error field');
+});
+
+test('analyseDempe: valid ip_type does NOT return error (regression guard)', () => {
+  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+
+  assert.equal(result['error'], undefined, 'valid call should not produce an error field');
+});

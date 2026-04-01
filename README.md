@@ -91,6 +91,15 @@ The agent is built on the GAME framework (Goals / Actions / Memory / Environment
 
 The agent loop is domain-agnostic — it contains no WHT logic. All domain knowledge lives in the Goals, tool definitions, and the Environment. This separation is the architectural property that makes the system testable, auditable, and extensible.
 
+The architecture follows the **MATE design principles** (Model Efficiency / Action Specificity / Token Efficiency / Environmental Safety):
+
+| Principle | Implementation |
+|---|---|
+| **M — Model Efficiency** | Two LLM tiers: `LLM.fast()` for simple lookups, `LLM.powerful()` for legal synthesis. Configured via `OPENAI_MODEL_FAST` / `OPENAI_MODEL_POWERFUL`. The agent switches tiers automatically once complex findings (substance, DEMPE, MLI) are present. |
+| **A — Action Specificity** | Each tool does one thing. Enum constraints and typed parameters prevent loose inputs. Server-side validation in `WhtEnvironment` catches LLM-fabricated out-of-range values. |
+| **T — Token Efficiency** | `buildFindingsSummary()` injects a compact findings block each iteration. A duplicate-call guard prevents redundant tool calls. |
+| **E — Environmental Safety** | `maxIterations` safety valve. `simulate: true/false` mode switch. Parameter validation in every environment method returns structured errors rather than silently processing bad inputs. |
+
 ---
 
 ## Tools
@@ -110,6 +119,27 @@ Treaty data covers 36 countries (EU-27 + UK, Switzerland, Norway, USA, Canada, J
 
 ---
 
+## Planned: Phase 7 — FactChecker Persona Agent (Gemini Custom Gem)
+
+Phase 7 introduces a second agent that cross-verifies substance claims produced by the WHT agent. It is built as a **Gemini Custom Gem** — a configured Gemini agent with a custom persona, system prompt, and verification tools — and follows the **multi-agent call_agent pattern** from Jules White's course.
+
+```
+BeneficialOwnerAgent  ──call_agent("fact_checker", substance_profile)──►  FactCheckerAgent (Gemini Gem)
+                                                                           - verifies DDQ claims vs. public registry
+                                                                           - checks filed accounts vs. substance factors
+                                                                           - flags contradictions
+                              ◄──── verified / unverified / contradicted ────
+```
+
+**Memory pattern used:** Memory Reflection — after the FactChecker completes, its reasoning is copied back into the main agent's memory so the WHT conclusion can cite the verification result.
+
+**Why Gemini Custom Gem for this role?**
+- Demonstrates a multi-vendor, multi-model architecture (OpenAI for orchestration, Gemini for verification)
+- Custom Gem configuration lets you lock the FactChecker to a strict verification persona (no free-form commentary, structured output only)
+- The `call_agent` pattern means the main agent remains OpenAI-based and the Gemini Gem is a pluggable specialist
+
+---
+
 ## Setup
 
 **Prerequisites:** Node.js 18+, an OpenAI API key
@@ -120,11 +150,17 @@ cd tax-agent-ai
 npm install
 ```
 
-Create `.env` in the project root:
+Create `.env` in the project root (see `.env.example` for all options):
 
 ```
 OPENAI_API_KEY=your-key-here
+
+# Single-model setup (backward-compatible):
 OPENAI_MODEL=gpt-4o-mini
+
+# Two-tier setup — recommended (MATE M: Model Efficiency):
+# OPENAI_MODEL_FAST=gpt-4o-mini      ← simple lookups
+# OPENAI_MODEL_POWERFUL=gpt-4o       ← legal synthesis
 ```
 
 ---
@@ -169,9 +205,11 @@ Reports are saved automatically to `reports/<entity_slug>_<date>.json`. The fold
 | 1 | Live treaty data (`treaties.json` wired into `WhtEnvironment`) | ✓ Complete |
 | 2 | Real CLI input (`--input` JSON file, `AgentInput` validation) | ✓ Complete |
 | 3 | Structured JSON report output (`reports/`) | ✓ Complete |
-| 4 | Refined substance test — concrete criteria aligned with Art. 26 CIT and MLI PPT guidelines | Next |
-| 5 | Document ingestion — Python/FastAPI microservice replacing simulated substance and DEMPE tools | Planned |
-| 6+ | Additional Tax OS modules: Pillar Two, TP screening, PE risk | Future |
+| 4 | Refined substance test — entity-aware profiles, three-condition BO test, DEMPE, Pay and Refund | ✓ Complete |
+| 5 | MATE improvements — model efficiency (LLM tiering), environment-level parameter validation | ✓ Complete |
+| 6 | Document ingestion — Python/FastAPI microservice replacing simulated substance and DEMPE tools | Planned |
+| 7 | FactChecker Persona Agent (Gemini Custom Gem) — multi-agent verification of DDQ substance claims | Planned |
+| 8+ | Additional Tax OS modules: Pillar Two, TP screening, PE risk | Future |
 
 ---
 
@@ -196,7 +234,8 @@ The product agent (`src/agents/`) builds directly on these patterns. The learnin
 | Language | TypeScript | ^6.0 |
 | Runtime | Node.js | 18+ |
 | AI SDK | OpenAI SDK | ^6.0 |
-| Model | gpt-4o-mini | via `.env` |
+| Model (fast tier) | gpt-4o-mini | via `OPENAI_MODEL_FAST` |
+| Model (powerful tier) | gpt-4o | via `OPENAI_MODEL_POWERFUL` |
 | Testing | `node:test` (built-in) | Node 18 |
 | Runner | ts-node | ^10.0 |
 

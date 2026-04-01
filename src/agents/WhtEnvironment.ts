@@ -272,6 +272,22 @@ export class WhtEnvironment {
     incomeType: string,
     shareholdingPercentage: number
   ): string {
+    // ── Parameter validation ───────────────────────────────────────────────────
+    // The agent loop validates user input at the CLI boundary, but the LLM can
+    // still fabricate out-of-range values when calling tools. These guards prevent
+    // silent errors propagating into treaty rate logic.
+    const VALID_INCOME = new Set(['dividend', 'interest', 'royalty']);
+    if (!VALID_INCOME.has(incomeType.toLowerCase())) {
+      return JSON.stringify({
+        error: `Unsupported income_type "${incomeType}". Must be one of: dividend, interest, royalty.`,
+      });
+    }
+    if (shareholdingPercentage < 0 || shareholdingPercentage > 100) {
+      return JSON.stringify({
+        error: `shareholding_percentage must be between 0 and 100. Received: ${shareholdingPercentage}.`,
+      });
+    }
+
     if (this.simulate) {
       const country = residenceCountry.toLowerCase();
 
@@ -727,6 +743,9 @@ export class WhtEnvironment {
   // Stays simulated permanently — real substance data comes from due diligence
   // questionnaires processed by the Phase 5 Python ingestion component.
   checkEntitySubstance(entityName: string, country: string): string {
+    if (!entityName || entityName.trim() === '') {
+      return JSON.stringify({ error: 'entity_name must be a non-empty string.' });
+    }
     return JSON.stringify(this.buildEntityProfile(entityName, country));
   }
 
@@ -749,6 +768,13 @@ export class WhtEnvironment {
   // documentation (DDQs, TP files, functional analyses). Phase 5 will replace
   // this with Python document ingestion.
   analyseDempe(entityName: string, country: string, ipType: string): string {
+    const VALID_IP = new Set(['brand', 'technology', 'patent', 'software', 'know_how', 'mixed']);
+    if (!VALID_IP.has(ipType.toLowerCase())) {
+      return JSON.stringify({
+        error: `Unsupported ip_type "${ipType}". Must be one of: brand, technology, patent, software, know_how, mixed.`,
+      });
+    }
+
     return JSON.stringify({
       entity:   entityName,
       country:  country,
@@ -803,6 +829,26 @@ export class WhtEnvironment {
     shareholdingPercentage: number,
     holdingYears: number
   ): string {
+    // ── Parameter validation ───────────────────────────────────────────────────
+    const DIRECTIVE_TYPES = new Set(['interest', 'royalty']);
+    if (!DIRECTIVE_TYPES.has(incomeType.toLowerCase())) {
+      return JSON.stringify({
+        error:
+          `Directive only covers interest and royalties, not "${incomeType}". ` +
+          'For dividends, see the Parent-Subsidiary Directive (Art. 22 CIT).',
+      });
+    }
+    if (shareholdingPercentage < 0 || shareholdingPercentage > 100) {
+      return JSON.stringify({
+        error: `shareholding_percentage must be between 0 and 100. Received: ${shareholdingPercentage}.`,
+      });
+    }
+    if (holdingYears < 0) {
+      return JSON.stringify({
+        error: `holding_years must be 0 or greater. Received: ${holdingYears}.`,
+      });
+    }
+
     // EU-27 member states (as of 2026)
     const EU27 = new Set([
       'austria', 'belgium', 'bulgaria', 'croatia', 'cyprus',
@@ -890,6 +936,19 @@ export class WhtEnvironment {
     relatedParty: boolean,
     annualPaymentPln: number
   ): string {
+    // ── Parameter validation ───────────────────────────────────────────────────
+    const VALID_INCOME = new Set(['dividend', 'interest', 'royalty']);
+    if (!VALID_INCOME.has(incomeType.toLowerCase())) {
+      return JSON.stringify({
+        error: `Unsupported income_type "${incomeType}". Must be one of: dividend, interest, royalty.`,
+      });
+    }
+    if (annualPaymentPln < 0) {
+      return JSON.stringify({
+        error: `annual_payment_pln must be 0 or greater. Pass 0 if unknown. Received: ${annualPaymentPln}.`,
+      });
+    }
+
     const THRESHOLD_PLN = 2_000_000;
 
     // Domestic WHT rates that apply when Pay and Refund is triggered

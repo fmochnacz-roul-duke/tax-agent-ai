@@ -283,6 +283,43 @@ function buildWhtTools(): Tool[] {
   ];
 }
 
+// ── M: MODEL EFFICIENCY ───────────────────────────────────────────────────────
+//
+// MATE principle — M: choose the right model for each iteration, not one model
+// for everything.
+//
+// How it works in this agent:
+//   - Early iterations call simple lookup tools (check_treaty, get_treaty_rate,
+//     check_directive_exemption). These do not require the most capable model.
+//   - Once complex findings arrive — substance profile (entity_substance),
+//     DEMPE analysis (dempe_analysis), or MLI PPT assessment (mli_ppt_status) —
+//     the model must reason over multi-condition legal frameworks. Switch to the
+//     powerful tier for synthesis.
+//
+// COMPLEX_FINDINGS: the set of finding keys that indicate complex data is present.
+// Any key in this set in the current findings map triggers the switch.
+
+const COMPLEX_FINDINGS = new Set([
+  'entity_substance',
+  'dempe_analysis',
+  'mli_ppt_status',
+]);
+
+// selectLlm() returns the appropriate LLM instance for the current iteration.
+// Takes the current findings map and both LLM instances; returns one of them.
+// The agent loop calls this before each generateWithTools() call.
+//
+// 'findings' is Record<string, string> because Memory.getFindings() returns that type.
+// Object.keys() gives us the array of current finding keys to check against the Set.
+function selectLlm(
+  findings: Record<string, string>,
+  fastLlm: LLM,
+  powerfulLlm: LLM
+): LLM {
+  const hasComplexData = Object.keys(findings).some(k => COMPLEX_FINDINGS.has(k));
+  return hasComplexData ? powerfulLlm : fastLlm;
+}
+
 // ── INPUT PARSING ─────────────────────────────────────────────────────────────
 //
 // Phase 2: accept structured JSON input from the command line instead of a
@@ -625,15 +662,16 @@ async function runAgent(
   memory: Memory,
   input: AgentInput,
   outputPath: string,
+  fastLlm: LLM,
+  powerfulLlm: LLM,
   maxIterations: number = 20
 ): Promise<void> {
   console.log('\n' + '='.repeat(70));
   console.log('BENEFICIAL OWNER AGENT');
   console.log('='.repeat(70));
   console.log('\nTask:', task);
+  console.log(`Models: fast=${fastLlm.getModelName()}  powerful=${powerfulLlm.getModelName()}`);
   console.log('-'.repeat(70));
-
-  const llm = new LLM();
 
   // Tracks every tool call made so far as "name:argsJSON".
   // Used to detect and skip exact duplicate calls — a common LLM loop pattern.
@@ -663,7 +701,11 @@ async function runAgent(
         ]
       : memory.getMessages();
 
-    const response = await llm.generateWithTools(messagesWithFindings, tools);
+    // selectLlm() reads the current findings to decide which tier to use.
+    // Once substance/DEMPE/MLI data is present, switch to the powerful model.
+    const activeLlm = selectLlm(memory.getFindings(), fastLlm, powerfulLlm);
+    console.log(`  [MODEL] ${activeLlm.getModelName()}`);
+    const response = await activeLlm.generateWithTools(messagesWithFindings, tools);
 
     // Plain text response — model answered without calling terminate.
     // This happens when the model writes its conclusion as prose instead of
@@ -839,7 +881,13 @@ async function main(): Promise<void> {
   // Tools (A)
   const tools = buildWhtTools();
 
-  await runAgent(systemPrompt, task, tools, env, memory, input, outputPath);
+  // M: Model Efficiency — create both LLM tiers from .env config.
+  // LLM.fast() reads OPENAI_MODEL_FAST; LLM.powerful() reads OPENAI_MODEL_POWERFUL.
+  // If only OPENAI_MODEL is set, both tiers use the same model (backward-compatible).
+  const fastLlm    = LLM.fast();
+  const powerfulLlm = LLM.powerful();
+
+  await runAgent(systemPrompt, task, tools, env, memory, input, outputPath, fastLlm, powerfulLlm);
 }
 
 main();

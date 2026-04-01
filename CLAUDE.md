@@ -7,7 +7,8 @@ A project with two parallel goals:
 2. **Business goal** — build a real Beneficial Owner Analysis Agent for Polish withholding tax (WHT) purposes
 
 The project has graduated from pure learning exercise to a product-grade agent foundation.
-Modules 1–3 are complete. Future sessions focus on connecting real data sources.
+Modules 1–3 and product phases 1–5 are complete. Phase 6 (document ingestion) and Phase 7
+(FactChecker Persona Agent via Gemini Custom Gem) are the next steps.
 
 The learner is new to TypeScript and to agentic AI. Explain all code in detail.
 Always walk through changes step by step. Never skip explanations.
@@ -36,16 +37,33 @@ beneficial owner, it must apply the correct withholding tax rate. The rate depen
 - Whether the owner meets the "beneficial owner" test (Art. 26 Polish CIT Act)
 - MLI modifications — specifically the Principal Purpose Test (Article 7)
 
-**Current state:** The agent runs end-to-end using simulated tool data.
+**Current state:** The agent runs end-to-end. Treaty data is live (36 countries).
+Substance and DEMPE tools remain simulated until Phase 6 (document ingestion).
 Every tool result includes a `source` field marking what real data source would replace it.
 The `WhtEnvironment` class has a `simulate: true/false` switch — the only change needed
 when connecting real APIs.
 
 **The GAME breakdown:**
-- G — Goals: `src/agents/BeneficialOwnerAgent.ts` (4 goals with priorities)
+- G — Goals: `src/agents/BeneficialOwnerAgent.ts` (7 goals with priorities)
 - A — Actions: tool definitions with JSON Schema in the same file
 - M — Memory: `src/shared/Memory.ts` (conversation + structured findings)
 - E — Environment: `src/agents/WhtEnvironment.ts` (all tool implementations)
+
+**MATE design principles applied:**
+- M — Model Efficiency: `LLM.fast()` / `LLM.powerful()` tiers; `selectLlm()` in agent loop; configured via `OPENAI_MODEL_FAST` / `OPENAI_MODEL_POWERFUL`
+- A — Action Specificity: narrow tools, enum constraints, server-side validation in every Environment method
+- T — Token Efficiency: `buildFindingsSummary()` compact injection; duplicate-call guard
+- E — Environmental Safety: `maxIterations` valve; parameter validation returns structured errors
+
+**Phase roadmap:**
+
+| Phase | Description | Status |
+|---|---|---|
+| 1–3 | Live treaty data, real CLI input, JSON report output | ✓ Complete |
+| 4 | Entity-aware substance profiles, three-condition BO test, DEMPE, Pay and Refund | ✓ Complete |
+| 5 | MATE improvements — model tiering (LLM.fast/powerful), Environment-level parameter validation | ✓ Complete |
+| 6 | Document ingestion — Python/FastAPI microservice for DDQ substance and DEMPE tools | Planned |
+| 7 | FactChecker Persona Agent (Gemini Custom Gem) — multi-agent DDQ verification via call_agent pattern | Planned |
 
 ---
 
@@ -56,7 +74,8 @@ when connecting real APIs.
 | Language | TypeScript | ^6.0 |
 | Runtime | Node.js | v18+ |
 | AI SDK | OpenAI SDK | ^6.0 |
-| Model | gpt-4o-mini | via .env |
+| Model (fast tier) | gpt-4o-mini | via OPENAI_MODEL_FAST |
+| Model (powerful tier) | gpt-4o | via OPENAI_MODEL_POWERFUL |
 | Env vars | dotenv | ^17.0 |
 | Runner | ts-node | ^10.0 |
 | Testing | node:test (built-in) | Node 18 |
@@ -69,7 +88,7 @@ when connecting real APIs.
 src/
   shared/
     Message.ts    ← 4 roles: system/user/assistant/tool; StoredToolCall for round-tripping
-    LLM.ts        ← generate() and generateWithTools(); Tool/ToolCall/LLMResponse types; ToolFactory
+    LLM.ts        ← generate() and generateWithTools(); LLM.fast()/LLM.powerful() tier factories; ToolFactory
     Goal.ts       ← Goal interface; buildSystemPrompt() generates prompt from goals + priorities
     Memory.ts     ← Conversation history + key/value findings store; buildFindingsSummary()
     index.ts      ← re-exports everything from shared
