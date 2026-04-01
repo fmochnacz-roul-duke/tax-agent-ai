@@ -3,7 +3,7 @@
 ## Current Status
 **Phase:** Phase 9 COMPLETE — RAG infrastructure built and wired into the agent.
 **Date of last session:** 2026-04-01
-**Branch:** feature/phase9-rag-taxonomy (ready to PR → master)
+**Branch:** master (feature/phase9-rag-taxonomy merged, tagged v0.9.0)
 
 ### Phase 9 summary (this session)
 - Phase 9a ✓ Tax taxonomy (40 concepts) + wiki content
@@ -20,11 +20,11 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Phase 9 is complete — let's open a PR to merge feature/phase9-rag-taxonomy into master, then start Phase 11 (Audit Trail / PDF attestation)."
+> "Phase 9 is merged and tagged v0.9.0. Let's start Phase 11 — Audit Trail / PDF attestation."
 
 Verify environment:
 ```
-git checkout feature/phase9-rag-taxonomy
+git checkout master
 npm run build    ← zero errors
 npm test         ← 143/143 passing
 ```

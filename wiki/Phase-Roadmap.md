@@ -121,17 +121,17 @@ Each phase corresponds to a git tag. All completed phases are available as GitHu
 
 ---
 
-## In progress
+### v0.9.0 — Phase 9: Legal knowledge RAG
 
-### feature/phase9-rag-taxonomy — Phase 9: Legal knowledge RAG
+**What:**
+- 9a: Tax taxonomy (`data/tax_taxonomy.json`) — 40 controlled concepts with Polish/English terms and RAG keywords
+- 9b: RAG infrastructure — `Chunker`, `Embedder`, `Retriever`, `LegalRagService`; source .md files for MF-OBJ-2025 (14 chunks) and PL-CIT-2026-WHT (9 chunks); `npm run rag:build` embeds 23 chunks using `text-embedding-3-small`; incremental rebuild via SHA-256 manifest
+- 9c: `consult_legal_sources` tool — agent retrieves statutory text before final BO determination; goal priority 2; RAG results flow as reasoning context (not persisted finding); smoke test retrieved Art. 4a pkt 29 with score 0.58
 
-**What (planned):**
-- 9a: Tax taxonomy (`data/tax_taxonomy.json`) — controlled vocabulary ✅ Done
-- 9b: RAG infrastructure — embed MF Objaśnienia + Jankowski & Smoleń; vector store; retrieval
-- 9c: Cited conclusions — `check_entity_substance` returns "per MF Objaśnienia §2.3, condition (ii)..."
-- 9d: DEMPE RAG — ingest OECD TP Guidelines Ch. VI; `analyse_dempe` uses retrieval not simulation
-
-**Why Phase 9 is important:** Today the agent applies a hardcoded checklist. With RAG, it retrieves the exact paragraph from official guidance, applies it, and cites it. The report says "per MF Objaśnienia §2.3.1, a holding company needs adequate experienced personnel — this entity PASSES/FAILS because [specific facts from interview]."
+**Key decisions:**
+- Knowledge base = authoritative sources only (CIT Act, MF Objaśnienia). Academic commentary (Jankowski & Smoleń) deliberately excluded — not legislation.
+- `vectors.json` gitignored (905 KB generated file); `chunks/index.json` and `manifest.json` tracked (human-readable, enables incremental rebuild)
+- RAG results not stored as findings — tool may be called multiple times with different queries; citations appear in the final answer text
 
 ---
 

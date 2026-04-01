@@ -63,7 +63,7 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 6 | Document ingestion — Python/FastAPI microservice for DDQ substance and DEMPE extraction | ✓ Complete |
 | 7 | FactChecker Persona Agent — Gemini + Google Search grounding, multi-agent call_agent pattern | ✓ Complete |
 | 8 | Conversational web UI — Express server, InputExtractor, SSE progress streaming | ✓ Complete |
-| 9 | Legal Knowledge RAG — tax taxonomy, Chunker/Embedder/Retriever/LegalRagService, source .md files | In progress |
+| 9 | Legal Knowledge RAG — tax taxonomy, Chunker/Embedder/Retriever/LegalRagService, consult_legal_sources tool | ✓ Complete |
 | 10 | Substance interview — 5-question chat flow, TypeScript LLM extractor, any entity assessed | ✓ Complete |
 
 ---
