@@ -1,18 +1,22 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 9 COMPLETE — RAG infrastructure built and wired into the agent.
-**Date of last session:** 2026-04-01
-**Branch:** master (feature/phase9-rag-taxonomy merged, tagged v0.9.0)
+**Phase:** Phase 11 COMPLETE — Entity Registry (JSON persistence + audit trail + web UI panel).
+**Date of last session:** 2026-04-02
+**Branch:** feature/phase11-entity-registry (ready to merge)
 
-### Phase 9 summary (this session)
-- Phase 9a ✓ Tax taxonomy (40 concepts) + wiki content
-- Phase 9b ✓ RAG infrastructure (Chunker, Embedder, Retriever, LegalRagService) + source .md files
-  - Step 2: `npm run rag:build` run — 23 chunks embedded (MF-OBJ-2025: 14, PL-CIT-2026: 9)
-  - Outputs: `chunks/index.json` (43 KB), `embeddings/vectors.json` (905 KB), `manifest.json`
-- Phase 9c ✓ `consult_legal_sources` tool wired into BeneficialOwnerAgent + WhtEnvironment
-  - Smoke test: agent called RAG twice, retrieved Art. 4a pkt 29 (score 0.58), completed in 6 iterations
-  - 143/143 tests passing
+### Phase 11 summary (this session)
+- `src/server/EntityRegistry.ts` — EntityRegistry class + extractSubstanceFields() helper + getRegistry() singleton
+  - Persists to `data/registry.json` (gitignored)
+  - Upsert semantics: re-analysis updates entry but preserves `created_at` and `review_status`
+  - Lookup key: entity_name + country (lowercased, case-insensitive)
+  - Extracts `substance_tier` + `bo_overall` from parsed findings
+- `src/server/EntityRegistry.test.ts` — 26 tests (all pure logic, no API calls)
+- `src/server/index.ts` — `getRegistry().save(report, outputPath)` after each analysis + `GET /registry` endpoint
+- `src/agents/BeneficialOwnerAgent.ts` — `registry.save(report, outputPath)` in CLI `main()`
+- `src/public/index.html` — "Past Analyses" collapsible panel in right column; loads on init + refreshes after each run
+- `.gitignore` — `data/registry.json` added
+- **169/169 tests passing**
 
 ---
 
@@ -20,13 +24,13 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Phase 9 is merged and tagged v0.9.0. Let's start Phase 11 — Audit Trail / PDF attestation."
+> "Phase 11 is merged. Let's start Phase 12 — Treaty rate verification + human review workflow."
 
 Verify environment:
 ```
 git checkout master
 npm run build    ← zero errors
-npm test         ← 143/143 passing
+npm test         ← 169/169 passing
 ```
 
 Then verify the environment is healthy:
