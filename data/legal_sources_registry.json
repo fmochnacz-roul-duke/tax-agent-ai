@@ -1,0 +1,514 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-04-01",
+  "description": "Registry of all legal sources, regulations and guidelines used in the WHT Beneficial Owner Agent. Each entry documents provenance, verification status, agent tool dependencies, and RAG readiness for future ingestion.",
+  "maintainer": "Franciszek Mochnacz",
+
+  "source_types": {
+    "statute":    "Primary legislation — acts of parliament",
+    "directive":  "EU secondary legislation",
+    "treaty":     "Bilateral double taxation convention",
+    "convention": "Multilateral convention or instrument",
+    "guidance":   "Official government or regulatory guidance",
+    "database":   "Reference database or lookup table (derived or official)",
+    "commentary": "Academic or professional commentary",
+    "oecd":       "OECD publication or standard"
+  },
+
+  "statuses": {
+    "current":              "Verified current; used in agent logic",
+    "pending_verification": "Source exists; individual provisions not yet confirmed against original",
+    "superseded":           "Replaced by a newer version; kept for historical context",
+    "planned":              "Identified as needed; not yet integrated into agent"
+  },
+
+  "sources": [
+
+    {
+      "id": "PL-CIT-2026",
+      "type": "statute",
+      "name": "Ustawa z dnia 15 lutego 1992 r. o podatku dochodowym od osób prawnych",
+      "short_name": "Polish CIT Act",
+      "authority": "Sejm Rzeczypospolitej Polskiej",
+      "jurisdiction": "Poland",
+      "language": "Polish",
+      "dziennik_ustaw": "Dz.U. 2026 poz. 331",
+      "consolidated_as_of": "2026-01",
+      "original_date": "1992-02-15",
+      "verified_date": "2026-03-31",
+      "url": "https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU19920210086/U/D19920086Lj.pdf",
+      "local_path": "C:\\Users\\fmoch\\Documents\\D19920086Lj.pdf",
+      "key_provisions": [
+        "Art. 4a pkt 29 — Beneficial owner definition (3 cumulative conditions)",
+        "Art. 21 ust. 1 — WHT rates on interest and royalties (20%)",
+        "Art. 21 ust. 3 — EU I&R Directive implementation (0% exemption)",
+        "Art. 22 ust. 1 — WHT rate on dividends (19%)",
+        "Art. 22 ust. 4 — EU P-S Directive implementation (0% exemption)",
+        "Art. 22c — General Anti-Avoidance Rule (GAAR) for WHT",
+        "Art. 26 — Remitter obligations, beneficial owner verification, due diligence",
+        "Art. 26 §2c — Pay and Refund mechanism (PLN 2M threshold)",
+        "Art. 26aa — Withholding and refund procedure",
+        "Art. 26b — Opinion on WHT Exemption (Opinia o stosowaniu preferencji)",
+        "Art. 11a — Transfer pricing related-party definition"
+      ],
+      "used_by_tools": [
+        "check_treaty",
+        "check_entity_substance",
+        "check_directive_exemption",
+        "check_pay_and_refund",
+        "analyse_dempe"
+      ],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Full act is ~150 pages; for WHT agent, extract chapters on Art. 4a, 21, 22, 26 only (~20 pages). High-priority for RAG Phase 9.",
+      "notes": "URL uses 'Lj' suffix (ostatni jednolity) — ISAP updates the file in place. Always the latest consolidation under the 1992 act record. Frank has verified the current DzU reference."
+    },
+
+    {
+      "id": "PL-ORD-2026",
+      "type": "statute",
+      "name": "Ustawa z dnia 29 sierpnia 1997 r. Ordynacja podatkowa",
+      "short_name": "Polish Tax Ordinance",
+      "authority": "Sejm Rzeczypospolitej Polskiej",
+      "jurisdiction": "Poland",
+      "language": "Polish",
+      "dziennik_ustaw": "Dz.U. 2026 poz. 252",
+      "amendment_ref": "Dz.U. 2026 poz. 347 (post-consolidation amendment — must be read together)",
+      "consolidated_as_of": "2026-01",
+      "original_date": "1997-08-29",
+      "verified_date": "2026-03-31",
+      "url": "https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU19971370926/U/D19970926Lj.pdf",
+      "local_path": "C:\\Users\\fmoch\\Documents\\D19970926Lj.pdf",
+      "key_provisions": [
+        "Art. 14a-14m — Binding tax interpretations and explanations (ochrona podatkowa)",
+        "Art. 14k-14m — Protection for taxpayers following official guidance",
+        "Art. 14p — Protection extended to withholding agents (płatnicy)",
+        "Art. 30 §5a — Related-party: withholding agent liability not excluded by taxpayer fault"
+      ],
+      "used_by_tools": ["check_pay_and_refund"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Most relevant for agent: arts. 14a-14p on protection status. Low priority for RAG — only procedural impact on agent.",
+      "notes": "Both poz. 252 and poz. 347 must be read together."
+    },
+
+    {
+      "id": "EU-DIR-2003-49-EC",
+      "type": "directive",
+      "name": "Council Directive 2003/49/EC of 3 June 2003 on a common system of taxation applicable to interest and royalty payments made between associated companies of different Member States",
+      "short_name": "EU Interest and Royalties Directive (I&R Directive)",
+      "authority": "Council of the European Union",
+      "jurisdiction": "European Union",
+      "language": "English (+ all EU languages)",
+      "official_journal": "OJ L 157, 26.6.2003, p. 49–54",
+      "implemented_in_pl": "Art. 21 ust. 3 Polish CIT Act",
+      "effective_date": "2003-06-03",
+      "verified_date": "2026-03-31",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32003L0049",
+      "local_path": null,
+      "key_provisions": [
+        "Art. 1 — Exemption from withholding tax on cross-border interest and royalty payments",
+        "Art. 3 — Associated companies definition (≥25% direct shareholding, ≥2 years)",
+        "Art. 5 — Anti-abuse provision (Directive does not preclude domestic GAAR)"
+      ],
+      "used_by_tools": ["check_directive_exemption"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Short directive (~6 pages); good RAG candidate. Pair with Art. 21 CIT Act.",
+      "notes": "The 0% rate applies only when: EU member state recipient, ≥25% shareholding, ≥2 continuous years, income type is interest or royalty (NOT dividends)."
+    },
+
+    {
+      "id": "EU-DIR-2011-96-EU",
+      "type": "directive",
+      "name": "Council Directive 2011/96/EU of 30 November 2011 on the common system of taxation applicable in the case of parent companies and subsidiaries of different Member States (recast)",
+      "short_name": "EU Parent-Subsidiary Directive (P-S Directive)",
+      "authority": "Council of the European Union",
+      "jurisdiction": "European Union",
+      "language": "English (+ all EU languages)",
+      "official_journal": "OJ L 345, 29.12.2011, p. 8–16",
+      "implemented_in_pl": "Art. 22 ust. 4 Polish CIT Act",
+      "effective_date": "2011-11-30",
+      "verified_date": "2026-03-31",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32011L0096",
+      "local_path": null,
+      "key_provisions": [
+        "Art. 5 — Prohibition of withholding tax on profit distributions from subsidiary to parent",
+        "Art. 3 — Parent company definition (≥10% shareholding, 24 months minimum)",
+        "Art. 1(2) — General anti-abuse clause (GAAR)"
+      ],
+      "used_by_tools": ["check_directive_exemption"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Short directive; good RAG candidate. Pair with Art. 22 ust. 4 CIT Act.",
+      "notes": "Applies to dividends only (not interest/royalties). Threshold: ≥10% direct shareholding, ≥2 continuous years."
+    },
+
+    {
+      "id": "PL-MF-OBJ-2025",
+      "type": "guidance",
+      "name": "Objaśnienia podatkowe z 3 lipca 2025 r. dotyczące stosowania tzw. klauzuli rzeczywistego właściciela dla celów podatku u źródła",
+      "short_name": "MF Objaśnienia BO 2025",
+      "authority": "Ministerstwo Finansów — Minister Finansów",
+      "jurisdiction": "Poland",
+      "language": "Polish",
+      "legal_basis": "Art. 14a §1 pkt 2 Ordynacji podatkowej (Dz.U. 2025 poz. 111)",
+      "issue_date": "2025-07-03",
+      "verified_date": "2026-03-31",
+      "url": null,
+      "local_path": "C:\\Users\\fmoch\\Downloads\\Objaśnienia_podatkowe_z_3_lipca_2025_r.pdf",
+      "key_provisions": [
+        "§2.2.1 — Conduit indicators (red flags) for conditions (i)+(ii)",
+        "§2.3 — Universal substance factors for condition (iii)",
+        "§2.3.1 — Holding companies: lower substance threshold + shared substance rules",
+        "§3 — Payment types requiring BO check (dividends, interest, royalties only)",
+        "§4 — Due diligence standards (related vs. unrelated parties)",
+        "§6.2 — Look-Through Approach (LTA) rules",
+        "§6.3 — Extended subject scope",
+        "§6.4 — PS Directive presumption",
+        "§6.5 — OZZ (collective rights management organisations)"
+      ],
+      "protection_status": "Full legal protection under Art. 14k-14m Tax Ordinance for taxpayers and withholding agents (Art. 14p) who follow these explanations.",
+      "used_by_tools": ["check_entity_substance", "check_directive_exemption"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Primary target for RAG Phase 9. ~60 pages. Ingesting this document would replace the hardcoded substance simulation with real authoritative logic.",
+      "notes": "The most authoritative domestic source on the BO test. Has legal protection status — agents referencing it are in the safest position."
+    },
+
+    {
+      "id": "OECD-MTC-2017",
+      "type": "oecd",
+      "name": "OECD Model Tax Convention on Income and on Capital (2017, condensed version)",
+      "short_name": "OECD MTC 2017",
+      "authority": "OECD",
+      "jurisdiction": "International",
+      "language": "English",
+      "issue_date": "2017-11-21",
+      "verified_date": "2026-03-31",
+      "url": "https://www.oecd.org/en/publications/model-tax-convention-on-income-and-on-capital-condensed-version-2017_mtc_cond-2017-en.html",
+      "local_path": null,
+      "key_provisions": [
+        "Art. 7 — Business profits",
+        "Art. 10 — Dividends (BO requirement, Commentary evolution 1977-2014)",
+        "Art. 11 — Interest (BO requirement)",
+        "Art. 12 — Royalties (BO requirement; note: not all Polish treaties follow OECD Art. 12)",
+        "Art. 26 — Exchange of information"
+      ],
+      "used_by_tools": ["check_treaty", "analyse_dempe"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Commentary sections on Arts. 10-12 are the most relevant (~50 pages). Medium priority for RAG.",
+      "notes": "Key for BO interpretation history. The 2014 Commentary update introduced the 'facts and circumstances' test for pass-through obligations and the dependent/independent payment distinction — both used in MF Objaśnienia 2025."
+    },
+
+    {
+      "id": "OECD-MLI-TEXT",
+      "type": "convention",
+      "name": "Multilateral Convention to Implement Tax Treaty Related Measures to Prevent Base Erosion and Profit Shifting",
+      "short_name": "OECD Multilateral Instrument (MLI)",
+      "authority": "OECD / signatory states",
+      "jurisdiction": "International (bilateral effect per CTA)",
+      "language": "English + French",
+      "signing_date": "2017-06-07",
+      "verified_date": "2026-03-31",
+      "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/beps-mli/multilateral-convention-to-implement-tax-treaty-related-measures-to-prevent-beps.pdf",
+      "local_path": null,
+      "key_provisions": [
+        "Art. 7 — Principal Purpose Test (PPT) — anti-abuse rule for treaty benefits",
+        "Art. 6 — Preamble language (treaty purpose: no double non-taxation)",
+        "Art. 8 — Dividend holding period (Poland reserved for treaties already containing holding period)",
+        "Art. 10 — PE third-country abuse (Poland reserved — does NOT apply)",
+        "Art. 12 — Commissionnaire PE (Poland reserved — does NOT apply)"
+      ],
+      "used_by_tools": ["check_treaty", "check_mli_ppt"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Low priority for RAG — Poland's positions are captured in the project's data files and treaties.json.",
+      "notes": "The MLI modifies bilateral treaties; it does not replace them. Effect depends on both parties' notified CTAs and specific reservations."
+    },
+
+    {
+      "id": "OECD-MLI-PL-POSITIONS",
+      "type": "database",
+      "name": "Poland's MLI Deposited Positions (Notification under Art. 35)",
+      "short_name": "Poland MLI Positions",
+      "authority": "OECD (deposited by Poland)",
+      "jurisdiction": "Poland",
+      "language": "English",
+      "deposit_date": "2018-03-23",
+      "verified_date": "2026-03-31",
+      "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/beps-mli/beps-mli-position-poland.pdf",
+      "local_path": "C:\\Users\\fmoch\\Documents\\beps-mli-position-poland.pdf",
+      "key_facts": [
+        "78 Covered Tax Agreements (CTAs) notified by Poland",
+        "Art. 7 PPT accepted as interim measure for all 78 CTAs",
+        "Germany: explicitly excluded from Poland's CTAs — MLI PPT does NOT apply",
+        "USA: not an MLI signatory",
+        "Art. 8 reserved for treaties already containing holding period (Belgium, Cyprus, Denmark, Luxembourg, Malta, Norway, Portugal, Singapore, Slovakia, Switzerland, UK)"
+      ],
+      "used_by_tools": ["check_treaty", "check_mli_ppt"],
+      "local_project_file": "data/poland_dtt_list.csv",
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Data extracted into data/poland_dtt_list.csv — the project's CSV is the primary lookup. PDF kept for audit trail.",
+      "notes": "Frank personally verified and cross-checked. Key finding: Germany is the only major EU country excluded from Poland's CTAs."
+    },
+
+    {
+      "id": "OECD-MLI-SIGNATORIES-2026",
+      "type": "database",
+      "name": "MLI Signatories and Parties — OECD Official Status Table",
+      "short_name": "MLI Signatories Table",
+      "authority": "OECD",
+      "jurisdiction": "International",
+      "language": "English",
+      "document_date": "2026-01-12",
+      "verified_date": "2026-03-31",
+      "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/beps-mli/beps-mli-signatories-and-parties.pdf",
+      "local_path": "C:\\Users\\fmoch\\Documents\\beps-mli-signatories-and-parties.pdf",
+      "key_facts": [
+        "104 MLI signatories as of Jan 2026",
+        "83+ Parties (ratified and in force) as of Jan 2026",
+        "Italy: signed 2017 but NOT ratified as of Jan 2026 → MLI PPT does NOT apply for Poland-Italy"
+      ],
+      "used_by_tools": ["check_treaty", "check_mli_ppt"],
+      "local_project_file": "data/poland_dtt_list.csv",
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Data extracted into poland_dtt_list.csv. Not needed for RAG.",
+      "notes": "Frank personally verified. Cross-checked with Poland's positions to derive mli_ppt_applies values."
+    },
+
+    {
+      "id": "OECD-MLI-MATCHING-DB",
+      "type": "database",
+      "name": "OECD BEPS MLI Matching Database",
+      "short_name": "OECD MLI Matching Database",
+      "authority": "OECD",
+      "jurisdiction": "International",
+      "language": "English",
+      "last_accessed": "2026-03-31",
+      "url": "https://www.oecd.org/en/data/tools/beps-mli-matching-database.html",
+      "local_path": null,
+      "key_facts": [
+        "Per-treaty tool: shows whether both parties included a specific treaty as a CTA",
+        "Needed to resolve VERIFY cases in treaties.json (Netherlands, Sweden, Switzerland)"
+      ],
+      "used_by_tools": ["check_mli_ppt"],
+      "status": "pending_verification",
+      "rag_ready": false,
+      "rag_notes": "Interactive web tool — not suitable for direct RAG. Use to resolve VERIFY cases and update treaties.json.",
+      "notes": "VERIFY cases: Netherlands, Sweden, Switzerland. Absence of synthesized text after 6+ years strongly implies those countries excluded the Poland treaty from their own CTAs. Must be confirmed here before updating mli_ppt_applies to 'NO' for those entries."
+    },
+
+    {
+      "id": "PL-MF-TREATY-LIST-2026",
+      "type": "database",
+      "name": "Wykaz umów o unikaniu podwójnego opodatkowania — Poland MoF treaty list",
+      "short_name": "Polish MoF Treaty List",
+      "authority": "Ministerstwo Finansów",
+      "jurisdiction": "Poland",
+      "language": "Polish",
+      "last_updated_by_mof": "2026-01-27",
+      "verified_date": "2026-03-31",
+      "url": "https://www.podatki.gov.pl/podatkowa-wspolpraca-miedzynarodowa/wykaz-umow-o-unikaniu-podwojnego-opodatkowania/",
+      "local_path": null,
+      "key_facts": [
+        "91 bilateral tax treaties in force (as of Jan 2026)",
+        "Used as the canonical list; 36 countries extracted into treaties.json"
+      ],
+      "used_by_tools": ["check_treaty"],
+      "local_project_file": "data/poland_dtt_list.csv",
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Web page — not suitable for RAG. Periodic check needed to catch newly ratified treaties.",
+      "notes": "Frank confirmed list. 91 entries in poland_dtt_list.csv. treaties.json covers 36 most commercially relevant."
+    },
+
+    {
+      "id": "OECD-TP-GUIDELINES-2022",
+      "type": "oecd",
+      "name": "OECD Transfer Pricing Guidelines for Multinational Enterprises and Tax Administrations 2022 — Revised Chapter VI: Intangibles",
+      "short_name": "OECD TP Guidelines Ch. VI (BEPS 8-10)",
+      "authority": "OECD",
+      "jurisdiction": "International",
+      "language": "English",
+      "publication_date": "2022-01-20",
+      "verified_date": "2026-03-31",
+      "url": "https://www.oecd.org/en/publications/oecd-transfer-pricing-guidelines-for-multinational-enterprises-and-tax-administrations-2022_0e655865-en.html",
+      "local_path": null,
+      "key_provisions": [
+        "Chapter VI — Intangibles: legal vs. economic ownership of IP",
+        "Section D.1 — DEMPE framework: Development, Enhancement, Maintenance, Protection, Exploitation",
+        "Section D.2 — DEMPE control: entity bearing risk/cost of DEMPE entitled to return",
+        "Chapter IX — Business restructurings (relevance: IP transfers pre-royalty payment)",
+        "Paras 6.32-6.54 — Economic ownership test for intangibles"
+      ],
+      "used_by_tools": ["analyse_dempe"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "High priority for RAG Phase 9. Ingesting Chapter VI and relevant DEMPE sections (~80 pages) would substantially improve the analyse_dempe tool.",
+      "notes": "The DEMPE framework from BEPS Actions 8-10 is the legal basis for the analyse_dempe tool. Economic ownership of IP (not legal title) determines entitlement to royalty as BO."
+    },
+
+    {
+      "id": "ACADEMIC-JANKOWSKI-SMOLEN-2025",
+      "type": "commentary",
+      "name": "Test substancji ekonomicznej w przypadku spółek pośredniczących – klauzula rzeczywistego właściciela a recharakteryzacja transakcji",
+      "short_name": "Jankowski & Smoleń (2025)",
+      "authority": "Kwartalnik Prawa Podatkowego (peer-reviewed)",
+      "authors": ["Jankowski J.", "Smoleń K."],
+      "journal": "Kwartalnik Prawa Podatkowego",
+      "issue": "2/2025",
+      "pages": "9-35",
+      "doi": "https://doi.org/10.18778/1509-877X.2025.02.01",
+      "publication_date": "2025-06-01",
+      "verified_date": "2026-03-31",
+      "local_path": "C:\\Users\\fmoch\\Downloads\\9-35_Jankowski_Smoleń.pdf",
+      "key_insights": [
+        "BO clause is binary (qualifying) — entity IS or IS NOT the BO; NOT a gradient assessment",
+        "BO test ≠ TP recharacterisation — different thresholds, different instruments",
+        "Obligation to pass on = factual OR contractual (CJEU Danish Cases 2019)",
+        "CJEU Danish Cases (C-116/16, C-117/16 et al.) — foundation for Polish substance test",
+        "NSA Nov 2023 (II FSK 27/23): DutchCo denied BO — capital/income disproportion",
+        "IKEA Netherlands 2022 (CAA Versailles): BO confirmed with pass-through if genuine business",
+        "Austria VwGH 2020: formal IP ownership insufficient without functional control"
+      ],
+      "used_by_tools": ["check_entity_substance"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "Excellent RAG target for case law queries. 27 pages of dense legal analysis. Pair with MF Objaśnienia 2025.",
+      "notes": "Primary doctrinal source for the substance test logic in check_entity_substance. Frank has the PDF; verified personally."
+    },
+
+    {
+      "id": "PROJECT-TREATIES-JSON",
+      "type": "database",
+      "name": "Project treaty database — derived static lookup table",
+      "short_name": "data/treaties.json",
+      "authority": "Project-maintained (derived from official sources)",
+      "jurisdiction": "Poland (bilateral)",
+      "language": "English",
+      "coverage": "36 countries: EU-27 + UK, Switzerland, Norway, USA, Canada, Japan, Singapore, UAE, Australia, India",
+      "last_updated": "2026-03-31",
+      "source_documents": [
+        "PL-MF-TREATY-LIST-2026",
+        "OECD-MLI-PL-POSITIONS",
+        "OECD-MLI-SIGNATORIES-2026",
+        "Individual treaty PDFs (pending full verification)"
+      ],
+      "local_project_file": "data/treaties.json",
+      "key_facts": [
+        "36 entries with treaty metadata, MLI flags, and rates",
+        "All rates marked verified: false — from professional commentary, not official PDFs",
+        "mli_ppt_applies: YES / NO / VERIFY per country",
+        "VERIFY cases: Netherlands, Sweden, Switzerland — need OECD Matching DB check"
+      ],
+      "verification_priority": [
+        "Luxembourg — 2012 Protocol; dividend rates changed",
+        "Cyprus — 0% dividend rate threshold",
+        "Germany — confirmed NO PPT, rates need PDF check",
+        "Netherlands, Sweden, Switzerland — VERIFY MLI status"
+      ],
+      "used_by_tools": ["check_treaty", "get_treaty_rate", "check_mli_ppt"],
+      "status": "pending_verification",
+      "rag_ready": true,
+      "rag_notes": "Already machine-readable JSON — can be loaded as a context document for treaty queries. Suitable as a lookup context for a RAG-augmented treaty tool.",
+      "notes": "This is the agent's primary live data source for three tools. Highest priority for data quality improvement."
+    },
+
+    {
+      "id": "PROJECT-DTT-CSV",
+      "type": "database",
+      "name": "Poland DTT list with MLI cross-check — full 91-country CSV",
+      "short_name": "data/poland_dtt_list.csv",
+      "authority": "Project-maintained (derived from MoF list + OECD MLI positions)",
+      "jurisdiction": "Poland (bilateral)",
+      "language": "English",
+      "coverage": "All 91 Polish bilateral tax treaties",
+      "last_updated": "2026-03-31",
+      "columns": [
+        "country, treaty_name, dz_u, year_in_force",
+        "mli_cta_poland, mli_counterparty_mli_status, mli_counterparty_force_date",
+        "mli_synthesized_text_mof, mli_ppt_applies, mli_flags, mli_note"
+      ],
+      "local_project_file": "data/poland_dtt_list.csv",
+      "used_by_tools": ["check_treaty", "check_mli_ppt"],
+      "status": "current",
+      "rag_ready": false,
+      "rag_notes": "CSV format — would need preprocessing for RAG. The 36-country subset in treaties.json is more suitable.",
+      "notes": "Frank personally compiled from MoF treaty list + OECD MLI positions. Full cross-check completed March 2026."
+    }
+  ],
+
+  "planned_sources": [
+    {
+      "id": "INDIVIDUAL-TREATY-FR-1975",
+      "type": "treaty",
+      "name": "Umowa między Rządem PRL a Rządem Republiki Francuskiej w sprawie zapobiegania podwójnemu opodatkowaniu w zakresie podatków od dochodu i majątku",
+      "short_name": "Poland-France DTC (1975)",
+      "dz_u": "Dz.U. 1977 nr 1 poz. 5",
+      "notes": "Key case: Orange Polska. Art. 12 scope may not cover all modern royalties — Art. 7 Business Profits fallback possible. Needs PDF verification for rates and Art. 12 definition.",
+      "status": "planned"
+    },
+    {
+      "id": "INDIVIDUAL-TREATY-LU",
+      "type": "treaty",
+      "name": "Umowa między Rządem RP a Rządem Wielkiego Księstwa Luksemburga w sprawie unikania podwójnego opodatkowania (2012 Protocol)",
+      "short_name": "Poland-Luxembourg DTC (+ 2012 Protocol)",
+      "notes": "2012 Protocol changed dividend rates. Verify current rates against DzU reference in treaties.json.",
+      "status": "planned"
+    },
+    {
+      "id": "INDIVIDUAL-TREATY-DE",
+      "type": "treaty",
+      "name": "Umowa między RP a Republiką Federalną Niemiec w sprawie unikania podwójnego opodatkowania (2003)",
+      "short_name": "Poland-Germany DTC (2003)",
+      "notes": "Germany excluded from Poland's MLI CTAs — PPT confirmed NO. Rates need PDF verification.",
+      "status": "planned"
+    },
+    {
+      "id": "INDIVIDUAL-TREATY-NL",
+      "type": "treaty",
+      "name": "Konwencja między RP a Królestwem Niderlandów w sprawie unikania podwójnego opodatkowania",
+      "short_name": "Poland-Netherlands DTC",
+      "notes": "VERIFY MLI case — check OECD Matching Database. Rates need PDF verification.",
+      "status": "planned"
+    }
+  ],
+
+  "rag_roadmap": {
+    "description": "Phased plan for moving from static data to RAG-based treaty and legal knowledge",
+    "phases": [
+      {
+        "phase": "9a",
+        "priority": "HIGH",
+        "target_sources": ["PL-MF-OBJ-2025", "ACADEMIC-JANKOWSKI-SMOLEN-2025"],
+        "benefit": "Replace hardcoded substance simulation with authoritative BO test logic. Most impactful single improvement.",
+        "approach": "Chunk by section; embed with topic labels; retrieve by condition and entity type"
+      },
+      {
+        "phase": "9b",
+        "priority": "HIGH",
+        "target_sources": ["OECD-TP-GUIDELINES-2022"],
+        "benefit": "Replace hardcoded DEMPE simulation with real OECD Ch. VI functional analysis.",
+        "approach": "Chunk Chapter VI by DEMPE function; embed with IP type and function labels"
+      },
+      {
+        "phase": "9c",
+        "priority": "MEDIUM",
+        "target_sources": ["EU-DIR-2003-49-EC", "EU-DIR-2011-96-EU", "PL-CIT-2026"],
+        "benefit": "Improve directive exemption analysis from hardcoded rules to cited-text reasoning.",
+        "approach": "Short documents; load in full as context rather than chunk-and-retrieve"
+      },
+      {
+        "phase": "9d",
+        "priority": "MEDIUM",
+        "target_sources": ["INDIVIDUAL-TREATY-FR-1975", "INDIVIDUAL-TREATY-LU", "INDIVIDUAL-TREATY-DE", "INDIVIDUAL-TREATY-NL"],
+        "benefit": "Rate verification and Art. 12 scope checks against official treaty PDFs.",
+        "approach": "Per-treaty chunks; retrieve by article number and income type"
+      }
+    ]
+  }
+}
