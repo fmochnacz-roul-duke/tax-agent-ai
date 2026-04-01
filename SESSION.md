@@ -1,7 +1,7 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 9a complete (Tax Taxonomy). Phase 9b (RAG infrastructure) next.
+**Phase:** Phase 9b in progress — RAG infrastructure complete, source files created (MF-OBJ-2025 + CIT WHT). Step 2 (embedding build) and Step 3 (agent integration) remain.
 **Date of last session:** 2026-04-01
 **Branch:** feature/phase9-rag-taxonomy
 
@@ -18,14 +18,24 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's continue — Phase 9a taxonomy is done, next is Phase 9b RAG infrastructure."
+> "Let's continue — Phase 9b source files are committed, next is Step 2 (npm run rag:build) and Phase 9c (agent integration)."
 
 Verify environment:
 ```
 git checkout feature/phase9-rag-taxonomy
 npm run build    ← zero errors
-npm test         ← 99/99 passing
+npm test         ← 140/140 passing
 ```
+
+Phase 9b progress:
+- [x] Step 0: Architecture designed (Chunker, Embedder, Retriever, LegalRagService)
+- [x] Step 1: Source .md files created — MF-OBJ-2025.md (14 chunks), PL-CIT-2026-WHT.md (9 chunks)
+- [ ] Step 2: Run `npm run rag:build` — requires OPENAI_API_KEY (embeds chunks, writes vectors.json)
+- [ ] Step 3 (Phase 9c): Integrate LegalRagService into SubstanceExtractor.ts and BeneficialOwnerAgent.ts
+
+Still to do before Step 2:
+- Optional: Create JANKOWSKI-SMOLEN-2025.md from extracted text (academic source, lower priority)
+- Run npm run rag:build to embed all sources (Frank needs OPENAI_API_KEY set)
 
 Then verify the environment is healthy:
 ```
