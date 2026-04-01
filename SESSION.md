@@ -1,9 +1,18 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 10 complete (Substance Interview). All phases 1–8 + 10 done. 99/99 tests passing. On branch master.
+**Phase:** Phase 9 COMPLETE — RAG infrastructure built and wired into the agent.
 **Date of last session:** 2026-04-01
-**Branch:** master
+**Branch:** feature/phase9-rag-taxonomy (ready to PR → master)
+
+### Phase 9 summary (this session)
+- Phase 9a ✓ Tax taxonomy (40 concepts) + wiki content
+- Phase 9b ✓ RAG infrastructure (Chunker, Embedder, Retriever, LegalRagService) + source .md files
+  - Step 2: `npm run rag:build` run — 23 chunks embedded (MF-OBJ-2025: 14, PL-CIT-2026: 9)
+  - Outputs: `chunks/index.json` (43 KB), `embeddings/vectors.json` (905 KB), `manifest.json`
+- Phase 9c ✓ `consult_legal_sources` tool wired into BeneficialOwnerAgent + WhtEnvironment
+  - Smoke test: agent called RAG twice, retrieved Art. 4a pkt 29 (score 0.58), completed in 6 iterations
+  - 143/143 tests passing
 
 ---
 
@@ -11,12 +20,19 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's continue — Phase 10 is done, what's next?"
+> "Phase 9 is complete — let's open a PR to merge feature/phase9-rag-taxonomy into master, then start Phase 11 (Audit Trail / PDF attestation)."
+
+Verify environment:
+```
+git checkout feature/phase9-rag-taxonomy
+npm run build    ← zero errors
+npm test         ← 143/143 passing
+```
 
 Then verify the environment is healthy:
 ```
 npm run build                                                     ← zero errors
-npm test                                                          ← 99/99 passing
+npm test                                                          ← 140/140 passing
 npm start                                                         ← web UI at http://localhost:3000
 npm run tax:agent -- --input data/orange_polska_royalty.json      ← CLI still works
 

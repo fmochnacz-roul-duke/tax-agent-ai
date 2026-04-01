@@ -13,7 +13,8 @@
     "tax:agent": "ts-node src/agents/BeneficialOwnerAgent.ts",
     "module3:readme": "ts-node src/module3/ReadmeAgent.ts",
     "ddq:service": "python python/run.py",
-    "start": "ts-node src/server/index.ts"
+    "start": "ts-node src/server/index.ts",
+    "rag:build": "ts-node scripts/build-knowledge-base.ts"
   },
   "keywords": [],
   "author": "",

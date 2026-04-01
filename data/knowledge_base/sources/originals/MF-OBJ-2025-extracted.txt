@@ -1,0 +1,1619 @@
+
+===PAGE 1===
+Objaśnienia podatkowe
+z 3 lipca 2025 r.
+dotyczące stosowania tzw. klauzuli
+rzeczywistego właściciela dla celów
+podatku u źródła
+Podstawa prawna: art. 14a § 1 pkt 2 ustawy z dnia 29 sierpnia 1997 r. – Ordynacja podatkowa (jednolity tekst: Dz. U. z 2025 r. poz.
+111 ze zmianami)
+
+===PAGE 2===
+Spis treści
+1. Wprowadzenie ................................................................................................................................... 4
+2. Status rzeczywistego właściciela jako warunek zastosowania preferencji w WHT .................... 5
+2.1. Definicja rzeczywistego właściciela w przepisach krajowych - uwzględnienie dorobku
+OECD i UE ......................................................................................................................................... 5
+2.2. Przesłanka otrzymania danej należności dla własnej korzyści i nieistnienia zobowiązania
+do przekazania całości lub części należności ................................................................................... 7
+2.3. Przesłanka prowadzenia rzeczywistej działalności gospodarczej ........................................ 10
+2.3.1. Dzielony substrat osobowo-majątkowy ........................................................................... 14
+3. Zakres płatności objętych obowiązkiem badania warunku rzeczywistego właściciela ............. 15
+3.1. Płatności bierne ......................................................................................................................... 15
+3.2. Usługi niematerialne stanowiące zysk przedsiębiorstwa w rozumieniu przepisów UPO .. 16
+3.3. Dywidendy na gruncie art. 22 ust. 4 ustawy o CIT ............................................................... 16
+3.4. Dywidendy, odsetki i należności licencyjne na gruncie UPO niezawierających wprost
+klauzuli rzeczywistego właściciela.................................................................................................. 18
+4. Okoliczności badane w celu weryfikacji warunku rzeczywistego właściciela ............................ 18
+4.1. Wstęp ......................................................................................................................................... 18
+4.2. Okoliczności badane w przypadku płatności do podmiotu powiązanego............................ 19
+4.3. Okoliczności badane w przypadku płatności do podmiotu niepowiązanego ...................... 19
+4.4. Szczególne przypadki okoliczności badanych w celu weryfikacji warunku rzeczywistego
+właściciela ......................................................................................................................................... 20
+4.4.1. Okoliczności badane przez płatnika technicznego ......................................................... 20
+4.4.2. Okoliczności badane przez OZZ ...................................................................................... 22
+5. Standard badania możliwości zastosowania preferencyjnej stawki podatku, zwolnienia lub
+niepobrania podatku ........................................................................................................................... 23
+6. Szczególne przypadki badania warunku rzeczywistego właściciela ........................................... 23
+6.1. Wstęp ......................................................................................................................................... 23
+6.2. LTA ............................................................................................................................................ 24
+6.2.1. LTA a dywidenda na gruncie dyrektywy PS .................................................................. 24
+6.2.2. LTA a odsetki i należności licencyjne na gruncie dyrektywy IR. ................................. 27
+6.2.3. LTA a dywidendy na gruncie UPO. ................................................................................. 29
+6.2.4. LTA a odsetki i należności licencyjne na gruncie UPO.................................................. 30
+6.3. Rozszerzony zakres podmiotowy badania warunku rzeczywistego właściciela.................. 30
+6.3.1. Płatności mogące podlegać analizie pod kątem zastosowania preferencji na podstawie
+rozszerzonego zakresu podmiotowego badania ........................................................................ 30
+6.3.2. Przesłanki spełnienia warunku rzeczywistego właściciela na podstawie rozszerzonego
+zakresu podmiotowego badania ................................................................................................. 32
+6.4. Domniemanie spełnienia warunku rzeczywistego właściciela na gruncie dyrektywy PS .. 34
+6.5. OZZ jako rzeczywisty właściciel ............................................................................................. 36
+2
+
+===PAGE 3===
+Wykaz skrótów
+BO rzeczywisty właściciel / beneficial owner
+CIT podatek dochodowy od osób prawnych
+Dyrektywa Rady 2003/49/WE z dnia 3 czerwca 2003 r.
+w sprawie wspólnego systemu opodatkowania
+stosowanego do odsetek oraz należności licencyjnych
+między powiązanymi spółkami różnych
+dyrektywa IR
+Państw Członkowskich - w wersji skonsolidowanej:
+https://eur-lex.europa.eu/legal-
+content/EN/TXT/?uri=CELEX%3A02003L0049-
+20130701
+Dyrektywa Rady 2011/96/UE z dnia 30 listopada 2011 r.
+w sprawie wspólnego systemu opodatkowania mającego
+zastosowanie w przypadku spółek dominujących i spółek
+dyrektywa PS
+zależnych różnych państw członkowskich
+(przekształcenie) – w wersji skonsolidowanej:
+http://data.europa.eu/eli/dir/2011/96/2015-02-17
+EOG Europejski Obszar Gospodarczy
+Konwencja sporządzona w Wiedniu dnia 23 maja 1969 r.
+Konwencja wiedeńska o prawie traktatów
+(Dz. U. z 1990 r., Nr 74, poz. 439)
+LTA look-through approach
+Modelowa Konwencja OECD w sprawie podatku od
+MK OECD
+dochodu i majątku
+Modelowa Konwencja OECD w sprawie podatku od
+MK OECD (1977) dochodu i majątku w wersji z 1977 roku; odpowiednio
+stosowane w przypadku wersji z innego roku
+NSA Naczelny Sąd Administracyjny
+ustawa z dnia 29 sierpnia 1997 r. - Ordynacja podatkowa
+Ordynacja podatkowa
+(jednolity tekst: Dz. U. z 2025 r .poz. 111 ze zmianami)
+PIT podatek dochodowy od osób fizycznych
+OZZ organizacja zbiorowego zarządzania prawami autorskimi
+zryczałtowany podatek dochodowy od przychodów, o
+podatek u źródła; WHT których mowa w art. 21-22 ustawy o CIT oraz art. 29
+ust.1 pkt 1 oraz art. 30a ust. 1-5a ustawy o PIT
+podmioty, o których mowa w art. 23m ust. 1 pkt 4 ustawy
+podmioty powiązane
+o PIT lub art. 11a ust. 1 pkt 4 ustawy o CIT
+relacje, o których mowa w art. 23m ust. 1 pkt 5 ustawy o
+powiązania
+PIT lub art. 11a ust. 1 pkt 5 ustawy o CIT
+RP Rzeczpospolita Polska
+TSUE Trybunał Sprawiedliwości Unii Europejskiej
+UE Unia Europejska
+umowa albo umowy o unikaniu podwójnego
+UPO
+opodatkowania
+ustawa z dnia 15 lutego 1992 r. o podatku dochodowym
+ustawa o CIT od osób prawnych (jednolity tekst: Dz.U z 2025 r. poz.
+278 ze zmianami)
+ustawa z dnia 26 lipca 1991 r. o podatku dochodowym od
+ustawa o PIT osób fizycznych (jednolity tekst: Dz.U. z 2025 r. poz.163
+ze zmianami)
+Ustawa z dnia 15 czerwca 2018 r. o zbiorowym
+ustawa o zbiorowym zarządzaniu prawami autorskimi i
+zarządzaniu prawami autorskimi i prawami pokrewnymi
+prawami pokrewnymi
+(jednolity tekst: Dz.U. 2024 r., poz. 1665)
+ustawa z dnia 29 października 2021 r. o zmianie ustawy
+o podatku dochodowym od osób fizycznych, ustawy o
+ustawa z 29 października 2021 roku
+podatku dochodowym od osób prawnych oraz niektórych
+innych ustaw (Dz. U. z 2021 r., poz. 2105 ze zmianami)
+3
+
+===PAGE 4===
+1. Wprowadzenie
+Niniejsze objaśnienia podatkowe (dalej jako: „Objaśnienia”) wyjaśniają stosowanie klauzuli
+rzeczywistego właściciela w kontekście obowiązku poboru przez płatników podatku u źródła
+na gruncie przepisów ustawy o CIT i ustawy o PIT. Objaśnienia dotyczą w szczególności
+przepisów art. 4a pkt 29, art. 21, art. 22, art. 26 oraz art. 28b ust. 4 pkt 5-6 ustawy o CIT oraz
+art. 5a pkt 33d, art. 29 ust. 1 pkt 1, art. 30a ust. 1 pkt 1-5a, art. 41 oraz art. 44f ust. 4 pkt 5-6
+ustawy o PIT.
+Celem Objaśnień jest wyjaśnienie stosowania klauzuli rzeczywistego właściciela w kontekście
+poboru podatku przez płatników ze względu na ciążący na nich obowiązek dochowania
+należytej staranności w określeniu czy dany podmiot jest uprawniony do preferencji
+podatkowej przewidzianej w przepisach ustawy o CIT (art. 22 ust. 4 albo art. 21 ust. 3 ustawy
+o CIT) albo odpowiedniej UPO.
+Niniejszy dokument sporządzony został m.in. jako wynik analizy uwag zgłoszonych w trakcie
+konsultacji podatkowych i został podzielony na następujące części:
+a) definicja rzeczywistego właściciela jako warunku zastosowania preferencji w WHT,
+b) zakres płatności objętych obowiązkiem badania odbiorcy należności pod kątem wymogu
+badania przesłanki rzeczywistego właściciela,
+c) zakres okoliczności podlegających badaniu w celu weryfikacji czy warunek rzeczywistego
+właściciela został spełniony,
+d) standard badania możliwości zastosowania preferencyjnej stawki podatku, zwolnienia lub
+niepobrania podatku,
+e) fakultatywne rozwiązania dla podatnika/płatnika umożliwiające zastosowanie preferencji
+podatkowej ze względu na cechy innego podmiotu niż podmiot, do którego dokonano płatności
+(np. look through approach).
+Objaśnienia stanowią ogólne wyjaśnienia przepisów prawa podatkowego dotyczące ich
+stosowania i wydawane są na podstawie art. 14a § 1 pkt 2 Ordynacji podatkowej. Zgodnie z
+art. 14n § 4 pkt 1 Ordynacji podatkowej zastosowanie się przez podatnika w danym okresie
+rozliczeniowym do objaśnień podatkowych powoduje objęcie go ochroną przewidzianą w art.
+14k-14m. Zastosowanie się do niniejszych objaśnień powodować będzie więc objęcie
+podatnika ochroną przewidzianą w przepisach podatkowych. Ochrona ta rozciąga się, zgodnie
+z art. 14p Ordynacji podatkowej, także na płatników.
+Należy mieć na uwadze, że gdy Objaśnienia zawierają przykład ilustrujący spełnienie danego
+warunku, stan faktyczny opisany w takim przykładzie może podlegać ocenie na gruncie art.
+22c ustawy o CIT.
+4
+
+===PAGE 5===
+2. Status rzeczywistego właściciela jako warunek zastosowania preferencji w WHT
+2.1. Definicja rzeczywistego właściciela w przepisach krajowych - uwzględnienie dorobku
+OECD i UE
+Koncepcja klauzuli rzeczywistego właściciela w prawie podatkowym wywodzi się z umów
+o unikaniu podwójnego opodatkowania, gdzie odnosi się ona do opodatkowania przychodu
+z tzw. płatności biernych (tj. do opodatkowania na zasadach wyrażonych w art. 10-12 MK
+OECD), szczególnie podatnych na wykorzystywanie w celach erozji podstawy opodatkowania
+i przesuwania dochodu. Analogicznie, warunek ten dotyczy preferencji przewidzianej art. 21
+ust. 3 i art. 22 ust. 4 ustawy o CIT (implementacja dyrektywy IR i dyrektywy PS)
+przewidujących możliwość zastosowania zwolnienia z WHT dla płatności w ramach UE1.
+Klauzula ta ma swoje źródło w celach regulacji stanowiących podstawę preferencji
+podatkowych i to one determinują jej wykładnię (w tym podmiot podlegający badaniu),
+a niekiedy uzasadniają domniemanie, że w odniesieniu do danego podmiotu warunek
+rzeczywistego właściciela jest spełniony. Klauzula rzeczywistego właściciela w założeniu
+przeciwdziała bowiem transgranicznemu unikaniu opodatkowania - stosowanie jej ma
+gwarantować, że kryterium rezydencji podatkowej, jako narzędzie służące do korzystania
+z ochrony traktatowej przez podatników, nie jest wykorzystywane w niewłaściwy sposób.
+Nie można przyjąć, że podstawową funkcją tej klauzuli jest techniczne przypisanie dochodu do
+odpowiedniego podmiotu2. Jednakże to, że zastosowanie klauzuli rzeczywistego właściciela
+służy zabezpieczeniu celu dyrektyw PS/IR3 lub UPO4 i przeciwdziała nieuprawnionemu
+korzystaniu z tych regulacji przez podmioty nimi nieobjęte, nie oznacza, że jest ona klauzulą
+1 Każdorazowo, kiedy niniejsze objaśnienia odwołują się do UE w kontekście preferencji stosowanych na
+podstawie dyrektyw należy uwzględniać odpowiednie stosowanie regulacji do krajów EOG i Szwajcarii.
+2 Por. przykładowo wyrok NSA z 26 lipca 2022 r., sygn. akt II FSK 1230/21, gdzie NSA wskazuje: „Zgodnie z
+treścią komentarza do MK OECD, pojęcie beneficial owner nie jest używane w wąskim, technicznym sensie, ale
+powinno być rozumiane w jego kontekście i w świetle przedmiotu i celów Konwencji, w tym unikania
+opodatkowania i uchylania się (obchodzenia) opodatkowania. Wbrew twierdzeniom skargi kasacyjnej takie
+rozumienie tego pojęcia było aktualne w jego wersji z 2012 r. W wersji komentarza z 2017 r. doprecyzowano
+tylko, że wspomniane techniczne, wąskie rozumienie odnosi się na przykład do znaczenia pojęcia beneficial owner
+nadawanego mu w systemach krajowych, w tym w unormowaniach prawa trustowego (przepisów o
+powiernictwie) w porządkach typu common law.”; analogicznie NSA w wyroku z 8 lutego 2023 r, sygn. akt II
+FSK 1280/22, w wyroku z 16 maja 2023 r., sygn. akt II FSK 14/23, w wyroku z 27 lutego 2024 r., sygn. akt II
+FSK 1467/23 i w wyroku z 27 lutego 2024 r., sygn. akt II FSK 1466/23.
+3 Par. 92 wyroku TSUE z 26 lutego 2019 r., w sprawach połączonych C‑115/16, C‑118/16, C‑119/16 i C‑299/16
+w związku z par. 90 tego wyroku: „z rozwoju modelowej konwencji podatkowej OECD i komentarzy do niej (…)
+wynika, że pojęcie „właściciela” wyklucza spółki pośredniczące i powinno być rozumiane nie w wąskim i
+technicznym znaczeniu, lecz w sposób pozwalający uniknąć podwójnego opodatkowania i zapobiec oszustwom
+oraz uchylaniu się od opodatkowania.”. Analogicznie do pojęcia „właściciela” stosowanego na gruncie umów o
+unikaniu podwójnego opodatkowania TSUE odwołuje się w par. 108-111 wyroku z dnia 26 lutego 2019 r. w
+sprawach połączonych C‑116/16 i C‑117/16.
+4 Zgodnie z raportem OECD z 2022 r. Restricting the Entitlement to Treaty Benefits: „Zwrot rzeczywisty właściciel
+nie powinien być używany w wąskim, technicznym znaczeniu, lecz powinien być rozumiany w świetle przedmiotu
+i celu UPO, uwzględniając przeciwdziałanie unikaniu opodatkowania”.
+5
+
+===PAGE 6===
+stricte antyabuzywną w rodzaju klauzuli GAAR5 czy klauzuli zawartej w art. 22c ustawy
+o CIT6, do stosowania których uprawnione są wyłącznie organy podatkowe.
+Weryfikacja statusu rzeczywistego właściciela w odniesieniu do odbiorcy należności jest więc
+w przypadku określonych płatności warunkiem zastosowania preferencyjnej stawki lub
+zwolnienia z WHT wynikającego z przepisów ustawy o CIT, ustawy o PIT lub umów o
+unikaniu podwójnego opodatkowania.
+Określenie „rzeczywisty właściciel” zostało zdefiniowane w art. 4a pkt 29 ustawy o CIT7. Jak
+wynika z tych przepisów, ilekroć w ustawie o CIT lub ustawie o PIT mowa jest o rzeczywistym
+właścicielu, pod pojęciem tym należy rozumieć podmiot, który spełnia łącznie następujące
+warunki:
+• otrzymuje daną należność dla własnej korzyści, w tym samodzielnie decyduje o jej
+przeznaczeniu i ponosi ryzyko ekonomiczne związane z utratą tej należności lub jej
+części;
+• nie jest pośrednikiem, przedstawicielem, powiernikiem lub innym podmiotem
+zobowiązanym do przekazania całości lub części należności innemu podmiotowi;
+• prowadzi rzeczywistą działalność gospodarczą w kraju siedziby, jeżeli należności są
+uzyskiwane w związku z prowadzoną działalnością gospodarczą, przy czym przy
+ocenie, czy podmiot prowadzi rzeczywistą działalność gospodarczą, uwzględnia się
+charakter oraz skalę działalności prowadzonej przez ten podmiot w zakresie otrzymanej
+należności.
+Tym samym przepisy ustawy o CIT i ustawy o PIT przewidują trzy przesłanki, które
+muszą być spełnione łącznie dla uznania odbiorcy należności za jej rzeczywistego
+właściciela, tj.:
+(i) otrzymanie danej należności dla własnej korzyści,
+(ii) brak zobowiązania do przekazania całości lub części należności,
+(iii) prowadzenie rzeczywistej działalności gospodarczej.
+Przesłanka braku zobowiązania do przekazania należności innemu podmiotowi oraz
+otrzymywania należności dla własnej korzyści powinny być rozpatrywane funkcjonalnie
+jako jedna. W założeniu wykluczają one z definicji BO podmioty, które nie posiadają
+5 Por. NSA w wyroku z 26 lipca 2022 r., sygn. akt II FSK 1230/21, gdzie w odniesieniu do różnic między klauzulą
+rzeczywistego właściciela a klauzulą GAAR NSA zauważa: „regulacja art. 11 ust. 1 Konwencji nie jest szczególną
+klauzulą przeciw unikaniu opodatkowania. Prawidłowe zastosowanie tego przepisu (skorzystanie z preferencyjnej
+stawki podatku u źródła) wymaga jedynie, żeby dochód w postaci odsetek od pożyczek trafił do podmiotu
+będącego beneficial owner. (…) Organ w decyzji faktycznie odwołuje się w do sztuczności powstałych pomiędzy
+podmiotami struktur, co mogłoby sugerować zastosowaniu klauzuli GAAR, bądź SAAR. Jednak w efekcie nie
+kwestionuje w sprawie żadnej z przeprowadzonych transakcji między powiązanymi podmiotami, nie dokonuje ich
+recharakteryzacji, tym samym nie można twierdzić, że traktuje instytucję beneficial owner, jako klauzulę
+antyabuzywną.”.
+6 Tak też: TSUE w wyroku z 26 lutego 2019 r., w sprawach połączonych C‑115/16, C‑118/16, C‑119/16 i
+C‑299/16, par. 140 vs. par. 142 i w wyroku z dnia 26 lutego 2019 r. w sprawach połączonych C‑116/16 i C‑117/16,
+par. 116 vs. par. 117; ponadto, per analogiam argumentacja przedstawiona przez NSA w ww. wyroku dot. klauzuli
+GAAR.
+7 Odpowiednio art. 5a pkt 33d ustawy o PIT.
+6
+
+===PAGE 7===
+ekonomicznego władztwa nad należnością. Rzeczywistym właścicielem będzie więc podmiot,
+który takie władztwo posiada.
+Przesłanka prowadzenia rzeczywistej działalności gospodarczej uzupełnia powyższe i
+odnosi się do cech danego podmiotu wymagając, żeby dany podmiot posiadał
+wystarczające dla danego typu działalności zasoby (ludzkie, informacyjne czy
+infrastrukturalne), aby to ekonomiczne władztwo nad daną należnością wykonywać.
+Celem tej przesłanki jest zatem ustalenie faktycznej możliwości spełnienia przez odbiorcę
+należności dwóch pozostałych przesłanek.
+Niespełnienie jednej z powyższych przesłanek uniemożliwia kwalifikacje danego podmiotu
+jako rzeczywistego właściciela płatności, gdyż dopiero łącznie odzwierciedlają one treść tego
+pojęcia określaną m.in. przez dorobek prac OECD8, uznany przez TSUE za stanowiący
+podstawę wykładni tego pojęcia także na potrzeby dyrektyw PS i IR9. Międzynarodowe źródło
+pojęcia BO oznacza także, że aspekty te podlegają badaniu niezależnie od wskazania danej
+przesłanki wprost w krajowej definicji10.
+Wykładnia pojęcia rzeczywistego właściciela zgodna z jego międzynarodowym znaczeniem
+wymaga również uwzględnienia rozumienia tej koncepcji prezentowanego przez TSUE w
+sprawie N Luxembourg 111 (wykazującego wiele cech wspólnych z komentarzem do MK
+OECD w wersji z lat 2003 i 2014). Oznacza to, że:
+• zwrot „rzeczywisty właściciel” nie powinien być rozumiany w wąskim, technicznym
+znaczeniu, ale mieć takie znaczenie, które pozwala zapobiegać unikaniu opodatkowania
+z wykorzystaniem UPO lub dyrektyw unijnych;
+• przy interpretacji warunku rzeczywistego właściciela należy zastosować podejście
+ekonomiczne.
+2.2. Przesłanka otrzymania danej należności dla własnej korzyści i nieistnienia
+zobowiązania do przekazania całości lub części należności
+Zgodnie z podejściem ekonomicznym rzeczywisty właściciel należności dysponuje nie tyle
+ścisłym formalnym władztwem prawnym, lecz władztwem ekonomicznym nad należnością.
+Rzeczywistym właścicielem nie może być więc podmiot podstawiony wyłącznie do dalszego
+8 W Raporcie OECD z 1986 r. Double Taxation Conventions and the Use of Conduit Companies pojęcie
+rzeczywistego właściciela zostało wprost odniesione do problematyki spółek pośredniczących nieprowadzących
+istotnej rzeczywistej działalności gospodarczej i posiadających bardzo ograniczone władztwo nad dochodem. W
+pkt 14b, R (6)-8 wyraźnie podkreślono, że kryterium rzeczywistego właściciela nie spełniają również podmioty
+pośredniczące posiadające bardzo ograniczone władztwo nad tym dochodem, które w sensie ekonomicznym z
+niego nie korzystają. W Harmful Tax Competition An Emerging Global Issue, 1998 r., pkt 119, OECD wprost
+wskazuje na zależność pomiędzy prowadzeniem istotnej rzeczywistej działalności gospodarczej a pojęciem
+rzeczywistego właściciela.
+9 TSUE w par. 90 wyroku z 26 lutego 2019 r., w sprawach połączonych C‑115/16, C‑118/16, C‑119/16 i C‑299/16
+„dyrektywa ta [dyrektywa IR] czerpie z art. 11 modelowej konwencji podatkowej OECD z 1996 r. i dąży do tego
+samego celu, czyli do unikania międzynarodowego podwójnego opodatkowania. Pojęcie „właściciela”, które
+znajduje się w dwustronnych umowach opartych na tej modelowej konwencji, a także kolejne zmiany
+wprowadzone do rzeczonej konwencji i do komentarzy jej dotyczących mają zatem znaczenie przy dokonywaniu
+wykładni dyrektywy 2003/49”. Odpowiednio, do pojęcia „właściciela” odwołuje się także drugi wyrok w tzw.
+„sprawach duńskich”, z dnia 26 lutego 2019 r. w sprawach połączonych C‑116/16 i C‑117/16 (omawiany bardziej
+szczegółowo w pkt. 3.2. Objaśnień).
+10 Por. NSA w wyroku z 26 lipca 2022, sygn. akt II FSK 1230/21; NSA w wyrokach z 27 lutego 2024 r., sygn. akt
+II FSK 1467/23, sygn. akt II FSK 1466/23.
+11 Wyrok TSUE z dnia 26 lutego 2019 r. w sprawach połączonych C-115/16, C-118/16, C-119/16 i C-299/16.
+7
+
+===PAGE 8===
+transferu płatności (ang. merely a conduit for the passage of (…) payment). Pojęcie to (BO)
+odnosi się do podmiotu, który w rzeczywistości i efektywnie korzysta z danej płatności.
+Przesłanka „otrzymania danej należności dla własnej korzyści” jest konsekwencją wymogu
+braku zobowiązania do przekazania płatności. Odwołuje się ona do aspektów rzeczywistego
+właściciela określanych także jako pełne władztwo i kontrola nad funduszami (ang. complete
+dominion and control), co odróżnia go od podmiotu pośredniczącego utrzymującego jedynie
+tymczasowe fizyczne władztwo (ang. obtanining physcial possession on temporary basis).
+Bywa ona także określana jako test znaczącej własności ekonomicznej (ang. substantive
+economic ownership).
+Podmiot, którego prawo do dysponowania dochodem jest ograniczone zobowiązaniem do
+przekazania otrzymanej należności innemu podmiotowi nie może być bowiem uznany za
+rzeczywistego właściciela. Zobowiązanie do przekazania należności może wynikać z
+formalnie zawartej umowy jak i wszystkich okoliczności faktycznych12 sprawy świadczących
+o jego istnieniu. W obu przypadkach zobowiązanie takie będzie wykluczało status danego
+podmiotu jako rzeczywistego właściciela danej należności. Zobowiązanie wynikające z
+okoliczności sprawy ma miejsce zazwyczaj pomiędzy podmiotami powiązanymi. Możliwe jest
+ono jednak również pomiędzy podmiotami niepowiązanymi. Rozważając, czy istnieje
+obowiązek przekazania dochodu należy zauważyć, że obowiązek ten musi dotyczyć
+otrzymanej płatności i być z nią związany13, szczególnie że zobowiązanie do przekazania
+dochodu nie zawsze musi polegać na przekazaniu dochodu przez ten podmiot w takiej
+samej formie w jakiej został on uzyskany (np. kiedy zapłata odsetek uzależniona jest od
+uzyskania dywidendy).
+O byciu podmiotem pośredniczącym nie świadczy jednak samo w sobie dokonanie płatności
+pomiędzy podmiotami wynikające z obowiązujących w danym kraju systemowych unormowań
+dotyczących grup przedsiębiorstw (takich jak np. funkcjonujące w niemieckim systemie
+prawnym umowy o przekazywaniu zysku). Ustalenie, że inwestorem w badanym podmiocie są
+osoby, którym nie przysługiwałaby preferencyjna stawka podatku u źródła lub zwolnienie,
+gdyby uzyskiwały one płatności bezpośrednio, także nie przesądza, że podmiot ten nie może
+być uznany za rzeczywistego właściciela danej należności - w szczególności w sytuacji, gdy
+12 Za uzasadnieniem do ustawy z dnia 29 października 2021 r. o zmianie ustawy o podatku dochodowym od osób
+fizycznych, ustawy o podatku dochodowym od osób prawnych oraz niektórych innych ustaw, druk 1532: „Zmiana
+w definicji rzeczywistego właściciela ma wyłącznie charakter techniczny, bowiem polega na wyeliminowaniu z
+treści przepisów słów „prawnie lub faktycznie”, które mogły sugerować zawężenie zakresu pojęcia zobowiązania
+na potrzeby przedmiotowej definicji. Omawiane podejście jest spójne z zaprezentowanym w Komentarzu do
+Konwencji Modelowej OECD, gdzie test rzeczywistego właściciela obejmuje przede wszystkim fakty i
+okoliczności, które mogą towarzyszyć zobowiązaniu, nie koncentrując się przy tym na samej naturze / rodzaju
+zobowiązania.”.
+13 Punkt 12.4 Komentarza do Artykułu 10 MK OECD (oraz odpowiadające mu fragmenty Komentarza do Artykułu
+11 oraz Artykułu 12) wskazuje, że umowne lub prawne zobowiązanie odbiorcy płatności do jej przekazania
+innemu podmiotowi musi mieć bezpośredni związek z otrzymaniem tej płatności przez odbiorcę: “Takie
+zobowiązanie zwykle wynika z odpowiednich dokumentów prawnych, ale może również zostać stwierdzone na
+podstawie faktów i okoliczności wskazujących, że w istocie odbiorca wyraźnie nie ma prawa do używania i
+korzystania z dywidendy bez ograniczenia umownym lub prawnym obowiązkiem przekazania otrzymanej
+płatności innej osobie. Ten rodzaj zobowiązania nie obejmuje zobowiązań umownych lub prawnych, które nie są
+zależne od otrzymania płatności przez bezpośredniego odbiorcę, takich jak zobowiązanie, które nie jest zależne
+od otrzymania płatności i które bezpośredni odbiorca ma jako dłużnik lub jako strona transakcji finansowych lub
+typowych obowiązków dystrybucyjnych programów emerytalnych i zbiorowych wehikułów inwestycyjnych
+uprawnionych do świadczeń wynikających z umowy na podstawie zasad paragrafów 22–48 Komentarza do
+artykułu 1.”
+8
+
+===PAGE 9===
+inwestorzy są podmiotami niepowiązanymi (np. sytuacja spółek joint venture czy niektórych
+funduszy inwestycyjnych). Tym samym, dla uznania lub nieuznania danego podmiotu za
+rzeczywistego właściciela płatności konieczne jest każdorazowe dokonanie całościowej oceny
+uprawnień podmiotu w kontekście danej płatności, również kiedy taki inwestor jest uprawniony
+do wypłat podzielonego zysku tego podmiotu14.
+O statusie rzeczywistego właściciela w odniesieniu do danej należności będzie świadczyć m.in.
+ponoszenie związanych z nią czynników ryzyka, takich jak przykładowo: ryzyko niewykonania
+zobowiązania, ryzyko kredytowe dłużnika odsetek, ryzyko zmian stóp procentowych czy
+ryzyko walutowe lub ryzyko kursowe. Ryzyko to także musi być ponoszone dla własnej
+korzyści, odpowiednio do uzyskiwania należności dla własnej korzyści. Oznacza to, że nie
+będzie mogła zostać uznana za rzeczywistego właściciela spółka, która istnieje wyłącznie
+w celu zabezpieczenia ryzyka innego podmiotu (przypadek taki może być ewentualnie objęty
+preferencją na podstawie rozszerzonego zakresu podmiotowego badania opisanego w pkt 6.3.
+Objaśnień).
+Jednocześnie, uzyskanie „własnej korzyść” z otrzymanej należność nie zawsze będzie oznaczać
+dochód bezpośrednio związany z dochodem wykazanym w wyniku jej otrzymania (np. odsetki
+od reinwestycji otrzymanej płatności). „Uzyskanie korzyści” w inny sposób ma miejsce np. w
+przypadku spółki, której działalność polega na utrzymywaniu własności intelektualnej, znaków
+towarowych, know-how itp. i zabezpieczeniu takich aktywów przed ryzykiem utraty ich
+wartości. Spółka taka może otrzymywać należności z tytułu opłat licencyjnych za użytkowanie
+posiadanego aktywa. Sam fakt, że nie dokona ona dalszej inwestycji całości lub części
+uzyskanych w ten sposób środków, a następnie wypłaci dywidendę, nie przesądza, że nie
+uzyskała ona takiej należności licencyjnej dla własnej korzyści lub była zobowiązana do jej
+przekazania. Jeżeli w ramach prowadzonej działalność spółka ta ma faktyczną możliwość
+korzystania z tej należności dla własnej korzyści (tj. spółka ma własne zasoby opłacane m.in. z
+otrzymanej należności i wystarczające, aby zapewnić finansowanie działalność skutkującej
+korzyścią w postaci zabezpieczenia wartości posiadanych aktywów) spółka ta będzie mogła
+zostać uznana za rzeczywistego właściciela należności.
+Ocena zakresu i charakteru uprawnień danego podmiotu w odniesieniu do określonej płatności
+wymaga dokonania analizy konkretnych okoliczności faktycznych, w oparciu o wszelkie
+dostępne informacje. Chodzi tu zarówno o podstawowe dane wynikające z ksiąg podmiotu
+o otrzymanych należnościach i dalszych płatnościach, jak i kontekst tych informacji
+wynikający z rodzaju danej transakcji i okoliczności jej dokonania.
+Przykład 1
+Spółka A wypłaca dywidendę do spółki B, będącej spółką holdingową. Przesłanką statusu
+spółki holdingowej jako rzeczywistego właściciela danej należności, którą płatnik może
+zweryfikować na moment dokonywania wypłaty, jest posiadanie przez tę spółkę substratu
+majątkowo-osobowego umożliwiającego prowadzenie przez nią rzeczywistej działalności
+gospodarczej w zakresie tej wypłaty. Jednakże, kiedy na podstawie publicznie dostępnych
+dokumentów możliwe jest ustalenie, że w latach poprzedzających wypłatę spółka ta nie
+wykonywała władztwa ekonomicznego nad otrzymywanymi dywidendami (np. wypłacała
+14 Tak też TSUE w wyroku z dnia 20 grudnia 2017 r. w sprawach połączonych C-504/16 i C-613/16 w odniesieniu
+do przepisów niemieckich ustanawiających w takiej sytuacji ogólne domniemanie nadużycia.
+9
+
+===PAGE 10===
+dywidendy w praktycznie tej samej wysokości, w jakiej sama takie otrzymała, nie osiągając przy
+tym np. zysku inwestycji tego kapitału) konieczne jest zbadanie okoliczności świadczących o
+tym, że wobec wypłacanej dywidendy spółka wykona władztwo ekonomiczne. Będzie to
+przykładowo uzyskanie oświadczenia od spółki, że będzie ona rzeczywistym właścicielem
+planowanej płatności. Należy jednak podkreślić, że oświadczenie takie nie będzie
+wystarczające, kiedy spółka ta składała takie oświadczenia wobec dywidend w poprzednich
+latach (pomimo niewykonywania władztwa ekonomicznego nad płatnościami).
+Nie jest więc możliwe stworzenie wyczerpującej listy przesłanek kwalifikujących dany
+podmiot jako zobowiązany do przekazania całości lub części płatności. O pośrednictwie i
+nieotrzymywaniu należności dla własnej korzyści może jednak świadczyć wystąpienie m.in.
+następujących przesłanek (przy czym nie jest konieczne, aby wszystkie z nich wystąpiły
+łącznie):
+● podmiot realizuje niewielką marżę na przekazywanych płatnościach;
+● podmiot nie wykazuje przychodu podatkowego z tytułu otrzymanych należności;
+● należności w krótkich odstępach czasu są przekazywane na rzecz innego podmiotu;
+● podmiot nie dokonuje reinwestycji środków finansowych uzyskanych w związku z
+otrzymanymi należnościami;
+● podmiot nie ma innych środków lub źródeł dochodów niż otrzymywana należność
+umożliwiających spłatę jego zobowiązań;
+● podmiot nie ponosi ryzyka związanego z daną należnością.
+Jednocześnie, wystąpienie pojedynczej z powyższych okoliczności nie skutkuje jednoznacznie
+brakiem statusu rzeczywistego właściciela. Dopiero analiza całokształtu okoliczności
+faktycznych umożliwia sprawdzenie, czy wystąpienie powyższych przesłanek w sposób
+obiektywny i spójny wskazuje na brak spełnienia warunku rzeczywistego właściciela.
+2.3. Przesłanka prowadzenia rzeczywistej działalności gospodarczej
+Przesłanka prowadzenia rzeczywistej działalności gospodarczej podlega badaniu w kontekście
+konkretnej płatności. Z jednej strony oznacza to, że spółka prowadząca rozbudowaną
+działalność gospodarczą nie może zostać uznana za rzeczywistego właściciela konkretnej
+płatności, kiedy jedynie pośredniczy w jej otrzymaniu i nie otrzymuje jej dla własnej korzyści.
+Spółka ta nie będzie również wówczas prowadzić rzeczywistej działalności w zakresie tej
+płatności. Z drugiej strony oznacza to, że dana działalność gospodarcza – chociaż
+nierozbudowana – może zostać uznana za rzeczywistą w kontekście danej płatności,
+niewymagającej bardziej rozbudowanej działalności dla czerpania z niej własnej korzyści.
+Nie może spełnić warunku rzeczywistej działalności gospodarczej podmiot, który nie posiada
+własnych środków (majątkowych i osobowych) umożliwiających mu jej prowadzenie (z
+zastrzeżeniem koncepcji dzielonego substratu majątkowo-osobowego, o której mowa w części
+2.3.1 Objaśnień). W praktyce różne będą przesłanki prowadzenia rzeczywistej działalności
+gospodarczej w przypadku spółek produkcyjnych/handlowych, usługowych czy spółek
+zajmujących się szeroko rozumianą działalnością finansową (np. czynnościami inwestycyjnymi
+czy też holdingowymi). W pewnych jednak zakresach kryteria prowadzenia rzeczywistej
+działalności gospodarczej pozostają uniwersalne. Weryfikując status danego podmiotu bierze
+się pod uwagę przykładowo następujące czynniki: czy posiada własny majątek; czy posiada
+biuro w sensie materialnym; czy zatrudnia personel; czy opłaca rachunki związane z bieżącą
+10
+
+===PAGE 11===
+działalnością (w tym np. za wynajem, za media: prąd, telefony itp.); czy zatrudnia (posiada)
+osoby zarządzające z wystarczającym doświadczeniem i wiedzą w zakresie badanych
+transakcji; czy posiada swój kapitał, który służy finansowaniu działalności; czy podejmuje
+samodzielnie i na własny rachunek czynności w obrocie gospodarczym; czy pomiędzy
+podmiotem a jego właścicielem/właścicielami nie zachodzą powiązania kapitałowe i osobowe,
+tego rodzaju, że podmiot taki można uznać za jedynie administratora dochodu15.
+Analogiczne wnioski wypływają z dorobku orzeczniczego TSUE. W wyroku w sprawie
+Cadbury Schweppes16 TSUE odmówił korzyści traktatowych fikcyjnym spółkom,
+niewykonującym faktycznie żadnej działalności gospodarczej17. Podmioty takie nie posiadały
+żadnego personelu, siedziby ani wyposażenia. Szereg prac związanych z zapobieganiem erozji
+bazy podatkowej, podejmowany zarówno na poziomie OECD jak i UE, wpłynął jednak na
+rozszerzenie treści tego pojęcia18. Zwrócił na to uwagę TSUE, wskazując że przy ocenie
+rzeczywistej działalności gospodarczej należy uwzględniać szczególne cechy charakteryzujące
+daną działalność gospodarczą, a w szczególności:
+● sposób zarządzania spółką, w tym możliwość wykonywania istotnych funkcji
+zarządczych w stosunku do posiadanego majątku,
+● bilans księgowy spółki,
+● strukturę kosztów i faktycznie poniesionych wydatków,
+● liczbę zatrudnionych pracowników i ich kwalifikacje,
+● zakres pomieszczeń i wyposażenia, jakimi spółka dysponuje19.
+Nie oznacza to jednak, że w przypadku każdego podmiotu konieczne jest posiadanie
+znaczącego substratu majątkowo-osobowego, aby można było uznać go za rzeczywistego
+właściciela danej płatności. Poziom rozbudowania tego substratu wystarczający dla spełnienia
+przesłanki prowadzenia rzeczywistej działalności gospodarczej zależy od rodzaju prowadzonej
+działalności i rodzaju badanej należności. Oznacza to, że inne (niższe) wymogi co do
+zawartości tego substratu będą stawiane tzw. spółkom holdingowym niż spółkom operacyjnym.
+W przypadku spółek holdingowych posiadanie substratu majątkowo-osobowego sprowadza
+się, co do zasady, do odpowiednio doświadczonego personelu, faktycznie zaangażowanego w
+działalność podmiotu, posiadającego wystarczającą wiedzę ekspercką i wyposażonego w
+odpowiedni sprzęt biurowy (o ile inne okoliczności nie świadczą o braku tego substratu).
+O braku spełnienia przesłanki posiadania substratu osobowego mogą świadczyć następujące
+okoliczności:
+• członkami zarządu (dyrektorami) badanego podmiotu są osoby fizyczne/inne podmioty
+pełniące te funkcje wyłącznie w sposób usługowy, również równolegle dla innych
+klientów, niemające doświadczenia zawodowego w zakresie branży/biznesu formalnie
+prowadzonego przez podmiot, zwykle będące rezydentami państwa siedziby podmiotu
+(tzw. dyrektorzy nominowani; usługa standardowo zapewniania przez kancelarię
+prawną lub księgową lub innych podmiot zakładający/dostarczający gotowy podmiot);
+15 Tak też NSA w wyroku z 26 lipca 2022, sygn. II FSK 1230/2, z 8 lutego 2023 r., sygn. II FSK 1280/22, z 16
+maja 2023 r., sygn. II FSK 14/23.
+16 Wyrok TSUE z 12.09.2006 r. w sprawie Cadbury Schweppes, sygn. akt C‑196/04.
+17 Ibidem, pkt 68.
+18 Które jest podobnie szeroko interpretowane przez NSA – por. NSA w wyroku z 26 lipca 2022, sygn. akt II FSK
+1230/21 NSA, w wyroku z 8 lutego 2023 r., sygn. II FSK 1280/22 i wy wyroku z 16 maja 2023 r., sygn. II FSK
+14/23.
+19 Wyrok TSUE z 26 lutego 2019 r., C-115/16, C-118/16, C-119/16 i C-299/16, pkt 131.
+11
+
+===PAGE 12===
+• brak jest przypisania zakresu obowiązków/kompetencji poszczególnym członkom
+zarządu podmiotu;
+• zatrudnienie w spółce jedynie (lub niemal jedynie) personelu administracyjnego
+(zwłaszcza, gdy jednocześnie świadczy on usługi na rzecz innych podmiotów, w tym w
+szczególności innych klientów kancelarii prawnej/innego podmiotu dostarczającego
+podmiot);
+• outsourcing przez podmiot większości podstawowych aspektów funkcjonowania (m.in.
+szerokie korzystanie z usług polegających na uczynieniu danego kraju siedzibą prawną
+lub miejscem prowadzenia działalności, takich jak przykładowo zapewnienia siedziby,
+zapewnienia odpowiednio wykwalifikowanych dyrektorów-rezydentów danego kraju,
+zapewnienia wspólnej przestrzeni biurowej, obsługi poczty przychodzącej, zapewnienia
+zarządzania i kontroli, usługi administracyjne itp.);
+• korzystanie w szerokim zakresie z usług powierniczych;
+• konsultowanie decyzji dotyczących podmiotu głównie z doradcami z kraju innego niż
+kraj podmiotu lub kraj inwestycji prowadzonej przez podmiot (w tym doradcami
+podatkowymi).
+Przykład 2
+Odbiorcą płatności z Polski jest spółka A z siedzibą w państwie A, będąca spółką-córką spółki
+B z państwa B. Spółka A nie zatrudnia pracowników, a jej jedynymi członkami zarządu są osoby
+zamieszkujące w kraju B i pracujące dla spółki B. Jednocześnie brak jest udokumentowanych
+informacji o czasie spędzonym przez te osoby w kraju A w celu prowadzenia spraw spółki A. W
+takim przypadku nie można uznać, że spółka A dysponuje substratem osobowym.
+Jednocześnie, wystąpienie pojedynczej z powyższych okoliczności nie skutkuje jednoznacznie
+brakiem statusu rzeczywistego właściciela. Dopiero analiza całokształtu okoliczności
+faktycznych umożliwia sprawdzenie, czy wystąpienie powyższych przesłanek w sposób
+obiektywny i spójny wskazuje na brak spełnienia warunku rzeczywistego właściciela.
+Posiadanie własnego substratu majątkowo-osobowego dla prowadzenia rzeczywistej
+działalności gospodarczej oznacza faktyczne ponoszenie jego kosztów. Oznacza to, że
+o prowadzeniu „rzeczywistej działalności gospodarczej” decydować będzie nie tyle forma
+prawna posiadania prawa do korzystania z biura (własność, najem, dzierżawa itp.) czy
+zatrudnienia pracowników (umowa o pracę, umowa zlecenia, tzw. globalna umowa o
+mobilności itp.), co fakt obciążenia podmiotu ich kosztami w zakresie uzasadniającym
+założenie, że decyzje podejmowane w ramach takiego podmiotu w odniesieniu do badanej
+należności są podejmowane na jego rzecz (dla jego korzyści).
+Przykład 3
+Spółka A posiada w kraju A w pełni wyposażone, duże biuro. Spółka uzyskuje dywidendy na
+poziomie x mln PLN. Decyzje co do sposobu przeznaczenia środków z tej dywidendy są
+podejmowane w spółce przez jej jedynych pracowników, zatrudnionych w tej i innych spółkach
+grupy w ramach zawartej przez grupę globalnej umowy o mobilności. Osoby te mają
+podejmować te decyzje na podstawie uzyskanych analiz zewnętrznych, jednak koszty ich
+wynagrodzenia (przenoszone na spółkę w ramach rozliczeń wewnątrzgrupowych) są wyraźnie
+niższe od rynkowego wynagrodzenia osób faktycznie zarządzających aktywami o podobnej
+wartości w podmiotach niepowiązanych w państwie tego podmiotu (np. na poziomie poniżej
+12
+
+===PAGE 13===
+przeciętnego wynagrodzenia). Niezależnie od cech posiadanego biura i zamówionych analiz
+zewnętrznych, brak ponoszenia przez spółkę kosztów adekwatnego wynagrodzenia osób
+decyzyjnych w zakresie badanej należności świadczy o przeniesieniu ryzyka związanego z taką
+należnością na inne spółki z grupy. Spółka ta nie prowadzi więc rzeczywistej działalności
+gospodarczej w zakresie badanej należności.
+Także podmioty, od których wymagany jest niższy poziom substratu majątkowo-osobowego
+muszą ponosić koszty uzasadniające uznanie, że ponoszą ryzyko związane z otrzymywanymi
+należnościami (działają samodzielnie, na własny rachunek), a ich działalność musi mieć
+charakter zarobkowy, umożliwiający samodzielne ponoszenie tych kosztów. Oznacza to, że
+samo wykazanie przez odbiorcę płatności marży w związku z jej otrzymaniem i dalszą
+dystrybucją nie przesądza automatycznie o „rzeczywistym” (w rozumieniu omawianych
+regulacji) charakterze działalności gospodarczej; marża musi bowiem odzwierciedlać poziom
+ryzyka adekwatny dla podmiotu korzystającego z otrzymanej należności dla własnej korzyści20.
+Podobnie ogólne przesłanki utworzenia podmiotu takie jak: koordynacja (działalności grupy,
+inwestycji itp.), tworzenie relacji z klientami, koszty czy lokalne preferencje w prawie
+holdingowym nie mogą decydować o statusie rzeczywistego właściciela, jeżeli dany podmiot
+nie prowadzi w tym zakresie rzeczywistej (zarobkowej) działalności gospodarczej,
+umożliwiającej mu czerpanie własnej korzyści z takich okoliczności rynkowych.
+Szczególnie w przypadku spółek holdingowych konieczne jest stwierdzenie czy ponoszone
+koszty świadczą o ponoszeniu ryzyka gospodarczego adekwatnego do prowadzonej przez ten
+podmiot działalności21 (czy koszty działalności, w tym koszty substratu majątkowo-
+osobowego, są adekwatne do skali tej działalności; czy podmiot faktycznie ponosi koszty
+ryzyka lub jego zabezpieczenia, takie jak koszty różnic kursowych lub lokat, itd.). O
+samodzielności w prowadzeniu działalności gospodarczej w przypadku spółek holdingowych
+świadczyć będzie przykładowo: posiadanie i ponoszenie kosztów kont bankowych, na które
+otrzymywana jest płatność i nad którymi wyłączną kontrolę spółka sprawuje poprzez własny
+personel; brak wydzielonych kont bankowych dla otrzymywanej płatności; opłacanie przez
+spółkę kosztów działalności z takiej jednolitej puli środków; brak ograniczeń korporacyjnych
+uniemożliwiających samodzielne decyzje co do codziennej działalności spółki. Rzeczywistej
+działalności gospodarczej nie będzie więc prowadził podmiot, którego założenia korporacyjne
+lub sposób finansowania determinują brak możliwości podjęcia czynności w obrocie
+gospodarczym samodzielnie i na własny rachunek.
+20 Wyłącznie kiedy przepisy kraju takiego podmiotu zezwalają na prowadzenie działalności nienastawionej na
+zysk w formie organizacyjno-prawnej regulowanej przepisami prawa handlowego, podmiot prawa handlowego
+prowadzący taką niezarobkową działalność (zgodnie z przepisami swojego kraju) może wciąż spełnić przesłankę
+prowadzenia rzeczywistej działalności gospodarczej. Analogicznie, niezarobkową a rzeczywistą działalność
+gospodarczą prowadzą podmioty działające w formie zakładającej brak celu zarobkowego, takiej jak fundacja,
+stowarzyszenie, spółdzielnia.
+21 Por. TSUE w wyroku z dnia 20 grudnia 2017 r., sygn. akt C-504/16 i C-613/16, gdzie, w odniesieniu do
+pozostającego poza zakresem niniejszych objaśnień aspektu sztuczności, TSUE wskazuje w par 73: „Okoliczność,
+że działalność gospodarcza spółki dominującej niebędącej rezydentem polega na zarządzaniu aktywami jej spółek
+zależnych, lub że dochody tej spółki dominującej pochodzą wyłącznie z owego zarządzania nie może samo w
+sobie oznaczać istnienia czysto sztucznej struktury pozbawionych wszelkich realiów gospodarczych.”. Dla
+zachowania celu stosowania klauzuli rzeczywistego właściciela analogiczne podejście musi mieć jednak
+zastosowanie także do oceny tego warunku.
+13
+
+===PAGE 14===
+2.3.1. Dzielony substrat osobowo-majątkowy
+W niektórych okolicznościach (np. ze względu na przyjęty model biznesowy grupy) nie jest
+uzasadnione ponoszenie przez spółkę niektórych kosztów środków niezbędnych do
+gospodarowania uzyskanym przychodem dla własnej korzyści. Fakt, że środki takie są
+udostępniane podmiotowi przez inne podmioty z grupy nie wyklucza zastosowania danej
+preferencji i uznania podmiotu za rzeczywistego właściciela analizowanej płatności.
+Dzieje się tak, kiedy koszty substratu majątkowo-osobowego niezbędnego do prowadzenia
+przez analizowany podmiot rzeczywistej działalności gospodarczej są ponoszone przez inny
+podmiot, którego rezydencja podatkowa znajduje się na terenie objętym zakresem działania
+aktu stanowiącego źródło danej preferencji. W praktyce oznacza to, że w przypadku badania
+przesłanki prowadzenia rzeczywistej działalności gospodarczej na potrzeby zastosowania
+preferencji przewidzianej dyrektywą PS lub IR uzasadnione jest uwzględnienie środków
+udostępnianych przez podmioty będące rezydentem podatkowym jednego z państw
+członkowskich. Natomiast w przypadku badania tej przesłanki na potrzeby zastosowania
+preferencji przewidzianej UPO uzasadnione jest uwzględnienie środków udostępnianych przez
+podmioty będące rezydentem podatkowym tego samego państwa co spółka, której status
+rzeczywistego właściciela jest badany.
+Ze względu na konieczność posiadania rozbudowanej wiedzy co do sposobu
+funkcjonowania danej grupy ustalenie i wykazanie, że przesłanka rzeczywistej
+działalności gospodarczej jest spełniona przy zastosowaniu dzielonego substratu
+majątkowo-osobowego jest wyłącznie fakultatywną opcją dla płatnika lub podatnika i do
+jej stosowania nie jest zobowiązany organ podatkowy, który wiedzy takiej nie posiada.
+Korzystanie przez dany podmiot z dzielonego substratu majątkowo-osobowego nie oznacza, że
+nie musi on spełnić przesłanek definicji rzeczywistego właściciela opisanych w pkt 2 Objaśnień
+- podmiot taki wciąż musi (w zakresie badanej płatności): nie być pośrednikiem i otrzymywać
+ją dla własnej korzyści oraz prowadzić rzeczywistą działalność gospodarczą. Ustalenie, że
+spółka korzysta z dzielonego substratu majątkowo-osobowego w sposób świadczący o
+prowadzeniu przez nią rzeczywistej działalności gospodarczej w zakresie analizowanej
+płatności jest warunkiem poprawności dokonanej weryfikacji spełnienia klauzuli
+rzeczywistego właściciela. Należy więc podkreślić, że dzielenie substratu majątkowo-
+osobowego dotyczy wyłącznie jednego z elementów przesłanki prowadzenia rzeczywistej
+działalności gospodarczej. Fakt korzystania przez dany podmiot z substratu majątkowo-
+osobowego innego podmiotu nie będzie sam w sobie świadczył ani, że podmiot ten
+prowadzi rzeczywistą działalność w zakresie analizowanej płatności ani, że spełnia on
+pozostałe przesłanki warunku rzeczywistego właściciela.
+Na podstawie niniejszych objaśnień nie jest przy tym możliwe dowodzenie spełnienia
+warunku rzeczywistego właściciela w oparciu o dzielony substrat majątkowo-osobowy w
+odniesieniu do podmiotu innego niż podmiot, do którego płatność została wypłacona.
+14
+
+===PAGE 15===
+Przykład 4
+Spółka uzyskująca płatność od polskiej spółki prowadzi działalność przy wykorzystaniu
+personelu oraz biura, których koszty ponoszą inne spółki z grupy znajdujące się na tym samym
+obszarze co spółka. Jednocześnie, przy pomocy takiego dzielonego substratu majątkowo-
+osobowego podejmuje kroki mające umożliwić zarządzenie badaną płatnością dla własnej
+korzyści (np. dokonanie jej reinwestycji). Dopiero więc fakt prowadzenia działalności w sposób
+świadczący o niebyciu pośrednikiem umożliwia uznanie, że pomimo braku kosztów substratu
+majątkowo-osobowego badana spółka wciąż jest rzeczywistym właścicielem wypłacanej
+płatności.
+Schemat 1: możliwość korzystania z substratu majątkowo-osobowego innych podmiotów
+Podmiot
+badany pod
+kątem
+warunku BO
+płatności
+UE lub kraj-strona UPO
+Polska
+3. Zakres płatności objętych obowiązkiem badania warunku rzeczywistego właściciela
+3.1. Płatności bierne
+Warunek rzeczywistego właściciela jako warunek zastosowania preferencyjnej stawki,
+zwolnienia lub niepobrania podatku badany w ramach należytej staranności z art. 26 ust. 1
+ustawy o CIT został w sposób ogólny wyrażony w art. 28b ust. 4 pkt 5-6 w zw. z art. 28b ust.
+4a ustawy o CIT22. Zgodnie z tymi przepisami, jeżeli z przepisów odrębnych lub umów o
+unikaniu podwójnego opodatkowania wynika obowiązek spełnienia warunku rzeczywistego
+właściciela, to dla wystąpienia przez podatnika o zwrot podatku pobranego w ramach systemu
+pay&refund konieczne jest przedstawienie oświadczenia, że jest on rzeczywistym właścicielem
+należności, od której podatek ten został pobrany (w tym, że prowadzi w odniesieniu do tej
+należności rzeczywistą działalność gospodarczą). Jednocześnie, w odniesieniu do katalogu
+płatności wskazanych w art. 26 ust. 1 ustawy o CIT warunek rzeczywistego właściciela wynika
+z umów o unikaniu podwójnego opodatkowania lub przepisów odrębnych23 jedynie w
+odniesieniu do tzw. płatności biernych. W Polsce przychód z tzw. płatności biernych podlega
+opodatkowaniu na podstawie:
+22 Odpowiednio art. 44f ust. 4 pkt 5-6 w z. z art. 44f ust. 4a ustawy o PIT.
+23 Przez przepisy odrębne należy rozumieć m.in. pozostałe regulacje regulujące prawo państw do opodatkowania,
+np. dyrektywę IR i PS.
+15
+
+===PAGE 16===
+• art. 21 ust. 1 pkt 1 ustawy o CIT24, tj. w przypadku płatności z tytułu odsetek i tzw.
+należności licencyjnych, oraz
+• art. 22 ust. 1 ustawy o CIT25, tj. w przypadku płatności z tytułu dywidend oraz
+innych przychodów (dochodów) z tytułu udziału w zyskach osób prawnych
+mających siedzibę lub zarząd na terytorium Rzeczypospolitej Polskiej.
+Warunek rzeczywistego właściciela musi więc być badany dla zastosowania preferencji
+podatkowej wyłącznie w przypadku płatności z ww. tytułów.
+Wyżej opisana okoliczność, że warunek rzeczywistego właściciela odnosi się jedynie do tzw.
+płatności biernych, została ponadto wyrażona w konstrukcji art. 26 ust. 2e ustawy o CIT, który
+to przewiduje dodatkową weryfikację prawa do zastosowania preferencji wyłącznie w
+odniesieniu do należności wypłacanych z tytułów wymienionych w art. 21 ust. 1 pkt 1 oraz art.
+22 ust. 1 ustawy o CIT26.
+3.2. Usługi niematerialne stanowiące zysk przedsiębiorstwa w rozumieniu przepisów UPO
+Odpowiednio, w przypadku płatności wymienionych w art. 26 ust. 1 ustawy o CIT27 innych niż
+ww. płatności bierne weryfikacja prawa do zastosowania preferencji nie uwzględnia warunku
+rzeczywistego właściciela. Oznacza to, że w przypadku usług niematerialnych (np. usługi
+reklamowe czy doradcze) po stronie płatnika nie występuje obowiązek weryfikacji
+warunku rzeczywistego właściciela.
+3.3. Dywidendy na gruncie art. 22 ust. 4 ustawy o CIT
+Celem dyrektywy PS jest przede wszystkim stworzenie w ramach UE warunków analogicznych
+do warunków rynku wewnętrznego i ułatwienie konsolidacji spółek z państw członkowskich
+poprzez zapewnienie jej neutralności28. Zastosowane w polskiej wersji językowej dyrektywy
+PS pojęcie „konsolidacji spółek” należy rozumieć w kontekście tej dyrektywy. W tym
+przypadku nie oznacza więc ono np. konsolidacji sprawozdań finansowych, a „grupowanie
+spółek” (odpowiednio do angielskiego tekstu dyrektywy PS29). W przypadku grup
+przedsiębiorstw zorganizowanych w formie łańcucha spółek, dyrektywa PS ma zastosowanie,
+kiedy spółka dominująca w rozumieniu tej dyrektywy może uzyskać podział zysku poprzez
+kolejne wypłaty z łańcucha spółek zależnych (tj. kiedy zyski są wypłacane poprzez taki łańcuch
+spółek zależnych na rzecz spółki dominującej30). Dyrektywa rozpoznaje więc, że niezależnie
+od konieczności spełnienia definicji spółki dominującej przez każdą (oprócz pierwszej)
+spółkę w takim łańcuchu, jedynie określona spółka może być identyfikowana jako spółka
+24 Odpowiednio art. 29 ust. 1 pkt 1 ustawy o PIT.
+25 Odpowiednio art. 30a ust. 1 pkt 1-5a ustawy o PIT.
+26 Odpowiednio art. 29 ust. 1 pkt 1 ustawy o PIT i art. 30a ust. 1 pkt 1-5a ustawy o PIT.
+27 Odpowiednio art. 41 ust. 1 ustawy o PIT.
+28 Motywy dyrektywy PS, szczególnie motyw 3-5.
+29 Odpowiednio motyw 4 i 5 dyrektywy PS: “The grouping together of companies of different Member States may
+be necessary in order to create within the Union conditions analogous to those of an internal market (…) Such
+grouping together may result in the formation of groups of parent companies and subsidiaries.”.
+30 Tak też pkt 11 motywów dyrektywy PS: „Jeżeli grupy przedsiębiorstw są zorganizowane w formie łańcucha
+spółek i zyski są wypłacane poprzez taki łańcuch spółek zależnych na rzecz spółki dominującej, podwójne
+opodatkowanie powinno zostać wyeliminowane poprzez zwolnienie albo poprzez kredyt podatkowy” (por. ang.:
+„When corporate groups are organised in chains of companies and profits are distributed through the chain of
+subsidiaries to the parent company, double taxation should be eliminated either by exemption or tax credit.”).
+16
+
+===PAGE 17===
+dominująca uzyskująca wypłacany podział zysku. W tym kontekście konieczne jest
+dodatkowo wzięcie pod uwagę wyroku TSUE z dnia 26 lutego 2019 r. w sprawach połączonych
+C‑116/16 i C‑117/16, gdzie w par. 111-113 wskazano:
+Co więcej, gdy właściciel uiszczonych dywidend ma siedzibę do celów podatkowych w państwie
+trzecim, odmowa zwolnienia przewidzianego w art. 5 dyrektywy 90/435 w żaden sposób nie jest
+wynikiem stwierdzenia oszustwa lub nadużycia prawa.
+Dyrektywa ta – jak wynika między innymi z jej motywu trzeciego – poprzez wprowadzenie
+wspólnego systemu podatkowego ma bowiem na celu wyeliminowanie wszelkich niedogodności
+we współpracy między spółkami różnych państw członkowskich w porównaniu ze współpracą
+między spółkami z tego samego państwa członkowskiego, a także ułatwienie konsolidacji spółek
+na szczeblu Unii (wyrok z dnia 8 marca 2017 r., Wereldhave Belgium i in., C‑448/15,
+EU:C:2017:180, pkt 25 i przytoczone tam orzecznictwo). Jak zaznaczono w pkt 78 niniejszego
+wyroku, rzeczona dyrektywa służy w ten sposób zapewnieniu neutralności w aspekcie
+podatkowym wypłaty zysków przez spółkę zależną z siedzibą w jednym państwie członkowskim
+na rzecz jej spółki dominującej z siedzibą w innym państwie członkowskim, ponieważ z art. 1
+tej dyrektywy wynika, że dotyczy ona jedynie wypłat otrzymywanych przez spółki z danego
+państwa członkowskiego, a pochodzących od ich spółek zależnych mających siedzibę w innych
+państwach członkowskich (zob. podobnie postanowienie z dnia 4 czerwca 2009 r., KBC Bank i
+Beleggen, Risicokapitaal, Beheer, C‑439/07 i C‑499/07, EU:C:2009:339, pkt 62 i przytoczone
+tam orzecznictwo).
+Mechanizmy dyrektywy 90/435, a w szczególności jej art. 5, zostały wobec tego wprowadzone
+z myślą o sytuacjach, w których – bez ich zastosowania – wykonanie przez państwa
+członkowskie ich władztwa podatkowego mogłoby prowadzić do tego, że zyski wypłacane przez
+spółkę zależną na rzecz jej spółki dominującej byłyby podwójnie opodatkowane (wyrok z dnia
+8 marca 2017 r., Wereldhave Belgium i in., C‑448/15, EU:C:2017:180, pkt 39). Mechanizmy
+takie nie mogą natomiast mieć zastosowania, jeżeli właścicielem dywidend jest spółka mająca
+siedzibę do celów podatkowych poza Unią, ponieważ w takim wypadku zwolnienie z podatku
+u źródła z tytułu rzeczonych dywidend w państwie członkowskim, z którego je wypłacono,
+mogłoby prowadzić do tego, że dywidendy te nie byłyby skutecznie opodatkowane w Unii.
+Aby zastosować preferencję wynikająca z dyrektywy PS spółka, na rzecz której wypłacany jest
+podział zysku musi mieć siedzibę do celów podatkowych w Unii, przy czym – ze względu na
+zauważone przez TSUE możliwe zastosowanie regulacji niezgodnie z jej celem – konieczne
+jest przyjęcie, że warunek „właściciela mającego siedzibę do celów podatkowych w Unii”
+odnosi się do elementów innych niż wprost wskazane w mechanizmach dyrektywy takich jak
+forma spółki (a więc i rezydencja podatkowa) i dotyczy statusu takiej spółki jako rzeczywistego
+właściciela wypłaconego podziału zysku. Podsumowując, celem dyrektywy PS jest
+neutralność podziału zysku w granicach UE, co ma zastosowanie, kiedy spółka
+dominująca, na której rzecz jest wypłacany podział zysku, jest jego rzeczywistym
+właścicielem31 (przy czym spółką taką może być kolejna spółka w łańcuchu spółek
+zależnych i dominujących w rozumieniu dyrektywy PS).
+31 Tak też TSUE w wyroku z dnia 26 lutego 2019 r. w sprawach połączonych C‑116/16 i C‑117/16.
+17
+
+===PAGE 18===
+3.4. Dywidendy, odsetki i należności licencyjne na gruncie UPO niezawierających wprost
+klauzuli rzeczywistego właściciela
+Celem każdego UPO jest wyeliminowanie międzynarodowego podwójnego opodatkowania
+pomiędzy dwoma przystępującymi państwami; ich celem nie jest jednak uniknięcie
+opodatkowania w ogóle. Warunek rzeczywistego właściciela dotyczy więc zarówno UPO
+posługujących się zwrotem “paid….to a resident” lub analogicznym, jak i UPO zawierających
+konkretyzacje tego zwrotu w postaci klauzuli rzeczywistego właściciela32. Każde z nich należy
+bowiem interpretować przede wszystkim zgodnie z ogólną regułą interpretacyjną zawartą w
+art. 31 ust. 1 Konwencji Wiedeńskiej o Prawie Traktatów, zgodnie z którą: „Traktat należy
+interpretować w dobrej wierze, zgodnie ze zwykłym znaczeniem, jakie należy przypisywać
+użytym w nim wyrazom w ich kontekście, oraz w świetle jego przedmiotu i celu” oraz – biorąc
+pod uwagę ewolucję tego pojęcia w MK OECD - z uwzględnieniem tzw. wewnętrznej reguły
+wykładni zawartej np. w art. 3 ust. 2 MK OECD (1963), zgodnie z którą kolejne zmiany do
+MK OECD mają raczej charakter doprecyzowujący niż nadający nowe znaczenie33. Ponieważ
+więc ”niezgodne z przedmiotem i celem UPO byłoby przyznawanie ulgi w podatku u źródła
+podmiotowi działającemu w charakterze pośrednika w imieniu innego podmiotu, który w
+rzeczywistości otrzymuje dochód z tego tytułu”34, a zmiany art. 10 - 12 MK OECD wprost
+wskazują na uwzględnienie pojęcia rzeczywistego właściciela jako konkretyzacji wcześniej
+stosowanych pojęć „paid… to a resident”35, brak jest podstaw do rozróżniania na gruncie
+różnych UPO obowiązku płatnika, co do badania statusu rzeczywistego właściciela.
+4. Okoliczności badane w celu weryfikacji warunku rzeczywistego właściciela
+4.1. Wstęp
+Zgodnie z art. 8 Ordynacji podatkowej płatnik jest z mocy prawa zobligowany do obliczenia
+podatku (w prawidłowej wysokości), następnie jego pobrania i wpłacenia we właściwym
+terminie organowi podatkowemu. Jedynie w bardzo określonych przypadkach wskazanych w
+art. 30 Ordynacji podatkowej odpowiedzialność płatnika za niewykonanie tego obowiązku
+może być wyłączona. Niekiedy ustawy podatkowe doprecyzowują obowiązki płatnika w
+odniesieniu do zryczałtowanego podatku dochodowego od osób prawnych lub od osób
+fizycznych. Nie modyfikują one jednak istoty obowiązku i zakresu odpowiedzialności płatnika
+wynikającej z art. 8 i art. 30 Ordynacji podatkowej. Kiedy więc zastosowanie danej preferencji
+podatkowej uzależnione jest od spełnienia warunku rzeczywistego właściciela, płatnik
+każdorazowo zobowiązany jest do weryfikacji czy dany podmiot faktycznie nim jest – tj. czy
+wypełnia przesłanki definicji wskazane w pkt 2 Objaśnień. Zachodzi tu więc konieczność
+32 Por. wyjaśnienia dotyczące znaczenia aktualizacji artykułów 10-12 MK OECD dokonanej w 1977 roku zawarte
+w raporcie OECD z 2022 r. Restricting the Entitlement to Treaty Benefits, szczególnie pkt. 21 raportu dot. pkt. 12
+komentarza do art. 10 MK OECD (w aktualnej wersji pkt. 12, 12.2 i 12.3) wskazujący, że ”warunek rzeczywistego
+właściciela został dodany, aby doprecyzować znaczenie zwrotu paid….to a resident”.
+33 Art. 3 ust. 2 MK OECD (1963): „Przy stosowaniu Konwencji przez Umawiające się Państwo, jeżeli z kontekstu
+nie wynika inaczej, każde określenie, które nie zostało zdefiniowane inaczej, ma takie znaczenie, jakie nadaje mu
+prawo danego Umawiającego się Państwa w zakresie podatków, których dotyczy Konwencja.”
+34 Wyjaśnienia w ww. raporcie OECD z 2002 r., pkt. 21 dot. pkt. 12.1 komentarza do art. 10 MK OECD (w
+aktualnej wersji pkt. 12, 12.2 i 12.3).
+35 Artykuły 11 i 12 MK OECD (1963) posługiwały się wyrażeniem „paid […] to a resident”. Zostały
+zmodyfikowane MK OECD (1977), która dodała wyrazy: „…if the recipient is the beneficial owner of […]”, a w
+art. 12 ust. 1: „…if such resident is the beneficial owner of […]”.
+18
+
+===PAGE 19===
+przeprowadzenia określonego rodzaju postępowania wyjaśniającego, którego treścią będzie nie
+tylko ustalenie faktów i ich ocena, lecz również dokonanie ich oceny prawnej36.
+W art. 26 ustawy o CIT37 został jedynie doprecyzowany ww. obowiązek zawarty w art. 8
+Ordynacji podatkowej38. Ustawa o CIT i ustawa o PIT określają, poprzez wskazanie formalnych
+obowiązków, zakres okoliczności badanych przez płatnika dla ustalenia, że zaszły fakty
+świadczące o spełnieniu warunku rzeczywistego właściciela. Ustawy te łączą jednak stopień
+koniecznej analizy z powiązaniem pomiędzy płatnikiem a podatnikiem, rozszerzając jej zakres
+w przypadku występowania takich powiązań.
+4.2. Okoliczności badane w przypadku płatności do podmiotu powiązanego
+Zgodnie z art. 30 §5a Ordynacji podatkowej odpowiedzialność płatnika nie może być
+wyłączona ani ograniczona ze względu na winę podatnika, jeżeli płatnik i podatnik byli
+podmiotami powiązanymi. Odpowiednio, art. 26 ust. 7a ustawy o CIT39 określa zakres
+weryfikacji koniecznej dla zastosowania preferencji w przypadku płatności biernych
+wypłacanych do podmiotów powiązanych. Wskazuje on stan wiedzy jakim musi dysponować
+podmiot dokonujący takich płatności (który w przypadku płatności objętych mechanizmem
+pay&refund dla zastosowania preferencji musi potwierdzić ten stan wiedzy złożonym
+oświadczeniem). Niezależnie jednak od wypłacanej kwoty (i ewentualnego złożenia
+oświadczenia), w każdym przypadku płatności biernych do podmiotów powiązanych
+weryfikacja warunków zastosowania preferencyjnej stawki, zwolnienia lub niepobrania
+podatku dokonana z należytą starannością musi prowadzić do „nieposiadania wiedzy
+uzasadniającej przypuszczenie, że istnieją okoliczności wykluczające możliwość” ich
+zastosowania40.
+Z tego względu, w przypadku podmiotów powiązanych konieczne jest zbadanie wszelkich
+okoliczności skutkujących kwalifikacją danego podmiotu jako rzeczywistego właściciela.
+W przypadku wypłaty do podmiotu powiązanego nie jest więc wystarczające uzyskanie
+oświadczeń i certyfikatów. Konieczna jest weryfikacja innych dostępnych dokumentów
+potwierdzających spełnienie każdego elementu definicji, składających się na „wiedzę” płatnika,
+o której można jednocześnie powiedzieć, że nie uzasadnia przypuszczenia, że istniały
+okoliczności wykluczające możliwość zastosowania preferencji podatkowej. Są to
+przykładowo umowy świadczące o posiadaniu substratu majątkowo-osobowego czy
+sprawozdania finansowe świadczące o władztwie ekonomicznym nad otrzymywanymi
+należnościami.
+4.3. Okoliczności badane w przypadku płatności do podmiotu niepowiązanego
+W pierwszej kolejności należy podkreślić, że poniższe zasady mają zastosowanie wyłącznie,
+kiedy płatnik i podatnik nie są podmiotami powiązanymi.
+36 S. Babiarz (w:) B. Dauter, R. Hauser, A. Kabat, M. Niezgódka-Medek, J. Rudowski, S. Babiarz, Ordynacja
+podatkowa. Komentarz, LEX, komentarz do art. 30.
+37 Odpowiednio art. 41 ustawy o PIT.
+38 Tak też NSA w wyroku z 31 stycznia 2023 r., sygn. akt II FSK 1588/20 i w wyroku z 6 października 2023 r.
+sygn. akt II FSK 1333/22.
+39 Odpowiednio art. 41 ust. 15 pkt 2 ustawy o PIT.
+40 Jest to jedna z przesłanek umożliwiających niepobranie podatku w mechanizmie pay&refund. Jej treść wskazuje
+zakres obowiązków płatnika w weryfikacji warunków zastosowania preferencyjnej stawki podatku (zwolnienia).
+Należy jednak podkreślić, że nie jest to jedyna przesłanka niepobrania podatku w tym mechanizmie.
+19
+
+===PAGE 20===
+Uwzględniając wyższej opisane regulacje, w takich przypadkach możliwe jest ustalenie
+faktów koniecznych dla stwierdzenia czy spełniony został warunek rzeczywistego
+właściciela w oparciu o badanie określonego zakresu okoliczności, tj. w oparciu o
+uzyskany od podatnika certyfikat rezydencji i jego oświadczenie o spełnieniu warunku
+rzeczywistego właściciela.
+Powyższe nie oznacza jednak, że płatnik nie jest zobowiązany do dochowania należytej
+staranności w ocenie uzyskanych dokumentów pod względem formalnym, tj. przykładowo do
+weryfikacji okresu, na jaki zostały wydane czy weryfikacji ich formy (tj. do działania zgodnie
+ze standardem omówionym w pkt 5 Objaśnień).
+Jednocześnie, powyższe nie oznacza braku możliwości udowodnienia przez organ podatkowy
+na podstawie szerszego zakresu okoliczności, że warunek rzeczywistego właściciela nie został
+spełniony. Oznacza to jedynie, że niezbadanie przez płatnika szerszego zakresu okoliczności
+dla stwierdzenia możliwości zastosowania preferencji nie świadczy o niedochowaniu przez
+niego należytej staranności (także kiedy w wyniku takiego szerszego badania
+przeprowadzonego przez organ podatkowy ustalono, że warunek rzeczywistego właściciela nie
+był spełniony, a preferencja podatkowa została zastosowana w sposób nieuprawniony).
+4.4. Szczególne przypadki okoliczności badanych w celu weryfikacji warunku
+rzeczywistego właściciela
+4.4.1. Okoliczności badane przez płatnika technicznego
+W przypadku płatnika technicznego weryfikacja spełnienia warunku rzeczywistego właściciela
+także jest dokonywana w oparciu o enumeratywnie określoną listę dokumentów. Jest to
+konsekwencją uwzględnienia podejścia przyjętego przez ustawodawcę i wyrażonego m.in. w
+art. 30 §5b czy §5c Ordynacji podatkowej, zakładającego ograniczenie w określonych
+przypadkach winy płatnika technicznego ze względu na nieprzekazanie informacji bądź
+przekazanie nieprawdziwych informacji przez inne podmioty. Podejście to wynika ze
+specyficznego położenia płatnika technicznego, który ze względu na swoją czysto techniczną
+funkcję i brak bezpośredniej relacji z odbiorcami płatności ma ograniczony dostęp do
+informacji na ich temat. Ponadto, uwzględnia ono wynikającą z obowiązku implementacji
+dyrektywy FASTER konieczność dalszego dostosowania w perspektywie 5 lat zakresu
+informacji weryfikowanych przez tego rodzaju podmioty41. Zarówno bowiem zakres
+podmiotowy jak i przedmiotowy tej dyrektywy odpowiada działalności i związanych z nią
+obowiązkom w zakresie podatku u źródła uregulowanych w polskich ustawodawstwie poprzez
+instytucję płatnika technicznego. Dyrektywa ta dotyczyć będzie bowiem obowiązków tzw.
+pośredników finansowych (enumeratywnie określonych instytucji) w zakresie procedury
+zwolnienia wszelkiej nadwyżki podatku u źródła (rozumianej jako różnica między stawką
+krajową a wynikającą z właściwego UPO lub szczególnych przepisów krajowych), która może
+zostać pobrana przez państwo członkowskie:
+• od dywidend z akcji znajdujących się w obrocie publicznym oraz,
+• od odsetek od obligacji znajdujących się w obrocie publicznym wypłacanych
+zarejestrowanym właścicielom będącym rezydentami do celów podatkowych poza tym
+państwem członkowskim (w określonych przypadkach).
+41 Dyrektywa została przyjęta 10 grudnia 2024 r. Obecnie trwają prace implementacyjne, w tym umożliwiające
+techniczną realizację postanowień dyrektywy.
+20
+
+===PAGE 21===
+Konsekwentnie, omawiane ograniczenie odnosi się jedynie do obowiązków określonych
+podmiotów jako płatników technicznych. Pojęcie płatnika technicznego dotyczy wyłącznie
+wypłat należności z tytułu:
+• odsetek od papierów wartościowych zapisanych na rachunkach papierów
+wartościowych albo na rachunkach zbiorczych, wypłacanych na rzecz podatników, o
+których mowa w art. 3 ust. 2 ustawy o CIT,
+• przychodów wymienionych w art. 7b ust. 1 pkt 1 lit. a, b, e oraz g ustawy o CIT,
+uzyskanych z papierów wartościowych zapisanych na rachunkach papierów
+wartościowych albo na rachunkach zbiorczych,
+które dokonywane są za pośrednictwem podmiotów prowadzących te rachunki papierów
+wartościowych albo rachunki zbiorcze42.
+W przypadku podmiotów prowadzących takie rachunki tylko w odniesieniu do wypłat ww.
+należności weryfikacja warunków zastosowania preferencji podatkowej w oparciu o poniższą
+enumeratywnie określoną listę dokumentów jest wystraczająca dla dochowania obowiązku
+należytej staranności.
+Lista dokumentów obejmuje:
+1. dla weryfikacji prawa do preferencji podatkowej w odniesieniu do osoby fizycznej:
+a) nieprowadzącej działalności gospodarczej:
+- certyfikat rezydencji podatkowej;
+b) prowadzącej działalność gospodarczą:
+- certyfikat rezydencji podatkowej,
+- oświadczenie rzeczywistego właściciela, wskazujące, że odbiorca poświadcza
+spełnienie warunków, o których mowa w art. 5a pkt 33d ustawy PIT.
+2. w pozostałych przypadkach w odniesieniu do podatników podlegających przepisom ustawy
+o CIT:
+a) dla weryfikacji prawa do zastosowania preferencji wynikającej z UPO:
+- certyfikat rezydencji podatkowej,
+- oświadczenie rzeczywistego właściciela wskazujące, że odbiorca poświadcza
+spełnienie warunków, o których mowa w art. 4a pkt 29 ustawy CIT,
+- dokumenty potwierdzające spełnienie warunku powiązań kapitałowych (jeśli
+występuje);
+b) dla weryfikacji prawa do zastosowania zwolnienia z art. 6 ust. 1 pkt 10a i pkt 11a
+oraz art. 17 ust. 1 pkt 58 ustawy CIT:
+- certyfikat rezydencji podatkowej,
+- oświadczenie rzeczywistego właściciela wskazujące, że odbiorca poświadcza
+spełnienie warunków, o których mowa w art. 4a pkt 29 ustawy CIT,
+- oświadczenie o spełnieniu warunków, o których mowa w art. 6 ust. 1 pkt 10a albo
+pkt 11a albo art. 17 ust. 1 pkt 58 ustawy CIT (tj. warunków z art. 6 ust. 1 pkt 10a lit.
+a i d-f ustawy CIT);
+42 Odpowiednio art. 41 ust. 10 ustawy o PIT.
+21
+
+===PAGE 22===
+c) dla weryfikacji prawa do zastosowania zwolnienia z art. 22 ust. 4 / art. 21 ust. 3
+ustawy o CIT:
+- certyfikat rezydencji podatkowej (w przypadku nierezydenta),
+- oświadczenie rzeczywistego właściciela, wskazujące, że odbiorca poświadcza
+spełnienie warunków, o których mowa w art. 4a pkt 29 ustawy CIT,
+- dokumenty potwierdzające spełnienie warunku powiązań kapitałowych,
+- oświadczenie o spełnieniu przesłanek z art. 22 ust. 4 / art. 21 ust. 3 ustawy CIT.
+Przy czym, na potrzeby weryfikacji złożonych przez podatnika oświadczeń, o których mowa
+wyżej (w pkt 2 lit. a i c), płatnik techniczny musi sprawdzić, czy na podstawie:
+• wyciągu z rejestru handlowego odbiorcy należności,
+• ostatniego sprawozdania finansowego wraz z opinią biegłego rewidenta (kiedy taka
+opinia jest sporządzana)
+- nie wynikają okoliczności sprzeczne ze złożonymi oświadczeniami.
+Ponadto, w każdym przypadku za brakiem prawa do zastosowania zwolnienia lub
+preferencyjnej stawki na podstawie dyrektyw lub UPO nie mogą przemawiać informacje
+posiadane przez płatnika na temat danego klienta w związku z procedurą Know-Your-
+Customer43.
+Jednocześnie, w związku z obowiązującym wyłączeniem44 stosowania mechanizmu
+pay&refund w zakresie art. 26 ust. 2c ustawy o CIT45, w okresie jego obowiązywania
+wyłączone są także obowiązki informacyjne emitenta (art. 26 ust. 2ca ustawy o CIT46) i płatnika
+technicznego (art. 26 ust. 2ed ustawy o CIT47) polegające odpowiednio na przekazaniu
+informacji o występowaniu powiązań i przekroczeniu kwoty 2 000 000 złotych oraz ustaleniu
+tych okoliczności.
+4.4.2. Okoliczności badane przez OZZ
+Ze względu na specyfikę działalności zbiorowego zarządu i jej prawne umocowanie oraz
+funkcjonowanie powszechnego system nadzoru państwowego nad taką działalnością,
+gwarantującego rzetelność i spełnienie standardów przez daną organizację zbiorowego
+zarzadzania, zasadne jest przyjęcie zakresu badanych okoliczności, który jest adekwatny do
+modelu i standardów współpracy pomiędzy organizacjami zbiorowego zarządzania.
+Mając na uwadze powyższe, w odniesieniu do płatności na rzecz zagranicznych organizacji
+zbiorowego zarządzania krajowa organizacja zbiorowego zarządzania, działając jako płatnik
+wypłacający należności licencyjne, jest zobowiązana do uzyskania:
+• oryginału certyfikatu rezydencji podatkowej lub jego kopii (w przypadkach, gdy
+dopuszcza to ustawa o CIT oraz ustawa o PIT) kontrahenta, oraz
+43 Tj. w ramach środków bezpieczeństwa finansowego przewidzianych ustawą z dnia 1 marca 2018 r. o
+przeciwdziałaniu praniu pieniędzy oraz finansowaniu terroryzmu (Dz.U. 2023 poz. 1124, z późn. zm.).
+44 Rozporządzenie Ministra Finansów z dnia 28 grudnia 2022 r. w sprawie wyłączenia obowiązku poboru
+zryczałtowanego podatku dochodowego od osób fizycznych (t.j. Dz.U. 2025 r., poz. 232); Rozporządzenie
+Ministra Finansów z dnia 28 grudnia 2022 r. w sprawie wyłączenia obowiązku poboru zryczałtowanego podatku
+dochodowego od osób prawnych (t.j. Dz.U. 2025 poz. 659).
+45 Odpowiednio art. 41 ust. 12 ustawy o PIT.
+46 Odpowiednio art. 41 ust. 4da ustawy o PIT.
+47 Odpowiednio art. 41 ust. 12d ustawy o PIT.
+22
+
+===PAGE 23===
+• oświadczenia kontrahenta, że jest podmiotem uznanym za organizację zbiorowego
+zarządzania prawami autorskimi lub prawami pokrewnymi za granicą w państwie
+swojej siedziby.
+W odniesieniu do wypłat należności na rzecz zagranicznych organizacji zbiorowego
+zarządzania weryfikacja warunków zastosowania preferencji podatkowej w oparciu o
+powyższą enumeratywnie określoną listę dokumentów jest wystraczająca dla dochowania
+obowiązku należytej staranności.
+5. Standard badania możliwości zastosowania preferencyjnej stawki podatku, zwolnienia
+lub niepobrania podatku
+Istotnym, a odrębnym aspektem jest, czy w konkretnym przypadku badanie okoliczności
+świadczących o spełnieniu warunku rzeczywistego właściciela zastało przeprowadzone w
+standardzie odpowiadającym należytej staranności. Standard ten zależy bowiem, zgodnie z
+ustawą, od charakteru, skali działalności prowadzonej przez płatnika oraz powiązań płatnika z
+podatnikiem i w konsekwencji jest odmienny dla indywidualnego przypadku. Fakt powiązania
+podmiotów wpływa zatem także na standard badania należytej staranności.
+Przykład 5
+Zarówno podmiot A jak i podmiot B dokonują płatności z tytułu korzystania z licencji do
+podmiotu niepowiązanego C. Zarówno więc podmiot A i podmiot B są zobowiązane do badania
+certyfikatu rezydencji oraz oświadczenia podatnika o spełnieniu warunku rzeczywistego
+właściciela dla weryfikacji warunku rzeczywistego właściciela (przykład nie dotyczy
+pozostałych warunków zastosowania preferencji). Podmiot A dokonuje wielu tego rodzaju
+płatności rocznie. Podmiot B dokonuje jednej takiej płatności rocznie. W obu przypadkach
+podmiot C jednorazowo przedstawił nieprawidłowy certyfikat rezydencji, który co prawda
+dotyczył odpowiedniego okresu i wskazywał właściwy organ wydający, jednak nie zawierał
+kompletnych danych. Niezależnie od tego, że oba podmioty poddały badaniu wymagane od nich
+okoliczności w celu weryfikacji warunku rzeczywistego właściciela, to inaczej zostanie
+oceniony pod kątem dochowania należytej staranności w tym badaniu podmiot A, który miał
+wielokrotnie możliwość wystąpienia o przedłożenie aktualnego certyfikatu, a inaczej podmiot
+B, który nie miał takiej możliwości.
+6. Szczególne przypadki badania warunku rzeczywistego właściciela
+6.1. Wstęp
+Fakultatywnie, płatnik lub podatnik może zastosować preferencję podatkową na podstawie
+szczególnych okoliczności, takich jak np. statusu rzeczywistego właściciela innego podmiotu
+niż odbiorca należności. Ponieważ jest to opcja dla płatnika lub podatnika, zastosowanie się do
+Objaśnień w tym zakresie polega na odpowiednim wskazaniu w deklaracjach (informacjach)
+podatkowych lub wnioskach podmiotu, którego status rzeczywistego właściciela stanowi
+podstawę preferencji. W innym przypadku nie jest możliwe wskazanie, że płatnik lub podatnik
+zastosował się do Objaśnień w sposób, o którym mowa w art. 14n §4 Ordynacji podatkowej, tj.
+nie jest możliwe twierdzenie, że uzyskano na ich podstawie ochronę prawną. Odpowiednie
+wyjaśnienia w tym zakresie zawierają broszury do konkretnych formularzy.
+Podkreślenia wymaga, że do zastosowania żadnej z poniższych koncepcji nie jest
+zobligowany organ podatkowy.
+23
+
+===PAGE 24===
+6.2. LTA
+Klauzula „look-through approach” (klauzula LTA) wywodzi się z rozumienia klauzuli
+rzeczywistego właściciela i jest wprost wyrażona w komentarzu do MK OECD. Możliwość jej
+stosowania jest także akceptowana przez krajowe sądy administracyjne48, a w przypadku
+zwolnień dyrektywowych także przez TSUE49. W praktyce pozwala ona płatnikowi
+wypłacającemu należności na zastosowanie zwolnienia lub obniżonej stawki podatku nawet
+jeżeli rzeczywisty właściciel tej należności nie jest jej bezpośrednim odbiorcą, a jest ona mu
+przekazywana przez pośredników. Stosowanie koncepcji LTA na etapie wypłaty należności
+jest opcją dla płatnika.
+Płatnik przed zastosowaniem LTA powinien, w ramach należytej staranności, ustalić:
+1) rzeczywistego właściciela należności;
+2) czy rzeczywisty właściciel rozpoznaje w swoim kraju przychód podatkowy z tytułu
+otrzymanej należności;
+3) czy płatności przekazywane w łańcuchu podmiotów są rodzajowo tożsame;
+4) czy spełnione są warunki przewidziane dla danej preferencji podatkowej, omówione
+w dalszych częściach objaśnień.
+Rodzajowa tożsamość płatności oznacza sytuację, w której należność wypłacana przez
+polskiego płatnika jest następnie przekazywana w łańcuchu płatności do rzeczywistego
+właściciela pod tym samym tytułem. Przykładowo, jeżeli płatnik wypłaca pośrednikowi
+należność tytułem odsetek to także w postaci odsetek powinny one zostać przekazane ich
+rzeczywistemu właścicielowi. Zastosowania LTA nie wyklucza natomiast brak tożsamości
+kwotowej, tj. okoliczność, że wypłacona należność nie została w całości przekazana przez
+pośrednika rzeczywistemu właścicielowi.
+Stosując koncepcję LTA należy zwrócić uwagę czy ma to miejsce na gruncie Dyrektyw PS i
+IR czy na gruncie UPO. Wynika to bowiem z faktu, że cele i zakres podmiotowy dyrektyw oraz
+UPO wykazują pewne istotne różnice. Dlatego też stosowanie LTA musi te różnice
+uwzględniać, co znalazło odzwierciedlenie w przedstawionych poniżej wyjaśnieniach.
+Jednocześnie, należy wskazać, że różnice te przekładają także odrębność przesłanek
+zastosowania LTA na dyrektywach i na UPO. Oznacza to przykładowo, że kiedy nie jest
+możliwe zastosowanie LTA w odniesieniu do Dyrektywy PS zasadnym jest zweryfikowanie
+możliwości stosowania i ewentualne zastosowanie LTA w odniesieniu do odpowiednich UPO.
+6.2.1. LTA a dywidenda na gruncie dyrektywy PS
+Oprócz okoliczności, o których mowa w pkt. 4.1 płatnik powinien ustalić łańcuch podmiotów
+w ramach którego dywidenda jest przekazywana do rzeczywistego właściciela oraz czy
+spełnione są przesłanki z art. 22 ust. 4-4d ustawy o CIT. Ponadto w przypadku stosowania tego
+zwolnienia, na zasadzie koncepcji LTA, każdy z podmiotów w łańcuchu płatności powinien:
+48 Zob. wyrok NSA z 31 stycznia 2023 r., sygn. II FSK 1588/20, z 11 marca 2015 r. (sygnatury: II FSK 212-
+215/13), 18 kwietnia 2023 roku (sygnatury: II FSK 2524-2525/20, 2782/20 i 400/21) i 11 czerwca 2024 r. (sygn.
+II FSK 1161/21).
+49 W przypadku dyrektywy PS zob. wyrok TSUE z 26 lutego 2019 r. w połączonych sprawach C-116/16 i 117/16,
+pkt 111 i 113, w odniesieniu zaś do dyrektywy IR zob. wyrok TSUE z 26 lutego 2019 r. w połączonych sprawach
+C-115/16, 118/16, 119/16 i 299/16, pkt 94.
+24
+
+===PAGE 25===
+1) podlegać opodatkowaniu podatkiem dochodowym od całości swoich dochodów, bez
+względu na miejsce ich osiągania, na terytorium RP, państwa członkowskiego UE lub w innym
+państwie należącym do EOG (art. 22 ust. 4 pkt 2 ustawy o CIT);
+2) nie korzystać ze zwolnienia z opodatkowania podatkiem dochodowym od całości swoich
+dochodów, bez względu na źródło ich osiągnięcia (art. 22 ust. 4 pkt 4 ustawy o CIT);
+3) stanowić spółkę w rozumieniu art. 4a pkt 21 ustawy o CIT lub jeden z podmiotów
+wymienionych w załączniku nr 4 do ustawy o CIT lub jeden z podmiotów, do których przepisy
+ust. 4-4b stosuje się odpowiednio (art. 22 ust. 4 pkt 2, ust. 4c i ust. 6 ustawy o CIT);
+4) posiadać nieprzerwanie przez okres co najmniej dwóch lat bezpośrednio nie mniej niż 10%
+udziałów (akcji) w kapitale spółki wypłacającej dywidendę (tzw. przesłanka bezpośredniego
+posiadania udziałów) (art. 22 ust. 4 pkt 3 w zw. art. 22 ust. 4a-4b ustawy o CIT);
+5) posiadać tytułem własności udziały (akcje) z tytułu których dywidenda jest wypłacana (art.
+22 ust. 4d ustawy o CIT).
+Warunek bezpośredniego posiadania udziałów jest spełniony, gdy wszystkie podmioty w
+łańcuchu płatności kaskadowo spełniają ten warunek w kolejnej spółce w łańcuchu. Wówczas
+każda kolejna spółka otrzymująca dywidendę powinna spełniać warunek bezpośredniego
+posiadania udziałów względem kolejnej spółki wypłacającej, a nie względem pierwszej spółki
+wypłacającej.
+Ponadto, zastosowanie koncepcji LTA przez płatnika nie może pozostawać w sprzeczności z
+celami dyrektywy PS. Brak sprzeczności zachodzi w jednej z następujących sytuacji:
+• rzeczywistym właścicielem dywidendy jest podmiot z UE lub EOG lub
+• dywidenda jest co najmniej jednokrotnie opodatkowana na terytorium UE lub EOG.
+Przykład 6
+Jedynym udziałowcem polskiej spółki (spółka X) jest francuska spółka (spółka Y), a jedynym
+udziałowcem spółki Y jest spółka niemiecka (spółka Z). Spółka X wypłaca dywidendę spółce Y,
+która następnie jest przekazywana spółce Z, która jest jej rzeczywistym właścicielem. Spółka X
+ustaliła, że spółka Z jest rzeczywistym właścicielem wypłacanej należności w rozumieniu art.
+4a pkt 29 ustawy o CIT oraz że ta należność zostanie jej przekazana także w postaci dywidendy.
+Spółka X ustaliła także, że spółka Z wykaże uzyskaną należność jako przychód zwolniony w
+swoim zeznaniu podatkowym. Ponadto spółka X ustaliła, że na każdym etapie łańcucha
+płatności warunki zwolnienia wynikające z przepisów 22 ust. 4-4d ustawy o CIT są spełnione.
+Polska spółka, decydując się na zastosowanie LTA, będzie mogła w stosunku do wypłacanej
+należności zastosować zwolnienie wynikające z art. 22 ust. 4 ustawy o CIT.
+Przykład 7
+Spółka hiszpańska w formie sociedad anónima (spółka X) posiada w niemieckiej spółce w
+formie aktiengesellschaft (spółka Y) tytułem własności 15% udziałów nieprzerwanie przez
+okres trzech lat. Spółka Y posiada tytułem własności nieprzerwanie przez okres dwóch lat 10%
+udziałów w polskiej spółce (spółka Z). Spółka Z wypłaca dywidendę na rzecz spółki Y, która z
+kolei wypłaca odsetki na rzecz spółki X.
+25
+
+===PAGE 26===
+Mając na uwadze, iż spółka Y jest pośrednikiem, a płatność pomiędzy spółkami Z-Y
+(dywidenda) w porównaniu do relacji spółek Y-X (odsetki) zmieniła swój charakter, nie jest
+możliwe zastosowanie LTA w stosunku do spółki X. Spółka Z nie może zastosować
+zwolnienia, o którym mowa w art. 22 ust. 4 ustawy o CIT.
+Przykład 8
+Polska spółka dokonuje wypłaty dywidendy do swojej niemieckiej spółki-matki.
+Większościowym udziałowcem niemieckiej spółki jest spółka z kraju niebędącego krajem
+członkowskim UE i będącego rzeczywistym właścicielem dywidendy. Mniejszościowym
+udziałowcem spółki niemieckiej jest spółka francuska, uzyskująca dywidendę od spółki
+niemieckiej. Spółka francuska rozpoznaje uzyskany w ten sposób przychód jako zwolniony.
+Jednocześnie jedynymi udziałowcami spółki francuskiej są osoby fizyczne, do których wypłata
+dywidendy jest opodatkowana podatkiem u źródła. Polska spółka może zastosować zwolnienie
+z art. 22 ust. 4 ustawy o CIT, w odniesieniu do części dywidendy, która zostanie przekazana do
+spółki francuskiej bez badania statusu rzeczywistego właściciela takiej spółki.
+LTA pozwala więc na gruncie dyrektywy PS na zastosowanie zwolnienia z opodatkowania do
+części płatności, w sytuacji, gdy płatność dokonywana jest co prawda poprzez pośrednika –
+podmiot niebędący rzeczywistym właścicielem, ale zastosowanie zwolnienia do części
+płatności nie skutkuje konsekwencjami podatkowymi sprzecznymi z celami dyrektywy PS, tj.
+w odniesieniu do tej części płatności nie występuje nieopodatkowana wypłata poza granice UE
+przy braku jej rzeczywistego właściciela w granicach UE. Odpowiednio, na gruncie zwolnienia
+z dyrektywy PS nie jest konieczne badanie statusu rzeczywistego właściciela podmiotu
+uzyskującego płatność na kolejnym etapie łańcucha, jeśli podmiot ten dokonuje wypłaty
+podzielonego zysku podlegającej opodatkowaniu WHT (w tym niekorzystających ze
+zwolnienia na podstawie UPO).
+Przykład 9
+Spółka izraelska (spółka X) posiada przez okres dwóch lat 100% udziałów w spółce
+holenderskiej (spółka Y). Spółka Y posiada również przez okres dwóch lat 10% udziałów w
+polskiej spółce (spółka Z). Spółka X jest rzeczywistym właścicielem dywidendy, natomiast
+spółka Y pośrednikiem. Spółka Z wypłaca dywidendę na rzecz spółki Y, która następnie
+przekazuje ją na rzecz spółki X. Wypłacana dywidenda jest zwolniona z opodatkowana na
+poziomie spółki Y w Holandii na podstawie przepisów będących implementacją dyrektywy PS
+w tym państwie. Wypłata dywidendy ze spółki Y na rzecz spółki X jest zwolniona z
+opodatkowania u źródła w Holandii.
+W powyższym przykładzie spółka Z nie może zastosować zwolnienia z podatku u źródła, na
+zasadzie LTA, ponieważ nie jest spełniona żadna z następujących przesłanek:
+• rzeczywisty właściciel dywidendy nie znajduje się na terytorium UE (EOG),
+• wypłata dywidendy nie jest co najmniej jednokrotnie opodatkowana na terytorium UE
+(EOG).
+Rzeczywistym właścicielem jest spółka X mającą siedzibę poza terytorium UE (EOG). Ponadto
+w związku ze zwolnieniem z podatku u źródła obowiązującym w Holandii na wypłaty
+dywidendy również do państw pozaunijnych, łańcuch płatności dywidendy w ramach UE nie
+jest co najmniej jednokrotnie opodatkowany.
+26
+
+===PAGE 27===
+Przykład 10
+Polska spółka-córka wypłaca dywidendę do niemieckiej spółki-matki posiadającej 100%
+udziałów, niebędącej rzeczywistym właścicielem dywidendy. Większościowym udziałowcem
+spółki niemieckiej jest spółka brytyjska. Ponadto udziałowcem niemieckiej spółki jest także
+spółka francuska, posiadająca pozostałe udziały (mniejszościowy udziałowiec spółki
+niemieckiej).
+Polska spółka nie może więc zastosować zwolnienia z art. 22 ust. 4 ustawy o CIT do całości
+kwoty wypłacanej do spółki niemieckiej. Jednakże spółka francuska otrzyma dywidendę
+wypłaconą przez spółkę niemiecką i będzie jej rzeczywistym właścicielem. Polska spółka może
+więc zastosować zwolnienie do części kwoty wypłacanej dywidendy, proporcjonalnie do kwoty
+w jakiej pozostaje kwota dywidendy, do jakiej wypłaty uprawniona jest spółka francuska do
+całej dywidendy wypłacanej przez spółkę niemiecką. W przypadku braku uprzywilejowanych
+udziałów w spółce niemieckiej będzie to kwota odpowiadająca procentowemu udziałowi spółki
+francuskiej w spółce niemieckiej.
+6.2.2. LTA a odsetki i należności licencyjne na gruncie dyrektywy IR.
+Oprócz okoliczności, o których mowa w pkt. 2 Objaśnień, płatnik powinien ustalić łańcuch
+podmiotów w ramach którego odsetki (należności licencyjne) są przekazywane do
+rzeczywistego właściciela oraz spełnienie warunków z art. 21 ust. 3-6 ustawy o CIT.
+Po pierwsze żaden z podmiotów w łańcuchu nie może korzystać ze zwolnienia z opodatkowania
+podatkiem dochodowym od całości swoich dochodów, bez względu na źródło ich osiągnięcia
+(art. 21 ust. 3c ustawy o CIT). Płatnik chcąc zastosować LTA powinien zweryfikować czy
+łańcuch płatności odsetek/należności licencyjnych pomiędzy spółkami z różnych krajów
+członkowskich nie skutkuje konsekwencjami podatkowymi sprzecznymi z celami dyrektywy
+IR, tj. czy w każdym państwie członkowskim spełniony jest warunek efektywnego
+opodatkowania. Płatnik musi zatem badać - w kierunku wykluczenia braku efektywnego
+opodatkowania - ustawodawstwo państw siedziby pozostałych podmiotów aż do podmiotu
+będącego BO.
+Po drugie, zgodnie z art. 21 ust. 3 pkt 3 ustawy o CIT uzyskujący odsetki (należności licencyjne)
+powinien posiadać bezpośrednio nie mniej niż 25% udziałów (akcji) w kapitale spółki je
+wypłacającej (warunek bezpośredniego posiadania udziałów). Warunek bezpośredniego
+posiadania udziałów jest spełniony, gdy wszystkie podmioty w łańcuchu płatności kaskadowo
+spełniają warunek bezpośredniego posiadania udziałów w kolejnej spółce w łańcuchu lub
+stanowią spółki-siostry. Warunek, o którym mowa w art. 21 ust. 3 pkt 1 lit. a i lit. b oraz art. 21
+ust. 3a ustawy o CIT będzie spełniony także jeżeli bezpośrednio pomiędzy spółką wypłacającą
+należności a rzeczywistym właścicielem będzie spełniony warunek bezpośredniego posiadania
+udziałów lub gdy będą one spółkami-siostrami. Posiadanie udziałów (akcji), o których mowa
+w tych przepisach, musi wynikać z tytułu własności (art. 21 ust. 3b ustawy o CIT) i muszą one
+być posiadane nieprzerwanie przez okres co najmniej dwóch lat (art. 21 ust. 4 i ust. 5 ustawy o
+CIT).
+Przykład 11
+Spółka A ma siedzibę w Polsce i wypłaca odsetki do spółki B. Spółka B ma siedzibę w
+Luksemburgu i przekazuje otrzymane odsetki prawie w całości do spółki C. Spółka B nie ma
+27
+
+===PAGE 28===
+udziałów w kapitale spółki A. Spółka C z siedzibą we Francji jest rzeczywistym właścicielem
+wypłaconych należności. Nie korzysta ona ze zwolnienia od całości swoich dochodów, bez
+względu na źródło ich osiągnięcia i jest spółką-matką dla spółek A i B (posiada 25-procentowe
+udziały w ich kapitałach).
+Spółka A może zastosować w stosunku do podmiotu C zwolnienie z art. 21 ust. 3 ustawy o CIT
+na zasadzie stosowania LTA.
+Przykład 12
+Spółka hiszpańska X posiada przez okres dwóch lat 100% udziałów w niemieckiej spółce
+(spółka Y). Spółka Y posiada również przez okres dwóch lat 100% udziałów w polskiej spółce
+(spółka Z). Spółka Z wypłaca odsetki na rzecz spółki Y, natomiast spółka Y wypłaca spółce X
+dywidendę, która jest jej rzeczywistym właścicielem.
+Mając na uwadze, że spółka Y jest pośrednikiem, a płatność pomiędzy spółkami X-Y (odsetki)
+w porównaniu do relacji spółek Y-X (dywidendy) zmieniła swój charakter, nie jest możliwe
+zastosowanie LTA w stosunku do spółki X z pominięciem spółki Y. Płatnik, spółka Z, nie może
+zastosować zwolnienia, o którym mowa w art. 21 ust. 3 ustawy o CIT.
+Przykład 13
+Spółka hiszpańska X posiada przez okres dwóch lat 100% udziałów w luksemburskiej spółce Y.
+Spółka Y posiada również przez okres dwóch lat 100% udziałów w polskiej spółce (spółka Z).
+Spółka Z wypłaca odsetki na rzecz spółki Y, która z kolei wypłaca dalej odsetki do spółki X,
+która jest ich rzeczywistym właścicielem. Spółka hiszpańska korzysta ze zwolnienia od
+opodatkowania podatkiem dochodowym od osób prawnych, bez względu na źródło ich
+osiągnięcia.
+W tym przypadku nie jest możliwe zastosowanie LTA przez spółkę Z, ponieważ spółka X nie
+spełnia warunku, o którym mowa w art. 21 ust. 3c ustawy o CIT.
+Przykład 14
+Polska spółka wypłaca 100 odsetek do swojej niemieckiej spółki-matki, w której mniejszościowy
+udział 25% posiada spółka francuska, a pozostałe udziały posiada spółka brytyjska. Niemiecka
+spółka uzyskuje także odsetki od pożyczek udzielonych pozostałym spółkom-córkom: spółce
+czeskiej i rumuńskiej, a wszystkie pożyczki finansowane są z pożyczek udzielonych przez jej
+udziałowców. Jednocześnie, spółka niemiecka nie jest rzeczywistym właścicielem uzyskanych
+odsetek m. in. ze względu na zobowiązanie do spłaty odsetek od pożyczek udzielonych przez jej
+udziałowców i brak innych źródeł finansowania umożliwiających taką spłatę (przy czym spółka
+ta nie prowadzi rzeczywistej działalności gospodarczej w zakresie takich pożyczek). Z
+okoliczności faktycznych nie wynika jednak, aby pożyczka udzielona polskiej spółce została
+udzielona przez któregoś z udziałowców za pośrednictwem spółki niemieckiej, niezależnie od
+funduszy, z których finansowane są pożyczki do pozostałych spółek-córek. Jednocześnie, koszty
+ryzyka związanego z działalnością spółki niemieckiej ponoszone są przez spółkę brytyjską (np.
+koszty odpowiedniej kadry, analiz, zabezpieczenia).
+W takim przypadku nie jest możliwe zastosowanie zwolnienia z art. 21 ust. 3 ustawy o CIT do
+wypłaty z Polski, niezależnie od tego, czy francuska spółka jest rzeczywistym właścicielem
+28
+
+===PAGE 29===
+płatności, którą otrzyma od spółki niemieckiej. Nie jest bowiem możliwe jednoznaczne
+prześledzenie łańcucha płatności takiej wypłaty.
+6.2.3. LTA a dywidendy na gruncie UPO.
+Niezależnie od okoliczności, o których mowa w pkt 6.2 Objaśnień, płatnik powinien ustalić,
+czy warunki do zastosowania zwolnienia lub obniżonej stawki podatku wynikające z danej
+UPO są spełnione. UPO przewidują trzy różne warianty w zakresie warunku posiadania
+udziałów przez rzeczywistego właściciela w spółce wypłacającej dywidendę.
+Wariant 1: konieczność bezpośredniego posiadania udziałów – UPO wymaga, aby rzeczywisty
+właściciel posiadał udziały bezpośrednio w spółce wypłacającej dywidendę.
+Przykład 15
+Spółka X z jurysdykcji X posiada 100% udziałów w Y. Spółka Y z jurysdykcji Y posiada również
+100% udziałów w polskiej sp. z .o.o. (A). Spółka A wypłaca dywidendę na rzecz spółki Y, która
+z kolei wypłaca dywidendę do X. UPO pomiędzy Polską a Y zawiera wymóg bezpośredniego
+posiadania udziałów przez rzeczywistego właściciela w kapitale spółki wypłacającej
+dywidendę. Spółka X jest rzeczywistym właścicielem dywidendy UPO pomiędzy Polską a X
+przewiduje dwie stawki WHT w przypadku wypłaty dywidend: 5% w przypadku bezpośredniego
+posiadania udziałów oraz 15% w pozostałych przypadkach.
+Spółka A stosuje UPO pomiędzy Polską a X, gdzie znajduje się spółka będącą rzeczywistym
+właścicielem dywidendy. Z uwagi jednak na fakt, iż spółka X nie posiada bezpośrednio
+udziałów w spółce A, nie jest możliwe zastosowanie stawki 5%, lecz 15%.
+Wariant 2: możliwość bezpośredniego lub pośredniego posiadania udziałów – UPO dopuszcza
+zarówno bezpośrednie, jak i pośrednie posiadanie udziałów w spółce wypłacającej dywidendę
+przez rzeczywistego właściciela.
+Przykład 16
+Spółka X z jurysdykcji X posiada 100% udziałów w Y. Spółka Y z jurysdykcji Y posiada również
+100% udziałów w polskiej sp. z .o.o. (A). Spółka A wypłaca dywidendę na rzecz spółki Y, która
+z kolei wypłaca dywidendę do X. Rzeczywistym właścicielem dywidendy jest X. UPO pomiędzy
+Polską a Y zawiera wymóg bezpośredniego lub pośredniego posiadania udziałów przez
+rzeczywistego właściciela w kapitale spółki wypłacającej dywidendę. UPO pomiędzy Polską a
+X przewiduje dwie stawki WHT w przypadku wypłaty dywidend: 5% w przypadku
+bezpośredniego lub pośredniego posiadania udziałów oraz 15% w pozostałych przypadkach.
+Spółka A stosuje UPO pomiędzy Polską a X, gdzie znajduje się spółka będącą rzeczywistym
+właścicielem dywidendy. Z uwagi jednak na fakt braku wymogu bezpośredniego udziałów
+(UPO dopuszcza również pośrednie posiadanie) w spółce A przez X, możliwe jest zastosowanie
+stawki 5%.
+Wariant 3: UPO nie zawiera wzmianki o charakterze posiadania udziałów – UPO nie precyzuje,
+czy udziały muszą być posiadane bezpośrednio czy pośrednio przez rzeczywistego właściciela.
+Przykład 17
+Spółka X z jurysdykcji X posiada 100% udziałów w Y. Spółka Y z jurysdykcji Y posiada również
+100% udziałów w polskiej sp. z .o.o. (A). Spółka A wypłaca dywidendę na rzecz spółki Y, która
+29
+
+===PAGE 30===
+z kolei wypłaca dywidendę do X. UPO pomiędzy Polską a Y nie precyzyuje czy udziały muszą
+być posiadane bezpośrednio lub pośrednio posiadania udziałów przez rzeczywistego
+właściciela w kapitale spółki wypłacającej dywidendę. UPO pomiędzy Polską a X przewiduje
+dwie stawki WHT w przypadku wypłaty dywidend: 5% w przypadku bezpośredniego lub
+pośredniego posiadania udziałów oraz 15% w pozostałych przypadkach.
+Spółka A stosuje UPO pomiędzy Polską a X, gdzie znajduje się spółka będącą rzeczywistym
+właścicielem dywidendy. Z uwagi jednak na fakt braku wymogu bezpośredniego udziałów w
+spółce A przez X, możliwe jest zastosowanie stawki 5%.
+6.2.4. LTA a odsetki i należności licencyjne na gruncie UPO.
+Niezależnie od okoliczności, o których mowa w pkt 6.2 Objaśnień, płatnik powinien ustalić,
+czy warunki do zastosowania zwolnienia lub obniżonej stawki podatku wynikające z danej
+UPO są spełnione. W przypadku odsetek i należności licencyjnych UPO nie przewiduje
+warunku posiadania udziałów przez rzeczywistego właściciela w podmiocie wypłacającym.
+Przykład 18
+Spółka brytyjska (spółka X) posiada 100% udziałów w spółce kanadyjskiej (spółka Y).
+Spółka Y posiada również 100% udziałów w polskiej spółce (spółka Z). Spółka Z wypłaca
+odsetki na rzecz spółki kanadyjskiej, która z kolei wypłaca dalej te odsetki do spółki brytyjskiej,
+która jest jej rzeczywistym właścicielem i rozpoznaje z tego tytułu przychód. Płatność nie
+zmieniła swojego charakteru i jest ona wykazywana przez rzeczywistego właściciela w swoim
+państwie jako przychód.
+Spółka Z - jako płatnik - może, stosując koncepcję LTA, pobrać podatek według obniżonej
+stawki przewidzianej w polsko-brytyjskiej UPO.
+6.3. Rozszerzony zakres podmiotowy badania warunku rzeczywistego właściciela
+6.3.1. Płatności mogące podlegać analizie pod kątem zastosowania preferencji na
+podstawie rozszerzonego zakresu podmiotowego badania
+Niekiedy podmiot uzyskujący płatność nie jest jej BO, a jednocześnie nie jest możliwe
+zastosowanie LTA wyłącznie ze względu na brak wiedzy co do dalszej płatności, tj. spełnione
+są pozostałe warunki LTA, jednak nie jest wiadome czy dojdzie do przekazania płatności przez
+podmiot, do którego płatność jest wypłacana. Niekiedy oba podmioty - podmiot otrzymujący
+płatność (podmiot B w schemacie poniżej) oraz podmiot, do którego płatność ta miałaby zostać
+przekazana (podmiot C w schemacie poniżej) - mają siedzibę na terytorium objętym jednym
+systemem prawnym będącym źródłem preferencji, tj. w przypadku płatności objętych
+dyrektywą na terytorium UE, a w przypadku UPO w państwie będącym stroną UPO. Kiedy
+zachodzą obie te okoliczności polski płatnik (podmiot A w schemacie poniżej) może
+zweryfikować zasadność zastosowania preferencji podatkowej na podstawie rozszerzonego
+zakresu podmiotowego badania rzeczywistego właściciela.
+30
+
+===PAGE 31===
+Schemat 2: płatność mogąca podlegać analizie pod kątem zastosowania preferencji na
+podstawie rozszerzonego zakresu podmiotowego badania rzeczywistego właściciela
+C
+płatność, co do której nie
+wiadomo czy dojdzie do
+jej wypłaty
+B spełnione
+pozostałe
+warunki LTA
+UE lub kraj-strona UPO
+analizowana płatność Polska
+A
+Podsumowując, jeżeli:
+(i) A nie może zastosować do płatności do B preferencji wyłącznie ze względu na brak statusu
+BO podmiotu B;
+(ii) C spełnia wobec B warunek kaskadowego posiadania udziałów z LTA;
+(iii) gdyby doszło do wypłaty płatności przez podmiot B do podmiotu C (dalej: hipotetyczna
+płatność) zachowany byłby warunek tożsamości płatności w rozumieniu LTA;
+(iv) C ma siedzibę na obszarze objętym tą samą preferencją, co wskazana w pkt. (i);
+(v) forma prawna C uzasadniałaby zastosowanie tej preferencji, gdyby zastosowanie miało
+LTA,
+to uzasadnione jest rozważenie przez polskiego płatnika zastosowanie preferencji
+(preferencyjnej stawki, zwolnienia lub niepobrania podatku) na podstawie rozszerzonego
+zakresu podmiotowego badania rzeczywistego właściciela. Polski płatnik będzie mógł przyjąć,
+że jest spełniony warunek BO dla zastosowania tej preferencji, kiedy w takich okolicznościach
+spełnione będą przesłanki opisane w pkt. 6.3.2.
+Jak zostało wskazane, zastosowanie preferencji do płatności wypłacanej z Polski na podstawie
+rozszerzonego zakresu podmiotowego badania rzeczywistego właściciela jest możliwe
+wyłącznie, kiedy podmiot C ma siedzibę na tym samym obszarze co odbiorca płatności
+(podmiot B). W przypadku braku przekazania płatności przychód wykazywany jest
+wyłącznie przez podmiot B i nie jest wiadome czy podmiot C wykaże przychód w skutek
+tej płatności. Nie jest więc możliwe zastosowanie przepisów wynikających z innej regulacji
+niż dotyczącej podwójnego opodatkowania przychodu wykazywanego przez podmiot B.
+Oznacza, że w przypadku spółek położonych w różnych krajach zastosowanie tej koncepcji
+możliwe jest wyłącznie dla celów preferencji mającej swoje źródło w dyrektywie.
+Zastosowanie analizowanej koncepcji dla celów preferencji wynikającej z UPO możliwe jest
+wyłącznie, kiedy wszystkie spółki, których cechy brane są pod uwagę dla stwierdzenia
+spełnienia warunku rzeczywistego właściciela, znajdują się w państwie, którego rezydentem
+jest podmiot otrzymujący płatność (podmiot B).
+31
+
+===PAGE 32===
+Na podstawie niniejszych objaśnień nie jest jednak możliwe dowodzenie spełnienia
+warunku rzeczywistego właściciela w oparciu o rozszerzony zakres podmiotowy badania
+tego warunku w odniesieniu do podmiotu innego niż podmiot, do którego płatność została
+wypłacona.
+6.3.2. Przesłanki spełnienia warunku rzeczywistego właściciela na podstawie
+rozszerzonego zakresu podmiotowego badania
+Dla spełnienia warunku rzeczywistego właściciela na podstawie rozszerzonego zakresu
+podmiotowego badania konieczne jest wykazanie, że w sytuacji opisanej w pkt. 6.3.1.:
+a) istnieją okoliczności umożliwiające badanemu podmiotowi (podmiotowi C) żądanie od
+podmiotu, który płatność tę uzyska (od podmiotu B), aby ten ją przekazał, tj. podmiot
+B nie jest jej BO ze względu na uprawnienia podmiotu C (dalej jako: przesłanka
+pośrednika ze względu na hipotetyczną płatność) [krok 1];
+b) badany podmiot (podmiot C) może samodzielnie decydować o przeznaczeniu danej
+płatności „z poziomu” podmiotu uzyskującego przychód (podmiotu B) oraz prowadzi
+rzeczywistą działalność gospodarczą w zakresie tej płatności, tj. badany podmiot jest
+BO analizowanej płatności [krok 2].
+Należy przy tym podkreślić, że powyższe okoliczności są ze sobą powiązane i wzajemnie
+zależne.
+Schemat 3: elementy badane na potrzeby rozszerzonego badania podmiotowego
+[krok 1] [krok 2]
+rzeczywista działalność
+C gospodarcza w zakresie
+analizowanej płatności
+uprawnienie do
+hipotetycznej płatności
+władztwo ekonomiczne
+brak rzeczywistej
+nad płatnością
+B
+działalności w zakresie
+analizowanej płatności
+UE lub kraj-strona UPO
+Polska
+A
+Przykładem struktury, w której może być uzasadnione zastosowanie rozszerzonego badania
+podmiotowego warunku rzeczywistego właściciela jest tworzenie na tym samym obszarze
+spółek celowych ze względów gospodarczych (np. dla odseparowania ryzyka).
+32
+
+===PAGE 33===
+krok 1: przesłanka pośrednika ze względu na hipotetyczną płatności
+W pierwszym kroku należy zweryfikować czy podmiot uzyskujący płatność (podmiot B) nie
+jest BO i czy ma to miejsce ze względu na uprawnienia podmiotu badanego pod kątem warunku
+BO (podmiotu C). Oznacza to weryfikację czy istnieją okoliczności świadczące o tym, że
+podmiot B w zakresie analizowanej płatności: jest pośrednikiem i nie uzyskuje jej dla własnej
+korzyści oraz nie prowadzi rzeczywistej działalności gospodarczej. Taką okolicznością będzie
+przykładowo umowa pożyczki (zawarta z podmiotem C) na warunkach odpowiadających
+umowie pożyczki stanowiącej podstawę wypłaty należności odsetkowej do podmiotu
+uzyskującego płatność (podmiotu B) czy posiadanie (przez podmiot C) udziałów
+umożliwiających samodzielne podjęcie decyzji o wypłacie dywidendy (połączone z brakiem
+samodzielności w podjęciu decyzji co do przeznaczania otrzymanej płatności odsetkowej /
+dywidendy po stronie podmiotu B ze względu na nieprowadzenie przez niego rzeczywistej
+działalności gospodarczej).
+Przykład 19 - przesłanki spełnienia warunku rzeczywistego właściciela na podstawie
+rozszerzonego zakresu podmiotowego badania:
+Przykład A krok 1
+Polski płatnik (podmiot A) wypłaca odsetki do spółki B będącej spółką państwa członkowskiego
+UE i 100% udziałowcem polskiego płatnika. Spółka B nie dysponuje własnymi środkami, a
+pożyczka udzielone polskiemu płatnikowi została udzielona wyłącznie z pożyczki udzielonej
+przez spółkę C. Z tytułu tej pożyczki spółka B jest zobowiązana do spłaty odsetek do spółki C,
+także będącej spółką w państwa członkowskiego UE i 100% udziałowcem spółki B. Umowa o
+spłacie pożyczki do podmiotu C przewiduje, że spłata jest wymagana, kiedy spółka dysponuje
+umożliwiającymi ją środkami. Jednocześnie, spółka B nie prowadzi innej działalności
+zarobkowej niż udzielanie ww. pożyczek. Spełniona jest wówczas przesłanka pośrednika ze
+względu na hipotetyczną płatność.
+Przykład B krok 2
+Spółka z Francji (spółka C) była udziałowcem polskiej spółki operacyjnej. Chcąc wnieść
+dodatkowe środki do polskiej spółki (spółki A) planuje uzyskać pożyczkę z banku, przy czym
+warunkiem udzielenia pożyczki jest uzyskanie zabezpieczenia na udziałach. Ponieważ umowa
+polskiej spółki wyklucza taką możliwość w odniesieniu do udziałów tej spółki, spółka C
+powołała we Francji spółkę zależną (spółkę B), w której posiada 100% udziałów i do której
+wniosła udziały polskiej spółki. Udziały w spółce B stanowiły zabezpieczenie finansowania
+udzielonego spółce C. Tak uzyskane środki spółka C wniosła do spółki B. Następnie, tak
+pozyskane środki spółka B wniosła do polskiej spółki A. Spółka B nie prowadzi działalności
+zarobkowej i nie prowadzi innej działalności niż posiadanie udziałów w polskiej spółce.
+Ewentualna dywidenda wypłacona przez spółkę B do spółki C odpowiadać więc będzie
+wysokości dywidendy wypłaconej przez polską spółkę A do spółki B. Spełniona jest wówczas
+przesłanka pośrednika ze względu na hipotetyczną płatność.
+krok 2: status BO płatności badanego podmiotu
+W kolejnym kroku konieczne jest zweryfikowanie czy podmiot badany pod kątem BO (podmiot
+C) spełnia przesłanki opisane w pkt. 2 Objaśnień, tj. czy sam jest BO płatności. W pierwszej
+kolejności konieczne jest zbadanie, czy może on „otrzymać” (wykorzystać) płatność dla
+33
+
+===PAGE 34===
+własnej korzyści. Oznacza to, że musi on mieć samodzielną możliwość zadecydowania o jej
+przeznaczeniu „z poziomu” podmiotu uzyskującego przychód. Będzie to miało miejsce, kiedy
+wszelkie decyzje o jej przeznaczeniu podejmowane są przez podmiot badany pod kątem
+warunku BO (podmiot C), ponoszącego koszty ryzyka zarządzania tą płatnością. Po drugie,
+podmiot ten sam musi spełniać przesłankę niebycia pośrednikiem, czyli nie mogą zachodzić
+okoliczności świadczące o tym, że jest on zobowiązany do przekazania płatności (w tym że nie
+jest on zobowiązany do wykorzystania płatności na korzyść innego podmiotu).
+Przykład A krok 2
+W stanie faktycznym opisanym w kroku 1 podmiot B nie posiada żadnego substratu
+majątkowego, a wszelkie decyzje podejmowane są przez dyrektorów, których koszty
+wynagrodzenia ponosi spółka C i którzy korzystają z majątku spółki C. Ww. personel podejmuje
+decyzje o udzieleniu pożyczek innym spółkom z grupy ze środków uzyskiwanych ze spłaty
+pożyczki czy innej inwestycji takich środków. Jednocześnie, sposób inwestycji środków
+podyktowany jest strategią rozwoju spółki C, a wartość należności spółki C od spółki B jest
+zależna od kwoty odsetek uzyskanych przez spółkę B: im wyższa jest suma odsetek wypłacanych
+do spółki B tym wyższa jest należności spółki C. Uzasadnione jest wówczas przyjęcie, że spółka
+C jest BO analizowanej płatności.
+W stanie faktycznym przykładu A (krok 1 i krok 2) spełniony jest więc warunek rzeczywistego
+właściciela na podstawie rozszerzonego badania podmiotowego.
+Przykład B krok 2
+W stanie faktycznym opisanym w kroku 1 o wypłacie dywidendy przez spółkę B decyduje spółka
+C jako jedyny wspólnik. Ponadto to spółka C ponosi koszty działalności spółki B – spółka B nie
+posiada substratu majątkowego, a wszelkie decyzje podejmowane są przez dyrektorów,
+będących także dyrektorami spółki C (ponoszącej koszty ich wynagrodzenia). Spółka C posiada
+natomiast własny substrat majątkowo-osobowy. W przypadku wypłaty dywidendy przez spółkę
+B do spółki C, to spółka C samodzielnie poniosłaby więc koszty ryzyka takiej płatności, w tym
+odpowiedniego zabezpieczenia jej wartości umożliwiającego spółce C prowadzenie jej
+działalności, w tym np. terminowe spłaty zobowiązania wobec banku. Konieczność spłaty
+zobowiązania wobec banku nie jest przy tym uzależniona od uzyskania analizowanej
+dywidendy. Uzasadnione jest wówczas przyjęcie, że spółka C jest BO analizowanej płatności.
+W stanie faktycznym przykładu B (krok 1 i krok 2) spełniony jest więc warunek rzeczywistego
+właściciela na podstawie rozszerzonego badania podmiotowego.
+6.4. Domniemanie spełnienia warunku rzeczywistego właściciela na gruncie dyrektywy PS
+Biorąc pod uwagę opisany w pkt 3.3. cel dyrektywy PS, jakim jest wyłącznie nieopodatkowana
+wypłata podziału zysku do spółki dominującej, w tym poprzez łańcuch spółek zależnych, oraz
+uwzględniając przywołany tam fragment wyroku TSUE, należy uznać, że nie jest konieczne
+badanie warunku rzeczywistego właściciela w odniesieniu do wypłaty podziału zysku, która
+podlega co najmniej jednokrotnemu opodatkowaniu w granicach UE. Kiedy wypłata podziału
+zysku pomiędzy spółkami zależnymi i dominującymi podlega jednokrotnemu opodatkowaniu
+w ramach UE nie zachodzi bowiem ryzyko, że dyrektywa PS jest stosowana niezgodnie z
+celem. Taka wypłata podziału zysku podlega co najmniej jednokrotnemu opodatkowaniu w
+granicach UE, kiedy opodatkowany jest podział zysku pomiędzy spółkami zależnymi i
+34
+
+===PAGE 35===
+dominującymi w rozumieniu dyrektywy PS lub podział zysku wypłacany przez ostatnią spółkę
+dominującą w takim łańcuchu.
+Powyższe domniemanie może zostać zastosowane przez płatnika. Stanowi ono bowiem
+dopełnienie systemowej wykładni zakresu badania w ramach obowiązku należytej staranności
+w przypadku dyrektywy PS. Możliwość zastosowanie tego domniemania przez płatnika nie
+może jednak modyfikować formalnych obowiązków ustawowych ciążących na podatniku
+takich jak warunek statusu rzeczywistego właściciela dla zastosowania preferencji
+podatkowej dla płatności biernych (i złożenie odpowiedniego oświadczania w przypadku
+wystąpienia o zwrot podatku na podstawi art. 28b ustawy o CIT50).
+Dla określenia czy uzasadnione jest przyjęcie domniemania spełnienia warunku rzeczywistego
+właściciela zastosowanie ma odpowiednio koncepcja LTA. Oznacza to, że aby zastosować
+domniemanie na etapie płatności z Polski konieczne jest prześledzeniu hipotetycznego
+łańcucha płatności podziału zysku przez spółki zależne i dominujące. Konieczność
+prześledzenia hipotetycznego łańcucha płatności oznacza w konsekwencji, że w przypadku
+zastosowania domniemania nie ma zastosowania wyjściowy wymóg LTA polegający na
+konieczności wykazywania opodatkowanego przychodu przez podmiot, którego cechy
+decydują o spełnieniu warunku rzeczywistego właściciela. O możliwości zastosowania
+domniemania decydują zasady opodatkowania, które miałyby zastosowanie do hipotetycznych
+wypłat podziału zysku w łańcuchu płatności dokonywanych przez spółki zależne i dominujące
+na moment wypłaty płatności z Polski.
+Należy przy tym zauważyć, że zastosowanie powyższego domniemania nie wyklucza
+zastosowania do danej wypłaty art. 22c ustawy o CIT. Nie jest bowiem wykluczone, że jego
+zastosowanie było sprzeczne w danych okolicznościach z przedmiotem lub celem tych
+przepisów, głównym lub jednym z głównych celów ukształtowania w określony sposób
+struktury właścicielskiej w danym łańcuchu płatności na moment wypłaty było skorzystanie z
+domniemania, a sposób działania był sztuczny (np. kiedy w krótkim odstępie czasu dochodzi
+do zmian w strukturze właścicielskiej bez uzasadnionych przyczyn ekonomicznych, na gruncie
+których zastosowanie domniemania nie byłoby możliwe).
+Podkreślenia wymaga więc, że zastosowanie tego domniemania jest dla płatnika fakultatywne.
+Przykład 20
+Polska spółka zależna w rozumieniu dyrektywy PS (spółka A) wypłaca dywidendę do
+niemieckiej spółki dominującej w rozumieniu dyrektywy PS (spółki B). Jedynymi udziałowcami
+spółki B są: (i) osoby fizyczne, do których wypłata dywidendy będzie opodatkowana WHT, oraz
+(ii) spółka, do której wypłata dywidendy podlega WHT (np. będąca rezydentem kraju, z którym
+UPO przewiduje w takim przypadku WHT w Niemczech). Wówczas płatnik może zastosować
+domniemanie spełnienia warunku rzeczywistego właściciela w odniesieniu do całości
+wypłacanej dywidendy.
+Przykład 21
+Polska spółka zależna w rozumieniu dyrektywy PS wypłaca dywidendę do polskiej spółki,
+będącej spółką dominująca w rozumieniu dyrektyw PS, w której udziałowcami są wyłącznie
+osoby fizyczne (do których wypłata dywidendy będzie podlegała WHT). W takim przypadku
+50 Odpowiednio art. 44f ustawy o PIT.
+35
+
+===PAGE 36===
+płatnik może zastosować domniemanie spełnienia warunku rzeczywistego właściciela w
+odniesieniu do całości wypłacanej dywidendy.
+Przykład 22
+Polska spółka zależna w rozumieniu dyrektywy PS wypłaca dywidendę do greckiej spółki
+dominującej, w której jedynym udziałowcem jest spółka niebędąca spółką dominująca w
+rozumieniu dyrektywy PS i będąca rezydentem kraju, z którym UPO umożliwia zwolnienie z
+WHT w Grecji dywidendy wypłacanej takiej spółce. W takim przypadku płatnik nie może
+zastosować domniemania spełnienia warunku rzeczywistego właściciela w odniesieniu do
+całości wypłacanej dywidendy i musi – dla zastosowania preferencji podatkowej –
+przeprowadzić weryfikację spełnienia warunku rzeczywistego właściciela.
+6.5. OZZ jako rzeczywisty właściciel
+Pojęcia organizacji zbiorowego zarządzania prawami autorskimi lub prawami pokrewnymi
+oraz zagranicznej organizacji zbiorowego zarządzania zdefiniowane zostały w ustawie o
+zbiorowym zarządzaniu prawami autorskimi i prawami pokrewnymi.
+Ustawa o zbiorowym zarządzaniu prawami autorskimi i prawami pokrewnymi wdraża
+dyrektywę Parlamentu Europejskiego i Rady 2014/26/UE z dnia 26 lutego 2014 r. w sprawie
+zbiorowego zarządzania prawami autorskimi i prawami pokrewnymi oraz udzielania licencji
+wieloterytorialnych dotyczących praw do utworów muzycznych do korzystania online na rynku
+wewnętrznym.
+Zgodnie z ustawą, organizacją zbiorowego zarządzania prawami autorskimi lub prawami
+pokrewnymi jest stowarzyszenie zrzeszające uprawnionych lub podmioty reprezentujące
+uprawnionych, którego podstawowym celem statutowym jest zbiorowe zarządzanie prawami
+autorskimi lub prawami pokrewnymi na rzecz uprawnionych w zakresie zezwolenia
+udzielonego mu przez ministra właściwego do spraw kultury i ochrony dziedzictwa
+narodowego.
+Przez zagraniczną organizację zbiorowego zarządzania należy natomiast rozumieć podmiot
+uznany za organizację zbiorowego zarządzania prawami autorskimi lub prawami pokrewnymi
+za granicą w państwie swojej siedziby.
+Wskazać należy na szczególny i wyjątkowy charakter organizacji zbiorowego zarządzenia,
+które posiadają samodzielne kompetencje do negocjowania i ustalania warunków umów z
+użytkownikami utworów lub przedmiotów praw pokrewnych, w tym przede wszystkim
+wysokości wynagrodzenia za ich eksploatację z prawem ich poboru i repartycji według
+zatwierdzonych przez organy OZZ zasad, których podstawowe wytyczne znajdują się w
+ustawie o zbiorowym zarządzaniu. Nie działają one zatem w imieniu i na rzecz pojedynczych
+twórców, lecz całego środowiska, czy całej zrzeszonej w nich społeczności, reprezentując
+grupowo zarówno ich interesy, jak i realizując własne zadania i cele. Wśród nich jest także
+pobieranie należności oraz ich wypłata uprawnionym w całości (lub w części w uzasadnionych
+przypadkach jak np. w sytuacji braku dokumentacji podziałowej). W tym sensie uprawnienia o
+charakterze właścicielskim wykonywane są przez organizacje zbiorowego zarządzenia
+prawami autorskimi, gdyż to one ustalają zasady współpracy i poboru należności od
+użytkowników dzieł. Podkreślenia wymaga również, że OZZ działają w obszarach, w których
+w praktyce nie jest możliwe bezpośrednie dochodzenie indywidualnie wynagrodzeń przez
+36
+
+===PAGE 37===
+twórców od użytkowników tak w kraju, w którym zostały one stworzone, jak i za jego
+granicami.
+Organizacje zbiorowego zarządzania współpracują ze sobą na całym świecie na podstawie
+umów o wzajemnej reprezentacji w celu udzielania licencji i pobierania wynagrodzeń
+autorskich od użytkowników korzystających z utworów i przedmiotów praw pokrewnych za
+granicą. Umowa o wzajemnej reprezentacji jest umową pomiędzy dwiema organizacjami, na
+postawie której organizacje te upoważniają się wzajemnie do pobierania na terytorium
+stanowiącym obszar ich działalności wszelkich środków pieniężnych od użytkowników na
+rzecz uprawnionych. Specyfika takich rozliczeń jest konsekwencją przyjętego globalnie
+modelu zbiorowego zarzadzania twórczością.
+Mając na uwadze powyższe, uznać należy, że w przypadku dokonywania płatności na
+rzecz zagranicznych organizacji zbiorowego zarządzania, organizacje te powinny być
+traktowane jako rzeczywiści właściciele tych należności.
+Mając na uwadze szczególny status organizacji zbiorowego zarządzania prawami autorskimi i
+prawami pokrewnymi, uzasadnione jest aby organizacje te również mogły identyfikować się
+jako rzeczywiści właściciele należności otrzymywanych od zagranicznych organizacji
+zbiorowego zarządzania.
+W konsekwencji, uznać należy, że w przypadku otrzymywania płatności przez organizacje
+zbiorowego zarządzania prawami autorskimi i prawami pokrewnymi organizacje te powinny
+być traktowane jako rzeczywiści właściciele tych należności.
+37

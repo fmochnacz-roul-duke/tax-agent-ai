@@ -63,6 +63,7 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 6 | Document ingestion — Python/FastAPI microservice for DDQ substance and DEMPE extraction | ✓ Complete |
 | 7 | FactChecker Persona Agent — Gemini + Google Search grounding, multi-agent call_agent pattern | ✓ Complete |
 | 8 | Conversational web UI — Express server, InputExtractor, SSE progress streaming | ✓ Complete |
+| 9 | Legal Knowledge RAG — tax taxonomy, Chunker/Embedder/Retriever/LegalRagService, source .md files | In progress |
 | 10 | Substance interview — 5-question chat flow, TypeScript LLM extractor, any entity assessed | ✓ Complete |
 
 ---
@@ -175,7 +176,7 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run tax:agent` | CLI agent — requires `--input <file>` |
 | `npm run ddq:service` | Python DDQ extraction service on port 8000 (optional) |
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
-| `npm test` | Unit tests — 99 tests, no API calls, ~2s |
+| `npm test` | Unit tests — 140 tests, no API calls, ~2s |
 | `npm run module1:prompting` | Module 1: prompting examples |
 | `npm run module1:agent` | Module 1: text-based agent loop |
 | `npm run module2:tools` | Module 2: function calling demo |
@@ -189,7 +190,7 @@ See `.env.example` for the complete configuration file with comments.
 ### TypeScript
 - `strict: true` is on — never use `any`; use `unknown` and narrow explicitly
 - Always run `npm run build` before committing — zero errors required
-- Always run `npm test` — all 99 tests must pass
+- Always run `npm test` — all 140 tests must pass
 - Use `async/await` for all LLM calls and all Environment methods that call external services
 - All functions must have explicit return types
 
