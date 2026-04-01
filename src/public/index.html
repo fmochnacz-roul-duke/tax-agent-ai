@@ -479,9 +479,10 @@
 <script>
 // ── State ──────────────────────────────────────────────────────────────────────
 
-let sessionId  = null;
+let sessionId      = null;
 let analysisRunning = false;
 let eventSource    = null;
+let interviewMode  = false;   // true while the 5-question substance interview is in progress
 
 // ── Session init ───────────────────────────────────────────────────────────────
 
@@ -583,7 +584,9 @@ function fillExample(el) {
 async function sendMessage() {
   const input = document.getElementById('user-input');
   const text  = input.value.trim();
-  if (!text || analysisRunning) return;
+  // Allow messages during the interview even though analysisRunning is not set yet.
+  // Block only when the agent is actually running (not during the interview phase).
+  if (!text || (analysisRunning && !interviewMode)) return;
 
   if (!sessionId) await initSession();
 
@@ -608,6 +611,14 @@ async function sendMessage() {
     } else if (data.type === 'ready') {
       // Show confirmation card with extracted params
       showConfirmCard(data.text, data.input);
+    } else if (data.type === 'interview_question') {
+      // Next substance question — display as bot message, keep input active
+      appendMessage('bot', escapeHtml(data.text));
+    } else if (data.type === 'interview_complete') {
+      // All 5 answers collected — analysis starting in background
+      interviewMode = false;
+      appendMessage('bot', escapeHtml(data.text));
+      openStream();   // connect to SSE stream now that analysis is running
     }
   } catch (err) {
     appendMessage('bot', '⚠ Error: ' + err.message);
@@ -667,29 +678,52 @@ async function confirmAnalysis() {
   document.querySelectorAll('.btn-primary').forEach(b => b.disabled = true);
 
   clearLog();
-  setProgressStatus('running');
-  analysisRunning = true;
 
-  appendMessage('bot', '<span class="spinner"></span> Starting analysis...');
-
-  // Tell server to start the analysis
+  let data;
   try {
-    await fetch('/session/' + sessionId + '/confirm', { method: 'POST' });
+    const res = await fetch('/session/' + sessionId + '/confirm', { method: 'POST' });
+    data = await res.json();
   } catch (err) {
-    appendMessage('bot', '⚠ Failed to start analysis: ' + err.message);
-    setProgressStatus('error');
-    analysisRunning = false;
+    appendMessage('bot', '⚠ Failed to confirm: ' + err.message);
     return;
   }
 
-  // Connect to SSE stream
+  if (data.type === 'interview_start') {
+    // Phase 10: substance interview — show the first question in the chat.
+    // The user answers via the normal message input; openStream() is called
+    // from sendMessage() when the last answer triggers 'interview_complete'.
+    interviewMode = true;
+    appendMessage('bot',
+      '<div style="color: var(--accent); font-size: 11px; margin-bottom: 8px;">' +
+      '◆ SUBSTANCE INTERVIEW — 5 questions before analysis</div>' +
+      escapeHtml(data.question)
+    );
+    // Re-enable send button (disabled by default while analysis runs)
+    const sendBtn = document.getElementById('send-btn');
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send';
+  } else {
+    // Fallback: if server skips interview, go straight to analysis stream
+    setProgressStatus('running');
+    analysisRunning = true;
+    appendMessage('bot', '<span class="spinner"></span> Starting analysis...');
+    openStream();
+  }
+}
+
+// openStream() connects to the SSE endpoint and handles progress events.
+// Called either directly from confirmAnalysis() (no interview) or from
+// sendMessage() when the interview completes.
+function openStream() {
+  setProgressStatus('running');
+  analysisRunning = true;
+
   eventSource = new EventSource('/session/' + sessionId + '/stream');
 
   eventSource.onmessage = function(e) {
     const event = JSON.parse(e.data);
     appendLog(event);
 
-    // When analysis is complete, fetch and display the report
     if (event.type === 'report_saved' && event.data && event.data.report) {
       displayReport(event.data.report);
       setProgressStatus('complete');

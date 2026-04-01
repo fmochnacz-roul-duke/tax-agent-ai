@@ -28,6 +28,7 @@ import * as crypto from 'crypto';
 import * as dotenv from 'dotenv';
 import { AgentInput, AgentEvent, WhtReport, runWhtAnalysis } from '../agents/BeneficialOwnerAgent';
 import { InputExtractor } from './InputExtractor';
+import { SubstanceInterviewer, InterviewState } from './SubstanceInterviewer';
 
 dotenv.config();
 
@@ -45,17 +46,21 @@ app.use(express.json());
 //   report     — the completed WhtReport after analysis finishes
 //   sseClients — SSE response objects waiting for analysis events
 
-type SessionStatus = 'chatting' | 'confirmed' | 'running' | 'complete' | 'error';
+type SessionStatus = 'chatting' | 'confirmed' | 'interviewing' | 'running' | 'complete' | 'error';
 
 interface Session {
-  id:         string;
-  messages:   { role: 'user' | 'assistant'; content: string }[];
-  input?:     AgentInput;
-  status:     SessionStatus;
-  report?:    WhtReport;
-  error?:     string;
+  id:              string;
+  messages:        { role: 'user' | 'assistant'; content: string }[];
+  input?:          AgentInput;
+  status:          SessionStatus;
+  report?:         WhtReport;
+  error?:          string;
+  // Phase 10: substance interview state
+  interviewer?:    SubstanceInterviewer;
+  interviewState?: InterviewState;
+  ddqText?:        string;
   // SSE: we keep Response objects open and write events to them
-  sseClients: Response[];
+  sseClients:      Response[];
 }
 
 // In-memory session store — good enough for single-server use
@@ -125,8 +130,8 @@ app.post('/session/:id/message', async (req: Request, res: Response) => {
   const session = getSession(res, String(req.params['id'] ?? ''));
   if (!session) return;
 
-  if (session.status !== 'chatting') {
-    res.status(400).json({ error: `Session is in ${session.status} state, not chatting` });
+  if (session.status !== 'chatting' && session.status !== 'interviewing') {
+    res.status(400).json({ error: `Session is in ${session.status} state — messages not accepted` });
     return;
   }
 
@@ -139,7 +144,64 @@ app.post('/session/:id/message', async (req: Request, res: Response) => {
   // Add user message to history
   session.messages.push({ role: 'user', content: userMessage.trim() });
 
-  // Run the extractor against the full conversation history
+  // ── Phase 10: interview mode ────────────────────────────────────────────────
+  //
+  // When status is 'interviewing', the user is answering the 5 substance
+  // questions. Route each answer to the SubstanceInterviewer instead of the
+  // InputExtractor. When all 5 answers are in, compile the DDQ text and
+  // start runWhtAnalysis() in the background (same as the /confirm route
+  // previously did for non-interview sessions).
+
+  if (session.status === 'interviewing') {
+    const { interviewer, interviewState, input } = session;
+
+    if (!interviewer || !interviewState || !input) {
+      res.status(500).json({ error: 'Interview state is missing — this is a server bug' });
+      return;
+    }
+
+    const result = interviewer.answer(interviewState, userMessage.trim());
+
+    if (result.status === 'in_progress') {
+      // More questions remain — send the next one
+      session.messages.push({ role: 'assistant', content: result.question });
+      res.json({ type: 'interview_question', text: result.question });
+      return;
+    }
+
+    // Interview complete — store the compiled DDQ text
+    session.ddqText = result.ddqText;
+    session.messages.push({ role: 'assistant', content: result.summary });
+
+    // Transition to running and start analysis in background
+    session.status = 'running';
+    const outputPath = reportPath(input);
+
+    runWhtAnalysis(input, session.ddqText, outputPath, (event: AgentEvent) => {
+      broadcastEvent(session, event);
+    })
+      .then((report: WhtReport) => {
+        session.report = report;
+        session.status = 'complete';
+        broadcastEvent(session, { type: 'report_saved', message: 'Analysis complete.', data: { report } });
+        for (const client of session.sseClients) client.end();
+        session.sseClients = [];
+      })
+      .catch((err: unknown) => {
+        session.status = 'error';
+        session.error  = String(err);
+        broadcastEvent(session, { type: 'error' as AgentEvent['type'], message: `Analysis failed: ${String(err)}` });
+        for (const client of session.sseClients) client.end();
+        session.sseClients = [];
+      });
+
+    // Tell the browser the interview is done — it will open the SSE stream
+    res.json({ type: 'interview_complete', text: result.summary });
+    return;
+  }
+
+  // ── Normal chatting mode: run InputExtractor ────────────────────────────────
+
   let result;
   try {
     result = await extractor.extract(session.messages);
@@ -180,44 +242,21 @@ app.post('/session/:id/confirm', (req: Request, res: Response) => {
     return;
   }
 
-  session.status = 'running';
-  res.json({ started: true });
+  // Phase 10: start the substance interview instead of going straight to analysis.
+  // The interview asks 5 questions in the chat. When complete, the /message handler
+  // compiles the DDQ text and calls runWhtAnalysis() with the interview answers.
+  session.status = 'interviewing';
 
-  // Start analysis in background — do NOT await here.
-  // The server returns the HTTP response immediately, then the analysis runs
-  // asynchronously and streams progress via SSE.
-  const outputPath = reportPath(session.input);
+  const iv = new SubstanceInterviewer();
+  session.interviewer    = iv;
+  session.interviewState = iv.start(
+    session.input.entity_name,
+    session.input.country,
+    session.input.income_type
+  );
+  const firstQuestion = iv.getQuestion(session.interviewState);
 
-  runWhtAnalysis(session.input, undefined, outputPath, (event: AgentEvent) => {
-    broadcastEvent(session, event);
-  })
-    .then((report: WhtReport) => {
-      session.report = report;
-      session.status = 'complete';
-      // Broadcast a 'complete' synthetic event so the browser knows to fetch the report
-      broadcastEvent(session, {
-        type:    'report_saved',
-        message: 'Analysis complete.',
-        data:    { report },
-      });
-      // Close all SSE connections gracefully
-      for (const client of session.sseClients) {
-        client.end();
-      }
-      session.sseClients = [];
-    })
-    .catch((err: unknown) => {
-      session.status = 'error';
-      session.error  = String(err);
-      broadcastEvent(session, {
-        type:    'error' as AgentEvent['type'],
-        message: `Analysis failed: ${String(err)}`,
-      });
-      for (const client of session.sseClients) {
-        client.end();
-      }
-      session.sseClients = [];
-    });
+  res.json({ type: 'interview_start', question: firstQuestion });
 });
 
 // ── GET /session/:id/stream — Server-Sent Events stream ───────────────────────

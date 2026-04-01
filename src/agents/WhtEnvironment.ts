@@ -17,6 +17,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { FactCheckerAgent } from './FactCheckerAgent';
+import { SubstanceExtractor } from '../server/SubstanceExtractor';
 
 // ── Treaty database types ─────────────────────────────────────────────────────
 //
@@ -790,9 +791,23 @@ export class WhtEnvironment {
         return JSON.stringify(await response.json());
       } catch (err) {
         // Graceful fallback: an unstarted or unreachable Python service should
-        // never block the TypeScript agent — simulation is the safe default.
+        // never block the TypeScript agent — try the TypeScript extractor next.
         console.warn(
-          `[DDQ SERVICE] /substance call failed: ${String(err)}. Falling back to simulation.`
+          `[DDQ SERVICE] /substance call failed: ${String(err)}. Trying TypeScript extractor.`
+        );
+      }
+    }
+
+    // Phase 10 — TypeScript extractor: DDQ text present but no Python service running.
+    // SubstanceExtractor calls OpenAI directly from Node.js — no Python required.
+    // This is the path used after a SubstanceInterviewer chat session.
+    if (!this.simulate && this.ddqText !== undefined) {
+      try {
+        const extractor = new SubstanceExtractor();
+        return await extractor.extract(this.ddqText, entityName, country);
+      } catch (err) {
+        console.warn(
+          `[SUBSTANCE EXTRACTOR] Extraction failed: ${String(err)}. Falling back to simulation.`
         );
       }
     }
