@@ -1,0 +1,251 @@
+DUE DILIGENCE QUESTIONNAIRE — BENEFICIAL OWNER SUBSTANCE ASSESSMENT
+Entity:  Orange S.A.
+Country: France
+Date:    January 2026
+Purpose: WHT beneficial owner analysis — royalty payments from Orange Polska S.A.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 1 — COMPANY OVERVIEW
+═══════════════════════════════════════════════════════════════════════════════
+
+Orange S.A. (formerly France Télécom S.A.) is the parent company and ultimate
+holding entity of the Orange Group, one of the world's largest telecommunications
+operators. It is incorporated in France under French company law (société anonyme),
+registered at the Paris Trade and Companies Register under SIREN 380 129 866.
+
+Orange S.A. is listed on Euronext Paris (ticker: ORA) and is subject to French
+corporate income tax at the standard rate (25% from 2022). It files consolidated
+and standalone accounts under IFRS. The French State holds a 22.95% stake via
+APE (Agence des participations de l'État); no single private shareholder holds
+more than 10%.
+
+Orange S.A. holds IP assets, signs master licence agreements with operating
+subsidiaries, and acts as the central funding and governance entity of the Group.
+It is not a pure holding company — it has direct employees, operates its own
+French telecommunications network, and runs the Orange Labs R&D division.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 2 — EMPLOYEES AND MANAGEMENT
+═══════════════════════════════════════════════════════════════════════════════
+
+Global headcount (Orange Group): approximately 133,000 full-time employees
+as of 31 December 2025 (source: 2025 Annual Report).
+
+France-based employees (Orange S.A. and French subsidiaries): approximately
+73,000, of whom approximately 49,000 are employed directly by Orange S.A. itself
+(not subsidiaries). The remaining employees work in French operational subsidiaries
+such as Orange Business Services and Orange Caraïbe.
+
+Senior leadership:
+- Chairman and CEO: Christel Heydemann (appointed February 2022), based in Paris
+- Senior Management Committee: 9 members, all based in France
+- Board of Directors: 14 members; 8 are independent non-executive directors
+  (meeting the French AFEP-MEDEF governance code threshold of majority-independence)
+
+No nominee directors. All directors hold genuine decision-making authority and
+are individually named in the Déclaration de Performance Extra-Financière.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 3 — PHYSICAL PRESENCE
+═══════════════════════════════════════════════════════════════════════════════
+
+Registered office:
+  111 quai du Président Roosevelt
+  92130 Issy-les-Moulineaux, France
+
+Orange S.A. owns the Issy-les-Moulineaux campus (7 buildings, acquired 2003).
+It also holds long-term leases on offices in:
+  - Paris 8ème (Group headquarters, senior management)
+  - Metz (operational centre, 4,200 employees)
+  - Bordeaux (technology hub, Orange Labs Sud-Ouest)
+  - Lyon (regional operational centre)
+
+The Group's principal data centres are located in France and operated by Orange S.A.
+directly (not outsourced to third parties).
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 4 — MANAGEMENT INDEPENDENCE AND DECISION-MAKING
+═══════════════════════════════════════════════════════════════════════════════
+
+Orange S.A. exercises autonomous decision-making over all material IP matters:
+
+a) Royalty rates: set annually by the Transfer Pricing team (headed by the Group
+   Chief Financial Officer) using the Comparable Uncontrolled Transaction (CUT)
+   method and benchmarked against publicly available external licence agreements.
+   No shareholder approval is required.
+
+b) Licence terms: the Group IP Legal team (25 dedicated lawyers, based in Paris)
+   drafts, negotiates, and executes all master licence agreements with subsidiaries.
+   No external party has veto rights over licence terms.
+
+c) IP strategy decisions: approved by the Board of Directors annually as part of
+   the Group Strategic Plan. The French State (22.95% shareholder) does not hold
+   a golden share or special voting right over IP strategy decisions.
+
+d) Dividend policy: determined exclusively by the Board of Directors based on Group
+   profitability and balance-sheet strength. There is no obligation, contractual
+   or factual, to distribute royalty income received from subsidiaries.
+
+Orange S.A. has confirmed in writing (letter dated 15 November 2025 from the CFO)
+that it has no back-to-back royalty arrangement with any entity above it in the
+corporate structure, and that royalty income is retained at Orange S.A. level for
+R&D reinvestment and general corporate purposes.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 5 — OWN ASSETS AND CAPITAL STRUCTURE
+═══════════════════════════════════════════════════════════════════════════════
+
+IP assets held directly by Orange S.A.:
+- Orange trademark: registered in 167 jurisdictions; registration numbers on file
+  with the Group IP team. All renewal decisions and maintenance costs borne by
+  Orange S.A. directly (not recharged to subsidiaries).
+- Technology portfolio: 9,300 active patents owned by Orange S.A. (2025 Annual
+  Report, Note 14 to the consolidated accounts). Orange Labs filed 436 new patents
+  in 2025.
+- Software licences: key platform licences held in Orange S.A.'s own name.
+
+Balance sheet summary (2024 Annual Report, Orange S.A. standalone):
+  Total assets:           €90.1 billion
+  Shareholders' equity:   €28.9 billion
+  Equity-to-assets ratio: 32%
+
+Capital structure: Orange S.A. raises debt independently on international capital
+markets. Credit ratings: Moody's Baa1, S&P BBB+ (both stable outlook as at
+January 2026). Orange S.A. issued €2.0 billion in senior unsecured bonds in
+March 2025. It does not rely on back-to-back intra-group loans to fund its
+IP portfolio — IP assets are financed from equity and public bond issuances.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 6 — OPERATING COSTS AND BUSINESS ACTIVITY
+═══════════════════════════════════════════════════════════════════════════════
+
+R&D expenditure: €1.4 billion per annum (2025 budget), managed by Orange Labs,
+a dedicated R&D division of Orange S.A. employing approximately 5,700 researchers.
+Orange Labs has centres in Issy-les-Moulineaux, Metz, Sophia Antipolis, and Grenoble.
+
+Brand management: the Global Marketing Division (approximately 1,200 employees)
+manages the Orange brand identity globally. Annual brand maintenance and
+enforcement budget: approximately €50 million.
+
+IP protection: the Group IP Legal team (25 lawyers in Paris, 12 in regional offices)
+handles trademark enforcement and patent prosecution. Orange S.A. initiated
+47 trademark infringement proceedings in 2025.
+
+Royalty income from subsidiaries is not automatically distributed or forwarded
+upstream. It forms part of Orange S.A.'s consolidated operating revenue and is
+allocated to R&D programmes, brand development, and general corporate purposes
+in accordance with the annual budget approved by the Board.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 7 — DEMPE FUNCTION ANALYSIS — BRAND AND TECHNOLOGY IP
+═══════════════════════════════════════════════════════════════════════════════
+
+Development:
+Orange S.A. (through Orange Labs) directs all R&D strategy for the Orange Group.
+The Orange Labs Executive Committee, reporting to the Orange S.A. CEO, approves
+all R&D budgets, determines research priorities (5G, AI, cybersecurity, cloud),
+and allocates research headcount. Operating subsidiaries may submit R&D requests
+but do not independently control R&D investment. Key decisions (investment approval
+above €5 million) require Senior Management Committee sign-off.
+
+Enhancement:
+Brand enhancement decisions — visual identity evolution, global advertising
+strategy, digital customer experience standards — are made by the Orange S.A.
+Global Marketing Division. All subsidiary marketing campaigns must comply with
+the Orange Brand Manual (revised 2024) issued by Orange S.A. Subsidiaries can
+run local tactical campaigns within the brand guidelines but cannot modify core
+brand elements (logo, colour palette, brand promise).
+
+Technology platform enhancements are developed centrally by Orange Labs and
+rolled out to subsidiaries under the Group Technology Roadmap. Subsidiaries do
+not independently develop or modify core platform technology.
+
+Maintenance:
+All Orange trademark registrations are maintained by the Orange S.A. IP team.
+Annual trademark renewal costs are borne directly by Orange S.A. Patent
+maintenance fees are paid from the Orange S.A. IP budget. Subsidiaries are not
+responsible for any IP maintenance obligations.
+
+Protection:
+The Orange S.A. Group IP Legal team manages all trademark enforcement globally.
+Orange S.A. is the named plaintiff in all trademark infringement and counterfeiting
+cases. Subsidiaries are required to notify Orange S.A. of any IP infringement
+they observe but cannot independently settle or initiate litigation. In 2025,
+Orange S.A. spent approximately €8 million on IP enforcement.
+
+Exploitation:
+Orange S.A. signs individual Master Licence Agreements (MLAs) with each operating
+subsidiary. The MLA for Orange Polska S.A. was signed on 1 March 2000 and has
+been renewed annually since. Under the MLA, Orange Polska S.A. pays a royalty
+for use of the Orange brand and technology platform. The royalty rate is set by
+the Orange S.A. Transfer Pricing team using the CUT method and is benchmarked
+annually. The current rate applicable to Orange Polska S.A. is [REDACTED — TP
+documentation on file]. Orange S.A. determines all licence terms; Orange Polska
+S.A. has no right to sub-license the Orange IP to third parties.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 8 — PASS-THROUGH OBLIGATION ASSESSMENT
+═══════════════════════════════════════════════════════════════════════════════
+
+Contractual pass-through: None. Orange S.A. has confirmed that:
+(a) No agreement requires it to forward royalty income from subsidiaries to any
+    third party or upstream entity.
+(b) There is no back-to-back royalty arrangement between Orange S.A. and any
+    entity above it in the corporate structure.
+(c) The French State shareholder does not receive any distribution automatically
+    linked to royalty receipts.
+
+Factual pass-through: Not applicable. Royalty income received from Orange Polska
+S.A. and other subsidiaries is retained by Orange S.A. for R&D reinvestment,
+brand development, and working capital. Annual dividend payments to shareholders
+are discretionary and decided annually by the Board based on overall profitability,
+not linked to subsidiary royalty receipts.
+
+Nominal margin: Orange S.A. retains a substantial economic margin on the royalty.
+After deducting direct IP costs (R&D, brand maintenance, enforcement), the net
+royalty margin at Orange S.A. level is estimated at [REDACTED — TP file].
+The margin is commercially meaningful and not merely nominal.
+
+Capital sufficiency: Orange S.A. is capitalised independently with €28.9 billion
+in equity. It does not require intra-group funding to cover its IP-related
+expenditures.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 9 — HOLDING PERIOD — ORANGE POLSKA S.A.
+═══════════════════════════════════════════════════════════════════════════════
+
+Orange S.A. has held a controlling stake in Orange Polska S.A. (formerly
+Telekomunikacja Polska S.A.) since 1998, when the French State-controlled
+France Télécom S.A. (the predecessor entity to Orange S.A.) first acquired
+shares in the Polish incumbent operator during the privatisation process.
+
+The current Orange S.A. stake of 50.67% of the share capital and voting rights
+of Orange Polska S.A. (as registered with the Warsaw Court Register) has been
+held continuously since 2013. The stake has been held by Orange S.A. in an
+uninterrupted manner for over 25 years, well in excess of the 2-year threshold
+required under Art. 21 of the Polish CIT Act (Interest and Royalties Directive
+transposition) and Art. 22(4)(3) of the Polish CIT Act (Parent-Subsidiary
+Directive transposition).
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 10 — RELATED-PARTY STATUS AND TRANSFER PRICING
+═══════════════════════════════════════════════════════════════════════════════
+
+Orange Polska S.A. is a subsidiary of Orange S.A. and qualifies as a related
+party within the meaning of Art. 11a(1)(4) of the Polish CIT Act (shareholding
+above 25%). All royalty payments are subject to full Polish transfer pricing
+documentation requirements (Art. 11k-11t CIT).
+
+Orange S.A. maintains a Master File and Local File for Orange Polska S.A. in
+compliance with Polish TP regulations. The royalty benchmarking analysis is
+updated annually and stored in the Orange Group TP documentation system.
+
+═══════════════════════════════════════════════════════════════════════════════
+DECLARATION
+═══════════════════════════════════════════════════════════════════════════════
+
+The information provided in this DDQ is accurate and complete to the best of
+the knowledge of Orange S.A. management as at the date stated above.
+
+Signed: [CFO, Orange S.A.]
+Date:   15 January 2026

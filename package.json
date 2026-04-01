@@ -11,7 +11,8 @@
     "module2:tools": "ts-node src/module2/FunctionCallingExample.ts",
     "module2:agent": "ts-node src/module2/AgentLoopFunctionCalling.ts",
     "tax:agent": "ts-node src/agents/BeneficialOwnerAgent.ts",
-    "module3:readme": "ts-node src/module3/ReadmeAgent.ts"
+    "module3:readme": "ts-node src/module3/ReadmeAgent.ts",
+    "ddq:service": "python python/run.py"
   },
   "keywords": [],
   "author": "",

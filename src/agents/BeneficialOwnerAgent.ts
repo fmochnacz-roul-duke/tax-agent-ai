@@ -351,6 +351,12 @@ interface AgentInput {
   // instead of having to infer it from substance_notes.
   // If omitted, the agent must determine related-party status from context.
   related_party?: boolean;
+  // ddq_path: path to a Due Diligence Questionnaire text file (Phase 6).
+  // When present, the DDQ is loaded at startup and forwarded to the Python
+  // extraction service, replacing simulated substance and DEMPE data with
+  // evidence extracted from the real document.
+  // Example: "data/ddqs/orange_sa_ddq.txt"
+  ddq_path?: string;
 }
 
 // validateInput() narrows an unknown value to AgentInput.
@@ -408,6 +414,11 @@ function validateInput(raw: unknown): AgentInput {
     throw new Error('related_party must be a boolean (true or false) when provided.');
   }
 
+  const { ddq_path } = obj;
+  if (ddq_path !== undefined && typeof ddq_path !== 'string') {
+    throw new Error('ddq_path must be a string file path when provided.');
+  }
+
   return {
     entity_name,
     country,
@@ -416,13 +427,22 @@ function validateInput(raw: unknown): AgentInput {
     substance_notes:    substance_notes    as string  | undefined,
     annual_payment_pln: annual_payment_pln as number  | undefined,
     related_party:      related_party      as boolean | undefined,
+    ddq_path:           ddq_path           as string  | undefined,
   };
 }
 
 // parseInput() reads process.argv looking for --input <file>.
 // process.argv is the array of command-line tokens: the first two entries are
 // always 'node' and the script path, so we slice(2) to get the user's flags.
-function parseInput(): AgentInput {
+//
+// Phase 6: if the input JSON contains a ddq_path field, the DDQ text is loaded
+// from that file here and returned alongside the validated input. The text is then
+// passed to WhtEnvironment so it can be forwarded to the Python extraction service.
+//
+// Return type is an object with two fields:
+//   input:   the validated AgentInput
+//   ddqText: the loaded DDQ text, or undefined if ddq_path was not set
+function parseInput(): { input: AgentInput; ddqText: string | undefined } {
   const args = process.argv.slice(2);
   const flag = args.indexOf('--input');
 
@@ -446,12 +466,34 @@ function parseInput(): AgentInput {
     process.exit(1);
   }
 
+  let input: AgentInput;
   try {
-    return validateInput(raw);
+    input = validateInput(raw);
   } catch (err) {
     console.error(`Invalid input file: ${String(err)}`);
     process.exit(1);
   }
+
+  // Phase 6 — load DDQ text when ddq_path is specified.
+  // The text is passed to WhtEnvironment and forwarded to the Python service
+  // when DDQ_SERVICE_URL is set in .env. If ddq_path is absent, ddqText stays
+  // undefined and the environment falls back to simulation as before.
+  let ddqText: string | undefined;
+  if (input.ddq_path) {
+    const ddqPath = path.resolve(input.ddq_path);
+    try {
+      ddqText = fs.readFileSync(ddqPath, 'utf-8');
+      console.log(
+        `[DDQ] Loaded ${ddqText.length.toLocaleString()} characters from ${ddqPath}`
+      );
+    } catch (err) {
+      console.error(`Error reading DDQ file: ${ddqPath}`);
+      console.error(String(err));
+      process.exit(1);
+    }
+  }
+
+  return { input, ddqText };
 }
 
 // buildTaskString() converts structured input into the natural-language task
@@ -792,7 +834,7 @@ async function runAgent(
             break;
 
           case 'check_entity_substance':
-            result = env.checkEntitySubstance(
+            result = await env.checkEntitySubstance(
               args['entity_name'] as string,
               args['country'] as string
             );
@@ -805,7 +847,7 @@ async function runAgent(
             break;
 
           case 'analyse_dempe':
-            result = env.analyseDempe(
+            result = await env.analyseDempe(
               args['entity_name'] as string,
               args['country'] as string,
               args['ip_type'] as string
@@ -859,7 +901,8 @@ async function runAgent(
 
 async function main(): Promise<void> {
   // Phase 2: read the task from a structured JSON file passed via --input.
-  const input = parseInput();
+  // Phase 6: parseInput() also loads the DDQ text when ddq_path is set.
+  const { input, ddqText } = parseInput();
   const task = buildTaskString(input);
 
   // Phase 3: resolve where the report will be written.
@@ -868,9 +911,16 @@ async function main(): Promise<void> {
   const outputPath = resolveOutputPath(input);
 
   // ── E: ENVIRONMENT ────────────────────────────────────────────────────────
-  // Change simulate: false when real data sources are connected.
-  // checkEntitySubstance stays simulated permanently until Phase 5.
-  const env = new WhtEnvironment({ simulate: false });
+  // Phase 6: pass DDQ_SERVICE_URL and ddqText so the environment can call the
+  // Python extraction service for checkEntitySubstance and analyseDempe.
+  //   - ddqServiceUrl = process.env['DDQ_SERVICE_URL'] (undefined if not set)
+  //   - ddqText = DDQ file contents (undefined if ddq_path was not in input JSON)
+  // If either is absent, WhtEnvironment falls back to simulation silently.
+  const env = new WhtEnvironment({
+    simulate:      false,
+    ddqServiceUrl: process.env['DDQ_SERVICE_URL'],
+    ddqText,
+  });
 
   // ── M: MEMORY ─────────────────────────────────────────────────────────────
   const memory = new Memory();

@@ -75,8 +75,8 @@ test('getTreatyRate: unknown combination returns an error field', () => {
 // Tests cover: Orange S.A. (STRONG), Alpine Holdings S.A. (WEAK/FAIL),
 // and the conservative unknown-entity fallback (CONDUIT/UNCERTAIN).
 
-test('checkEntitySubstance: Orange S.A. — substance_tier is STRONG', () => {
-  const result = parse(env.checkEntitySubstance('Orange S.A.', 'France'));
+test('checkEntitySubstance: Orange S.A. — substance_tier is STRONG', async () => {
+  const result = parse(await env.checkEntitySubstance('Orange S.A.', 'France'));
 
   assert.equal(result['entity'],         'Orange S.A.');
   assert.equal(result['country'],        'France');
@@ -85,8 +85,8 @@ test('checkEntitySubstance: Orange S.A. — substance_tier is STRONG', () => {
   assert.ok(result['source'], 'should include a source field');
 });
 
-test('checkEntitySubstance: Orange S.A. — all three BO conditions PASS', () => {
-  const result = parse(env.checkEntitySubstance('Orange S.A.', 'France'));
+test('checkEntitySubstance: Orange S.A. — all three BO conditions PASS', async () => {
+  const result = parse(await env.checkEntitySubstance('Orange S.A.', 'France'));
   const bo = result['bo_preliminary'] as Record<string, unknown>;
 
   assert.equal((bo['condition_1_own_benefit']      as Record<string, unknown>)['result'], 'PASS');
@@ -95,8 +95,8 @@ test('checkEntitySubstance: Orange S.A. — all three BO conditions PASS', () =>
   assert.equal(bo['overall'], 'PASS');
 });
 
-test('checkEntitySubstance: Orange S.A. — no conduit red flags present', () => {
-  const result = parse(env.checkEntitySubstance('Orange S.A.', 'France'));
+test('checkEntitySubstance: Orange S.A. — no conduit red flags present', async () => {
+  const result = parse(await env.checkEntitySubstance('Orange S.A.', 'France'));
   const indicators = result['conduit_indicators'] as Record<string, Record<string, unknown>>;
 
   assert.equal(indicators['pass_through_obligation']['present'], false);
@@ -104,8 +104,8 @@ test('checkEntitySubstance: Orange S.A. — no conduit red flags present', () =>
   assert.equal(indicators['nominal_margin']['present'],          false);
 });
 
-test('checkEntitySubstance: Alpine Holdings S.A. — substance_tier is WEAK', () => {
-  const result = parse(env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
+test('checkEntitySubstance: Alpine Holdings S.A. — substance_tier is WEAK', async () => {
+  const result = parse(await env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
 
   assert.equal(result['entity'],         'Alpine Holdings S.A.');
   assert.equal(result['country'],        'Luxembourg');
@@ -113,24 +113,24 @@ test('checkEntitySubstance: Alpine Holdings S.A. — substance_tier is WEAK', ()
   assert.equal(result['substance_tier'], 'WEAK');
 });
 
-test('checkEntitySubstance: Alpine Holdings S.A. — condition_2_not_conduit FAILS', () => {
-  const result = parse(env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
+test('checkEntitySubstance: Alpine Holdings S.A. — condition_2_not_conduit FAILS', async () => {
+  const result = parse(await env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
   const bo = result['bo_preliminary'] as Record<string, Record<string, unknown>>;
 
   assert.equal(bo['condition_2_not_conduit']['result'], 'FAIL');
   assert.equal(bo['overall'], 'FAIL');
 });
 
-test('checkEntitySubstance: Alpine Holdings S.A. — pass-through red flag is present', () => {
-  const result = parse(env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
+test('checkEntitySubstance: Alpine Holdings S.A. — pass-through red flag is present', async () => {
+  const result = parse(await env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
   const indicators = result['conduit_indicators'] as Record<string, Record<string, unknown>>;
 
   assert.equal(indicators['pass_through_obligation']['present'], true);
   assert.equal(indicators['rapid_forwarding']['present'],        true);
 });
 
-test('checkEntitySubstance: unknown entity — conservative CONDUIT tier returned', () => {
-  const result = parse(env.checkEntitySubstance('Unknown Corp Ltd', 'Cayman Islands'));
+test('checkEntitySubstance: unknown entity — conservative CONDUIT tier returned', async () => {
+  const result = parse(await env.checkEntitySubstance('Unknown Corp Ltd', 'Cayman Islands'));
 
   assert.equal(result['entity_type'],    'unknown');
   assert.equal(result['substance_tier'], 'CONDUIT');
@@ -139,10 +139,10 @@ test('checkEntitySubstance: unknown entity — conservative CONDUIT tier returne
   assert.equal(bo['overall'], 'UNCERTAIN');
 });
 
-test('checkEntitySubstance: all profiles include confidence field', () => {
-  const orange  = parse(env.checkEntitySubstance('Orange S.A.',          'France'));
-  const alpine  = parse(env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
-  const unknown = parse(env.checkEntitySubstance('Unknown Corp Ltd',      'Cayman Islands'));
+test('checkEntitySubstance: all profiles include confidence field', async () => {
+  const orange  = parse(await env.checkEntitySubstance('Orange S.A.',          'France'));
+  const alpine  = parse(await env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
+  const unknown = parse(await env.checkEntitySubstance('Unknown Corp Ltd',      'Cayman Islands'));
 
   // All simulated profiles are LOW confidence — real data requires DDQ (Phase 5)
   assert.equal(orange['confidence'],  'LOW');
@@ -287,12 +287,13 @@ test('live: checkMliPpt Netherlands — VERIFY treated conservatively as NO', ()
 
 // ── analyseDempe ──────────────────────────────────────────────────────────────
 //
-// analyseDempe() is always simulated (no live mode) — it requires due diligence
-// documentation that is not yet wired in (Phase 5).
+// analyseDempe() connects to the Python DDQ service in Phase 6.
+// In simulation mode (env created with simulate:true / no service configured),
+// it returns hardcoded data. Tests use simulate:true — no HTTP calls are made.
 // Tests verify the DEMPE structure and the Art. 12 scope warning are present.
 
-test('analyseDempe: returns all five DEMPE function keys', () => {
-  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+test('analyseDempe: returns all five DEMPE function keys', async () => {
+  const result = parse(await env.analyseDempe('Orange S.A.', 'France', 'brand'));
   const functions = result['dempe_functions'] as Record<string, unknown>;
 
   assert.ok(functions['development'], 'should include development function');
@@ -302,21 +303,21 @@ test('analyseDempe: returns all five DEMPE function keys', () => {
   assert.ok(functions['exploitation'],'should include exploitation function');
 });
 
-test('analyseDempe: returns control_test and risk_bearing fields', () => {
-  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+test('analyseDempe: returns control_test and risk_bearing fields', async () => {
+  const result = parse(await env.analyseDempe('Orange S.A.', 'France', 'brand'));
 
   assert.ok(result['control_test'],  'should include control_test');
   assert.ok(result['risk_bearing'],  'should include risk_bearing');
 });
 
-test('analyseDempe: beneficial_owner_dempe field is present', () => {
-  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+test('analyseDempe: beneficial_owner_dempe field is present', async () => {
+  const result = parse(await env.analyseDempe('Orange S.A.', 'France', 'brand'));
 
   assert.ok(result['beneficial_owner_dempe'], 'should include beneficial_owner_dempe conclusion');
 });
 
-test('analyseDempe: art12_scope_warning is present and mentions Art. 7', () => {
-  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+test('analyseDempe: art12_scope_warning is present and mentions Art. 7', async () => {
+  const result = parse(await env.analyseDempe('Orange S.A.', 'France', 'brand'));
   const warning = result['art12_scope_warning'] as string;
 
   assert.ok(warning, 'should include art12_scope_warning');
@@ -326,16 +327,16 @@ test('analyseDempe: art12_scope_warning is present and mentions Art. 7', () => {
   );
 });
 
-test('analyseDempe: echoes entity_name, country, and ip_type in output', () => {
-  const result = parse(env.analyseDempe('Test Corp', 'Germany', 'technology'));
+test('analyseDempe: echoes entity_name, country, and ip_type in output', async () => {
+  const result = parse(await env.analyseDempe('Test Corp', 'Germany', 'technology'));
 
   assert.equal(result['entity'],  'Test Corp');
   assert.equal(result['country'], 'Germany');
   assert.equal(result['ip_type'], 'technology');
 });
 
-test('analyseDempe: source field marks result as simulated', () => {
-  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+test('analyseDempe: source field marks result as simulated', async () => {
+  const result = parse(await env.analyseDempe('Orange S.A.', 'France', 'brand'));
 
   assert.ok(
     (result['source'] as string).toLowerCase().includes('simulated'),
@@ -502,20 +503,20 @@ test('checkPayAndRefund: negative annual_payment returns error', () => {
   assert.ok(result['error'], 'negative annual_payment_pln should return an error field');
 });
 
-test('checkEntitySubstance: empty entity_name returns error', () => {
-  const result = parse(env.checkEntitySubstance('', 'France'));
+test('checkEntitySubstance: empty entity_name returns error', async () => {
+  const result = parse(await env.checkEntitySubstance('', 'France'));
 
   assert.ok(result['error'], 'empty entity_name should return an error field');
 });
 
-test('checkEntitySubstance: whitespace-only entity_name returns error', () => {
-  const result = parse(env.checkEntitySubstance('   ', 'France'));
+test('checkEntitySubstance: whitespace-only entity_name returns error', async () => {
+  const result = parse(await env.checkEntitySubstance('   ', 'France'));
 
   assert.ok(result['error'], 'whitespace entity_name should return an error field');
 });
 
-test('analyseDempe: invalid ip_type returns error', () => {
-  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'copyright'));
+test('analyseDempe: invalid ip_type returns error', async () => {
+  const result = parse(await env.analyseDempe('Orange S.A.', 'France', 'copyright'));
 
   assert.ok(result['error'], 'invalid ip_type should return an error field');
   assert.ok(
@@ -545,8 +546,8 @@ test('checkPayAndRefund: valid inputs do NOT return error (regression guard)', (
   assert.equal(result['error'], undefined, 'valid call should not produce an error field');
 });
 
-test('analyseDempe: valid ip_type does NOT return error (regression guard)', () => {
-  const result = parse(env.analyseDempe('Orange S.A.', 'France', 'brand'));
+test('analyseDempe: valid ip_type does NOT return error (regression guard)', async () => {
+  const result = parse(await env.analyseDempe('Orange S.A.', 'France', 'brand'));
 
   assert.equal(result['error'], undefined, 'valid call should not produce an error field');
 });

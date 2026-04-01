@@ -189,16 +189,23 @@ interface SubstanceResult {
 // ── WhtEnvironment ────────────────────────────────────────────────────────────
 
 export interface WhtEnvironmentOptions {
-  simulate: boolean;  // true = use hard-coded data; false = load from treaties.json
+  simulate:       boolean;     // true = use hard-coded data; false = load from treaties.json
+  ddqServiceUrl?: string;      // URL of the Python DDQ extraction service, e.g. "http://localhost:8000"
+  ddqText?:       string;      // pre-loaded DDQ document content forwarded to the service
 }
 
 export class WhtEnvironment {
   private simulate: boolean;
   // db is populated only in live mode; stays empty in simulate mode
   private db: TreatyDatabase = {};
+  // Phase 6: DDQ service connection — both must be set to enable live DDQ mode
+  private ddqServiceUrl: string | undefined;
+  private ddqText:       string | undefined;
 
   constructor(options: WhtEnvironmentOptions) {
-    this.simulate = options.simulate;
+    this.simulate      = options.simulate;
+    this.ddqServiceUrl = options.ddqServiceUrl;
+    this.ddqText       = options.ddqText;
 
     if (!this.simulate) {
       // path.join builds the correct OS path from pieces.
@@ -737,15 +744,52 @@ export class WhtEnvironment {
   // ── checkEntitySubstance ─────────────────────────────────────────────────────
   //
   // Public method called by the agent loop via the check_entity_substance tool.
-  // Delegates to buildEntityProfile() for the entity-specific data, then
-  // serialises the result to a JSON string (the format all tool results use).
   //
-  // Stays simulated permanently — real substance data comes from due diligence
-  // questionnaires processed by the Phase 5 Python ingestion component.
-  checkEntitySubstance(entityName: string, country: string): string {
+  // Phase 6 — live DDQ mode:
+  //   If ddqServiceUrl and ddqText are both set (i.e. a ddq_path was in the input
+  //   file AND DDQ_SERVICE_URL is in .env), the method forwards the DDQ to the
+  //   Python extraction service and returns structured evidence from the real document.
+  //   If the service call fails for any reason, it falls back to simulation silently.
+  //
+  // Simulation fallback:
+  //   Delegates to buildEntityProfile() for entity-specific hardcoded data.
+  //   This is the same behaviour as Phase 4/5.
+  //
+  // The method is async because the live DDQ path requires an HTTP round-trip.
+  // In simulation mode it still resolves immediately — the Promise wraps a sync value.
+  async checkEntitySubstance(entityName: string, country: string): Promise<string> {
     if (!entityName || entityName.trim() === '') {
       return JSON.stringify({ error: 'entity_name must be a non-empty string.' });
     }
+
+    // Phase 6 — live DDQ mode: call the Python extraction service
+    if (!this.simulate && this.ddqServiceUrl !== undefined && this.ddqText !== undefined) {
+      try {
+        // fetch is Node 18+ built-in — no extra dependency needed.
+        // The Python service returns JSON matching the SubstanceResult shape.
+        const response = await fetch(`${this.ddqServiceUrl}/substance`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            entity_name: entityName,
+            country,
+            ddq_text: this.ddqText,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} ${response.statusText}`);
+        }
+        return JSON.stringify(await response.json());
+      } catch (err) {
+        // Graceful fallback: an unstarted or unreachable Python service should
+        // never block the TypeScript agent — simulation is the safe default.
+        console.warn(
+          `[DDQ SERVICE] /substance call failed: ${String(err)}. Falling back to simulation.`
+        );
+      }
+    }
+
+    // Simulation fallback (or simulate:true mode)
     return JSON.stringify(this.buildEntityProfile(entityName, country));
   }
 
@@ -767,12 +811,36 @@ export class WhtEnvironment {
   // Stays simulated permanently — real DEMPE analysis requires due diligence
   // documentation (DDQs, TP files, functional analyses). Phase 5 will replace
   // this with Python document ingestion.
-  analyseDempe(entityName: string, country: string, ipType: string): string {
+  async analyseDempe(entityName: string, country: string, ipType: string): Promise<string> {
     const VALID_IP = new Set(['brand', 'technology', 'patent', 'software', 'know_how', 'mixed']);
     if (!VALID_IP.has(ipType.toLowerCase())) {
       return JSON.stringify({
         error: `Unsupported ip_type "${ipType}". Must be one of: brand, technology, patent, software, know_how, mixed.`,
       });
+    }
+
+    // Phase 6 — live DDQ mode: call the Python extraction service
+    if (!this.simulate && this.ddqServiceUrl !== undefined && this.ddqText !== undefined) {
+      try {
+        const response = await fetch(`${this.ddqServiceUrl}/dempe`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            entity_name: entityName,
+            country,
+            ip_type:     ipType,
+            ddq_text:    this.ddqText,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} ${response.statusText}`);
+        }
+        return JSON.stringify(await response.json());
+      } catch (err) {
+        console.warn(
+          `[DDQ SERVICE] /dempe call failed: ${String(err)}. Falling back to simulation.`
+        );
+      }
     }
 
     return JSON.stringify({
@@ -801,7 +869,7 @@ export class WhtEnvironment {
         'Treaties predating the 1977 OECD Model Convention may omit Art. 12 entirely. ' +
         'If absent or inapplicable, income falls to Art. 7 Business Profits — ' +
         'Poland has no withholding right unless the recipient has a Polish permanent establishment.',
-      source: 'Simulated DEMPE analysis — real analysis requires TP documentation and DDQ (Phase 5)',
+      source: 'Simulated DEMPE analysis — real analysis requires TP documentation and DDQ (Phase 6)',
     });
   }
 
