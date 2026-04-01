@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 8 complete (Conversational Web UI). All phases 1–8 done. 86/86 tests passing. On branch feature/mate-improvements (to be merged to master).
+**Phase:** Phase 10 complete (Substance Interview). All phases 1–8 + 10 done. 99/99 tests passing. On branch master.
 **Date of last session:** 2026-04-01
-**Branch:** feature/mate-improvements
+**Branch:** master
 
 ---
 
@@ -11,12 +11,12 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's continue — Phase 8 is done, what's next?"
+> "Let's continue — Phase 10 is done, what's next?"
 
 Then verify the environment is healthy:
 ```
 npm run build                                                     ← zero errors
-npm test                                                          ← 86/86 passing
+npm test                                                          ← 99/99 passing
 npm start                                                         ← web UI at http://localhost:3000
 npm run tax:agent -- --input data/orange_polska_royalty.json      ← CLI still works
 
@@ -103,6 +103,16 @@ npm run tax:agent -- --input data/orange_polska_royalty.json      ← uses real 
 ---
 
 ## Roadmap — What Comes Next
+
+### Phase 10 — Substance Interview ✓ COMPLETE
+
+- **`SubstanceInterviewer.ts`** — 5-question Mode A interview state machine. Questions map to Art. 4a pkt 29 CIT conditions (i/ii/iii) + MF Objaśnienia §2.2–2.3. Compiles answers into DDQ text.
+- **`SubstanceExtractor.ts`** — TypeScript LLM extractor (no Python needed): DDQ text → SubstanceResult JSON. Uses powerful model, `json_object` mode, graceful CONDUIT fallback.
+- **`WhtEnvironment.checkEntitySubstance`** — 3-tier fallback: Python service → TS extractor → simulation.
+- **`server/index.ts`** — new `interviewing` state; `/confirm` starts interview; `/message` routes answers.
+- **`index.html`** — `interview_start/question/complete` response types; `openStream()` extracted.
+- **`SubstanceInterviewer.test.ts`** — 13 new unit tests (pure logic, no API calls).
+- **99/99 tests passing.**
 
 ### Phase 2 — Real input ✓ COMPLETE
 - `AgentInput` interface + `validateInput()` + `buildTaskString()` added to BeneficialOwnerAgent.ts.
