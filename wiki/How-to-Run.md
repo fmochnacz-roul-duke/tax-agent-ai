@@ -47,7 +47,7 @@ Verify everything works:
 
 ```bash
 npm run build    # TypeScript type-check — must return zero errors
-npm test         # 143/143 tests, ~3 seconds, no API calls needed
+npm test         # 169/169 tests, ~3 seconds, no API calls needed
 ```
 
 ---
@@ -133,7 +133,7 @@ If the service is not running, the agent automatically falls back to the TypeScr
 npm test
 ```
 
-143 tests across 5 test files. All tests run without API keys (simulation mode). Typical runtime ~3 seconds.
+169 tests across 6 test files. All tests run without API keys (simulation mode). Typical runtime ~3 seconds.
 
 Test files:
 - `src/shared/Goal.test.ts` — 4 tests: priority sorting, prompt generation
@@ -141,6 +141,7 @@ Test files:
 - `src/agents/WhtEnvironment.test.ts` — 74 tests: all environment methods
 - `src/agents/FactCheckerAgent.test.ts` — 8 tests: simulate mode
 - `src/server/SubstanceInterviewer.test.ts` — 13 tests: state machine logic (all pure, no LLM)
+- `src/server/EntityRegistry.test.ts` — 26 tests: registry upsert, persistence, substance field extraction
 
 ---
 
@@ -152,7 +153,7 @@ Test files:
 | `npm run tax:agent` | CLI agent (requires `--input <file>`) |
 | `npm run ddq:service` | Python DDQ service on port 8000 |
 | `npm run build` | TypeScript type-check (no output files) |
-| `npm test` | All 99 unit tests |
+| `npm test` | All 169 unit tests |
 | `npm run module1:prompting` | Module 1 prompting examples |
 | `npm run module1:agent` | Module 1 text-based agent loop |
 | `npm run module2:tools` | Module 2 function calling demo |

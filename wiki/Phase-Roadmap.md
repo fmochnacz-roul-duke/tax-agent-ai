@@ -135,17 +135,34 @@ Each phase corresponds to a git tag. All completed phases are available as GitHu
 
 ---
 
+### v0.11.0 — Phase 11: Entity Registry
+
+**What:**
+- `EntityRegistry.ts` — JSON-backed registry; persists to `data/registry.json` (gitignored)
+- Upsert semantics: re-running for the same entity updates the entry but preserves `created_at` and `review_status` (so a professional's sign-off is not wiped by a re-analysis)
+- Lookup key: `entity_name::country` (lowercased) — case-insensitive
+- Extracts `substance_tier` and `bo_overall` from the parsed findings map
+- `getRegistry()` singleton for the web server; CLI creates its own instance
+- `GET /registry` endpoint — returns all entries as JSON, newest-first
+- "Past Analyses" collapsible panel in the web UI right column — loads on init, refreshes after each analysis
+- 26 new unit tests (all pure logic, temp file paths, no API calls)
+
+**Key decisions:**
+- JSON (not SQLite) — zero new dependencies, human-readable, sufficient for 1–3 analysts
+- Circular import avoided: `EntityRegistry` defines its own `AnalysisReport` interface; `WhtReport` satisfies it via structural typing
+- `review_status` preserved on upsert — `draft` by default; a professional can set `reviewed` or `signed_off` in the JSON file
+- `data/registry.json` gitignored — runtime artifact, not source code
+
+---
+
 ## Planned
-
-### Phase 11 — Entity registry and profile persistence
-
-Store assessed entity profiles in file-based JSON or SQLite. Same holding next quarter → load cached profile, no re-interview. Key: expiry at 12 months + re-verification prompt.
 
 ### Phase 12 — Treaty rate verification + human review workflow
 
-- Verify top 10 treaty rates against official treaty PDFs
-- Add `reviewed_by` + `review_status` fields to report
-- "Review and approve" panel in web UI — report not finalised until signed off by professional
+- Verify top 10 treaty rates against official treaty PDFs (DzU references in treaties.json)
+- Add `reviewed_by` + `review_status` + `signed_off_at` fields to the registry
+- "Review and approve" button in web UI — entry not `signed_off` until a professional clicks it
+
 
 ### Phase 13 — Third-party vendor workflow
 

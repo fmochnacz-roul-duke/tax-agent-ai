@@ -2,30 +2,12 @@
 
 ## What This Project Is
 
-A project with two parallel goals:
-1. **Learning goal** — work through different AI courses from Vanderbilt University (by Jules White) step by step
-2. **Business goal** — build a real Beneficial Owner Analysis Agent for Polish withholding tax (WHT) purposes
+A product-grade AI agent for Polish withholding tax (WHT) beneficial owner analysis.
+Runs as a conversational web application (`npm start`) or CLI (`npm run tax:agent`).
+Part of an MBA research project: *AI and Digital Transformation in International Tax* (2026).
 
-The project has graduated from pure learning exercise to a product-grade agent with a web UI.
-Modules 1–3 and product phases 1–8 are all complete. The agent runs as a conversational web
-application (`npm start`) or via CLI (`npm run tax:agent`).
-
-The learner is new to TypeScript and to agentic AI. Explain all code in detail.
+Frank is new to TypeScript. Explain all code in detail.
 Always walk through changes step by step. Never skip explanations.
-
----
-
-## Course Structure
-
-| Module | Topic | Status |
-|---|---|---|
-| Module 1 | Programmatic prompting + text-based agent loop | **Complete** |
-| Module 2 | Function calling, registerTool() pattern | **Complete** |
-| Module 3 | GAME framework, unit testing, README agent | **Complete** |
-| Module 4+ | TBD from course | Not started |
-
-Course repo (reference only — do not clone into this project):
-https://github.com/juleswhite/typescript-ai-agents-course
 
 ---
 
@@ -65,6 +47,7 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 8 | Conversational web UI — Express server, InputExtractor, SSE progress streaming | ✓ Complete |
 | 9 | Legal Knowledge RAG — tax taxonomy, Chunker/Embedder/Retriever/LegalRagService, consult_legal_sources tool | ✓ Complete |
 | 10 | Substance interview — 5-question chat flow, TypeScript LLM extractor, any entity assessed | ✓ Complete |
+| 11 | Entity Registry — JSON persistence, audit trail, collapsible web UI panel | ✓ Complete |
 
 ---
 
@@ -105,10 +88,12 @@ src/
     FactCheckerAgent.test.ts ← Unit tests for FactCheckerAgent (8 tests, simulate mode)
 
   server/
-    index.ts                  ← Phase 8+10: Express web server; adds 'interviewing' state for substance interview
+    index.ts                  ← Phase 8+10+11: Express web server; adds 'interviewing' state and GET /registry
     InputExtractor.ts         ← Phase 8: LLM extracts AgentInput from free-form user text
     SubstanceInterviewer.ts   ← Phase 10: 5-question interview state machine; compiles DDQ text
     SubstanceExtractor.ts     ← Phase 10: TypeScript LLM extractor — DDQ text → SubstanceResult JSON
+    EntityRegistry.ts         ← Phase 11: JSON-backed entity registry; upsert + audit trail
+    EntityRegistry.test.ts    ← Phase 11: 26 unit tests (pure logic, temp files)
 
   public/
     index.html    ← Phase 8: single-file conversational chat UI (HTML + CSS + vanilla JS)
@@ -176,12 +161,12 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run tax:agent` | CLI agent — requires `--input <file>` |
 | `npm run ddq:service` | Python DDQ extraction service on port 8000 (optional) |
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
-| `npm test` | Unit tests — 140 tests, no API calls, ~2s |
-| `npm run module1:prompting` | Module 1: prompting examples |
-| `npm run module1:agent` | Module 1: text-based agent loop |
-| `npm run module2:tools` | Module 2: function calling demo |
-| `npm run module2:agent` | Module 2: registerTool() agent loop |
-| `npm run module3:readme` | Module 3: README agent |
+| `npm test` | Unit tests — 169 tests, no API calls, ~2s |
+| `npm run module1:prompting` | Scaffolding: basic prompting examples |
+| `npm run module1:agent` | Scaffolding: text-based agent loop |
+| `npm run module2:tools` | Scaffolding: function calling demo |
+| `npm run module2:agent` | Scaffolding: registerTool() agent loop |
+| `npm run module3:readme` | Scaffolding: README agent (GAME applied to a meta task) |
 
 ---
 
@@ -190,7 +175,7 @@ See `.env.example` for the complete configuration file with comments.
 ### TypeScript
 - `strict: true` is on — never use `any`; use `unknown` and narrow explicitly
 - Always run `npm run build` before committing — zero errors required
-- Always run `npm test` — all 140 tests must pass
+- Always run `npm test` — all 169 tests must pass
 - Use `async/await` for all LLM calls and all Environment methods that call external services
 - All functions must have explicit return types
 
@@ -217,7 +202,7 @@ See `.env.example` for the complete configuration file with comments.
 - Web server and CLI share the same agent core — no duplication
 
 ### Explanations
-- The learner is new to TypeScript — always explain what new syntax means
+- Frank is new to TypeScript — always explain what new syntax means
 - When introducing a concept, explain it before writing the code
 
 ---
