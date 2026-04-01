@@ -108,9 +108,46 @@ export class LLM {
   private client: OpenAI;
   private model: string;
 
-  constructor() {
+  // model is optional: if omitted, falls back to OPENAI_MODEL env var then 'gpt-4o-mini'.
+  // Accepting the model at construction time (rather than per-call) lets you create
+  // separate instances for different tiers and swap them in the loop without
+  // threading a model string through every generateWithTools() call.
+  constructor(model?: string) {
     this.client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    this.model = process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
+    this.model = model ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
+  }
+
+  // ── Model tier factory methods ─────────────────────────────────────────────
+  //
+  // MATE principle — M (Model Efficiency): use the cheapest model that can do
+  // the job. Simple lookups (treaty status, rate retrieval) do not need the
+  // most capable model. Complex multi-condition legal reasoning (BO assessment,
+  // DEMPE synthesis) benefits from a stronger model.
+  //
+  // Configure via .env:
+  //   OPENAI_MODEL_FAST     — cheap/fast model for structured data retrieval
+  //                           default: gpt-4o-mini
+  //   OPENAI_MODEL_POWERFUL — capable model for multi-step legal synthesis
+  //                           default: falls back to OPENAI_MODEL, then gpt-4o-mini
+  //
+  // If you only set OPENAI_MODEL, both tiers use it — no behaviour change from
+  // the old single-model setup.
+
+  static fast(): LLM {
+    return new LLM(
+      process.env.OPENAI_MODEL_FAST ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini'
+    );
+  }
+
+  static powerful(): LLM {
+    return new LLM(
+      process.env.OPENAI_MODEL_POWERFUL ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini'
+    );
+  }
+
+  // Exposes the active model name so the agent loop can log which tier is in use.
+  getModelName(): string {
+    return this.model;
   }
 
   // Module 1 method — unchanged

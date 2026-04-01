@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 4 complete. Ready for Phase 5 or treaty rate verification.
+**Phase:** Phase 5 complete (MATE improvements). Branch `feature/mate-improvements` open — merge to master before starting Phase 6.
 **Date of last session:** 2026-03-31
-**Branch:** master (all work merged)
+**Branch:** feature/mate-improvements
 
 ---
 
@@ -11,7 +11,7 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's start where we've stopped — it's time to build Phase 4."
+> "Let's continue — Phase 5 is on branch feature/mate-improvements, merge it and start Phase 6."
 
 Then verify the environment is healthy:
 ```
