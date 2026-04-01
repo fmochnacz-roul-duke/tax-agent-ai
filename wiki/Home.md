@@ -55,7 +55,7 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 | 7 | FactChecker Agent — Gemini + Google Search | ✅ v0.7.0 |
 | 8 | Conversational web UI, SSE streaming | ✅ v0.8.0 |
 | 10 | Substance interview — 5-question chat, any entity | ✅ v0.10.0 |
-| **9** | **Legal knowledge RAG + tax taxonomy** | 🔄 In progress |
+| **9** | **Legal knowledge RAG + tax taxonomy** | ✅ v0.9.0 |
 | 11 | Entity registry and profile persistence | Planned |
 | 12 | Treaty rate verification + human review workflow | Planned |
 | 13 | Third-party vendor workflow | Planned |
@@ -75,7 +75,7 @@ npm start
 npm run tax:agent -- --input data/orange_polska_royalty.json
 
 # Tests
-npm test         # 99/99 tests, ~2s, no API calls
+npm test         # 143/143 tests, ~3s, no API calls
 npm run build    # TypeScript type-check
 ```
 

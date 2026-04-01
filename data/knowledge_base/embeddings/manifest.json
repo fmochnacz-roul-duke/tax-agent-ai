@@ -1,0 +1,8 @@
+{
+  "indexed_at": "2026-04-01T20:35:46.489Z",
+  "model": "text-embedding-3-small",
+  "source_hashes": {
+    "MF-OBJ-2025": "b56c11a7ee0f5481f4c10bdf35a53d5940f48f4f785a4a77793b6c18a4ac850d",
+    "PL-CIT-2026": "8d10269778047c1e07ed2920925d83904488883e5e7acd5131e6bd41b65c037f"
+  }
+}

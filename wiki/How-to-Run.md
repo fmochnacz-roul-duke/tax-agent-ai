@@ -47,7 +47,7 @@ Verify everything works:
 
 ```bash
 npm run build    # TypeScript type-check — must return zero errors
-npm test         # 99/99 tests, ~2 seconds, no API calls needed
+npm test         # 143/143 tests, ~3 seconds, no API calls needed
 ```
 
 ---
@@ -133,7 +133,7 @@ If the service is not running, the agent automatically falls back to the TypeScr
 npm test
 ```
 
-99 tests across 5 test files. All tests run without API keys (simulation mode). Typical runtime ~2 seconds.
+143 tests across 5 test files. All tests run without API keys (simulation mode). Typical runtime ~3 seconds.
 
 Test files:
 - `src/shared/Goal.test.ts` — 4 tests: priority sorting, prompt generation

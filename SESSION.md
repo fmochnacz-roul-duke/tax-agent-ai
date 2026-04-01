@@ -1,16 +1,18 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 9b in progress — RAG infrastructure complete, source files created (MF-OBJ-2025 + CIT WHT). Step 2 (embedding build) and Step 3 (agent integration) remain.
+**Phase:** Phase 9 COMPLETE — RAG infrastructure built and wired into the agent.
 **Date of last session:** 2026-04-01
-**Branch:** feature/phase9-rag-taxonomy
+**Branch:** feature/phase9-rag-taxonomy (ready to PR → master)
 
-### Git hygiene — done this session
-- 13 stale local branches deleted (all merged or orphaned duplicates)
-- `origin/module1/prompting` remote branch deleted
-- 9 annotated tags created and pushed: v0.1.0 through v0.10.0
-- Branch protection enabled on master (PR required to merge)
-- feature/phase9-rag-taxonomy branch pushed to origin
+### Phase 9 summary (this session)
+- Phase 9a ✓ Tax taxonomy (40 concepts) + wiki content
+- Phase 9b ✓ RAG infrastructure (Chunker, Embedder, Retriever, LegalRagService) + source .md files
+  - Step 2: `npm run rag:build` run — 23 chunks embedded (MF-OBJ-2025: 14, PL-CIT-2026: 9)
+  - Outputs: `chunks/index.json` (43 KB), `embeddings/vectors.json` (905 KB), `manifest.json`
+- Phase 9c ✓ `consult_legal_sources` tool wired into BeneficialOwnerAgent + WhtEnvironment
+  - Smoke test: agent called RAG twice, retrieved Art. 4a pkt 29 (score 0.58), completed in 6 iterations
+  - 143/143 tests passing
 
 ---
 
@@ -18,24 +20,14 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's continue — Phase 9b source files are committed, next is Step 2 (npm run rag:build) and Phase 9c (agent integration)."
+> "Phase 9 is complete — let's open a PR to merge feature/phase9-rag-taxonomy into master, then start Phase 11 (Audit Trail / PDF attestation)."
 
 Verify environment:
 ```
 git checkout feature/phase9-rag-taxonomy
 npm run build    ← zero errors
-npm test         ← 140/140 passing
+npm test         ← 143/143 passing
 ```
-
-Phase 9b progress:
-- [x] Step 0: Architecture designed (Chunker, Embedder, Retriever, LegalRagService)
-- [x] Step 1: Source .md files created — MF-OBJ-2025.md (14 chunks), PL-CIT-2026-WHT.md (9 chunks)
-- [ ] Step 2: Run `npm run rag:build` — requires OPENAI_API_KEY (embeds chunks, writes vectors.json)
-- [ ] Step 3 (Phase 9c): Integrate LegalRagService into SubstanceExtractor.ts and BeneficialOwnerAgent.ts
-
-Still to do before Step 2:
-- Optional: Create JANKOWSKI-SMOLEN-2025.md from extracted text (academic source, lower priority)
-- Run npm run rag:build to embed all sources (Frank needs OPENAI_API_KEY set)
 
 Then verify the environment is healthy:
 ```

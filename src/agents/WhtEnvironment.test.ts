@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { WhtEnvironment } from './WhtEnvironment';
+import { LegalRagService } from '../rag';
+import type { Chunk, ChunkVector, TaxonomyConcept } from '../rag';
 
 // Helper: parse the JSON string every environment method returns
 function parse(result: string): Record<string, unknown> {
@@ -587,4 +589,90 @@ test('factCheckSubstance: empty claims array returns error', async () => {
   const result = parse(await env.factCheckSubstance('Orange S.A.', 'France', []));
 
   assert.ok(result['error'], 'empty claims array should return an error field');
+});
+
+// ── consultLegalSources ───────────────────────────────────────────────────────
+//
+// simulate:true → ragService stays undefined → graceful fallback.
+// For the "returns real chunks" test we inject a LegalRagService.fromData()
+// so no disk reads or OpenAI API calls are needed.
+
+test('consultLegalSources: returns not-available fallback in simulate mode', async () => {
+  // env is created with simulate:true at the top of this file.
+  // No ragService is injected, so consultLegalSources should degrade gracefully.
+  const result = parse(await env.consultLegalSources('What is beneficial owner?'));
+
+  assert.equal(result['available'], false,
+    'simulate mode should return available:false when no ragService is injected');
+  assert.ok(
+    (result['note'] as string).includes('rag:build'),
+    'note should instruct the user to run rag:build'
+  );
+});
+
+test('consultLegalSources: returns error for empty query', async () => {
+  const result = parse(await env.consultLegalSources(''));
+
+  assert.ok(result['error'], 'empty query should return an error field');
+  assert.equal(result['source'], 'validation');
+});
+
+test('consultLegalSources: returns formatted chunks from injected RAG service', async () => {
+  // Build a minimal in-memory RAG service — Chunk + ChunkVector + mock EmbedFunction.
+  // LegalRagService.fromData() accepts these directly, making no API calls.
+
+  // A single test chunk representing one section of MF-OBJ-2025.
+  const chunk: Chunk = {
+    chunk_id:         'MF-OBJ-2025::test-section',
+    source_id:        'MF-OBJ-2025',
+    section_ref:      '§2.3',
+    section_title:    'Kryteria uznania działalności za rzeczywistą',
+    concept_ids:      ['condition_iii_genuine_business'],
+    module_relevance: ['WHT'],
+    language:         'pl',
+    text:             '## §2.3 Kryteria uznania działalności za rzeczywistą\n\nTest content.',
+    char_count:       70,
+  };
+
+  // The embedding vector — we use a 3-dimensional vector to keep the test data small.
+  // The mock embedFn always returns this same vector, so cosine similarity will be 1.0
+  // (query vector === chunk vector → perfect match).
+  const embedding: number[] = [0.1, 0.2, 0.3];
+
+  const chunkVector: ChunkVector = { chunk_id: 'MF-OBJ-2025::test-section', embedding };
+
+  // mockEmbedFn satisfies the EmbedFunction type: (texts: string[]) => Promise<number[][]>
+  // It returns one vector per input text, ignoring the actual text content.
+  const mockEmbedFn = async (texts: string[]): Promise<number[][]> =>
+    texts.map(() => embedding);
+
+  const taxonomy: TaxonomyConcept[] = [];  // no expansion needed for this test
+
+  const ragService = LegalRagService.fromData({
+    chunks:   [chunk],
+    vectors:  [chunkVector],
+    taxonomy,
+    embedFn:  mockEmbedFn,
+  });
+
+  // Inject the mock service.  simulate:true avoids loading treaties.json or
+  // calling FactCheckerAgent — we only care about the RAG path here.
+  const ragEnv = new WhtEnvironment({ simulate: true, ragService });
+
+  const result = parse(
+    await ragEnv.consultLegalSources('genuine business activity', ['condition_iii_genuine_business'])
+  );
+
+  assert.equal(result['source'], 'legal_knowledge_base');
+  assert.equal(result['query'], 'genuine business activity');
+
+  const chunks = result['chunks'] as Record<string, unknown>[];
+  assert.ok(Array.isArray(chunks),  'chunks should be an array');
+  assert.ok(chunks.length > 0,      'should return at least one chunk');
+
+  const first = chunks[0];
+  assert.equal(first['source_id'],   'MF-OBJ-2025');
+  assert.equal(first['section_ref'], '§2.3');
+  assert.ok(typeof first['score'] === 'number', 'score should be a number');
+  assert.ok(first['text'],           'text should be present');
 });

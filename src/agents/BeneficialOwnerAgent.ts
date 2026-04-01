@@ -116,6 +116,18 @@ const WHT_GOALS: Goal[] = [
       'Skip this step entirely if the substance source indicates simulated data.',
     priority: 3,
   },
+  {
+    name: 'Ground BO reasoning in statutory text',
+    description:
+      'Before issuing the final answer: call consult_legal_sources once to retrieve the ' +
+      'exact legal wording for the BO conditions you are applying. This grounds your ' +
+      'conclusion in the statutory text rather than paraphrase. ' +
+      'Example call: query="What is condition 2 no pass-through requirement under Art. 4a pkt 29?", ' +
+      'concept_ids=["condition_ii_no_passthrough", "passthrough_obligation_contractual"]. ' +
+      'Cite the retrieved section_ref and source_id in your final answer. ' +
+      'Do NOT call this tool before check_entity_substance — substance data must come first.',
+    priority: 2,
+  },
 ];
 
 const WHT_PERSONA =
@@ -321,6 +333,42 @@ function buildWhtTools(): Tool[] {
           },
         },
         required: ['entity_name', 'country', 'claims'],
+      },
+    },
+    {
+      name: 'consult_legal_sources',
+      description:
+        'Retrieves relevant legal text from the built-in Polish WHT knowledge base ' +
+        '(MF Objaśnienia podatkowe 2025, CIT Act Art. 26/4a WHT provisions). ' +
+        'Use this before issuing your final BO determination to ground your reasoning ' +
+        'in the exact statutory wording. Returns the top matching sections with ' +
+        'source references (source_id + section_ref) suitable for citation.',
+      parameters: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+            description:
+              'Natural language question about Polish WHT law, e.g. ' +
+              '"What is the condition 2 pass-through requirement for beneficial owner?" ' +
+              'or "What are the conduit indicators under MF Objaśnienia §2.2.1?"',
+          },
+          concept_ids: {
+            type: 'array',
+            items: { type: 'string' },
+            description:
+              'Optional taxonomy IDs to focus the search (use 1–3 most relevant). ' +
+              'Key IDs: beneficial_owner, condition_i_economic_title, ' +
+              'condition_ii_no_passthrough, condition_iii_genuine_business, ' +
+              'holding_company, conduit_entity, passthrough_obligation_contractual, ' +
+              'passthrough_obligation_factual, genuine_business_activity',
+          },
+          top_k: {
+            type: 'number',
+            description: 'Number of results to return (1–5, default 3)',
+          },
+        },
+        required: ['query'],
       },
     },
     // ToolFactory.terminate() — no need to type this out per agent
@@ -1012,6 +1060,19 @@ async function runAgent(
               args['claims'] as string[]
             );
             memory.recordFinding('fact_check_result', result);
+            break;
+
+          case 'consult_legal_sources':
+            // RAG results are context for reasoning, not a structured finding about
+            // the entity.  We return the retrieved chunks directly into the conversation
+            // so the agent can cite them in its final answer.  We intentionally do NOT
+            // call memory.recordFinding() here — calling the tool twice with different
+            // queries is valid and should not be blocked by the duplicate guard.
+            result = await env.consultLegalSources(
+              args['query']       as string,
+              args['concept_ids'] as string[] | undefined,
+              args['top_k']       as number   | undefined
+            );
             break;
 
           default:

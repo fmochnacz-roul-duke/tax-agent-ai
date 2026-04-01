@@ -18,6 +18,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { FactCheckerAgent } from './FactCheckerAgent';
 import { SubstanceExtractor } from '../server/SubstanceExtractor';
+import { LegalRagService } from '../rag';
 
 // ── Treaty database types ─────────────────────────────────────────────────────
 //
@@ -194,6 +195,9 @@ export interface WhtEnvironmentOptions {
   simulate:       boolean;     // true = use hard-coded data; false = load from treaties.json
   ddqServiceUrl?: string;      // URL of the Python DDQ extraction service, e.g. "http://localhost:8000"
   ddqText?:       string;      // pre-loaded DDQ document content forwarded to the service
+  // Phase 9: injectable for tests — pass LegalRagService.fromData() to avoid disk/API calls.
+  // When omitted in live mode, the service is initialised from data/knowledge_base/ automatically.
+  ragService?:    LegalRagService;
 }
 
 export class WhtEnvironment {
@@ -205,6 +209,8 @@ export class WhtEnvironment {
   private ddqText:       string | undefined;
   // Phase 7: FactChecker agent — verifies substance claims against public records
   private factChecker: FactCheckerAgent;
+  // Phase 9: Legal RAG service — retrieves relevant chunks from the knowledge base
+  private ragService: LegalRagService | undefined;
 
   constructor(options: WhtEnvironmentOptions) {
     this.simulate      = options.simulate;
@@ -215,6 +221,29 @@ export class WhtEnvironment {
     // When simulate:false and GEMINI_API_KEY is absent, the agent self-degrades
     // to simulation and logs a warning — backward-compatible.
     this.factChecker = new FactCheckerAgent({ simulate: this.simulate });
+
+    // Phase 9 — LegalRagService: initialise once here so every tool call can reuse
+    // the loaded chunks and vectors without re-reading the files from disk.
+    //
+    // Injection (options.ragService) takes priority — used by tests to avoid
+    // disk I/O and OpenAI embedding calls (tests pass LegalRagService.fromData()).
+    //
+    // Auto-init from disk only runs in live mode (simulate:false).  If the
+    // knowledge base has not been built yet (npm run rag:build not run),
+    // fromDisk() throws and we degrade gracefully: consultLegalSources() will
+    // return a "not available" response rather than crashing the agent.
+    if (options.ragService !== undefined) {
+      this.ragService = options.ragService;
+    } else if (!this.simulate) {
+      try {
+        const kbPath  = path.join(__dirname, '..', '..', 'data', 'knowledge_base');
+        const taxPath = path.join(__dirname, '..', '..', 'data', 'tax_taxonomy.json');
+        this.ragService = LegalRagService.fromDisk({ knowledgeBasePath: kbPath, taxonomyPath: taxPath });
+      } catch {
+        // Knowledge base not yet built — degrade gracefully.
+        this.ragService = undefined;
+      }
+    }
 
     if (!this.simulate) {
       // path.join builds the correct OS path from pieces.
@@ -1198,5 +1227,65 @@ export class WhtEnvironment {
 
     const result = await this.factChecker.verify(entityName, country, claims);
     return JSON.stringify(result);
+  }
+
+  // ── Phase 9: consultLegalSources ─────────────────────────────────────────────
+  //
+  // Retrieves the most relevant chunks from the built-in legal knowledge base
+  // for a given natural-language query, with optional taxonomy-based filtering.
+  //
+  // The LegalRagService expands the query with rag_keywords from the taxonomy
+  // before embedding, so an English question retrieves Polish statutory text
+  // correctly (e.g. "pass-through obligation" → finds §2.2.1 of MF-OBJ-2025).
+  //
+  // Returns a JSON string containing:
+  //   source        — "legal_knowledge_base"
+  //   query         — the original query (for traceability in the agent's reasoning)
+  //   chunks[]      — array of { source_id, section_ref, section_title, text, score }
+  //
+  // When the knowledge base has not been built (rag:build not run), or in simulate
+  // mode, returns { available: false } rather than throwing.
+  async consultLegalSources(
+    query:      string,
+    conceptIds?: string[],
+    topK?:       number
+  ): Promise<string> {
+    if (!query || query.trim() === '') {
+      return JSON.stringify({ error: 'query must be a non-empty string.', source: 'validation' });
+    }
+
+    if (!this.ragService) {
+      return JSON.stringify({
+        source:    'legal_knowledge_base',
+        available: false,
+        note:      'RAG knowledge base not available. Run "npm run rag:build" to build it.',
+        chunks:    [],
+      });
+    }
+
+    try {
+      const results = await this.ragService.retrieve(query, {
+        concept_ids: conceptIds,
+        module:      'WHT',
+        top_k:       Math.min(topK ?? 3, 5),
+      });
+
+      return JSON.stringify({
+        source: 'legal_knowledge_base',
+        query,
+        chunks: results.map(c => ({
+          source_id:     c.source_id,
+          section_ref:   c.section_ref,
+          section_title: c.section_title,
+          text:          c.text,
+          score:         Math.round(c.score * 100) / 100,
+        })),
+      });
+    } catch (err) {
+      return JSON.stringify({
+        error:  `RAG retrieval failed: ${String(err)}`,
+        source: 'legal_knowledge_base',
+      });
+    }
   }
 }

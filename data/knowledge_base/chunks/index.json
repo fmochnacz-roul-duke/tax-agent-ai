@@ -1,0 +1,480 @@
+[
+  {
+    "chunk_id": "MF-OBJ-2025::preamble",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "preamble",
+    "section_title": "Document Preamble",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "Oficjalne objaśnienia podatkowe Ministra Finansów (MF) z ochroną prawną na podstawie art. 14n §4 Ordynacji podatkowej. Stosowanie się do objaśnień zapewnia podatnikom ochronę przed zmianą interpretacji przez organy podatkowe.",
+    "char_count": 225
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::1",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§1",
+    "section_title": "§1 Wprowadzenie i zakres",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §1 Wprowadzenie i zakres\n\nWeryfikacja statusu rzeczywistego właściciela w odniesieniu do odbiorcy należności jest w przypadku określonych płatności warunkiem zastosowania preferencyjnej stawki lub zwolnienia z WHT wynikającego z przepisów ustawy o CIT, ustawy o PIT lub umów o unikaniu podwójnego opodatkowania.\n\nOkreślenie „rzeczywisty właściciel\" zostało zdefiniowane w art. 4a pkt 29 ustawy o CIT. Jak wynika z tych przepisów, ilekroć w ustawie o CIT lub ustawie o PIT mowa jest o rzeczywistym właścicielu, pod pojęciem tym należy rozumieć podmiot, który spełnia łącznie następujące warunki:\n\n- otrzymuje daną należność dla własnej korzyści, w tym samodzielnie decyduje o jej przeznaczeniu i ponosi ryzyko ekonomiczne związane z utratą tej należności lub jej części;\n- nie jest pośrednikiem, przedstawicielem, powiernikiem lub innym podmiotem zobowiązanym do przekazania całości lub części należności innemu podmiotowi;\n- prowadzi rzeczywistą działalność gospodarczą w kraju siedziby, jeżeli należności są uzyskiwane w związku z prowadzoną działalnością gospodarczą, przy czym przy ocenie, czy podmiot prowadzi rzeczywistą działalność gospodarczą, uwzględnia się charakter oraz skalę działalności prowadzonej przez ten podmiot w zakresie otrzymanej należności.\n\nTym samym przepisy ustawy o CIT i ustawy o PIT przewidują trzy przesłanki, które muszą być spełnione łącznie dla uznania odbiorcy należności za jej rzeczywistego właściciela, tj.:\n\n(i) otrzymanie danej należności dla własnej korzyści,\n(ii) brak zobowiązania do przekazania całości lub części należności,\n(iii) prowadzenie rzeczywistej działalności gospodarczej.\n\nKlauzula rzeczywistego właściciela nie jest stricte antyabuzywną klauzulą w rodzaju klauzuli GAAR czy klauzuli zawartej w art. 22c ustawy o CIT. Wykładnia pojęcia rzeczywistego właściciela zgodna z jego międzynarodowym znaczeniem wymaga uwzględnienia rozumienia tej koncepcji prezentowanego przez TSUE w sprawie N Luxembourg 1 (wyrok z 26 lutego 2019 r., C-115/16 i in.), co oznacza:\n\n- zwrot „rzeczywisty właściciel\" nie powinien być rozumiany w wąskim, technicznym znaczeniu, ale mieć takie znaczenie, które pozwala zapobiegać unikaniu opodatkowania z wykorzystaniem UPO lub dyrektyw unijnych;\n- przy interpretacji warunku rzeczywistego właściciela należy zastosować podejście ekonomiczne.",
+    "char_count": 2322
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::22",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§2.2",
+    "section_title": "§2.2 Przesłanka otrzymania danej należności dla własnej korzyści i nieistnienia zobowiązania do przekazania całości lub części należności",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §2.2 Przesłanka otrzymania danej należności dla własnej korzyści i nieistnienia zobowiązania do przekazania całości lub części należności\n\nZgodnie z podejściem ekonomicznym rzeczywisty właściciel należności dysponuje nie tyle ścisłym formalnym władztwem prawnym, lecz władztwem ekonomicznym nad należnością. Rzeczywistym właścicielem nie może być więc podmiot podstawiony wyłącznie do dalszego transferu płatności (ang. merely a conduit for the passage of payment). Pojęcie to (BO) odnosi się do podmiotu, który w rzeczywistości i efektywnie korzysta z danej płatności.\n\nPrzesłanka „otrzymania danej należności dla własnej korzyści\" odwołuje się do aspektów określanych jako pełne władztwo i kontrola nad funduszami (ang. complete dominion and control), co odróżnia go od podmiotu pośredniczącego utrzymującego jedynie tymczasowe fizyczne władztwo (ang. obtaining physical possession on temporary basis). Bywa ona także określana jako test znaczącej własności ekonomicznej (ang. substantive economic ownership).\n\nPodmiot, którego prawo do dysponowania dochodem jest ograniczone zobowiązaniem do przekazania otrzymanej należności innemu podmiotowi nie może być uznany za rzeczywistego właściciela. Zobowiązanie do przekazania należności może wynikać z formalnie zawartej umowy jak i wszystkich okoliczności faktycznych sprawy świadczących o jego istnieniu.\n\nO statusie rzeczywistego właściciela w odniesieniu do danej należności będzie świadczyć m.in. ponoszenie związanych z nią czynników ryzyka, takich jak przykładowo: ryzyko niewykonania zobowiązania, ryzyko kredytowe dłużnika odsetek, ryzyko zmian stóp procentowych czy ryzyko walutowe lub ryzyko kursowe.\n\nO byciu podmiotem pośredniczącym nie świadczy jednak samo w sobie dokonanie płatności pomiędzy podmiotami wynikające z obowiązujących w danym kraju systemowych unormowań dotyczących grup przedsiębiorstw. Ustalenie, że inwestorem w badanym podmiocie są osoby, którym nie przysługiwałaby preferencyjna stawka podatku u źródła, gdyby uzyskiwały one płatności bezpośrednio, także nie przesądza, że podmiot ten nie może być uznany za rzeczywistego właściciela.\n\nNie jest możliwe stworzenie wyczerpującej listy przesłanek kwalifikujących dany podmiot jako zobowiązany do przekazania całości lub części płatności. O pośrednictwie i nieotrzymywaniu należności dla własnej korzyści może jednak świadczyć wystąpienie m.in. następujących przesłanek (przy czym nie jest konieczne, aby wszystkie z nich wystąpiły łącznie):\n\n- podmiot realizuje niewielką marżę na przekazywanych płatnościach;\n- podmiot nie wykazuje przychodu podatkowego z tytułu otrzymanych należności;\n- należności w krótkich odstępach czasu są przekazywane na rzecz innego podmiotu;\n- podmiot nie dokonuje reinwestycji środków finansowych uzyskanych w związku z otrzymanymi należnościami;\n- podmiot nie ma innych środków lub źródeł dochodów niż otrzymywana należność umożliwiających spłatę jego zobowiązań;\n- podmiot nie ponosi ryzyka związanego z daną należnością.\n\nJednocześnie, wystąpienie pojedynczej z powyższych okoliczności nie skutkuje jednoznacznie brakiem statusu rzeczywistego właściciela. Dopiero analiza całokształtu okoliczności faktycznych umożliwia sprawdzenie, czy wystąpienie powyższych przesłanek w sposób obiektywny i spójny wskazuje na brak spełnienia warunku rzeczywistego właściciela.",
+    "char_count": 3328
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::23",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§2.3",
+    "section_title": "§2.3 Przesłanka prowadzenia rzeczywistej działalności gospodarczej",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §2.3 Przesłanka prowadzenia rzeczywistej działalności gospodarczej\n\nPrzesłanka prowadzenia rzeczywistej działalności gospodarczej podlega badaniu w kontekście konkretnej płatności. Z jednej strony oznacza to, że spółka prowadząca rozbudowaną działalność gospodarczą nie może zostać uznana za rzeczywistego właściciela konkretnej płatności, kiedy jedynie pośredniczy w jej otrzymaniu. Z drugiej strony oznacza to, że dana działalność gospodarcza — chociaż nierozbudowana — może zostać uznana za rzeczywistą w kontekście danej płatności, niewymagającej bardziej rozbudowanej działalności dla czerpania z niej własnej korzyści.\n\nNie może spełnić warunku rzeczywistej działalności gospodarczej podmiot, który nie posiada własnych środków (majątkowych i osobowych) umożliwiających mu jej prowadzenie (z zastrzeżeniem koncepcji dzielonego substratu majątkowo-osobowego, o której mowa w §2.3.1 Objaśnień).\n\nW pewnych jednak zakresach kryteria prowadzenia rzeczywistej działalności gospodarczej pozostają uniwersalne. Weryfikując status danego podmiotu bierze się pod uwagę przykładowo następujące czynniki:\n\n- czy posiada własny majątek;\n- czy posiada biuro w sensie materialnym;\n- czy zatrudnia personel;\n- czy opłaca rachunki związane z bieżącą działalnością (w tym np. za wynajem, za media: prąd, telefony itp.);\n- czy zatrudnia (posiada) osoby zarządzające z wystarczającym doświadczeniem i wiedzą w zakresie badanych transakcji;\n- czy posiada swój kapitał, który służy finansowaniu działalności;\n- czy podejmuje samodzielnie i na własny rachunek czynności w obrocie gospodarczym;\n- czy pomiędzy podmiotem a jego właścicielem/właścicielami nie zachodzą powiązania kapitałowe i osobowe, tego rodzaju, że podmiot taki można uznać za jedynie administratora dochodu.\n\nPrzy ocenie rzeczywistej działalności gospodarczej uwzględniane są następujące szczególne cechy charakteryzujące daną działalność (per TSUE w sprawie N Luxembourg 1):\n\n- sposób zarządzania spółką, w tym możliwość wykonywania istotnych funkcji zarządczych w stosunku do posiadanego majątku,\n- bilans księgowy spółki,\n- strukturę kosztów i faktycznie poniesionych wydatków,\n- liczbę zatrudnionych pracowników i ich kwalifikacje,\n- zakres pomieszczeń i wyposażenia, jakimi spółka dysponuje.\n\nNie oznacza to jednak, że w przypadku każdego podmiotu konieczne jest posiadanie znaczącego substratu majątkowo-osobowego. Poziom rozbudowania substratu wystarczający dla spełnienia przesłanki prowadzenia rzeczywistej działalności gospodarczej zależy od rodzaju prowadzonej działalności i rodzaju badanej należności — inne (niższe) wymogi co do zawartości tego substratu będą stawiane tzw. spółkom holdingowym niż spółkom operacyjnym.\n\nW przypadku spółek holdingowych posiadanie substratu majątkowo-osobowego sprowadza się, co do zasady, do odpowiednio doświadczonego personelu, faktycznie zaangażowanego w działalność podmiotu, posiadającego wystarczającą wiedzę ekspercką i wyposażonego w odpowiedni sprzęt biurowy.\n\nO braku spełnienia przesłanki posiadania substratu osobowego mogą świadczyć następujące okoliczności:\n\n- członkami zarządu (dyrektorami) badanego podmiotu są osoby fizyczne/inne podmioty pełniące te funkcje wyłącznie w sposób usługowy, również równolegle dla innych klientów, niemające doświadczenia zawodowego w zakresie branży/biznesu formalnie prowadzonego przez podmiot (tzw. dyrektorzy nominowani);\n- brak jest przypisania zakresu obowiązków/kompetencji poszczególnym członkom zarządu podmiotu;\n- zatrudnienie w spółce jedynie (lub niemal jedynie) personelu administracyjnego (zwłaszcza, gdy jednocześnie świadczy on usługi na rzecz innych podmiotów, w tym innych klientów kancelarii prawnej);\n- outsourcing przez podmiot większości podstawowych aspektów funkcjonowania (m.in. szerokie korzystanie z usług polegających na uczynieniu danego kraju siedzibą prawną lub miejscem prowadzenia działalności, takich jak zapewnienia siedziby, zapewnienia odpowiednio wykwalifikowanych dyrektorów-rezydentów danego kraju, zapewnienia wspólnej przestrzeni biurowej, obsługi poczty przychodzącej, zapewnienia zarządzania i kontroli, usługi administracyjne itp.);\n- korzystanie w szerokim zakresie z usług powierniczych;\n- konsultowanie decyzji dotyczących podmiotu głównie z doradcami z kraju innego niż kraj podmiotu lub kraj inwestycji prowadzonej przez podmiot (w tym doradcami podatkowymi).\n\nPosiadanie własnego substratu majątkowo-osobowego dla prowadzenia rzeczywistej działalności gospodarczej oznacza faktyczne ponoszenie jego kosztów. O prowadzeniu „rzeczywistej działalności gospodarczej\" decydować będzie nie tyle forma prawna posiadania prawa do korzystania z biura czy zatrudnienia pracowników, co fakt obciążenia podmiotu ich kosztami w zakresie uzasadniającym założenie, że decyzje podejmowane w ramach takiego podmiotu w odniesieniu do badanej należności są podejmowane na jego rzecz.\n\nO samodzielności w prowadzeniu działalności gospodarczej w przypadku spółek holdingowych świadczyć będzie przykładowo: posiadanie i ponoszenie kosztów kont bankowych, na które otrzymywana jest płatność i nad którymi wyłączną kontrolę spółka sprawuje poprzez własny personel; opłacanie przez spółkę kosztów działalności z takiej jednolitej puli środków; brak ograniczeń korporacyjnych uniemożliwiających samodzielne decyzje co do codziennej działalności spółki.",
+    "char_count": 5327
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::231",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§2.3.1",
+    "section_title": "§2.3.1 Dzielony substrat osobowo-majątkowy",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "### §2.3.1 Dzielony substrat osobowo-majątkowy\n\nW niektórych okolicznościach (np. ze względu na przyjęty model biznesowy grupy) nie jest uzasadnione ponoszenie przez spółkę niektórych kosztów środków niezbędnych do gospodarowania uzyskanym przychodem dla własnej korzyści. Fakt, że środki takie są udostępniane podmiotowi przez inne podmioty z grupy nie wyklucza zastosowania danej preferencji i uznania podmiotu za rzeczywistego właściciela analizowanej płatności.\n\nDzieje się tak, kiedy koszty substratu majątkowo-osobowego niezbędnego do prowadzenia przez analizowany podmiot rzeczywistej działalności gospodarczej są ponoszone przez inny podmiot, którego rezydencja podatkowa znajduje się na terenie objętym zakresem działania aktu stanowiącego źródło danej preferencji. W praktyce oznacza to, że:\n\n- w przypadku badania przesłanki prowadzenia rzeczywistej działalności gospodarczej na potrzeby zastosowania preferencji przewidzianej dyrektywą PS lub IR uzasadnione jest uwzględnienie środków udostępnianych przez podmioty będące rezydentem podatkowym jednego z państw członkowskich UE;\n- w przypadku badania tej przesłanki na potrzeby zastosowania preferencji przewidzianej UPO uzasadnione jest uwzględnienie środków udostępnianych przez podmioty będące rezydentem podatkowym tego samego państwa co spółka, której status rzeczywistego właściciela jest badany.\n\nZe względu na konieczność posiadania rozbudowanej wiedzy co do sposobu funkcjonowania danej grupy, ustalenie i wykazanie, że przesłanka rzeczywistej działalności gospodarczej jest spełniona przy zastosowaniu dzielonego substratu majątkowo-osobowego jest wyłącznie fakultatywną opcją dla płatnika lub podatnika — do jej stosowania nie jest zobowiązany organ podatkowy.\n\nKorzystanie przez dany podmiot z dzielonego substratu majątkowo-osobowego nie oznacza, że nie musi on spełnić przesłanek definicji rzeczywistego właściciela opisanych w §2 Objaśnień. Podmiot taki wciąż musi (w zakresie badanej płatności): nie być pośrednikiem i otrzymywać ją dla własnej korzyści oraz prowadzić rzeczywistą działalność gospodarczą.\n\nNa podstawie niniejszych objaśnień nie jest możliwe dowodzenie spełnienia warunku rzeczywistego właściciela w oparciu o dzielony substrat majątkowo-osobowy w odniesieniu do podmiotu innego niż podmiot, do którego płatność została wypłacona.",
+    "char_count": 2325
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::31",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§3.1",
+    "section_title": "§3.1 Płatności bierne objęte obowiązkiem badania warunku rzeczywistego właściciela",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §3.1 Płatności bierne objęte obowiązkiem badania warunku rzeczywistego właściciela\n\nWarunek rzeczywistego właściciela musi być badany dla zastosowania preferencji podatkowej wyłącznie w przypadku tzw. płatności biernych. W Polsce przychód z tzw. płatności biernych podlega opodatkowaniu na podstawie:\n\n- art. 21 ust. 1 pkt 1 ustawy o CIT, tj. w przypadku płatności z tytułu odsetek i tzw. należności licencyjnych, oraz\n- art. 22 ust. 1 ustawy o CIT, tj. w przypadku płatności z tytułu dywidend oraz innych przychodów (dochodów) z tytułu udziału w zyskach osób prawnych mających siedzibę lub zarząd na terytorium Rzeczypospolitej Polskiej.\n\nWarunek rzeczywistego właściciela musi więc być badany dla zastosowania preferencji podatkowej wyłącznie w przypadku płatności z ww. tytułów.",
+    "char_count": 784
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::32",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§3.2",
+    "section_title": "§3.2 Usługi niematerialne — brak obowiązku badania warunku BO",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §3.2 Usługi niematerialne — brak obowiązku badania warunku BO\n\nW przypadku płatności wymienionych w art. 26 ust. 1 ustawy o CIT innych niż płatności bierne weryfikacja prawa do zastosowania preferencji nie uwzględnia warunku rzeczywistego właściciela. Oznacza to, że w przypadku usług niematerialnych (np. usługi reklamowe czy doradcze) po stronie płatnika nie występuje obowiązek weryfikacji warunku rzeczywistego właściciela.",
+    "char_count": 430
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::34",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§3.4",
+    "section_title": "§3.4 Dywidendy, odsetki i należności licencyjne na gruncie UPO niezawierających wprost klauzuli rzeczywistego właściciela",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §3.4 Dywidendy, odsetki i należności licencyjne na gruncie UPO niezawierających wprost klauzuli rzeczywistego właściciela\n\nWarunek rzeczywistego właściciela dotyczy zarówno UPO posługujących się zwrotem \"paid to a resident\" lub analogicznym, jak i UPO zawierających konkretyzacje tego zwrotu w postaci klauzuli rzeczywistego właściciela. Każde z nich należy interpretować przede wszystkim zgodnie z ogólną regułą interpretacyjną zawartą w art. 31 ust. 1 Konwencji Wiedeńskiej o Prawie Traktatów — brak jest więc podstaw do rozróżniania na gruncie różnych UPO obowiązku płatnika co do badania statusu rzeczywistego właściciela.",
+    "char_count": 629
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::42",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§4.2",
+    "section_title": "§4.2 Okoliczności badane w przypadku płatności do podmiotu powiązanego",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §4.2 Okoliczności badane w przypadku płatności do podmiotu powiązanego\n\nW przypadku podmiotów powiązanych konieczne jest zbadanie wszelkich okoliczności skutkujących kwalifikacją danego podmiotu jako rzeczywistego właściciela. W przypadku wypłaty do podmiotu powiązanego nie jest wystarczające uzyskanie oświadczeń i certyfikatów. Konieczna jest weryfikacja innych dostępnych dokumentów potwierdzających spełnienie każdego elementu definicji, składających się na „wiedzę\" płatnika, o której można jednocześnie powiedzieć, że nie uzasadnia przypuszczenia, że istniały okoliczności wykluczające możliwość zastosowania preferencji podatkowej. Są to przykładowo umowy świadczące o posiadaniu substratu majątkowo-osobowego czy sprawozdania finansowe świadczące o władztwie ekonomicznym nad otrzymywanymi należnościami.\n\nNiezależnie od wypłacanej kwoty (i ewentualnego złożenia oświadczenia), w każdym przypadku płatności biernych do podmiotów powiązanych weryfikacja warunków zastosowania preferencyjnej stawki, zwolnienia lub niepobrania podatku dokonana z należytą starannością musi prowadzić do „nieposiadania wiedzy uzasadniającej przypuszczenie, że istnieją okoliczności wykluczające możliwość\" ich zastosowania.",
+    "char_count": 1215
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::43",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§4.3",
+    "section_title": "§4.3 Okoliczności badane w przypadku płatności do podmiotu niepowiązanego",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §4.3 Okoliczności badane w przypadku płatności do podmiotu niepowiązanego\n\nW przypadku podmiotów niepowiązanych możliwe jest ustalenie faktów koniecznych dla stwierdzenia, czy spełniony został warunek rzeczywistego właściciela w oparciu o badanie określonego zakresu okoliczności, tj. w oparciu o uzyskany od podatnika certyfikat rezydencji i jego oświadczenie o spełnieniu warunku rzeczywistego właściciela.\n\nPowyższe nie oznacza jednak, że płatnik nie jest zobowiązany do dochowania należytej staranności w ocenie uzyskanych dokumentów pod względem formalnym. Jednocześnie, powyższe nie oznacza braku możliwości udowodnienia przez organ podatkowy na podstawie szerszego zakresu okoliczności, że warunek rzeczywistego właściciela nie został spełniony.",
+    "char_count": 755
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::5",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§5",
+    "section_title": "§5 Standard badania możliwości zastosowania preferencyjnej stawki podatku, zwolnienia lub niepobrania podatku",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §5 Standard badania możliwości zastosowania preferencyjnej stawki podatku, zwolnienia lub niepobrania podatku\n\nIstotnym, a odrębnym aspektem jest, czy w konkretnym przypadku badanie okoliczności świadczących o spełnieniu warunku rzeczywistego właściciela zostało przeprowadzone w standardzie odpowiadającym należytej staranności. Standard ten zależy bowiem, zgodnie z ustawą, od charakteru, skali działalności prowadzonej przez płatnika oraz powiązań płatnika z podatnikiem i w konsekwencji jest odmienny dla indywidualnego przypadku. Fakt powiązania podmiotów wpływa zatem także na standard badania należytej staranności.",
+    "char_count": 625
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::61",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§6.1",
+    "section_title": "§6.1 Szczególne przypadki badania warunku rzeczywistego właściciela — wstęp",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §6.1 Szczególne przypadki badania warunku rzeczywistego właściciela — wstęp\n\nFakultatywnie, płatnik lub podatnik może zastosować preferencję podatkową na podstawie szczególnych okoliczności, takich jak np. statusu rzeczywistego właściciela innego podmiotu niż odbiorca należności. Podkreślenia wymaga, że do zastosowania żadnej z poniższych koncepcji nie jest zobligowany organ podatkowy.",
+    "char_count": 391
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::62",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§6.2",
+    "section_title": "§6.2 LTA — klauzula look-through approach",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## §6.2 LTA — klauzula look-through approach\n\nKlauzula „look-through approach\" (klauzula LTA) wywodzi się z rozumienia klauzuli rzeczywistego właściciela i jest wprost wyrażona w komentarzu do MK OECD. W praktyce pozwala ona płatnikowi wypłacającemu należności na zastosowanie zwolnienia lub obniżonej stawki podatku nawet jeżeli rzeczywisty właściciel tej należności nie jest jej bezpośrednim odbiorcą, a jest ona mu przekazywana przez pośredników. Stosowanie koncepcji LTA na etapie wypłaty należności jest opcją dla płatnika.\n\nPłatnik przed zastosowaniem LTA powinien, w ramach należytej staranności, ustalić:\n\n1) rzeczywistego właściciela należności;\n2) czy rzeczywisty właściciel rozpoznaje w swoim kraju przychód podatkowy z tytułu otrzymanej należności;\n3) czy płatności przekazywane w łańcuchu podmiotów są rodzajowo tożsame;\n4) czy spełnione są warunki przewidziane dla danej preferencji podatkowej.\n\nRodzajowa tożsamość płatności oznacza sytuację, w której należność wypłacana przez polskiego płatnika jest następnie przekazywana w łańcuchu płatności do rzeczywistego właściciela pod tym samym tytułem (np. odsetki pozostają odsetkami przez cały łańcuch płatności). Zastosowania LTA nie wyklucza natomiast brak tożsamości kwotowej.",
+    "char_count": 1241
+  },
+  {
+    "chunk_id": "MF-OBJ-2025::621",
+    "source_id": "MF-OBJ-2025",
+    "section_ref": "§6.2.1",
+    "section_title": "§6.2.1 LTA a dywidenda na gruncie dyrektywy PS",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "conduit_entity",
+      "holding_company"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "### §6.2.1 LTA a dywidenda na gruncie dyrektywy PS\n\nOprócz okoliczności, o których mowa w §4.1, płatnik powinien ustalić łańcuch podmiotów w ramach którego dywidenda jest przekazywana do rzeczywistego właściciela oraz czy spełnione są przesłanki z art. 22 ust. 4–4d ustawy o CIT. W przypadku stosowania tego zwolnienia na zasadzie koncepcji LTA, każdy z podmiotów w łańcuchu płatności powinien:\n\n1) podlegać opodatkowaniu podatkiem dochodowym od całości swoich dochodów, bez względu na miejsce ich osiągania, na terytorium RP, państwa członkowskiego UE lub w innym państwie należącym do EOG (art. 22 ust. 4 pkt 2 ustawy o CIT);\n2) nie korzystać ze zwolnienia z opodatkowania podatkiem dochodowym od całości swoich dochodów, bez względu na źródło ich osiągnięcia (art. 22 ust. 4 pkt 4 ustawy o CIT);\n3) stanowić spółkę w rozumieniu art. 4a pkt 21 ustawy o CIT lub jeden z podmiotów wymienionych w załączniku nr 4 do ustawy o CIT;\n4) posiadać nieprzerwanie przez okres co najmniej dwóch lat bezpośrednio nie mniej niż 10% udziałów (akcji) w kapitale spółki wypłacającej dywidendę (art. 22 ust. 4 pkt 3 ustawy o CIT);\n5) posiadać tytułem własności udziały (akcje) z tytułu których dywidenda jest wypłacana (art. 22 ust. 4d ustawy o CIT).\n\nWarunek bezpośredniego posiadania udziałów jest spełniony, gdy wszystkie podmioty w łańcuchu płatności kaskadowo spełniają ten warunek w kolejnej spółce w łańcuchu.",
+    "char_count": 1400
+  },
+  {
+    "chunk_id": "PL-CIT-2026::preamble",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "preamble",
+    "section_title": "Document Preamble",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "Tekst jednolity opublikowany Dz. U. 2026 poz. 331 (stan na 2026-03-20). Wybrane przepisy dotyczące podatku u źródła (WHT) i klauzuli rzeczywistego właściciela.",
+    "char_count": 159
+  },
+  {
+    "chunk_id": "PL-CIT-2026::art-4a-pkt-29",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "Art. 4a pkt 29",
+    "section_title": "Art. 4a pkt 29 Definicja rzeczywistego właściciela",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## Art. 4a pkt 29 Definicja rzeczywistego właściciela\n\nIlekroć w ustawie jest mowa o rzeczywistym właścicielu — oznacza to podmiot, który spełnia łącznie następujące warunki:\n\na) otrzymuje należność dla własnej korzyści, w tym samodzielnie decyduje o jej przeznaczeniu i ponosi ryzyko ekonomiczne związane z utratą tej należności lub jej części,\n\nb) nie jest pośrednikiem, przedstawicielem, powiernikiem lub innym podmiotem zobowiązanym do przekazania całości lub części należności innemu podmiotowi,\n\nc) prowadzi rzeczywistą działalność gospodarczą w kraju siedziby, jeżeli należności są uzyskiwane w związku z prowadzoną działalnością gospodarczą, przy czym przy ocenie, czy podmiot prowadzi rzeczywistą działalność gospodarczą, uwzględnia się charakter oraz skalę działalności prowadzonej przez ten podmiot w zakresie otrzymanej należności.\n\nNota: tekst art. 4a pkt 29 cytowany za objaśnieniami podatkowymi MF z dnia 3 lipca 2025 r. (MF-OBJ-2025). Przepis art. 5a pkt 33d ustawy o PIT zawiera odpowiadającą definicję dla celów PIT.",
+    "char_count": 1034
+  },
+  {
+    "chunk_id": "PL-CIT-2026::art-21-ust-1",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "Art. 21 ust. 1",
+    "section_title": "Art. 21 ust. 1 Podatek dochodowy od odsetek i należności licencyjnych",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## Art. 21 ust. 1 Podatek dochodowy od odsetek i należności licencyjnych\n\nPodatek dochodowy z tytułu uzyskanych na terytorium Rzeczypospolitej Polskiej przez podatników, o których mowa w art. 3 ust. 2, przychodów:\n\n1) z odsetek, z praw autorskich lub praw pokrewnych, z praw do projektów wynalazczych, znaków towarowych i wzorów zdobniczych, w tym również ze sprzedaży tych praw, z należności za udostępnienie tajemnicy receptury lub procesu produkcyjnego, za użytkowanie lub prawo do użytkowania urządzenia przemysłowego, w tym także środka transportu, urządzenia handlowego lub naukowego, za informacje związane ze zdobytym doświadczeniem w dziedzinie przemysłowej, handlowej lub naukowej (know-how),\n\n2) z opłat za świadczone usługi w zakresie działalności widowiskowej, rozrywkowej lub sportowej, wykonywanej przez osoby prawne mające siedzibę za granicą, organizowanej za pośrednictwem osób fizycznych lub osób prawnych prowadzących działalność w zakresie imprez artystycznych, rozrywkowych lub sportowych na terytorium Rzeczypospolitej Polskiej,\n\n2a) z tytułu świadczeń: doradczych, księgowych, badania rynku, usług prawnych, usług reklamowych, zarządzania i kontroli, przetwarzania danych, usług rekrutacji pracowników i pozyskiwania personelu, gwarancji i poręczeń oraz świadczeń o podobnym charakterze\n\n— ustala się w wysokości 20 % przychodów.",
+    "char_count": 1353
+  },
+  {
+    "chunk_id": "PL-CIT-2026::art-21-ust-2",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "Art. 21 ust. 2",
+    "section_title": "Art. 21 ust. 2 Pierwszeństwo UPO",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## Art. 21 ust. 2 Pierwszeństwo UPO\n\nPrzepisy ust. 1 stosuje się z uwzględnieniem umów w sprawie zapobieżenia podwójnemu opodatkowaniu, których stroną jest Rzeczpospolita Polska.",
+    "char_count": 178
+  },
+  {
+    "chunk_id": "PL-CIT-2026::art-21-ust-3",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "Art. 21 ust. 3",
+    "section_title": "Art. 21 ust. 3 Zwolnienie na podstawie dyrektywy IR (odsetki i należności licencyjne)",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## Art. 21 ust. 3 Zwolnienie na podstawie dyrektywy IR (odsetki i należności licencyjne)\n\nZwalnia się od podatku dochodowego przychody, o których mowa w ust. 1 pkt 1, jeżeli spełnione są łącznie następujące warunki:\n\n1) wypłacającym należności, o których mowa w ust. 1 pkt 1, jest:\n   a) spółka będąca podatnikiem podatku dochodowego mająca siedzibę lub zarząd na terytorium Rzeczypospolitej Polskiej albo\n   b) położony na terytorium Rzeczypospolitej Polskiej zagraniczny zakład spółki podlegającej w państwie członkowskim Unii Europejskiej opodatkowaniu podatkiem dochodowym od całości swoich dochodów bez względu na miejsce ich osiągania;\n\n2) uzyskującym przychody, o których mowa w ust. 1 pkt 1, jest spółka podlegająca w innym niż Rzeczpospolita Polska państwie członkowskim Unii Europejskiej lub w innym państwie należącym do Europejskiego Obszaru Gospodarczego opodatkowaniu podatkiem dochodowym od całości swoich dochodów bez względu na miejsce ich osiągania;\n\n3) spółka:\n   a) o której mowa w pkt 1, posiada bezpośrednio nie mniej niż 25 % udziałów (akcji) w kapitale spółki, o której mowa w pkt 2, lub\n   b) o której mowa w pkt 2, posiada bezpośrednio nie mniej niż 25 % udziałów (akcji) w kapitale spółki, o której mowa w pkt 1;\n\n4) rzeczywistym właścicielem należności, o których mowa w ust. 1 pkt 1, jest:\n   a) spółka, o której mowa w pkt 2, albo\n   b) zagraniczny zakład spółki, o której mowa w pkt 2, jeżeli dochód osiągnięty w następstwie uzyskania tych należności podlega opodatkowaniu w tym państwie członkowskim Unii Europejskiej, w którym ten zagraniczny zakład jest położony.\n\nZwolnienie ma zastosowanie w przypadku, gdy spółka uzyskująca dochody posiada udziały w wysokości, o której mowa w ust. 3 pkt 3, nieprzerwanie przez okres dwóch lat (art. 21 ust. 4).",
+    "char_count": 1781
+  },
+  {
+    "chunk_id": "PL-CIT-2026::art-22-ust-1",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "Art. 22 ust. 1",
+    "section_title": "Art. 22 ust. 1 Podatek dochodowy od dywidend",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## Art. 22 ust. 1 Podatek dochodowy od dywidend\n\nPodatek dochodowy od określonych w art. 7b ust. 1 pkt 1 przychodów z dywidend oraz innych przychodów (dochodów) z tytułu udziału w zyskach osób prawnych mających siedzibę lub zarząd na terytorium Rzeczypospolitej Polskiej ustala się w wysokości 19 % uzyskanego przychodu (dochodu).",
+    "char_count": 330
+  },
+  {
+    "chunk_id": "PL-CIT-2026::art-22-ust-4",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "Art. 22 ust. 4",
+    "section_title": "Art. 22 ust. 4 Zwolnienie na podstawie dyrektywy PS (dywidendy)",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## Art. 22 ust. 4 Zwolnienie na podstawie dyrektywy PS (dywidendy)\n\nZwalnia się od podatku dochodowego przychody z tytułu udziału w zyskach osób prawnych, o których mowa w art. 7b ust. 1 pkt 1 lit. a, f oraz j, z wyjątkiem dochodów uzyskiwanych przez komplementariusza z tytułu udziału w zyskach spółki, o której mowa w art. 1 ust. 3 pkt 1, jeżeli spełnione są łącznie następujące warunki:\n\n1) wypłacającym dywidendę oraz inne przychody z tytułu udziału w zyskach osób prawnych jest spółka mająca siedzibę lub zarząd na terytorium Rzeczypospolitej Polskiej;\n\n2) uzyskującym dochody (przychody) z dywidend oraz inne przychody z tytułu udziału w zyskach osób prawnych, o których mowa w pkt 1, jest spółka podlegająca w Rzeczypospolitej Polskiej lub w innym niż Rzeczpospolita Polska państwie członkowskim Unii Europejskiej lub w innym państwie należącym do Europejskiego Obszaru Gospodarczego, opodatkowaniu podatkiem dochodowym od całości swoich dochodów, bez względu na miejsce ich osiągania;\n\n3) spółka, o której mowa w pkt 2, posiada bezpośrednio nie mniej niż 10 % udziałów (akcji) w kapitale spółki, o której mowa w pkt 1;\n\n4) spółka, o której mowa w pkt 2, nie korzysta ze zwolnienia z opodatkowania podatkiem dochodowym od całości swoich dochodów, bez względu na źródło ich osiągania.\n\nZwolnienie ma zastosowanie w przypadku, gdy spółka uzyskująca dochody (przychody) z dywidend posiada udziały w wysokości, o której mowa w ust. 4 pkt 3, nieprzerwanie przez okres dwóch lat (art. 22 ust. 4a).",
+    "char_count": 1498
+  },
+  {
+    "chunk_id": "PL-CIT-2026::art-26-ust-1",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "Art. 26 ust. 1",
+    "section_title": "Art. 26 ust. 1 Obowiązki płatnika WHT i należyta staranność",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## Art. 26 ust. 1 Obowiązki płatnika WHT i należyta staranność\n\nOsoby prawne, jednostki organizacyjne niemające osobowości prawnej oraz osoby fizyczne będące przedsiębiorcami, które dokonują wypłat należności z tytułów wymienionych w art. 21 ust. 1 oraz art. 22 ust. 1, są obowiązane jako płatnicy pobierać, z zastrzeżeniem ust. 2, 2b, 2d i 2e, w dniu dokonania wypłaty zryczałtowany podatek dochodowy od tych wypłat, z uwzględnieniem odliczeń przewidzianych w art. 22 ust. 1a–1e.\n\nZastosowanie stawki podatku wynikającej z właściwej umowy o unikaniu podwójnego opodatkowania albo niepobranie podatku zgodnie z taką umową jest możliwe pod warunkiem udokumentowania siedziby podatnika dla celów podatkowych uzyskanym od podatnika certyfikatem rezydencji.\n\nPrzy weryfikacji warunków zastosowania stawki podatku innej niż określona w art. 21 ust. 1 lub art. 22 ust. 1, zwolnienia lub warunków niepobrania podatku, wynikających z przepisów szczególnych lub umów o unikaniu podwójnego opodatkowania, płatnik jest obowiązany do dochowania należytej staranności. Przy ocenie dochowania należytej staranności uwzględnia się charakter, skalę działalności prowadzonej przez płatnika oraz powiązania w rozumieniu art. 11a ust. 1 pkt 5 płatnika z podatnikiem.",
+    "char_count": 1247
+  },
+  {
+    "chunk_id": "PL-CIT-2026::art-26-ust-1f",
+    "source_id": "PL-CIT-2026",
+    "section_ref": "Art. 26 ust. 1f",
+    "section_title": "Art. 26 ust. 1f Oświadczenie o statusie rzeczywistego właściciela",
+    "concept_ids": [
+      "beneficial_owner",
+      "condition_i_economic_title",
+      "condition_ii_no_passthrough",
+      "condition_iii_genuine_business",
+      "interest",
+      "royalty",
+      "dividend",
+      "due_diligence"
+    ],
+    "module_relevance": [
+      "WHT"
+    ],
+    "language": "pl",
+    "text": "## Art. 26 ust. 1f Oświadczenie o statusie rzeczywistego właściciela\n\nW przypadku należności z tytułów, o których mowa w art. 21 ust. 1 pkt 1 oraz art. 22 ust. 1, wypłacanych na rzecz spółki, o której mowa w art. 21 ust. 3 pkt 2 oraz art. 22 ust. 4 pkt 2, lub jej zagranicznego zakładu, jeżeli łączna kwota należności, wypłacona z tych tytułów temu podatnikowi w obowiązującym u płatnika roku podatkowym, nie przekracza kwoty, o której mowa w ust. 2e, osoby prawne i jednostki organizacyjne niemające osobowości prawnej, które dokonują wypłat tych należności, stosują zwolnienia wynikające z art. 21 ust. 3 oraz art. 22 ust. 4, z uwzględnieniem ust. 1c, pod warunkiem uzyskania od tej spółki lub jej zagranicznego zakładu sporządzonego na piśmie oświadczenia, że w stosunku do wypłacanych należności spełnione zostały warunki, o których mowa odpowiednio w art. 21 ust. 3a i 3c lub art. 22 ust. 4 pkt 4. W przypadku należności, o których mowa w art. 21 ust. 1 pkt 1, sporządzone na piśmie oświadczenie powinno wskazywać, że spółka albo zagraniczny zakład jest rzeczywistym właścicielem wypłacanych należności.",
+    "char_count": 1108
+  }
+]
