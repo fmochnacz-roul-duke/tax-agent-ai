@@ -227,9 +227,11 @@ npm run tax:agent -- --input data/orange_polska_royalty.json      ← uses real 
 ---
 
 ## Open Questions
-- Whether to add a confidence score to the agent's conclusion.
-- Whether to build a minimal web UI or keep CLI-only.
+- Treaty rate verification: verify rates against official treaty PDFs (DzU references in treaties.json).
 - OECD MLI Matching Database check needed for Netherlands, Sweden, Switzerland (VERIFY cases).
+- Session persistence: in-memory Map is fine for dev; Redis or DB needed for multi-user production use.
+- DDQ upload via web UI: currently DDQ path is only settable via the JSON input file for CLI; Phase 9 could add file upload to the web UI.
+- Phase 9+ roadmap: Pillar Two (GloBE), Transfer Pricing screening, PE risk, CbCR analysis modules.
 
 ---
 
@@ -238,6 +240,10 @@ npm run tax:agent -- --input data/orange_polska_royalty.json      ← uses real 
 - WhtEnvironment is the isolation boundary — simulate→live is one flag change.
 - treaties.json is the live data store (static, manually maintained); replaces simulated hardcoded data.
 - Conservative MLI rule: VERIFY status → mli_applies: false (with caution message surfaced to agent).
-- checkEntitySubstance stays simulated permanently — replaced by Phase 5 Python ingestion.
-- Phase 5 document ingestion: Python component (FastAPI or similar), called from TypeScript as a tool.
+- checkEntitySubstance connected to Python DDQ service (Phase 6); graceful simulation fallback when service is down.
+- Multi-agent topology: WHT Agent (OpenAI) calls FactCheckerAgent (Gemini) via fact_check_substance tool (Phase 7).
+- Web UI uses SSE streaming; agent loop emits events via callback alongside console.log (additive, backward-compatible).
+- runWhtAnalysis() is the single exported entry point — CLI and server both call it (Phase 8).
 - node:test (built-in) for testing — no extra dependencies.
+- Express for web server — sufficient for single-server use; no framework needed.
+- session store: in-memory Map — suitable for development; replace with Redis for production.

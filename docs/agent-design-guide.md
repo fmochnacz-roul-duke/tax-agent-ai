@@ -273,3 +273,260 @@ Only the Environment class changes. Goals, Memory, the loop, and tool definition
 - [ ] `any` type in strict TypeScript → use `unknown` and narrow explicitly
 - [ ] Committing without `npm run build` → broken TypeScript ships silently
 - [ ] Merging to master without a branch → lose the ability to track feature history
+- [ ] SSE: not calling `res.flushHeaders()` → browser does not start receiving events
+- [ ] Background async: not `.catch()`-ing `runWhtAnalysis()` → unhandled promise rejection crashes server
+- [ ] Gemini + `responseSchema` + `google_search` → these two cannot be used together; use system prompt + JSON extraction instead
+- [ ] `async` Environment methods: forgetting `await` in the dispatch switch → silent undefined result
+- [ ] In-memory session store: no TTL → memory grows unbounded in production; add cleanup for prod
+
+---
+
+## 9. The Multi-Agent call_agent Pattern
+
+When a task requires a capability the orchestrating model lacks — such as real-time web search —
+delegate to a specialist agent via a tool call.
+
+```
+WHT Agent (OpenAI) ──► fact_check_substance tool ──► FactCheckerAgent (Gemini)
+                                                           └─ google_search
+                         ◄── FactCheckResult (JSON) ───────────────────────────
+```
+
+**Implementation decisions:**
+
+1. **Different model, different vendor** — OpenAI for structured legal reasoning (function calling,
+   reliable JSON), Gemini for live web search grounding. Choose each model for what it does best.
+
+2. **No SDK for the specialist** — call Gemini via raw `fetch()` to the REST endpoint. This avoids
+   adding an SDK dependency for an optional component. Use `google_search: {}` in the tools array.
+
+3. **Structured output from the specialist** — the specialist's system prompt must demand strict JSON.
+   Because Gemini's `responseSchema` and `google_search` cannot be used simultaneously, extract JSON
+   from the text response using three fallback strategies: raw parse → markdown fence → first-brace heuristic.
+
+4. **Simulate fallback is mandatory** — the specialist must return a safe, structurally valid result
+   when the API key is absent or the call fails. The orchestrating agent must never see `undefined`.
+
+5. **Confidence propagation** — the specialist's verdict (`CONFIRMS` / `INCONCLUSIVE` / `UNDERMINES`)
+   feeds back into the orchestrating agent's report confidence. This is the Memory Reflection pattern:
+   the sub-agent's conclusion modifies the main agent's output quality tier.
+
+```typescript
+// The specialist as an injected dependency
+class WhtEnvironment {
+  private factChecker: FactCheckerAgent;
+
+  constructor(options: WhtEnvironmentOptions) {
+    this.factChecker = new FactCheckerAgent({ simulate: options.simulate });
+  }
+
+  async factCheckSubstance(entity, country, claims): Promise<string> {
+    const result = await this.factChecker.verify(entity, country, claims);
+    return JSON.stringify(result);  // always a string; caller handles parsing
+  }
+}
+```
+
+**Rule:** The specialist is injected into the environment, not into the agent loop.
+The loop remains domain-agnostic; it just dispatches `fact_check_substance` like any other tool.
+
+---
+
+## 10. Async Environment Methods
+
+When a tool needs to call an external service, the method signature changes from `string` to
+`Promise<string>`. This change must propagate through the entire call chain.
+
+```typescript
+// Before — synchronous
+checkEntitySubstance(name: string, country: string): string
+
+// After — async (calls Python DDQ service or Gemini)
+async checkEntitySubstance(name: string, country: string): Promise<string>
+```
+
+**The propagation chain:**
+
+```
+WhtEnvironment.checkEntitySubstance()  ← async
+  ↑ awaited in
+BeneficialOwnerAgent dispatch switch   ← await env.checkEntitySubstance(...)
+  ↑ inside
+runAgent()                             ← already async — no signature change
+```
+
+**Graceful fallback pattern:**
+
+```typescript
+async checkEntitySubstance(entity: string, country: string): Promise<string> {
+  if (this.ddqServiceUrl && this.ddqText) {
+    try {
+      const response = await fetch(`${this.ddqServiceUrl}/substance`, { ... });
+      if (response.ok) return await response.text();
+    } catch (err) {
+      console.warn(`[ENV] DDQ service failed: ${err}. Falling back to simulation.`);
+    }
+  }
+  return this.simulateSubstance(entity, country);  // always works
+}
+```
+
+Rule: every async tool method must have a synchronous simulation path it falls back to.
+This means `simulate: true` tests remain synchronous in spirit — they resolve immediately.
+Existing tests just need `await` added; no logic changes required.
+
+---
+
+## 11. Exporting Agent Functions for Reuse
+
+When an agent graduates from a CLI script to a library used by a web server, export the
+contract without exposing CLI-specific internals.
+
+**What to export:**
+
+```typescript
+// Types the server needs to build inputs and interpret outputs
+export interface AgentInput { ... }
+export interface WhtReport  { ... }
+export interface AgentEvent { ... }
+export type AgentEventType = ...;
+
+// Validation — used by both CLI and server's InputExtractor
+export function validateInput(raw: unknown): AgentInput { ... }
+
+// Task string builder — also useful for display in confirmation cards
+export function buildTaskString(input: AgentInput): string { ... }
+
+// The single public entry point for running the analysis
+export async function runWhtAnalysis(
+  input: AgentInput,
+  ddqText: string | undefined,
+  outputPath: string,
+  onEvent: (event: AgentEvent) => void
+): Promise<WhtReport> { ... }
+```
+
+**What NOT to export:**
+
+```typescript
+// parseInput() — reads process.argv, calls process.exit — CLI only
+// resolveOutputPath() — reads process.argv for --output flag — CLI only
+// runAgent() — internal; callers use runWhtAnalysis() instead
+// WHT_GOALS, WHT_PERSONA — internal; the caller doesn't configure goals
+```
+
+**The CLI `main()` becomes a thin wrapper:**
+
+```typescript
+async function main(): Promise<void> {
+  const { input, ddqText } = parseInput();        // CLI-specific
+  const outputPath = resolveOutputPath(input);    // CLI-specific
+  await runWhtAnalysis(input, ddqText, outputPath, (_event) => { /* emit() logs to console */ });
+}
+```
+
+Rule: the exported API surface should be as small as possible. Expose what the consumer
+needs to know; hide everything about how the agent loop is implemented internally.
+
+---
+
+## 12. Streaming Agent Progress via SSE
+
+Server-Sent Events (SSE) are the right transport for agent progress: unidirectional (server → browser),
+built into browsers natively (`EventSource` API), no library required.
+
+**The callback pattern in the agent loop:**
+
+```typescript
+// The agent loop accepts an optional onEvent callback
+async function runAgent(..., onEvent?: (event: AgentEvent) => void): Promise<WhtReport> {
+  const emit = (type: AgentEventType, message: string, data?: unknown): void => {
+    console.log(message);          // CLI output stays
+    onEvent?.({ type, message, data });  // web output added alongside
+  };
+
+  emit('iteration', `ITERATION ${i}`, { iteration: i });
+  emit('tool_call',  `[TOOL CALL] ${name}`, { name, arguments: args });
+  emit('tool_result', `[TOOL RESULT] ${result}`, { name, result });
+  emit('final_answer', answer, { conclusion: answer });
+}
+```
+
+**The server-side SSE endpoint:**
+
+```typescript
+app.get('/session/:id/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();   // ← critical: send headers now, not when first data arrives
+
+  session.sseClients.push(res);
+  req.on('close', () => {
+    session.sseClients = session.sseClients.filter(c => c !== res);
+  });
+});
+
+function broadcastEvent(session, event) {
+  const line = `data: ${JSON.stringify(event)}\n\n`;  // SSE wire format
+  for (const client of session.sseClients) client.write(line);
+}
+```
+
+**The browser-side EventSource:**
+
+```javascript
+const es = new EventSource('/session/' + sessionId + '/stream');
+es.onmessage = (e) => {
+  const event = JSON.parse(e.data);
+  if (event.type === 'report_saved') displayReport(event.data.report);
+  else appendLog(event);
+};
+```
+
+**Why SSE over WebSockets:** SSE is simpler (HTTP only, no upgrade handshake), built-in
+to browsers, and sufficient for one-directional streaming. WebSockets add complexity that
+is only justified when the browser also needs to send messages after the stream starts.
+
+---
+
+## 13. Conversational Input Extraction
+
+When replacing a structured form with free-text input, use an LLM with `response_format: json_object`
+to extract the required parameters across multiple turns.
+
+**The two-state machine:**
+
+```typescript
+type ExtractionResult =
+  | { status: 'need_more'; question: string }   // ask the user for a missing field
+  | { status: 'ready'; input: AgentInput; summary: string };  // all fields present
+```
+
+**The extraction prompt pattern:**
+
+```
+Return JSON with:
+  { "status": "need_more", "question": "Single question for missing field" }
+  or
+  { "status": "ready", "entity_name": "...", "country": "...", ..., "summary": "..." }
+
+INFERENCE RULES:
+  - "S.A." after a name → France; "GmbH" → Germany; "Ltd" → UK; "BV" → Netherlands
+  - "brand licence" or "technology licence" → income_type: "royalty"
+```
+
+**Validation at the boundary:**
+
+```typescript
+// After extraction succeeds, run the same validation the CLI uses
+const input = validateInput({ entity_name, country, income_type, ... });
+// If validateInput() throws, return need_more with the error as the question
+```
+
+This means there is exactly one validation function, shared by CLI and web UI.
+The LLM extraction is a UI convenience layer — it is not trusted to produce correct types;
+`validateInput()` is the enforcement gate.
+
+**Temperature = 0.** Extraction is a deterministic transformation; temperature should be 0
+to ensure the same user message always produces the same extraction.
