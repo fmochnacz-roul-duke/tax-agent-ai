@@ -235,7 +235,7 @@ npm run ddq:service     # starts FastAPI service on port 8000 (requires Python 3
 # Type-check (zero errors required before any commit)
 npm run build
 
-# Unit tests — 86 tests, no API calls, ~2s
+# Unit tests — 99 tests, no API calls, ~2s
 npm test
 ```
 
@@ -263,7 +263,10 @@ npm test
 | 6 | Document ingestion — Python/FastAPI microservice for DDQ substance and DEMPE extraction | ✓ Complete |
 | 7 | FactChecker Persona Agent — Gemini + Google Search grounding, multi-agent call_agent pattern | ✓ Complete |
 | 8 | Conversational web UI — Express, InputExtractor, SSE streaming, chat interface | ✓ Complete |
-| 9+ | Treaty rate verification; DDQ upload via web UI; Pillar Two module; TP screening | Future |
+| 10 | Substance interview — 5-question chat, TypeScript LLM extractor, any entity assessed | ✓ Complete |
+| 9 | RAG — MF Objaśnienia 2025, OECD TP Guidelines Ch. VI, EU Directives | Next |
+| 11 | Entity registry — persist interview results, avoid re-analysis, audit trail | Next |
+| 12+ | Treaty rate verification; third-party vendor workflow; Pillar Two module; TP screening | Future |
 
 ---
 

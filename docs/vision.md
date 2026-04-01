@@ -68,7 +68,7 @@ content licences from US or UK entities.
 
 ---
 
-## Honest current state (as of Phase 8)
+## Honest current state (as of Phase 10)
 
 ### What genuinely works
 
@@ -83,28 +83,25 @@ content licences from US or UK entities.
 | Progress streaming (SSE) | ✅ Live | Live agent log in browser |
 | Report output (JSON) | ✅ Live | Structured, timestamped, machine-readable |
 
-### What does NOT work — the central gap
+### What does NOT work — remaining gaps
 
 | Capability | Status | Why it matters |
 |---|---|---|
-| Entity substance assessment | ❌ Simulated | For any entity other than Orange S.A. or Alpine Holdings, defaults to CONDUIT/UNCERTAIN. Useless for real decisions. |
+| Entity substance assessment | ✅ Phase 10 — interview-based | Any entity can now be assessed via 5-question chat; TypeScript LLM extractor converts answers to SubstanceResult |
 | DEMPE analysis | ❌ Simulated | Returns structured template, not real functional analysis. |
 | FactChecker (web search) | ⚠ Optional | Only useful for large publicly-listed entities with abundant public data. Not reliable for most holding companies. |
-| Substance data entry in web UI | ❌ Missing | No way to input real entity data via browser. DDQ path is CLI-only. |
-| Entity registry | ❌ Missing | No persistence. Same entity re-analysed from scratch every run. |
+| Entity registry | ❌ Missing | No persistence. Same entity re-interviewed from scratch every run. |
 | Treaty rate verification | ⚠ All unverified | Every rate in treaties.json is `verified: false`. |
 | Human review workflow | ❌ Missing | No approval step, no annotation, no professional sign-off. |
+| Legal citations in substance reasoning | ❌ Missing | Substance conclusions are based on user answers only — not cited to MF Objaśnienia or case law (Phase 9 RAG). |
 
-### The central problem in one sentence
+### The remaining core problem
 
-The tool can correctly identify WHICH legal framework applies and WHAT rate would apply if
-the entity qualifies — but it cannot assess WHETHER the entity actually qualifies, because
-that requires real data about the entity, and no mechanism to input that data exists yet.
-
-For the Malta interest case: the agent would correctly flag the treaty rate, the EU Directive
-0% path, and the Pay and Refund obligation — but would conclude "cannot confirm BO status"
-for the Malta holding because it has no substance data. A tax professional already knows the
-treaty rate and the Directive exist. The value they need is exactly what the tool cannot yet provide.
+Phase 10 closes the data-entry gap — real entity data can now be collected via the chat interview.
+The next gap is **cited legal reasoning**: substance conclusions are as good as the user's answers,
+but they are not yet grounded in the actual legal text (MF Objaśnienia §2.2–2.3, Art. 4a pkt 29 CIT).
+Phase 9 (RAG) addresses this — the extractor will cite the exact legal criteria rather than applying
+a generic framework. Phase 11 (entity registry) makes the tool practical for repeat use.
 
 ---
 
