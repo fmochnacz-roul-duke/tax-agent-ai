@@ -16,6 +16,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { FactCheckerAgent } from './FactCheckerAgent';
 
 // ── Treaty database types ─────────────────────────────────────────────────────
 //
@@ -201,11 +202,18 @@ export class WhtEnvironment {
   // Phase 6: DDQ service connection — both must be set to enable live DDQ mode
   private ddqServiceUrl: string | undefined;
   private ddqText:       string | undefined;
+  // Phase 7: FactChecker agent — verifies substance claims against public records
+  private factChecker: FactCheckerAgent;
 
   constructor(options: WhtEnvironmentOptions) {
     this.simulate      = options.simulate;
     this.ddqServiceUrl = options.ddqServiceUrl;
     this.ddqText       = options.ddqText;
+    // Phase 7 — FactCheckerAgent shares the same simulate flag.
+    // When simulate:true (tests), no Gemini API calls are made.
+    // When simulate:false and GEMINI_API_KEY is absent, the agent self-degrades
+    // to simulation and logs a warning — backward-compatible.
+    this.factChecker = new FactCheckerAgent({ simulate: this.simulate });
 
     if (!this.simulate) {
       // path.join builds the correct OS path from pieces.
@@ -1143,5 +1151,37 @@ export class WhtEnvironment {
       } : {}),
       source: 'data/treaties.json — OECD MLI Poland positions + MoF synthesized texts',
     });
+  }
+
+  // ── factCheckSubstance ───────────────────────────────────────────────────────
+  //
+  // Phase 7 — delegates to FactCheckerAgent to verify factual claims from the
+  // DDQ against public records via Gemini + Google Search grounding.
+  //
+  // Called by the WHT agent after check_entity_substance returns real DDQ data.
+  // The agent is responsible for extracting 3–5 specific verifiable claims from
+  // the substance profile and passing them here.
+  //
+  // Parameter validation:
+  //   entity_name  — must be non-empty
+  //   claims       — must be a non-empty array of strings
+  //
+  // Returns a JSON string of FactCheckResult.
+  // In simulate mode (or when GEMINI_API_KEY is absent), returns INCONCLUSIVE
+  // with all claims marked UNVERIFIED — conservatively safe, never fabricated.
+  async factCheckSubstance(
+    entityName: string,
+    country:    string,
+    claims:     string[]
+  ): Promise<string> {
+    if (!entityName || entityName.trim() === '') {
+      return JSON.stringify({ error: 'entity_name must be a non-empty string.' });
+    }
+    if (!Array.isArray(claims) || claims.length === 0) {
+      return JSON.stringify({ error: 'claims must be a non-empty array of strings.' });
+    }
+
+    const result = await this.factChecker.verify(entityName, country, claims);
+    return JSON.stringify(result);
   }
 }

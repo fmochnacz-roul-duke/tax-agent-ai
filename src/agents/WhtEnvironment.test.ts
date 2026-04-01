@@ -551,3 +551,40 @@ test('analyseDempe: valid ip_type does NOT return error (regression guard)', asy
 
   assert.equal(result['error'], undefined, 'valid call should not produce an error field');
 });
+
+// ── factCheckSubstance — Phase 7 ─────────────────────────────────────────────
+//
+// Tests run in simulate:true mode — no Gemini API calls, no GEMINI_API_KEY needed.
+// The simulation returns INCONCLUSIVE with all claims UNVERIFIED.
+
+const FACT_CHECK_CLAIMS = [
+  'Orange S.A. employs approximately 133,000 people globally',
+  'Orange S.A. holds 50.67% of Orange Polska S.A.',
+];
+
+test('factCheckSubstance: returns entity and country in result', async () => {
+  const result = parse(await env.factCheckSubstance('Orange S.A.', 'France', FACT_CHECK_CLAIMS));
+
+  assert.equal(result['entity'],  'Orange S.A.');
+  assert.equal(result['country'], 'France');
+});
+
+test('factCheckSubstance: result includes claims array and wht_risk_flags', async () => {
+  const result = parse(await env.factCheckSubstance('Orange S.A.', 'France', FACT_CHECK_CLAIMS));
+
+  assert.ok(Array.isArray(result['claims']),         'claims should be an array');
+  assert.ok(Array.isArray(result['wht_risk_flags']), 'wht_risk_flags should be an array');
+  assert.ok(result['overall_assessment'],            'overall_assessment should be present');
+});
+
+test('factCheckSubstance: empty entity_name returns error', async () => {
+  const result = parse(await env.factCheckSubstance('', 'France', FACT_CHECK_CLAIMS));
+
+  assert.ok(result['error'], 'empty entity_name should return an error field');
+});
+
+test('factCheckSubstance: empty claims array returns error', async () => {
+  const result = parse(await env.factCheckSubstance('Orange S.A.', 'France', []));
+
+  assert.ok(result['error'], 'empty claims array should return an error field');
+});

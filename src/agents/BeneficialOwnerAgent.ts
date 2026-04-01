@@ -103,6 +103,19 @@ const WHT_GOALS: Goal[] = [
       'WHT Exemption (Art. 26b CIT) or submits a WH-OS management statement.',
     priority: 4,
   },
+  {
+    name: 'Fact-check substance claims',
+    description:
+      'After obtaining the substance profile via check_entity_substance: if the source ' +
+      'field indicates real DDQ data (not simulated — source does NOT contain "Simulated"), ' +
+      'call fact_check_substance to verify key claims against public records. ' +
+      'Extract 3–5 specific verifiable factual claims from the substance profile ' +
+      '(e.g. employee count, physical office location, IP ownership, shareholding percentage, ' +
+      'R&D expenditure). The fact-check result adjusts report confidence: CONFIRMS upgrades ' +
+      'confidence; UNDERMINES keeps it LOW regardless of other factors. ' +
+      'Skip this step entirely if the substance source indicates simulated data.',
+    priority: 3,
+  },
 ];
 
 const WHT_PERSONA =
@@ -278,6 +291,38 @@ function buildWhtTools(): Tool[] {
         required: ['entity_name', 'country', 'ip_type'],
       },
     },
+    {
+      name: 'fact_check_substance',
+      description:
+        'Phase 7 — verifies specific factual claims from the substance profile against ' +
+        'public records using Gemini with Google Search grounding. Only call this when ' +
+        'check_entity_substance returned real DDQ-derived data (source field does NOT ' +
+        'contain "Simulated"). Extract 3–5 verifiable factual claims from the substance ' +
+        'profile and pass them as the claims array. Returns a FactCheckResult with ' +
+        'VERIFIED / UNVERIFIED / CONTRADICTED status per claim, wht_risk_flags, and ' +
+        'an overall_assessment of CONFIRMS / INCONCLUSIVE / UNDERMINES.',
+      parameters: {
+        type: 'object',
+        properties: {
+          entity_name: {
+            type: 'string',
+            description: 'Name of the entity whose claims are being verified',
+          },
+          country: {
+            type: 'string',
+            description: 'Country of registration',
+          },
+          claims: {
+            type: 'array',
+            items: { type: 'string' },
+            description:
+              'List of 3–5 specific verifiable factual claims extracted from the ' +
+              'substance profile (e.g. "Orange S.A. employs approximately 133,000 people globally")',
+          },
+        },
+        required: ['entity_name', 'country', 'claims'],
+      },
+    },
     // ToolFactory.terminate() — no need to type this out per agent
     ToolFactory.terminate(),
   ];
@@ -303,6 +348,7 @@ const COMPLEX_FINDINGS = new Set([
   'entity_substance',
   'dempe_analysis',
   'mli_ppt_status',
+  'fact_check_result',  // Phase 7: FactChecker output requires synthesis reasoning
 ]);
 
 // selectLlm() returns the appropriate LLM instance for the current iteration.
@@ -612,15 +658,46 @@ function parseFindings(findings: Record<string, string>): Record<string, unknown
 function computeReportConfidence(
   findings: Record<string, string>
 ): 'HIGH' | 'MEDIUM' | 'LOW' {
-  // Check the substance result first — if it is simulated the whole report is LOW.
-  // We use a try/catch because JSON.parse can throw if the string is malformed.
+  // Phase 7: fact-check result takes priority when present.
+  //
+  // UNDERMINES — a public source contradicted a DDQ claim → unconditionally LOW.
+  // CONFIRMS   — public records verified the DDQ claims → skip substance-confidence
+  //              check and go straight to treaty rate verification.
+  // INCONCLUSIVE (or absent) → fall through to the standard substance-first logic.
+  const factCheckRaw = findings['fact_check_result'];
+  if (factCheckRaw !== undefined) {
+    try {
+      const factCheck = JSON.parse(factCheckRaw) as Record<string, unknown>;
+
+      if (factCheck['overall_assessment'] === 'UNDERMINES') return 'LOW';
+
+      if (factCheck['overall_assessment'] === 'CONFIRMS') {
+        // Public records confirm the DDQ — check only treaty rate verification
+        const rateRaw = findings['wht_rate'];
+        if (rateRaw !== undefined) {
+          try {
+            const rate = JSON.parse(rateRaw) as Record<string, unknown>;
+            if (rate['verified'] === false) return 'MEDIUM';
+          } catch {
+            return 'MEDIUM';
+          }
+        }
+        return 'HIGH';
+      }
+      // INCONCLUSIVE: fall through to standard logic below
+    } catch {
+      // Parsing failed — fall through to standard logic
+    }
+  }
+
+  // Standard logic (no fact-check ran, or INCONCLUSIVE result).
+  // If substance data is simulated the whole report is LOW.
   const substanceRaw = findings['entity_substance'];
   if (substanceRaw !== undefined) {
     try {
       const parsed = JSON.parse(substanceRaw) as Record<string, unknown>;
       if (parsed['confidence'] === 'LOW') return 'LOW';
     } catch {
-      // If we can't parse it at all, treat as LOW to be conservative.
       return 'LOW';
     }
   }
@@ -872,6 +949,15 @@ async function runAgent(
               args['annual_payment_pln'] as number
             );
             memory.recordFinding('pay_and_refund', result);
+            break;
+
+          case 'fact_check_substance':
+            result = await env.factCheckSubstance(
+              args['entity_name'] as string,
+              args['country'] as string,
+              args['claims'] as string[]
+            );
+            memory.recordFinding('fact_check_result', result);
             break;
 
           default:
