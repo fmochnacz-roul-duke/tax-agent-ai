@@ -40,7 +40,7 @@ Still to do before Step 2:
 Then verify the environment is healthy:
 ```
 npm run build                                                     ← zero errors
-npm test                                                          ← 99/99 passing
+npm test                                                          ← 140/140 passing
 npm start                                                         ← web UI at http://localhost:3000
 npm run tax:agent -- --input data/orange_polska_royalty.json      ← CLI still works
 

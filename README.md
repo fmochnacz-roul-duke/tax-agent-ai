@@ -235,7 +235,7 @@ npm run ddq:service     # starts FastAPI service on port 8000 (requires Python 3
 # Type-check (zero errors required before any commit)
 npm run build
 
-# Unit tests — 99 tests, no API calls, ~2s
+# Unit tests — 140 tests, no API calls, ~2s
 npm test
 ```
 
