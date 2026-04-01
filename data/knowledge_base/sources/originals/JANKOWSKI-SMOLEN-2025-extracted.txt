@@ -1,0 +1,1062 @@
+
+===PAGE 1===
+Artykuły
+https://doi.org/10.18778/1509-877X.2025.02.01
+Jakub Jankowski*
+Katarzyna Smoleń**
+Test substancji ekonomicznej
+w przypadku spółek pośredniczących
+– klauzula rzeczywistego właściciela
+a recharakteryzacja transakcji
+Streszczenie: Artykuł podejmuje problematykę testu substancji ekonomicznej w odniesieniu do
+spółek pośredniczących, analizując wzajemne relacje pomiędzy klauzulą rzeczywistego właściciela
+(beneficial owner) a recharakteryzacją transakcji (non-recognition) w prawie podatkowym. Autorzy
+dokonują przeglądu ewolucji koncepcji rzeczywistego właściciela w świetle Komentarza do Mode-
+lowej Konwencji OECD, zestawiając ją z metodyką badania substancji ekonomicznej stosowaną na
+gruncie przepisów o cenach transferowych. Na podstawie analizy orzecznictwa TSUE oraz sądów
+krajowych i zagranicznych autorzy stwierdzają, że współczesne podejście do oceny substancji eko-
+nomicznej wykracza poza formalnoprawne kryteria własności i obejmuje bardziej złożoną ocenę
+* Doktor nauk prawnych, członek Rady ds. Przeciwdziałania Unikaniu Opodatkowa-
+nia, e-mail: j.jankowski@onet.eu
+** Doradca podatkowy ze specjalizacją w obszarze międzynarodowego prawa po-
+datkowego, podatku dochodowego od osób prawnych oraz cen transferowych, e-mail:
+smolenkatarzyna@outlook.com, https://orcid.org/0009-0000-9641-1098
+Received: 20.07.2025. Revised: 10.10.2025. Accepted: 20.10.2025.
+© by the Authors, licensee University of Lodz – Lodz University Press, Lodz, Poland. This article
+is an open access article distributed under the terms and conditions of the Creative Commons
+Attribution license CC-BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)
+Funding information: Not applicable. Conflicts of interests: None. Ethical considerations: The Authors assure of no violations
+of publication ethics and take full responsibility for the content of the publication. The percentage share of the Authors in the
+preparation of the work is: J.J. 50%, K.S. 50%. Declaration regarding the use of GAI tools: Not used.
+2 2025 Kwartalnik Prawa Podatkowego 9
+
+===PAGE 2===
+Jakub Jankowski, Katarzyna Smoleń
+prowadzonej działalności. Wskazują także na przenikanie się mechanizmów charakterystycznych
+dla reżimów WHT oraz TP, co prowadzi do konieczności zrównoważenia skuteczności przeciw-
+działania nadużyciom z ochroną praw podatników. Zasadniczą tezą artykułu jest stwierdzenie, że
+test substancji ekonomicznej – choć w obu reżimach pełni w istocie funkcję antyabuzywną – różni
+się co do zakresu, celu i intensywności oceny: w klauzuli BO ma charakter binarny (kwalifikacyjny),
+a w ramach TP stanowi narzędzie kalibracji rozkładu funkcji i dochodów w grupach powiązanych.
+Słowa kluczowe: rzeczywisty właściciel, BO, substancja ekonomiczna, recharakteryzacja, non-
+recognition, ceny transferowe, WHT, OECD, BEPS
+Economic substance test in the case of conduit
+companies – the beneficial ownership clause
+and transaction recharacterisation
+Abstract: The article examines the economic substance test as applied to conduit companies,
+analysing the interaction between the beneficial ownership clause (beneficial owner) and transaction
+recharacterisation (non-recognition) in tax law. The authors review the evolution of the beneficial
+ownership concept in the context of the OECD Model Tax Convention Commentary, comparing it
+with the methodology used to assess economic substance under transfer pricing rules. Drawing
+on case law of the Court of Justice of the European Union (CJEU) as well as domestic and foreign
+courts, the article argues that the modern approach to assessing economic substance extends beyond
+formal legal ownership criteria and involves a more comprehensive evaluation of actual business
+activity. The paper also highlights the growing overlap between mechanisms typical of the WHT
+and TP regimes, which necessitates balancing the effectiveness of anti-avoidance measures with the
+protection of taxpayers’ rights. The central thesis is that while the economic substance test serves an
+anti-abuse function in both regimes, it differs in scope, purpose, and intensity of assessment: under
+the BO clause it has a binary (qualifying) character, whereas in transfer pricing it operates as a tool
+for calibrating the allocation of functions and income within multinational groups.
+Keywords: beneficial owner, BO, economic substance, recharacterization, non-recognition, transfer
+pricing, WHT, OECD, BEPS
+1. Wstęp
+Wykorzystywanie spółek zlokalizowanych w krajach przewidujących
+preferencyjne zasady opodatkowania dochodów pasywnych lub posiada-
+jących korzystną sieć umów o unikaniu podwójnego opodatkowania do
+przerzucania zysków pomiędzy jurysdykcjami podatkowymi jest stosun-
+kowo częstym zjawiskiem. Spółki te zazwyczaj nie mają rozbudowanego
+substratu osobowo-majątkowego. Celem badawczym niniejszego artykułu
+jest analiza aktualnych trendów międzynarodowych w zakresie wymogów
+co do poziomu substancji ekonomicznej, jakim takie podmioty powinny
+się legitymować. Autorzy skupiają się na dwóch kluczowych elementach
+10 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 3===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+mających przeciwdziałać erozji podstawy opodatkowania w państwie źród-
+ła: klauzuli rzeczywistego właściciela (beneficial owner – BO) oraz recha-
+rakteryzacji transakcji (non-recognition in transfer pricing). W założeniu
+klauzule te mają charakter aksjologiczny i nie odwołują się do jasnych kry-
+teriów kwantytatywnych (ilościowych) jak klauzule szczególne typu prze-
+pisy o niedostatecznej kapitalizacji czy regulacje dotyczące zagranicznych
+spółek kontrolowanych. Przesłanką zastosowania klauzul BO czy non-re-
+cognition są z kolei kryteria kwalitatywne (sposób działania).
+2. Zarys problemu
+Obowiązek weryfikacji statusu rzeczywistego właściciela stanowi istot-
+ny element stosowania przepisów o podatku u źródła (WHT). Wynika on
+przede wszystkim z postanowień umów o unikaniu podwójnego opodatko-
+wania (UPO), które – w odniesieniu do wypłat dywidend, odsetek oraz na-
+leżności licencyjnych – zasadniczo warunkują możliwość zastosowania ob-
+niżonej stawki podatku lub zwolnienia od jego poboru od posiadania przez
+odbiorcę statusu właściciela płatności1.
+Polskie przepisy (art. 4a pkt 29 ustawy z dnia 15 lutego 1992 r. o podat-
+ku dochodowym od osób prawnych2) definiują rzeczywistego właściciela
+jako podmiot, który spełnia jednocześnie trzy przesłanki:
+1) otrzymuje należność dla własnej korzyści, w tym decyduje samodziel-
+nie o jej przeznaczeniu i ponosi ryzyko ekonomiczne związane z utratą
+tej należności lub jej części,
+2) nie jest pośrednikiem, przedstawicielem, powiernikiem lub innym
+podmiotem zobowiązanym do przekazania całości lub części należno-
+ści innemu podmiotowi, oraz
+3) prowadzi rzeczywistą działalność gospodarczą w kraju siedziby, jeżeli
+należności są uzyskiwane w związku z prowadzoną działalnością go-
+spodarczą, przy czym przy ocenie, czy podmiot prowadzi rzeczywistą
+działalność gospodarczą, uwzględnia się charakter oraz skalę działalno-
+ści prowadzonej przez ten podmiot w zakresie otrzymanej należności.
+1 W tłumaczeniach UPO na język polski równorzędnie stosowane bywa również
+pojęcie „osoby uprawnionej do odsetek” – np. UPO między Rzecząpospolitą Polską a Re-
+publiką Estońską.
+2 Tekst jedn. Dz.U. z 2025 r., poz. 278 ze zm. – dalej: u.p.d.o.p.
+2 2025 Kwartalnik Prawa Podatkowego 11
+
+===PAGE 4===
+Jakub Jankowski, Katarzyna Smoleń
+Aby odbiorca należności stał się jej rzeczywistym właścicielem w myśl
+polskiej ustawy, wszystkie powyższe przesłanki powinny być spełnione jed-
+nocześnie.
+Nomenklatura stosowana w powyższej definicji3 nasuwać może – w opi-
+nii autorów – zasadniczo trafne skojarzenie z pojęciami powszechnie sto-
+sowanymi w materii cen transferowych (transfer pricing – TP). Aspekt po-
+noszenia ryzyka ekonomicznego jest kluczowym komponentem analizy
+funkcjonalnej (art. 11q ust. 1 pkt 2 u.p.d.o.p.), stanowiącej podstawowe na-
+rzędzie stosowane w celu określenia tzw. profilu funkcjonalnego podmiotu
+powiązanego, a przez to docelowo adekwatnego poziomu zysku, do którego
+uprawniony byłby on zgodnie z zasadą ceny rynkowej. Również podkreśla-
+nie „rzeczywistego” charakteru działalności gospodarczej bliskie jest prak-
+tyce cen transferowych, w których priorytet zwyczajowo nadaje się substan-
+cji ekonomicznej (economic/factual substance) ponad zapisami umownymi
+uzgodnionymi formalnie pomiędzy podmiotami powiązanymi4.
+Pod uwagę należy również wziąć sprawy duńskie5, w których TSUE
+brak rzeczywistej działalności wywodzi, „uwzględniając szczególne cechy
+charakteryzujące daną działalność gospodarczą, z analizy całokształtu istot-
+nych informacji dotyczących, w szczególności, zarządzania spółką, jej bi-
+lansu księgowego, struktury kosztów i faktycznie poniesionych wydatków,
+zatrudnionych przez nią pracowników oraz pomieszczeń i wyposażenia,
+jakimi spółka ta dysponuje”. Zaryzykować można postawienie tezy, iż po-
+wyższa lista stanowić mogłaby definicję substratu biznesowego adekwatną
+również na gruncie cen transferowych. Determinując profil funkcjonal-
+ny, punktem wyjścia często bywa rozważenie zakresu aktywów i środków
+finansowych posiadanych przez podmiot (np. na podstawie sprawozda-
+nia finansowego) czy zakresu zatrudnianych pracowników i linii rapor-
+towania (struktury organizacyjne i zarządcze). Ciekawym niuansem jest
+3 A także ogółem w zapisach Komentarza do Modelowej Konwencji OECD w zakre-
+sie art. 10–12.
+4 Na przykład pkt 1.46 oraz pkt 1.139 Wytycznych OECD w sprawie Cen Transfero-
+wych dla Przedsiębiorstw Wielonarodowych oraz Administracji Podatkowych – OECD,
+OECD Transfer Pricing Guidelines for Multinational Enterprises and Tax Administrations
+2022, Paris 2022, https://doi.org/10.1787/0e655865-en
+5 Wyroki Trybunału z dnia 26 lutego 2019 r. w sprawach połączonych C-116/16
+i C-117/16 (T Danmark i Y Denmark Aps v. Skatteministeriet) oraz C 115/16, C 118/16,
+C 119/16 i C 299/16 (N Luxembourg 1, X Denmark, C Denmark I, Z Denmark v. Skatte-
+ministeriet), opublikowane w oficjalnej bazie aktów prawnych Unii Europejskiej EUR-Lex
+– https://eur-lex.europa.eu/collection/eu-law/eu-case-law.html (dostęp: 19.10.2025).
+12 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 5===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+również podkreślenie „cech charakteryzujących daną działalność gospo-
+darczą”, które stanowić może wskazówkę, iż funkcje pełnione przez spółki
+determinowane bywają specyfiką branży, w której funkcjonują. Rezonuje
+to z art. 4a pkt 29 lit. c u.p.d.o.p., który definiując właściciela rzeczywiste-
+go, explicite podkreślił, iż „przy ocenie, czy podmiot prowadzi rzeczywistą
+działalność gospodarczą, uwzględnia się charakter oraz skalę działalności”.
+Uwzględnianie korelacji pomiędzy rynkiem a cechami charakterystyczny-
+mi prowadzonych działań gospodarczych stanowi niewątpliwie punkt sty-
+ku z metodologiami powszechnie stosowanymi dla potrzeb badania cen
+transferowych.
+Potwierdzenie poczynionych obserwacji wywodzić można z faktu, iż
+wszystkie z powyższych aspektów powinny być rozważane i opisywane dla
+potrzeb przygotowania lokalnej dokumentacji cen transferowych – zgod-
+nie z par. 2 rozporządzenia Ministra Finansów z dnia 21 grudnia 2018 r.
+w sprawie dokumentacji cen transferowych w zakresie podatku docho-
+dowego od osób prawnych6, Local File zawierać powinien bowiem m.in.
+„zatwierdzone sprawozdanie finansowe dotyczące roku obrotowego oraz
+opis umożliwiający przyporządkowanie danych finansowych dotyczących
+transakcji kontrolowanej do pozycji sprawozdania finansowego”, „opis
+struktury zarządczej i schemat organizacyjny podmiotu powiązanego” czy
+„opis branży i otoczenia rynkowego, w ramach których podmiot powiązany
+prowadzi działalność, ze wskazaniem wpływu warunków ekonomicznych
+i regulacyjnych oraz wskazaniem kluczowych konkurentów”.
+Analiza metod zastosowanych przez TSUE w sprawach duńskich może
+prowadzić do konkluzji, iż w tym wypadku użyto technik bliskich mate-
+rii badania substancji ekonomicznej dla potrzeb prawidłowego ustalania
+cen transferowych pomiędzy podmiotami powiązanym. Potwierdza to
+m.in. fragment (wciąż nieprawomocnego) wyroku Wojewódzkiego Sądu
+Administracyjnego (WSA) w Lublinie dotyczący ustalania statusu rzeczy-
+wistego właściciela, w którym skarżąca argumentowała następująco: „jeżeli
+analiza celów działalności podatnika i poziomu ich realizacji doprowadzi
+do wniosku, że zostały one osiągnięte, to oznacza, że substancja ekono-
+miczna posiadana przez tę spółkę była adekwatna do profilu prowadzo-
+nej działalności. W takiej sytuacji nie powinno być także kwestionowane
+6 Rozporządzenie Ministra Finansów z dnia 21 grudnia 2018 r. w sprawie doku-
+mentacji cen transferowych w zakresie podatku dochodowego od osób prawnych (Dz.U.
+z 2023 r., poz. 1783).
+2 2025 Kwartalnik Prawa Podatkowego 13
+
+===PAGE 6===
+Jakub Jankowski, Katarzyna Smoleń
+prowadzenie rzeczywistej działalności. Spółka ma dostęp do w pełni wy-
+posażonego biura, na jej rzecz świadczone są usługi recepcyjne, wykonuje
+swoje funkcje za pośrednictwem dyrektorów będących członkami zarządu,
+w celu prowadzenia swojej działalności korzysta z usług pracowników po-
+wiązanych podmiotów cypryjskich, ponosząc odpowiednio koszty z tego
+tytułu. Tym samym poziom substancji majątkowej posiadanej przez spółkę
+został dostosowany do pełnionych przez nią funkcji”7. Powyższa argumen-
+tacja bezpośrednio czerpie więc z wyżej omawianych technik mających
+swoje korzenie w metodologiach TP.
+Wyroki TSUE zapadłe w sprawach duńskich uwypuklają kolejny
+aspekt, który ma cechy zbieżne z praktyką cen transferowych: podkreśle-
+nie realnej sprawczości (decyzyjności) podmiotu w rozpatrywanym zakre-
+sie. Przypisanie takiego desygnatu klauzuli BO (poszukiwanie faktycznego
+właścicielstwa definiowanego jako zdolność do zarządzania płatnością)
+znów nasuwać może skojarzenie z praktyką TP, według której stronie nie
+wystarcza przypisać „formalnie” określonych funkcji czy ryzyka – musi
+ona być również w stanie je efektywnie kontrolować, np. poprzez posia-
+dane zasoby (np. ludzkie czy finansowe). Bezpośrednim wyrazem powyż-
+szego jest uwzględnienie w dokumentacji cen transferowych opisu pono-
+szonych ryzyk, w tym zdolności do ich ponoszenia. Powyższe łączy się
+w spójną całość z prewencją ustanawiania sztucznych (nieegzekwowanych
+faktycznie) warunków umownych – potwierdza to kolejny cytat z analizo-
+wanego wyroku TSUE: „przesłankami co do istnienia sztucznej konstrukcji
+mogą być także różne umowy istniejące między spółkami zaangażowanymi
+w rozpatrywane transakcje finansowe […]. W tym względzie takimi prze-
+słankami mogą być nie tylko umowne lub ustawowe zobowiązania spół-
+ki otrzymującej odsetki do wypłacenia ich dalej podmiotowi trzeciemu,
+ale także okoliczność, że spółka ta […] nie dysponuje pełnym prawem do
+korzystania i pobierania korzyści z tych kwot”. Ponownie – odkładając na
+dalszy plan dociekania względem słuszności konieczności weryfikacji sta-
+tusu BO – zasadna jest konkluzja, iż zbadanie ab initio faktycznych upraw-
+nień decyzyjnych płatnika względem należności stanowić może efektywne
+narzędzie zaprzeczenia (lub potwierdzenia), iż podmiot ma cechy spółki
+7 Wyrok WSA w Lublinie z dnia 4 października 2024 r., sygn. I SA/Lu 87/24, opubli-
+kowany w Centralnej Bazie Orzeczeń Sądów Administracyjnych – dalej: CBOSA – https://
+orzeczenia.nsa.gov.pl/cbo/query (dostęp: 19.10.2025), orzeczenie nieprawomocne.
+14 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 7===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+pustej (pośredniczącej), a przez to nieuprawnionej do zastosowania prefe-
+rencji w zakresie WHT.
+Wychwycenie tych korelacji stanowiło bezpośredni impuls do pogłę-
+bionej analizy charakteru powiązań pomiędzy koncepcją rzeczywistego
+właściciela a substancją ekonomiczną w rozumieniu przepisów o cenach
+transferowych. Czy konstrukcja BO jest spójna z podejściem do substancji
+ekonomicznej właściwym dla regulacji TP? Jakie elementy różnicują te dwa
+konstrukty prawne? Gdzie przebiega granica między zakresem wykładni
+pojęcia rzeczywistego właściciela a zakresem analiz wymaganych do celów
+cen transferowych? Czy wnioski wyciągane na gruncie jednej z tych insty-
+tucji mogą być automatycznie przenoszone na grunt drugiej? Niniejszy ar-
+tykuł stanowi próbę usystematyzowania tych zagadnień oraz wyznaczenia
+ram interpretacyjnych dla obu konstrukcji, z uwzględnieniem ich funk-
+cji normatywnych i podstaw prawnych. Podkreślenia przy tym wymaga
+fakt, iż animus tekstu nie stanowi oceny zasadności istnienia klauzuli BO
+(w tym w szczególności kryterium prowadzenia rzeczywistej działalności
+gospodarczej) per se, a jedynie teoretyczne zestawienie metodologii wyko-
+rzystywanych na gruncie WHT i TP, przy uwzględnieniu dotychczasowej
+doktryny i judykatury.
+3. Klauzula rzeczywistego beneficjenta
+w Komentarzu do MK OECD
+Klauzula rzeczywistego beneficjenta została dodana w 1977 r. do Kon-
+wencji Modelowej OECD w ramach art. 10, 11 i 12. W komentarzu do art. 1
+MK OECD wskazano, iż jej wprowadzenie ma przeciwdziałać zjawisku treaty
+shopping, polegającemu na nieuzasadnionym stosowaniu obniżonej stawki
+WHT w państwie źródła poprzez podstawienie sztucznego podmiotu pośred-
+niczącego8. Sam zakres podmiotowy tej klauzuli od strony negatywnej czy też
+8 Komentarz do Konwencji Modelowej OECD z 1977 r., art. 1 pkt 8: „[…] impact of
+such manoeuvres as they make it possible, through the creation of usually artificial legal
+constructions, to benefit both from the tax advantages available under certain domestic
+laws and the reliefs from tax provided for in double taxation conventions”. Dalej w art. 1
+pkt 9 wskazano jako przykład takich struktur: „This would be the case, for example, if
+a person (whether or not a resident of a Contracting State), acted through a legal entity
+created in a State essentially to obtain treaty benefits which would not be available
+directly to such person”. W art. 1 pkt 10 wyraźnie zaś wskazano, iż: „Some of these situa-
+tions are dealt with in the Convention, e.g. by the introduction of the concept of ‘benefi-
+cial owner’ (in Articles 10, 11 and 12) […]”.
+2 2025 Kwartalnik Prawa Podatkowego 15
+
+===PAGE 8===
+Jakub Jankowski, Katarzyna Smoleń
+pozytywnej nie został jednak zdefiniowany w żaden sposób w Komentarzu do
+MK OECD. Dopiero w raporcie OECD z 1986 r., dotyczącym umów o uni-
+kaniu podwójnego opodatkowania oraz wykorzystania podmiotów pośred-
+niczących9, pojęcie rzeczywistego właściciela zostało częściowo zdefiniowane.
+Podkreślono, iż spółka pośrednicząca (conduit company) nie może być
+uznana za rzeczywistego właściciela należności, nawet pomimo bycia for-
+malnym właścicielem majątku, ze względu na bardzo ograniczone władz-
+two nad należnością (very narrow powers)10. Podmiot taki działa bowiem
+wówczas w stosunku do takiej należności jako administrator dochodu.
+Koncepcja ta została przyjęta w zmienionej wersji Komentarza do MK
+OECD z 2003 r. Po pierwsze, zwrot „rzeczywisty właściciel” nie jest uży-
+wany w wąskim technicznym znaczeniu (narrow technical sense), lecz
+powinien być rozumiany w świetle przedmiotu i celu UPO, uwzględnia-
+jąc przeciwdziałanie unikaniu opodatkowania11. Po drugie, potwierdzono
+przy tym jednoznacznie, iż z zakresu definicji rzeczywistego właściciela wy-
+kluczona jest spółka pośrednicząca, tj. podmiot mający bardzo ograniczone
+władztwo nad należnością i działający w stosunku do otrzymanej należ-
+ności w charakterze administratora dochodu12. Dalsze zmiany w zakresie
+definicji rzeczywistego właściciela nastąpiły wraz z aktualizacją Komentarza
+do MK OECD w 2014 r. Pojęcie bardzo ograniczonego władztwa nad na-
+leżnością (very narrow power in relation to the income) zostało utrzymane,
+jednakże zdecydowano się doprecyzować, w jaki sposób należy badać tę
+przesłankę. Jest ona spełniona, gdy prawo do korzystania z należności jest
+ograniczone umownie lub prawnie zobowiązaniem do jej przekazania in-
+nemu podmiotowi13. Ustalenie istnienia takiego zobowiązania do prze-
+kazania należności powinno być dokonywane nie tylko na podstawie
+dokumentacji prawnej, ale również faktów i okoliczności związanych
+z transakcją14. Ponadto podkreślono, iż rzeczywisty właściciel powinien
+9 OECD, Double Taxation Conventions and the Use of Conduit Companies, Paris 1986.
+10 Ibidem.
+11 Komentarz do Konwencji Modelowej OECD z 2003 r., art. 10 pkt 12, art. 11 pkt 8,
+art. 12 pkt 4.
+12 Ibidem, art. 10 pkt 12.1, art. 11 pkt 8.1, art. 12 pkt 4.1.
+13 „[…] the direct recipient of the dividend is not the “beneficial owner” because that
+recipient’s right to use and enjoy the dividend is constrained by a contractual or legal
+obligation to pass on the payment received to another person” – Komentarz do Konwencji
+Modelowej OECD z 2014 r., art. 10 pkt 12.4, art. 11 pkt 10.2, art. 12 pkt 4.3.
+14 „Such an obligation will normally derive from relevant legal documents but may
+also be found to exist on the basis of facts and circumstances showing that, in substance,
+16 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 9===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+być w stanie samodzielnie zakończyć swój stosunek prawny z dalszym
+odbiorcą należności, bez względu na otrzymanie swojej należności od in-
+nego podmiotu15. Innymi słowy, jeżeli spółka nie ma wystarczającego po-
+ziomu kapitałów własnych, aby zrealizować dalszą płatność bez wcześniej-
+szego otrzymania tej płatności od innego podmiotu, wówczas nie powinna
+być ona uznawana za rzeczywistego właściciela otrzymanej należności16.
+Aktualizacje Komentarza do MK OECD wprowadziły trzy zasadnicze
+zmiany w zakresie koncepcji rzeczywistego właściciela:
+1) badanie istnienia zobowiązania do przekazania należności na podsta-
+wie faktów i okoliczności związanych z transakcją;
+2) referencję do charakteru władztwa nad należnością jako czynnika
+ekonomicznego (in substance);
+3) podział na płatności związane i niezwiązane (dependent and undepen-
+dent payments), z zastrzeżeniem, iż w tym ostatnim przypadku dotyczą
+one wyłącznie podmiotów niepowiązanych17.
+Klauzula BO w wersji Komentarza do MK OECD z 2014 r. to nie tyle
+test substancji ekonomicznej sensu stricto, ile raczej ocena zdolności do
+przekazania tzw. niezwiązanej płatności na rzecz innego podmiotu18. Jest
+to niejako podejście „hybrydowe” pomiędzy funkcją alokacyjną a anty-
+abuzywną klauzuli rzeczywistego właściciela. Należy zauważyć, że nawet
+w sprawie Prevost19, uznawanej za klasyczny przykład wyroku wskazują-
+cego na wąskie (techniczne) rozumienie zwrotu „rzeczywisty właściciel”,
+sąd kanadyjski wskazał jako kluczowy atrybut rzeczywistego właściciela
+the recipient clearly does not have the right to use and enjoy the dividend uncon-
+strained by a contractual or legal obligation to pass on the payment received to another
+person” – ibidem, art. 10 pkt 12.4, art. 11 pkt 10.2, art. 12 pkt 4.3.
+15 Ibidem, art. 10 pkt 12.4, art. 11 pkt 10.2, art. 12 pkt 4.3.
+16 M.S. Ganbay, J.J.M. Janssen, What Should Be the Scope of the Beneficial Owner
+Concept, „Intertax” 2020, vol. 48(12), s. 1090, https://doi.org/10.54648/TAXI2020111
+17 „[…] would not include contractual or legal obligations that are not dependent on
+the receipt of the payment by the direct recipient such as an obligation that is not depen-
+dent on the receipt of the payment and which the direct recipient has as a debtor or as
+a party to financial transactions” – Komentarz do Konwencji Modelowej OECD z 2014 r.,
+art. 10 pkt 12.4, art. 11 pkt 10.2, art. 12 pkt 4.3.
+18 A. Wardzyński, The 2014 Update to the OECD Commentary: A Targeted Hybrid Ap-
+proach to Beneficial Ownership, „Intertax” 2015, vol. 43(2), s. 190, https://doi.org/10.54648/
+TAXI2015015
+19 Canada v. Prévost Car Inc., 2009 DTC 5721, 2009 FCA 57. Orzeczenie dostępne
+w serwisie Canadian tax interpretations – https://taxinterpretations.com/content/355843
+(dostęp: 19.10.2025).
+2 2025 Kwartalnik Prawa Podatkowego 17
+
+===PAGE 10===
+Jakub Jankowski, Katarzyna Smoleń
+ponoszenie ryzyka w stosunku do otrzymywanej należności20. Jednocześ-
+nie samo OECD w niektórych swoich publikacjach utożsamia status
+rzeczywistego właściciela z posiadaniem substancji biznesowej sensu
+stricto21. Wynika to częściowo z błędnego utożsamiania spółek bazowych
+(base company) ze spółkami pośredniczącymi do celów testu rzeczywistego
+właściciela. Spółki bazowe są wykorzystywane do odroczenia opodatko-
+wania w państwie rezydenta spółki bazowej. Co istotne, zazwyczaj nie do-
+chodzi do natychmiastowego transferu dochodu, a płatność może zmienić
+swój charakter22. Normami, które mają przeciwdziałać wykorzystaniu spó-
+łek bazowych do unikania opodatkowania, są przepisy o zagranicznych
+jednostkach kontrolowanych. Brak konsekwencji OECD spowodował po-
+siłkowe stosowanie testu substancji ekonomicznej, charakterystyczne-
+go dla CFC (Controlled Foreign Corporation) w odniesieniu do spółek
+pośredniczących pod kątem analizy ich statusu jako rzeczywistych właści-
+cieli na gruncie umów o unikaniu podwójnego opodatkowania. W swoich
+dokumentach OECD wskazuje, iż poziom substancji biznesowej (włas-
+ny personel, aktywa obrotowe i rzeczowe, pełnione funkcje gospodarcze
+oraz ponoszone ryzyka) może działać w przypadku CFC jako safe har-
+bour wyłączający część dochodu kontrolowanej jednostki zagranicznej
+(KJZ) z opodatkowania w ramach tego reżimu23. Raport OECD wymienia
+w tym zakresie kilka możliwych rozwiązań:
+1) czy pracownicy KJZ mieli znaczący wkład (substantial contribution)
+w osiągnięciu poziomu jej dochodu,
+2) istotne funkcje wykonywane (significant functions performed – SPE)
+przez podmioty w ramach grupy w celu ustalenia, czy KJZ jest pod-
+miotem, który najprawdopodobniej posiadałby określone aktywa lub
+podejmował określone ryzyka, gdyby podmioty te nie były powiązane,
+3) czy KJZ posiadała niezbędne aktywa w swojej jurysdykcji, aby faktycz-
+nie uzyskać dochód, oraz
+20 Ibidem, pkt 100.
+21 Spółki pozbawione funkcji ekonomicznej i założone w rajach podatkowych mogą
+być pozbawione korzyści traktatowych, ponieważ nie są uznawane za rzeczywistych właś-
+cicieli danej należności – zob. Raport Komitetu OECD do Spraw Podatkowych – OECD,
+International Harmful Tax Competition an Emerging Global Issue, Paris 1998, pkt 119.
+22 S. Jain, Effectiveness of the Beneficial Ownership Test in Conduit Company Cases,
+Wellington 2013, s. 133, https://www.ibfd.org/sites/default/files/2021-06/14_002_effectiveness_
+beneficial_ownership_final_web.pdf (dostęp: 3.11.2025).
+23 OECD, BEPS Action 3: Designing Effective Controlled Foreign Company Rules, Paris
+2015, pkt 81, s. 47.
+18 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 11===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+4) czy KJZ posiadała niezbędną liczbę pracowników z wymaganymi kwa-
+lifikacjami w jurysdykcji KJZ, aby podjąć się większości podstawowych
+funkcji KJZ24.
+Wydaje się, iż BEPS Action Plan 3 był inspiracją w tzw. sprawach duń-
+skich, gdzie TSUE, odnosząc się do kwestii pojęcia rzeczywistego właści-
+ciela odsetek na gruncie dyrektywy Rady nr 2003/49/WE z dnia 3 czerw-
+ca 2003 r. w sprawie wspólnego systemu opodatkowania stosowanego do
+odsetek oraz należności licencyjnych między powiązanymi spółkami róż-
+nych Państw Członkowskich25, zaznaczył, iż art. 1 ust. 4 tej dyrektywy
+potwierdza odniesienie tego pojęcia do rzeczywistości ekonomicznej26.
+Oznacza to więc nie tyle formalnie zidentyfikowanego odbiorcę, ile pod-
+miot, który korzysta pod względem ekonomicznym z otrzymanych odsetek,
+a więc dysponuje uprawnieniem do swobodnego decydowania o ich prze-
+znaczeniu27. Podkreślono, iż zasadne jest odwołanie się do Komentarza do
+MK OECD dla wyjaśnienia tego zwrotu28. Trybunał Sprawiedliwości Unii
+Europejskiej wskazał w swoim wyroku cechy charakterystyczne rzeczywi-
+stego właściciela, takie jak:
+1) spółka otrzymująca odsetki lub dywidendy przekazuje je bardzo szybko
+po ich otrzymaniu innemu podmiotowi, który nie jest objęty zakresem
+przedmiotowym unĳnych dyrektyw podatkowych29;
+2) spółka otrzymująca odsetki lub dywidendy realizuje jedynie nieznacz-
+ny zysk podlegający opodatkowaniu z uwagi na pełnienie funkcji pod-
+miotu pośredniczącego30;
+3) jedynym przedmiotem działalności spółki jest otrzymywanie odsetek
+lub dywidend i przekazywanie ich dalej31;
+4) spółka otrzymująca odsetki lub dywidendy nie ma prawa do korzy-
+stania z tych kwot i jest obowiązana do przekazywania ich dalej na
+24 Ibidem, pkt 85, s. 48.
+25 Dz.U. L 157 z dnia 26 czerwca 2003 r.
+26 Wyrok TSUE z dnia 26 lutego 2019 r., sprawa C-115/16, pkt 88.
+27 Ibidem, pkt 89.
+28 Ibidem, pkt 91.
+29 Wyrok TSUE z dnia 26 lutego 2019 r., sprawa C-116/16, pkt 101 oraz sprawa
+C-115/16, pkt 128.
+30 Wyrok TSUE z dnia 26 lutego 2019 r., sprawa C-116/16, pkt 103 oraz sprawa
+C-115/16, pkt 130.
+31 Wyrok TSUE z dnia 26 lutego 2019 r., sprawa C-116/16, pkt 104 oraz sprawa
+C-115/16, pkt 131.
+2 2025 Kwartalnik Prawa Podatkowego 19
+
+===PAGE 12===
+Jakub Jankowski, Katarzyna Smoleń
+podstawie przepisu prawa lub umowy, ale również wtedy, gdy takie zo-
+bowiązanie ma charakter faktyczny32.
+Jednocześnie do oceny tych przesłanek należy uwzględniać szczegól-
+ne cechy: sposób zarządzania spółką, jej bilans księgowy, strukturę kosz-
+tów i faktycznie poniesionych wydatków, liczbę zatrudnionych pracow-
+ników i ich kwalifikacje oraz zakres pomieszczeń i wyposażenia, jakimi
+spółka dysponuje33.
+4. Klauzula recharakteryzacji
+Już od czasów rzymskich (fraus legis) aż po bardziej współczesne dok-
+tryny (na przykład amerykańska substance over form) prawo konsekwentnie
+próbuje przeciwdziałać pozornym czynnościom mającym na celu nienależ-
+ne przyznanie korzyści. Obecnie jednak największy wkład w systematyza-
+cję klauzuli non-recognition zdają się mieć prace OECD, w szczególności
+Komentarz do MK OECD oraz Wytyczne OECD w sprawie cen transfe-
+rowych dla przedsiębiorstw wielonarodowych oraz administracji podatko-
+wych z 20 stycznia 2022 r.34 Wytyczne TP OECD zwracają uwagę, że anali-
+za cen transferowych powinna zidentyfikować istotę komercyjnych lub
+finansowych relacji między stronami oraz precyzyjnie określić rzeczywi-
+stą transakcję poprzez analizę ekonomicznie istotnych cech („accurately
+delineated the actual transaction by analysing the economically relevant
+characteristics”)35. Takie badanie powinno pozwolić na rozgraniczenie
+transakcji autentycznych od tych, które mają charakter jedynie formalny
+lub fikcyjny – a to z kolei stanowi kluczowy element uzasadniający ewen-
+tualne zastosowanie klauzuli non-recognition (tj. braku uznania transakcji
+do celów podatkowych).
+Analiza taka powinna uwzględnić m.in. zgodność między przyję-
+tym rozkładem ryzyk (w tym kontroli nad nimi i zdolności finansowej
+do ich ponoszenia) a faktycznym postępowaniem stron (Wytyczne TP
+OECD, pkt 1.140). Jeżeli istnieją rozbieżności pomiędzy umownym opi-
+sem ryzyk a ich stanem rzeczywistym, o skutkach podatkowych powinna
+32 Wyrok TSUE z dnia 26 lutego 2019 r., sprawa C-116/16, pkt 105 oraz sprawa
+C-115/16, pkt 132.
+33 Wyrok TSUE z dnia 26 lutego 2019 r., sprawa C-116/16, pkt 104 oraz sprawa
+C-115/16, pkt 131.
+34 Dalej: Wytyczne TP OECD.
+35 Ibidem, pkt 1.139.
+20 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 13===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+przesądzać realna treść ekonomiczna. W praktyce podatkowej organom
+nie wolno jednak arbitralnie odrzucać rzeczywistej transakcji (nawet je-
+śli istnieją trudności z identyfikacją porównywalnych uzgodnień pomię-
+dzy podmiotami iepowiązanymi), a klauzula non-recognition powinna
+być stosowana wyłącznie w przypadkach, gdy transakcja jako całość wy-
+raźnie różni się od tego, co by przyjęły niezależne podmioty działające
+w racjonalny, umotywowany ekonomiczne sposób (Wytyczne TP OECD,
+pkt 1.142–1.145). To ograniczenie ma na celu uniknięcie nadużyć klauzu-
+li non-recognition, w tym w sytuacji, kiedy transakcja – po odpowiednim
+dostosowaniu części jej paramentów (recharacterization) – może zostać
+uznana za zgodną z zasadą ceny rynkowej. Podczas gdy recharakteryzacja
+pozwala „przywrócić” rynkowość realnej, popartej substancją ekonomicz-
+ną transakcji (poprzez zmianę podstawy opodatkowania lub wymiaru po-
+datku36), non-recognition polega na holistycznej odmowie uznania skutków
+podatkowych, traktując uzgodnienie jako całościowo sztuczne i niemożliwe
+do zaistnienia pomiędzy stronami niepowiązanymi. Rozgraniczenie tych
+mechanizmów interwencji fiskalnej przedstawiono na poniższym diagramie.
+Rys. 1. Środki interwencji fiskalnej w zakresie transakcji pomiędzy podmiotami
+powiązanymi
+Źródło: opracowanie własne.
+36 Najpowszechniejsze przykłady praktyczne to np. zmiana oprocentowania pożyczki
+wewnątrzgrupowej, dostosowanie docelowej marży zwrotu podmiotu rutynowego itp. Są
+one omawiane w dalszej części tekstu przy okazji analizy orzecznictwa w zakresie recha-
+rakteryzacji oraz non-recognition.
+2 2025 Kwartalnik Prawa Podatkowego 21
+
+===PAGE 14===
+Jakub Jankowski, Katarzyna Smoleń
+Analogiczny podział odzwierciedlono w polskiej ustawie o podatku
+dochodowym od osób prawnych37, gdzie zgodnie z art. 11c polskie orga-
+ny podatkowe mogą zarówno dokonać ingerencji w same warunki danej
+transakcji kontrolowanej (art. 11c ust. 2 u.p.d.o.p.), jak i określić dochód/
+stratę podatnika bez uwzględnienia transakcji kontrolowanej (art. 11c
+ust. 4 u.p.d.o.p.). Warto podkreślić jednak, że omawiany podział pojawił się
+dopiero w wersji ustawy obowiązującej od 1 stycznia 2019 r. Poprzednio nie
+istniała explicite norma prawna pozwalająca na nieuznanie transakcji po-
+między podmiotami powiązanymi. Organy sięgały więc po art. 11 u.p.d.o.p.
+(ogólne zasady cen transferowych38, najczęściej popierane bardziej funkcjo-
+nalną interpretacją przy uwzględnieniu dorobku Wytycznych TP OECD39)
+lub – w szerszym kontekście – klauzulę GAAR (General Anti-Avoidance
+Rule – ogólna klauzula przeciwko unikaniu opodatkowania), co prowadziło
+do licznych sporów podatkowych40. Po 2019 r. legalność stosowania obu
+mechanizmów została jednak potwierdzona przyjętą nowelizacją usta-
+wy, prowadząc do ich częstszego wykorzystywania przez polskie organy
+podatkowe.
+37 Analogiczne zapisy znajdują się również w rozdziale 4b ustawy z dnia 26 lipca
+1991 r. o podatku dochodowym od osób fizycznych (Dz.U. z 2025 r., poz. 163) w stosun-
+ku do podmiotów powiązanych będących podatnikami podatku dochodowego od osób
+fizycznych.
+38 „Jeżeli w wyniku powiązań zostaną ustalone lub narzucone warunki różniące się
+od warunków, które ustaliłyby między sobą niezależne podmioty, i w wyniku tego po-
+datnik nie wykazuje dochodów albo wykazuje dochody niższe od tych, jakich należałoby
+oczekiwać, gdyby wymienione powiązania nie istniały, dochody danego podatnika oraz
+należny podatek określa się bez uwzględnienia warunków wynikających z tych powiązań”.
+39 F. Majdowski, Sola scriptura czy w drodze wykładni – zasada rynkowości jako quasi-
+-ogólna klauzula przeciwko unikaniu opodatkowania? cz. 2, „Przegląd Podatkowy” 2018,
+nr 8, s. 35.
+40 Polskie sądy administracyjne prezentowały niekiedy rozbieżne stanowiska. Nie-
+które (np. wyrok WSA w Gdańsku z dnia 7 maja 2019 r., sygn. I SA/Gd 474/19) potwier-
+dzały legalność stosowania recharakteryzacji przed 1 stycznia 2019 r., natomiast inne
+(por. np. wyrok WSA w Gliwicach z dnia 30 czerwca 2021 r., sygn. I SA/Gl 1649/20) kon-
+kludowały, iż instrument ten nie był dozwolony przez ówcześnie obowiązujące regulacje.
+Z kolei Naczelny Sąd Administracyjny (NSA) w czerwcu 2022 r. (sygn. wyroku II FSK
+2508/19) zakwestionował nadmierne stosowanie recharakteryzacji przed zmianą prawa:
+według NSA dotychczasowy art. 11 u.p.d.o.p. dawał tylko możliwość przeprowadzenia
+korekty cen (tzw. doszacowania), nie zaś całościowej reklasyfikacji/pominięcia transakcji.
+Wszystkie wyżej wymieniane orzeczenia dostępne są w serwisie internetowym CBOSA.
+22 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 15===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+5. Test substantive business activity w ramach klauzuli BO
+Dobitnym przykładem testu rzeczywistej działalności gospodarczej
+w przypadku rzeczywistego beneficjenta jest sprawa Ikea41. Francuska firma
+zawarła umowę franczyzową z Inter Ikea Systems BV (Dutch BV) w Holan-
+dii, na mocy której korzystała, w szczególności jako franczyzobiorca, z prawa
+do prowadzenia „Ikea Retail System” (koncepcja Ikea), „Ikea Food System”
+(sprzedaż żywności) i „Ikea Proprietary Rights” (znak towarowy Ikea) w swo-
+ich sklepach. W zamian francuska spółka zapłaciła Inter Ikea Systems BV
+opłatę franczyzową równą 3% kwoty sprzedaży netto dokonanej we Francji.
+Dutch BV zapłaciło 70% tych opłat franczyzowych Fundacji Interogo, właś-
+cicielowi Ikea Proprietary Rights, która ma siedzibę w Liechtensteinie, gdzie
+nie płaci podatku bezpośredniego. Na tej podstawie francuska administracja
+podatkowa uznała, że Dutch BV nie była rzeczywistym właścicielem należno-
+ści licencyjnych płaconych przez francuską spółkę i że wstawienie jej między
+francuską spółką a fundację z Liechtensteinu miało na celu wyłącznie skorzy-
+stanie, w drodze unikania opodatkowania, ze zwolnienia wspomnianych na-
+leżności licencyjnych z podatku u źródła poprzez zastosowanie postanowień
+art. 12 francusko-holenderskiej umowy podatkowej. Sąd uznał, że Dutch BV
+jest rzeczywistym właścicielem należności licencyjnych, ponieważ:
+1) została założona w 1983 r. i ma własny personel i biura;
+2) jej działalność polega na zapewnianiu stałego rozwoju koncepcji fran-
+czyzowej Ikea i jej udzielaniu w ramach franczyzy franczyzobiorcom
+działającym w kilku krajach;
+3) posiada sklep testowy Ikea w mieście Delft w Holandii, w którym roz-
+wija koncepcję Ikea („System sprzedaży detalicznej Ikea”), a także cen-
+trum szkoleniowe w celu szkolenia personelu franczyzobiorców;
+4) 70-procentowa stała opłata uiszczana przez IIS BV na rzecz fundacji
+opiera się nie tylko na prawach własności Ikea, ale także na wszyst-
+kich opłatach franczyzowych, w tym na wynagrodzeniu za koncep-
+cję Ikea („System sprzedaży detalicznej Ikea”) i wynagrodzeniu za
+„System żywności Ikea”, plus opłaty za Ikea Business College i „do-
+chód netto z katalogu pomniejszony o składki marketingowe płacone
+franczyzobiorcom”42.
+41 France vs IKEA, 8 lutego 2022, Sąd Apelacyjny w Wersalu, No 19VE03571.
+Orzeczenie dostępne w serwisie TP Cases – https://tpcases.com/france-vs-ikea-february-
+2022-caa-of-versailles-no-19ve03571/ (dostęp: 19.10.2025).
+42 France vs IKEA, 8 lutego 2022, Sąd Apelacyjny w Wersalu, No 19VE03571, pkt 9.
+2 2025 Kwartalnik Prawa Podatkowego 23
+
+===PAGE 16===
+Jakub Jankowski, Katarzyna Smoleń
+Jeśli zasoby ludzkie i materialne są obecne, umożliwiając spółce
+otrzymującej należność prowadzenie własnej działalności gospodarczej,
+a dalsze przekazanie należności jest integralną częścią istoty jej dzia-
+łalności, spółka może być uznana za rzeczywistego właściciela pomimo
+tego, że istnieje zobowiązanie do przekazania należności dalej.
+W sprawie S GmbH43 w trakcie restrukturyzacji biznesowej dział nie-
+ruchomości austriackiej spółki został początkowo oddzielony od działu
+„operacje handlowe/marki” w dniu podziału 31 marca 2007 r. Prawa do
+znaku towarowego pozostały przy poprzedniej spółce handlowej, która
+była spółką dominującą grupy, obecnie M GmbH. W dniu 25 września
+2007 r. spółka M GmbH przeniosła wszystkie prawa do znaku towarowego
+na rzecz stałego zakładu na Malcie, który został utworzony w tym samym
+roku, do którego 15 stycznia 2008 r. przeniosła również swoją siedzibę za-
+rządu. Pomiędzy spółką S GmbH a spółką M GmbH zawarte zostały umo-
+wy licencyjne, które uprawniają spółkę S GmbH do korzystania ze znaków
+towarowych spółki M GmbH w celach reklamowych i marketingowych
+związanych z jej działalnością gospodarczą w zamian za opłatę licencyjną
+(zależną od obrotów).
+Władze podatkowe oceniły podatek dochodowy od osób prawnych za
+lata 2008 i 2009. Kontrola wykazała, że opłaty licencyjne miały być w cało-
+ści przypisane spółce S GmbH jako rzeczywistemu właścicielowi znaków
+towarowych, co oznaczało, że płatności licencyjne na rzecz spółki M GmbH
+również nie powinny być uznawane do celów podatkowych.
+Spółka S GmbH stworzyła prawa do znaku towarowego, które zostały
+wycenione na łączną kwotę 383,5 mln euro w trakcie jej wydzielenia; decy-
+zje dotyczące wykorzystania, tworzenia, reklamy i licencjonowania praw do
+znaku towarowego nadal leżały w gestii decydentów spółki operacyjnej rekla-
+mującej zmiany w siedzibie grupy austriackiej. Maltański zarząd był obecny
+na spotkaniach z agencjami reklamowymi w Austrii, ale jego działania nie
+wykraczały poza wsparcie o charakterze administracyjnym. Celem wybranej
+struktury był efekt oszczędności podatkowych, zgodnie z którym faktyczne
+opodatkowanie dochodu z licencji na Malcie wyniosło 5%. Menedżerowie
+marki M GmbH uczestniczyli co prawda w procesie rozwoju znaku to-
+warowego, ale decyzje podejmowane były przez organy S GmbH, które
+43 Austria vs S GmbH, 27 listopada 2020, Verwaltungsgerichtshof, Case No Ra
+2019/15/0162-3. Orzeczenie dostępne w serwisie TP Guidelines – https://tpguidelines.
+com/austria-vs-s-gmbh-november-2020-verwaltungsgerichtshof-case-no-ra-2019-15-0162-3/
+(dostęp: 19.10.2025).
+24 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 17===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+wydały ponad 56 mln euro w 2008 r. i prawie 68 mln euro w 2009 r. na
+reklamę i marketing. Natomiast M GmbH nie poniosła prawie żadnych
+wydatków na reklamę, a jej wydatki na wynagrodzenia były również nie-
+współmierne do zadań firmy, która miała zarządzać majątkiem korpo-
+racyjnym o wartości prawie 400 mln euro w prawach do znaków towa-
+rowych i działać jako (również ekonomiczny) właściciel tych aktywów44.
+Minimalne wydatki na wynagrodzenia, które w 2008 r. wyniosły łącznie
+91 791 euro, a w 2009 r. 77 008,10 euro i zostały rozdzielone pomiędzy osiem
+osób (z których większość stanowili pracownicy zatrudnieni w niepełnym
+wymiarze godzin), można było wyjaśnić jedynie tym, że wszystkimi istotny-
+mi zadaniami związanymi z administracją, utrzymaniem i zarządzaniem
+znakiem towarowym zajmowały się, podobnie jak w przeszłości, spółki
+grupy (poprzez wewnętrzne działania marketingowe grupy) lub specjaliści
+zatrudnieni przez grupę (prawnicy ds. znaków towarowych, agencja reklamo-
+wa), a spółka M GmbH działała jedynie w charakterze pomocniczym.
+Naczelny Sąd Administracyjny w Polsce w precedensowym wyroku,
+który został ogłoszony pod koniec 2023 r., wskazał, jak należy rozumieć to
+kryterium w odniesieniu do spółek holdingowych45. Podstawową działal-
+nością podatnika (holenderskiej spółki holdingowej Dutch Co) była sprze-
+daż i marketing chusteczek nawilżanych w regionie Beneluksu (zgodnie
+z wpisem w lokalnym rejestrze spółek handlowych). Dutch Co posiadała
+99% udziałów w kapitale zakładowym spółki będącej polską spółką zależną.
+Jedynym udziałowcem Dutch Co jest A. Ltd. z siedzibą w Izraelu. DutchCo
+nie została uznana za rzeczywistego właściciela dywidendy ze względu na:
+1) niską kwotę opłaconego kapitału początkowego w stosunku do warto-
+ści posiadanych udziałów w spółkach zależnych46;
+2) brak kosztów pracowniczych47;
+3) niskie koszty prowadzenia biura, brak kosztów zarządzania48;
+44 Austria vs S GmbH, 27th November 2020, Verwaltungsgerichtshof, Case No Ra
+2019/15/0162-3, pkt 24.
+45 Naczelny Sąd Administracyjny, 19 listopada 2023 r., II FSK 27/23. Orzeczenie do-
+stępne w serwisie CBOSA.
+46 Udział w zyskach spółek zależnych należności w kwotach rzędu kilku milionów
+euro a posiadanie opłaconego kapitału własnego w wysokości 18 000 euro.
+47 Jedynie wydatki na zakup usług doradczych w wysokości 33 000 euro rocznie.
+48 Zamortyzowany majątek trwały o wartości 1000 euro i wynajem biura za czynsz
+w kwocie 2000 euro w skali roku.
+2 2025 Kwartalnik Prawa Podatkowego 25
+
+===PAGE 18===
+Jakub Jankowski, Katarzyna Smoleń
+4) niewielkie zyski z działalności operacyjnej przy ponoszeniu jedynie
+kosztów usług doradczych49 oraz
+5) przekazywanie otrzymanych dywidend w tej samej wysokości jedy-
+nemu udziałowcowi.
+Naczelny Sąd Administracyjny uznał, iż biorąc pod uwagę relacje mię-
+dzy zakresem działalności operacyjnej spółki będącej podatnikiem a pozio-
+mem przychodów uzyskiwanych z tytułu dywidend, charakter działalności
+operacyjnej DutchCo, wynikający z rodzaju i wysokości wykazywanych
+przychodów i kosztów, oraz przekazywanie całości dywidend swojemu je-
+dynemu wspólnikowi wypełnia znamiona sztuczności.
+Porównując te trzy wyroki, należy zauważyć, że w każdym z nich, choć
+dotyczą koncepcji rzeczywistego właściciela, dorobek MK OECD nie ma de-
+cydującego znaczenia. Okoliczności, czy spółka pośrednicząca ma zdolność
+do wygenerowania zobowiązania niezwiązanego, są tutaj niejako obecne,
+jednakże decydujące znaczenie dla tej oceny ma posiadanie odpowiedniego
+poziomu substratu osobowo-majątkowego. Nawet jeżeli nie występuje
+zobowiązanie związane na podstawie dokumentacji prawnej, to jednak brak
+odpowiedniego poziomu substancji ekonomicznej w świetle analizy funkcji,
+aktywów i ryzyk (FAR) może skutkować brakiem spełnienia przesłanki rze-
+czywistego beneficjenta. Niewątpliwie pod uwagę brane są takie czynniki,
+jak: posiadanie odpowiedniego poziomu aktywów, kreującego zdolność
+władztwa ekonomicznego nad należnością, osiąganie przychodów znaj-
+dujących odzwierciedlenie w ponoszonych wydatkach czy poziom ryzyka
+proporcjonalny do zakresu prowadzonej działalności. Czynniki te są nie-
+odłącznie związane z problematyką cen transferowych, jednakże sposób
+rozłożenia tych akcentów czy – mówiąc inaczej – sposób implementacji
+tych kryteriów na gruncie przesłanki BO odbywa się w zupełnie inny
+sposób niż na gruncie cen transferowych.
+49 Rażąca dysproporcja pomiędzy przychodami uzyskanymi od spółek zależnych
+w 2020 r. z tytułu dywidend (w wysokości 5 500 000 euro) a przychodami z działalności
+operacyjnej, które wyniosły 146 000 euro.
+26 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 19===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+6. Reorganizacja oraz non-recognition na gruncie
+cen transferowych
+Proces analizowania rzeczywistej działalności gospodarczej dla potrzeb
+cen transferowych dobrze ilustruje orzeczenie włoskiego Sądu Najwyższego
+(Corte di Cassazione) w sprawie nr 1374/2022, opublikowane 18 stycznia
+2022 r.50 Spółka BenQ Italy SRL, należąca do grupy kapitałowej z siedzibą na
+Tajwanie, zakwestionowała decyzję włoskiego organu podatkowego (Agen-
+zia delle Entrate) w zakresie zobowiązania podatkowego za 2003 r. Sprawa
+dotyczyła zakupu towarów przez BenQ Italy SRL od BenQ Europe BV, która
+była jej spółką matką zlokalizowaną w Holandii. Sprawa dotyczyła transakcji
+zakupu towarów od BenQ Europe BV – spółki matki z siedzibą w Holandii.
+W ocenie organu podatkowego rola tej spółki była wyłącznie formalna i nie-
+uzasadniona ekonomicznie, a jej udział w łańcuchu dostaw miał na celu:
+1) przesunięcie dochodu do spółek z siedzibą w krajach o korzystnych
+systemach podatkowych;
+2) uniemożliwienie odliczenia niektórych kosztów (black list costs) wyni-
+kających z transakcji z podmiotami z krajów o preferencyjnym opodat-
+kowaniu;
+3) zastosowanie sztucznie zaniżonych marż cenowych (negative mark-up
+prices);
+4) przerzucenie na włoską spółkę nieuzasadnionych kosztów ubezpiecze-
+nia ryzyka niewypłacalności klientów.
+Włoski Sąd Najwyższy potwierdził, że narzuty stosowane przez holen-
+derską spółkę rzeczywiście mogły być nieadekwatne z perspektywy dzia-
+łalności podatnika51, natomiast organ podatkowy nie zastosował żadnej
+z rekomendowanych przez Wytyczne TP OECD metod ustalania cen
+transferowych, przez co nie zrealizował ciążącego na nim obowiązku
+dowodowego52. Brak przygotowania przez administrację adekwatnej ana-
+50 Dostępne pod linkiem https://www.misterlex.it/cassazione-civile/2022/1374/ (do-
+stęp: 19.10.2025).
+51 „[…] without the fictitious interposition of the Dutch parent company, the ap-
+pellant would have had direct relations with the manufacturing undertakings […] and
+therefore […] the relevant negative income components would not have been deductible
+[…]” – fragment wyroku nr 1374/2022.
+52 „[…] none of the methods advocated on the basis of the OECD Guidelines and the
+Circular of the tax authorities No 32/9/2267 of 1980 has been applied in the present case,
+with a consequent breach of the rules governing the distribution of the burden of proof”
+– fragment wyroku nr 1374/2022.
+2 2025 Kwartalnik Prawa Podatkowego 27
+
+===PAGE 20===
+Jakub Jankowski, Katarzyna Smoleń
+lizy cen transferowych oraz studium rynkowej wyceny transakcji (bench-
+marku) doprowadził do tego, że sprawa została przekazana do ponowne-
+go rozpatrzenia sądowi niższej instancji. Orzeczenie stanowi zatem cenne
+przypomnienie, że w przypadku próby zanegowania uzgodnionych wa-
+runków pomiędzy podmiotami powiązanymi organ nie powinien ba-
+zować jedynie na intuicyjnym domniemaniu abuzywnego charakteru
+transakcji, a przedstawić wyczerpujący materiał dowodowy wskazujący
+na jej sztuczność bądź nierynkowość. W kontekście cen transferowych
+jest to szczególnie istotne, gdyż cały szkielet transakcji (forma prawna, wa-
+runki, zaangażowane podmioty) ustalany jest przez jednostki powiązane,
+a więc mogące wywierać istotny wpływ na całość struktury. Próby dalszej
+rekonstrukcji transakcji w duchu rynkowości opierać się muszą zatem na
+adekwatnych, wyczerpujących argumentach (np. wynikach analizy porów-
+nawczej przeprowadzonej przez organ).
+Nie zawsze analiza porównawcza (benchmark) jest jednak możliwa do
+sporządzenia – główną przeszkodę stanowi zazwyczaj brak dostatecznie
+porównywalnych transakcji na rynku pomiędzy podmiotami niepowiąza-
+nymi. Jest to częste wyzwanie np. w transakcjach dotyczących własności
+intelektualnej (Intellectual Property – IP), które – nomen omen – są jed-
+nymi z najczęściej wykorzystywanych do erozji podstawy opodatkowania
+w wymiarze globalnym53. Przykład takiego stanu faktycznego opisuje wyrok
+portugalskiego Apelacyjnego Sądu Administracyjnego (Tribunal Central
+Administrativo Sul) z dnia 29 maja 2024 r., sygn. 1169/09.4BELRS54. Sprawa
+dotyczyła dwóch portugalskich spółek zależnych (F… Hipermercados, SA
+i P… Distribuição Alimentar, SA), które ponosiły opłaty licencyjne (royal-
+ties) na rzecz szwajcarskiej spółki siostry, wynikające z umów licencyjnych
+zawartych na okres co najmniej 30 lat. Znaki towarowe („F.” i „P.”) były for-
+malnie przeniesione do spółki z siedzibą w Szwajcarii (J…), która następnie
+udzielała odpłatnej licencji ich poprzednim właścicielom.
+Co jednak istotne – portugalskie spółki nadal ponosiły koszty zwią-
+zane z rozwijaniem i promocją marek oraz wszelkie ryzyka związane z ich
+53 F. Majdowski, Sola scriptura czy w drodze wykładni – zasada rynkowości jako quasi-
+-ogólna klauzula przeciwko unikaniu opodatkowania? cz. 1, „Przegląd Podatkowy” 2018,
+nr 7, s. 36.
+54 Dostępne pod linkiem https://tpcases.com/portugal-vs-j-g-retalho-sgps-s-a-may-
+2024-tribunal-central-administrativo-sul-case-1169-09-4belrs/ (dostęp: 19.10.2025).
+28 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 21===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+użytkowaniem55, mimo że nie były już formalnie właścicielami tych zna-
+ków. Tym samym, w ocenie portugalskiego organu podatkowego, kwota
+uzgodnionych opłat licencyjnych nie odpowiadała warunkom zasadniczo
+identycznym z warunkami, które byłyby normalnie uzgodnione, zaakcep-
+towane i stosowane między niezależnymi podmiotami w porównywalnych
+operacjach gospodarczych56.
+W wyniku kontroli podatkowej dokonano korekty cen transfero-
+wych – do dochodu F… doliczono około 4,22 mln euro, a do P… około
+5,38 mln euro57. Ponownie – per analogia do omawianego austriackiego
+orzeczenia w sprawie S GmbH – organ wskazał m.in. na brak kosztów
+związanych z zarządzaniem znakami towarowymi po stronie szwaj-
+carskiego właściciela jako argument do doszacowania dochodu portu-
+galskich spółek faktycznie (ekonomiczne) odpowiedzialnych za funkcje
+DEMPE (Development, Enhancement, Maintenance, Protection and Ex-
+ploitation – rozwój, ulepszanie, konserwacja, ochrona i eksploatacja) do-
+tyczące znaków („no costs relating to the management of the brands in
+question have been recorded in the accounts of the company of the group
+which acquired the brands”).
+Sąd ostatecznie podtrzymał korektę dochodu dokonaną przez portugal-
+ską administrację skarbową – uznał, że opłaty licencyjne płacone przez por-
+tugalskie spółki do spółki szwajcarskiej nie odzwierciedlały warunków ryn-
+kowych. Zastosowanie metody podziału zysków (Profit Split Method – PSM),
+którą posłużyli się kontrolujący, zostało zaakceptowane jako właściwe narzę-
+dzie do ustalenia ceny rynkowej, biorąc pod uwagę charakter transferowa-
+nych znaków towarowych oraz brak porównywalnych transakcji na rynku.
+55 „[…] continuing to deduct from their income, costs directly related to the manage-
+ment, promotion and development of the brands they transferred, as well as holding all the
+risks inherent to them” – fragment wyroku 1169/09.4BELRS.
+56 „Given that F... and P... have transferred their brands, through an operation that
+could not be carried out between independent entities, and that they continue to bear
+the costs associated with managing and developing them, as well as all the risks inher-
+ent to them, while additionally bearing a royalty for the use of an asset that in practice
+remains theirs, we proceed […]” – fragment wyroku 1169/09.4BELRS.
+57 „[…] a positive adjustment is made to the taxable profit of the controlled com-
+pany F... in the amount of €4,219,631.00 and a positive adjustment to the taxable profit
+of the controlled company P... in the amount of €5,383,761.00 […]” – fragment wyroku
+1169/09.4BELRS.
+2 2025 Kwartalnik Prawa Podatkowego 29
+
+===PAGE 22===
+Jakub Jankowski, Katarzyna Smoleń
+I choć na wcześniejszych etapach sporu sądowego podatnik zarzucał ta-
+kiemu rozstrzygnięciu szereg wad proceduralnych58 (m.in. brak precyzyjnego
+rozróżnienia pomiędzy faktami uznanymi za udowodnione i nieudowodnio-
+ne, selektywną ocenę materiału dowodowego, brak odniesienia się do argu-
+mentów i dowodów przedstawionych przez podatnika, w tym m.in. do opinii
+biegłych czy przedłożonych umów licencyjnych), to sąd apelacyjny ostatecz-
+nie orzekł, że ewentualne niedoskonałości uzasadnienia pierwotnej decyzji
+w sprawie korekty dochodów nie skutkują jej nieważnością, jeśli ogólna
+motywacja była możliwa do prześledzenia. Kluczowym elementem uzasad-
+nienia była ocena, że formalny transfer znaków towarowych nie skutkował
+realnym przeniesieniem funkcji i ryzyk – skoro portugalskie spółki nadal
+ponosiły koszty i realizowały funkcje związane z rozwijaniem, utrzymy-
+waniem i eksploatacją marek, to wynagrodzenie przekazywane podmio-
+towi nominalnie będącemu właścicielem aktywów nie odzwierciedlało
+warunków rynkowych. Co więcej, wprost podkreślono, że – niezależnie od
+istnienia powiązań – portugalskie organy podatkowe na mocy art. 38 pkt 1
+lokalnego kodeksu podatkowego mogą zawsze zakwestionować istotność
+przeprowadzonych operacji oraz interes gospodarczy danej operacji i sko-
+rygować ją, jeśli stwierdzą uzasadnione przesłanki wskazujące, że deklaracje
+gospodarcze zawarte w umowach stanowiących takie operacje nie zawierają
+w rzeczywistości żadnej substancji ekonomicznej lub zawierają treść od-
+mienną od formalnie zadeklarowanej, prawdopodobnie w celu uniknięcia
+lub zaniżenia podatku59.
+Wyrok ten wzmacnia linię orzeczniczą, zgodnie z którą istotą oceny
+rynkowego charakteru transakcji jest rzeczywisty rozkład funkcji, ryzyk
+i aktywów, a nie tylko formalna struktura prawna. W sytuacjach, w któ-
+rych funkcje DEMPE pozostają po stronie płatnika opłat licencyjnych,
+58 Więcej we wcześniejszym orzeczeniu w tym sporze: wyroku portugalskiego Ape-
+lacyjnego Sądu Administracyjnego (Tribunal Central Administrativo Sul) z dnia 16 lutego
+2023 r., sygn. 657/07.1 BELS. Orzeczenia dostępne m.in. w serwisie TP Cases – https://
+tpcases.com/wp-content/uploads/Spain-STS-904-2025-ENG.htm (dostęp: 19.10.2025).
+59 „In fact, regardless of the existence of special relationships, the tax authorities can
+always question the materiality of the operations carried out and the business interest of
+the operation carried out and correct it, if it finds well-founded indications that either the
+business declarations contained in the contracts that constitute such operations do not
+actually contain any economic substance, or that they contain a reality that is different
+from what was declared, possibly for evasive or elusive purposes (art. 38, no. 1 of the Tax
+Code)” – fragment wyroku 1169/09.4BELRS.
+30 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 23===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+fiskus może zasadnie kwestionować wysokość tych opłat – niezależnie od
+umów formalnie zawartych między podmiotami powiązanymi.
+Innym często badanym obszarem – oprócz transakcji kontrolowanych
+dotyczących własności niematerialnych – są wewnątrzgrupowe transakcje
+finansowe. Sytuację pełnego nieuznania struktury finansowania pomiędzy
+podmiotami powiązanymi omawia m.in. niedawny wyrok hiszpańskiego
+Sądu Najwyższego (Tribunal Supremo) z dnia 27 lutego 2025 r., sygn. STS
+904/2025 – ECLI:ES:TS:2025:904. Należąca do międzynarodowej grupy
+hiszpańska spółka Nutreco España zaciągnęła finansowanie wewnątrzgru-
+powe (240 mln euro pożyczki od Nutreco Nederland B.V.), odliczając co-
+rocznie znaczne kwoty z tytułu odsetek jako koszty uzyskania przychodu60.
+Finansowanie służyło m.in. sfinansowaniu akwizycji producenta pasz dla
+zwierząt, znajdującego się w Kanadzie i Stanach Zjednoczonych (pośrednio,
+poprzez spółkę córkę Nutreco España zlokalizowaną w Holandii). Jedno-
+cześnie – pomimo znacznego poziomu długu – Nutreco España wykazywa-
+ła dodatnie salda w wewnątrzgrupowym systemie zarządzania płynnością
+(cash-pooling).
+Hiszpański organ podatkowy zakwestionował powyższą strukturę jako
+sztuczną i nieuzasadnioną ekonomicznie – nie z uwagi na sam element
+transgraniczny61, a przede wszystkim ze względu na efektywne podwójne
+odliczenie kosztów odsetkowych62. Taką ocenę podtrzymał również kra-
+jowy Sąd Najwyższy, argumentując, iż „środek polegający na odmowie
+uznania wszystkich kosztów finansowych należy uznać za proporcjonalny,
+ponieważ, jak stwierdził TSUE63, […] takie czysto sztuczne rozwiązanie
+musi zostać pominięte przez organy podatkowe przy obliczaniu należ-
+nego podatku dochodowego od osób prawnych. Odmowa odliczenia
+tylko części odsetek zapłaconych z tytułu wyżej wymienionej pożyczki
+pozwoliłaby podatnikowi uzyskać część lub nawet całość zamierzonej
+korzyści podatkowej w sposób abuzywny, co podważyłoby spójność
+60 Około 30 mln euro za lata 2011–2013.
+61 „[…] the artificiality of the operation is constituted by the pursuit exclusively of
+a tax advantage, and not by the presence of a cross-border element” – fragment wyroku
+STS 904/2025 – ECLI:ES:TS:2025:904.
+62 „In short, the Nutreco Group, with the operation designed in terms of how to
+channel the funds, has achieved a double deduction of the same financial expenses: in
+Spain and in the countries that finally made the acquisition from the Maple Group, Canada
+and the USA” – fragment wyroku STS 904/2025 – ECLI:ES:TS:2025:904.
+63 Hiszpański sąd odnosi się do wyroku TSUE C-585/22 z dnia 4 października 2024 r.,
+który dotyczy również całościowej odmowy uznania finansowania wewnątrzgrupowego.
+2 2025 Kwartalnik Prawa Podatkowego 31
+
+===PAGE 24===
+Jakub Jankowski, Katarzyna Smoleń
+badanego systemu”. Klauzula non-recogonition stanowi więc w tej sytuacji
+rodzaj filtra, który usuwać ma z rzeczywistości gospodarczej ustalenia, które
+nakierowane są wyłącznie na osiągnięcie korzyści podatkowych – w ode-
+rwaniu od racjonalności ekonomicznej i biznesowej64.
+Analiza finansowania podmiotów powiązanych stanowi obecnie jeden
+z istotnych aspektów kontroli cen transferowych65. Nie zawsze oczywiście
+dochodzi do zupełnego zakwestionowania modelu finansowania (przykład
+wyżej omawianego Nutreco España), natomiast częstsze zdają się dosza-
+cowania dochodu (straty) poprzez recharakteryzację (1) części długu na
+kapitał – szczególnie w sytuacji, gdy pomiot nie ma adekwatnej zdolno-
+ści do obsługi zadłużenia (debt capacity) lub (2) samych warunków udzie-
+lonych pożyczek (dostosowanie oprocentowania). Praktyczny przykład
+tego drugiego środka odnaleźć można m.in. w orzeczeniu holenderskiego
+sądu apelacyjnego (Amsterdam Court of Appeal) z dnia 7 maja 2024 r.,
+sygn. 22/358–22/361, ECLI:NL:GHAMS:2024:192066. Holenderska spółka
+Real Estate Loan B.V. zaciągnęła od podmiotów powiązanych pożyczkę
+o oprocentowaniu 10%. Spółka odliczyła koszty odsetek jako koszty uzy-
+skania przychodu. Organ podatkowy zakwestionował jednak odliczenie,
+argumentując, że podmiot niepowiązany nie zgodziłby się na takie warun-
+ki, gdyż koszt porównywalnego finansowania na rynku jest istotnie niższy
+(non-businesslike). Sąd potwierdził to stanowisko, akceptując wyliczoną
+przez administrację rynkową stopę oprocentowania przedmiotowej po-
+życzki (tj. 3,09% – wartość ustalona poprzez analizę porównywalnej ceny
+niekontrolowanej, przy założeniu gwarancji spłaty finansowania przez
+udziałowców – spółka Real Estate Loan B.V. z perspektywy standalone nie
+prezentowała wystarczającej wiarygodności kredytowej (ratingu), umożli-
+wiającej niezależne uzyskiwanie finansowania na rynku). W konsekwencji
+koszty odsetkowe odpowiadające oprocentowaniu 3,09% zostały uznane za
+uzasadnione i kwalifikowalne do kosztów podatkowych, natomiast odsetki
+64 Choć w doktrynie pojawiają się również głosy krytyczne względem wyko-
+rzystywania klauzuli non-recognition w duchu zwalczania unikania opodatkowania,
+por. np. M. Pankiv, Contemporary Application of the Arm’s Length Principle in Transfer
+Pricing, Amsterdam 2017, s. 114.
+65 Deloitte, Kontrole cen transferowych w 2024 r. Statystyki, orzecznictwo i interpreta-
+cje, Warszawa 2025, https://www.deloitte.com/pl/pl/services/tax/research/raport-kontrole-
+cen-transferowych.html (dostęp: 3.11.2025).
+66 Orzeczenie dostępne m.in. w serwisie TP Cases – https://tpcases.com/netherlands-
+vs-real-estate-loan-b-v-may-2024-court-of-appeal-case-no-22-358-to-22-361-eclinlghams
+20241920/ (dostęp: 19.10.2025).
+32 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 25===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+naliczone powyżej tej stopy (czyli różnica około 6,91%) zostały uznane za
+nienależne. Sąd potwierdził zatem zasadność korekty podstawy opodat-
+kowania, eliminującej nadmierne koszty finansowe, które nie odpowiada-
+ły warunkom rynkowym.
+7. Podsumowanie
+Test substancji ekonomicznej, stosowany zarówno w ramach klau-
+zuli rzeczywistego właściciela, jak i recharakteryzacji transakcji, stanowi
+istotne narzędzie w przeciwdziałaniu erozji podstawy opodatkowania oraz
+agresywnej optymalizacji podatkowej. Oba mechanizmy mają zbieżny
+cel – wykrywanie i neutralizowanie sztucznych struktur służących prze-
+rzucaniu zysków między jurysdykcjami podatkowymi – jednak różnią
+się zakresem oraz sposobem zastosowania. Klauzula rzeczywistego właś-
+ciciela skupia się przede wszystkim na identyfikacji podmiotu faktycznie
+korzystającego z dochodów, odmawiając przyznania statusu beneficjenta
+jednostce, która nie prowadzi rzeczywistej działalności w kontekście praw
+do danej należności. Recharakteryzacja transakcji koncentruje się nato-
+miast na weryfikacji zgodności formalnej konstrukcji prawnej z rzeczywi-
+stą ekonomiczną treścią transakcji pomiędzy podmiotami powiązanymi,
+umożliwiając właściwe (rynkowe) przypisanie skutków podatkowych.
+Istotne jest jednak, aby nie postrzegać tych dwóch podejść jako auto-
+matycznie wymiennych czy zastępczych, lecz rozumieć je w świetle ich od-
+miennych celów i funkcji w systemie podatkowym. W szczególności w kon-
+tekście cen transferowych test substancji ma znacznie szerszy i bardziej
+złożony charakter niż w przypadku klauzuli BO. Na gruncie transfer pri-
+cing substancyjne desygnaty nie służą bowiem potwierdzeniu statusu rzeczy-
+wistego właściciela, lecz obejmują także ocenę zdolności podmiotu np. do
+ponoszenia ryzyk, absorpcji strat, realizacji pełnego profilu funkcjonalnego
+czy zarządzania finansowaniem. Przykładowo: podmiot o ograniczonym
+ryzyku może niewątpliwie posiadać wystarczającą substancję ekonomiczną,
+by spełniać kryteria klauzuli BO, jednak z punktu widzenia cen transfero-
+wych nie będzie to wystarczające dla uznania jego pozycji w zakresie peł-
+nej funkcjonalności, ponoszenia strat podatkowych czy bardzo znaczących
+kosztów finansowania dłużnego. Większą złożoność koncepcji substancji na
+gruncie TP potwierdza też różnorodność mechanizmów interwencyjnych
+(od dostosowania poszczególnych parametrów transakcji aż po jej całkowite
+2 2025 Kwartalnik Prawa Podatkowego 33
+
+===PAGE 26===
+Jakub Jankowski, Katarzyna Smoleń
+nieuwzględnienie), nie zaś – jak w przypadku BO – zero-jedynkowe przyznanie
+(bądź nie) statusu właściciela rzeczywistego.
+Oba testy bazują na jakościowej ocenie faktycznej działalności go-
+spodarczej, a nie wyłącznie na sztywnych kryteriach ilościowych, co naj-
+częściej w praktyce wymaga starannej i szczegółowej analizy danego stanu
+faktycznego67. Ta elastyczność umożliwia organom podatkowym skuteczne
+zwalczanie sztucznych schematów optymalizacyjnych, ale – jak wykazała
+analiza przywołanych wyroków – jednocześnie stawia wysokie wymaga-
+nia w zakresie przedstawianej dokumentacji i argumentacji.
+Podsumowując, test substancji ekonomicznej jest istotnym instru-
+mentem współczesnej polityki podatkowej, umożliwiającym identyfikację
+i eliminację struktur pozbawionych rzeczywistej podstawy ekonomicznej.
+Zrozumienie i uwzględnienie różnic celów pomiędzy klauzulą BO a wy-
+mogami kreowanymi przez inne konteksty podatkowe – na przykład ceny
+transferowe – jest jednak niezbędne do prawidłowego stosowania tych me-
+chanizmów oraz do zrównoważenia skuteczności przeciwdziałania naduży-
+ciom podatkowym z ochroną praw podatników.
+Bibliografia
+Athanasiou A., Definition of BEPS Fundamental Economic Attributes Criticized, „Tax Notes
+International” 2015, vol. 77.
+Deloitte, Kontrole cen transferowych w 2024 r. Statystyki, orzecznictwo i interpretacje,
+Warszawa 2025, https://www.deloitte.com/pl/pl/services/tax/research/raport-
+kontrole-cen-transferowych.html (dostęp: 3.11.2025).
+Ganbay M.S., Janssen J.J.M., What Should Be the Scope of the Beneficial Owner Concept,
+„Intertax” 2020, vol. 48(12), https://doi.org/10.54648/TAXI2020111
+Jain S., Effectiveness of the Beneficial Ownership Test in Conduit Company Cases, Wellington
+2013, https://www.ibfd.org/sites/default/files/2021-06/14_002_effectiveness_beneficial_
+ownership_final_web.pdf (dostęp: 3.11.2025).
+Majdowski F., Sola scriptura czy w drodze wykładni – zasada rynkowości jako quasi-ogólna
+klauzula przeciwko unikaniu opodatkowania? cz. 1, „Przegląd Podatkowy” 2018, nr 7.
+Majdowski F., Sola scriptura czy w drodze wykładni – zasada rynkowości jako quasi-ogólna
+klauzula przeciwko unikaniu opodatkowania? cz. 2, „Przegląd Podatkowy” 2018, nr 8.
+OECD, BEPS Action 3: Designing Effective Controlled Foreign Company Rules, Paris 2015.
+67 I choć OECD próbowała unifikować koncepcję mierzalnych atrybutów gospo-
+darczych, próby te zostały w większości ocenione negatywnie jako niepraktyczne i zbyt
+radykalne w świetle różnorodności konfiguracji gospodarczych, por. np. A. Athanasiou,
+Definition of BEPS Fundamental Economic Attributes Criticized, „Tax Notes International”
+2015, vol. 77, s. 678.
+34 Kwartalnik Prawa Podatkowego 2 2025
+
+===PAGE 27===
+Test substancji ekonomicznej w przypadku spółek pośredniczących…
+OECD, Double Taxation Conventions and the Use of Conduit Companies, Paris 1986.
+OECD, International Harmful Tax Competition an Emerging Global Issue, Paris 1998.
+OECD, OECD Transfer Pricing Guidelines for Multinational Enterprises and Tax
+Administrations 2022, Paris 2022, https://doi.org/10.1787/0e655865-en
+Pankiv M., Contemporary Application of the Arm’s Length Principle in Transfer Pricing,
+Amsterdam 2017.
+Wardzyński A., The 2014 Update to the OECD Commentary: A Targeted Hybrid Approach
+to Beneficial Ownership, „Intertax” 2015, vol. 43(2), https://doi.org/10.54648/TAXI
+2015015
+2 2025 Kwartalnik Prawa Podatkowego 35

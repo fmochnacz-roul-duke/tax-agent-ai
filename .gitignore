@@ -9,3 +9,6 @@ reports/
 # Chunks index is tracked (human-readable, useful for review)
 # Only the large embedding vectors are excluded
 data/knowledge_base/embeddings/vectors.json
+
+# PDF source files — binary, large, re-extractable from originals
+data/knowledge_base/sources/originals/*.pdf
