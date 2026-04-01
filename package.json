@@ -12,7 +12,8 @@
     "module2:agent": "ts-node src/module2/AgentLoopFunctionCalling.ts",
     "tax:agent": "ts-node src/agents/BeneficialOwnerAgent.ts",
     "module3:readme": "ts-node src/module3/ReadmeAgent.ts",
-    "ddq:service": "python python/run.py"
+    "ddq:service": "python python/run.py",
+    "start": "ts-node src/server/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,9 +21,11 @@
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^17.3.1",
+    "express": "^5.2.1",
     "openai": "^6.33.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^25.5.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"

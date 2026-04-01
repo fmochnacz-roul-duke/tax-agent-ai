@@ -382,7 +382,7 @@ function selectLlm(
 // AgentInput — the TypeScript type that mirrors the JSON schema.
 // 'dividend' | 'interest' | 'royalty' is a union type: only these three string
 // values are allowed for income_type. TypeScript enforces this at compile time.
-interface AgentInput {
+export interface AgentInput {
   entity_name: string;
   country: string;
   income_type: 'dividend' | 'interest' | 'royalty';
@@ -409,7 +409,7 @@ interface AgentInput {
 // We receive JSON.parse() output as type `unknown` (we don't know its shape yet).
 // Each check confirms a field exists and has the right type, then TypeScript knows
 // the final object satisfies the interface.
-function validateInput(raw: unknown): AgentInput {
+export function validateInput(raw: unknown): AgentInput {
   if (typeof raw !== 'object' || raw === null) {
     throw new Error('Input file must contain a JSON object.');
   }
@@ -545,7 +545,7 @@ function parseInput(): { input: AgentInput; ddqText: string | undefined } {
 // buildTaskString() converts structured input into the natural-language task
 // that the agent loop receives as its first user message.
 // The agent never sees the raw JSON — it sees this prose description.
-function buildTaskString(input: AgentInput): string {
+export function buildTaskString(input: AgentInput): string {
   // Shareholding is always included — for dividends it determines the treaty rate
   // threshold; for interest/royalties it determines EU Directive eligibility.
   const shareClause =
@@ -631,7 +631,7 @@ function ensureDir(filePath: string): void {
 //   { key: "<json string>" }  →  { key: { ... parsed object ... } }
 // so the report does not contain strings-within-strings.
 // If a value somehow isn't valid JSON, it is kept as-is.
-function parseFindings(findings: Record<string, string>): Record<string, unknown> {
+export function parseFindings(findings: Record<string, string>): Record<string, unknown> {
   const parsed: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(findings)) {
     try {
@@ -655,7 +655,7 @@ function parseFindings(findings: Record<string, string>): Record<string, unknown
 // The function accepts Record<string, string> — the raw findings map — and returns
 // a union type so TypeScript enforces that only 'HIGH', 'MEDIUM', or 'LOW' can
 // come back.
-function computeReportConfidence(
+export function computeReportConfidence(
   findings: Record<string, string>
 ): 'HIGH' | 'MEDIUM' | 'LOW' {
   // Phase 7: fact-check result takes priority when present.
@@ -716,49 +716,93 @@ function computeReportConfidence(
   return 'HIGH';
 }
 
-function saveReport(
+// ── WhtReport — the structured output of every analysis run ──────────────────
+//
+// Returned by runWhtAnalysis() and saved to disk by saveReport().
+// The web server uses this type to send the report to the browser as JSON.
+
+export interface WhtReport {
+  generated_at:            string;
+  entity_name:             string;
+  country:                 string;
+  income_type:             string;
+  shareholding_percentage: number;
+  related_party?:          boolean;
+  substance_notes?:        string;
+  data_confidence:         'HIGH' | 'MEDIUM' | 'LOW';
+  data_confidence_note:    string;
+  conclusion:              string;
+  findings:                Record<string, unknown>;
+}
+
+// ── AgentEvent — streaming progress events emitted during the agent loop ──────
+//
+// The web server forwards these to the browser via Server-Sent Events (SSE).
+// The CLI just logs them to console.
+
+export type AgentEventType =
+  | 'start'
+  | 'iteration'
+  | 'tool_call'
+  | 'tool_result'
+  | 'final_answer'
+  | 'report_saved'
+  | 'max_iterations';
+
+export interface AgentEvent {
+  type:     AgentEventType;
+  message:  string;     // human-readable, shown in the UI progress feed
+  data?:    unknown;    // optional structured payload (e.g. tool name, iteration #)
+}
+
+// Confidence note lookup — used both in saveReport() and returned in WhtReport.
+const CONFIDENCE_NOTES: Record<'HIGH' | 'MEDIUM' | 'LOW', string> = {
+  HIGH:
+    'All data verified. This report is suitable for internal decision-making.',
+  MEDIUM:
+    'Treaty rates have not been verified against official treaty texts. ' +
+    'Verify before relying on these conclusions for filing or client advice.',
+  LOW:
+    'Substance data is simulated and treaty rates are unverified. ' +
+    'This report is for analysis purposes only — not suitable for filing ' +
+    'or client advice without professional verification and real DDQ data.',
+};
+
+function buildReport(
   input: AgentInput,
   conclusion: string,
-  findings: Record<string, string>,
-  outputPath: string
-): void {
+  findings: Record<string, string>
+): WhtReport {
   const dataConfidence = computeReportConfidence(findings);
-
-  // Map each confidence level to a human-readable note.
-  // Record<'HIGH' | 'MEDIUM' | 'LOW', string> is a TypeScript object type where
-  // the keys must be exactly those three strings — it prevents typos.
-  const confidenceNotes: Record<'HIGH' | 'MEDIUM' | 'LOW', string> = {
-    HIGH:
-      'All data verified. This report is suitable for internal decision-making.',
-    MEDIUM:
-      'Treaty rates have not been verified against official treaty texts. ' +
-      'Verify before relying on these conclusions for filing or client advice.',
-    LOW:
-      'Substance data is simulated and treaty rates are unverified. ' +
-      'This report is for analysis purposes only — not suitable for filing ' +
-      'or client advice without professional verification and real DDQ data.',
-  };
-
-  const report = {
-    generated_at:      new Date().toISOString(),
-    // Spread the input fields at the top level so the report is self-contained
-    // — a reader doesn't need to know the original JSON file to understand it.
+  return {
+    generated_at:            new Date().toISOString(),
     entity_name:             input.entity_name,
     country:                 input.country,
     income_type:             input.income_type,
     shareholding_percentage: input.shareholding_percentage,
     ...(input.related_party !== undefined ? { related_party: input.related_party } : {}),
-    ...(input.substance_notes ? { substance_notes: input.substance_notes } : {}),
-    data_confidence:      dataConfidence,
-    data_confidence_note: confidenceNotes[dataConfidence],
+    ...(input.substance_notes             ? { substance_notes: input.substance_notes } : {}),
+    data_confidence:         dataConfidence,
+    data_confidence_note:    CONFIDENCE_NOTES[dataConfidence],
     conclusion,
-    findings: parseFindings(findings),
+    findings:                parseFindings(findings),
   };
+}
+
+function saveReport(
+  input: AgentInput,
+  conclusion: string,
+  findings: Record<string, string>,
+  outputPath: string
+): WhtReport {
+  const report = buildReport(input, conclusion, findings);
 
   ensureDir(outputPath);
   fs.writeFileSync(outputPath, JSON.stringify(report, null, 2), 'utf-8');
   console.log(`\nReport saved → ${outputPath}`);
-  console.log(`Data confidence: ${dataConfidence} — ${confidenceNotes[dataConfidence]}`);
+  console.log(`Data confidence: ${report.data_confidence} — ${report.data_confidence_note}`);
+
+  return report;
 }
 
 // ── AGENT LOOP ────────────────────────────────────────────────────────────────
@@ -783,13 +827,21 @@ async function runAgent(
   outputPath: string,
   fastLlm: LLM,
   powerfulLlm: LLM,
-  maxIterations: number = 20
-): Promise<void> {
-  console.log('\n' + '='.repeat(70));
-  console.log('BENEFICIAL OWNER AGENT');
-  console.log('='.repeat(70));
-  console.log('\nTask:', task);
-  console.log(`Models: fast=${fastLlm.getModelName()}  powerful=${powerfulLlm.getModelName()}`);
+  maxIterations: number = 20,
+  onEvent?: (event: AgentEvent) => void
+): Promise<WhtReport> {
+  // Helper: emit an event AND log to console.
+  // The console.log calls stay exactly as before — onEvent is additive only.
+  const emit = (type: AgentEventType, message: string, data?: unknown): void => {
+    console.log(message);
+    onEvent?.({ type, message, data });
+  };
+
+  emit('start', '\n' + '='.repeat(70));
+  emit('start', 'BENEFICIAL OWNER AGENT');
+  emit('start', '='.repeat(70));
+  emit('start', `\nTask: ${task}`, { task });
+  emit('start', `Models: fast=${fastLlm.getModelName()}  powerful=${powerfulLlm.getModelName()}`);
   console.log('-'.repeat(70));
 
   // Tracks every tool call made so far as "name:argsJSON".
@@ -801,8 +853,8 @@ async function runAgent(
   memory.addMessage(Message.user(task));
 
   for (let iteration = 1; iteration <= maxIterations; iteration++) {
-    console.log(`\n${'─'.repeat(70)}`);
-    console.log(`ITERATION ${iteration}`);
+    emit('iteration', `\n${'─'.repeat(70)}`);
+    emit('iteration', `ITERATION ${iteration}`, { iteration });
     console.log('─'.repeat(70));
 
     // Inject the findings summary before each LLM call with a clear header that
@@ -830,16 +882,17 @@ async function runAgent(
     // This happens when the model writes its conclusion as prose instead of
     // using the terminate tool. We treat it as a final answer and save the report.
     if (response.type === 'text') {
-      console.log('\nAgent responded directly:\n', response.content);
-      saveReport(input, response.content, memory.getFindings(), outputPath);
-      return;
+      emit('final_answer', `\nAgent responded directly:\n${response.content}`, { conclusion: response.content });
+      const report = saveReport(input, response.content, memory.getFindings(), outputPath);
+      emit('report_saved', `Report saved → ${outputPath}`, { path: outputPath });
+      return report;
     }
 
     // Store the assistant's tool-call message in memory
     memory.addMessage(response.assistantMessage);
 
     for (const call of response.calls) {
-      console.log(`\n  [TOOL CALL] ${call.name}(${JSON.stringify(call.arguments)})`);
+      emit('tool_call', `\n  [TOOL CALL] ${call.name}(${JSON.stringify(call.arguments)})`, { name: call.name, arguments: call.arguments });
 
       // ── duplicate guard ───────────────────────────────────────────────────
       // If the model calls the same tool with identical arguments a second time,
@@ -866,10 +919,10 @@ async function runAgent(
       if (call.name === 'terminate') {
         const answer = call.arguments['answer'] as string;
 
-        console.log('\n' + '='.repeat(70));
-        console.log('FINAL ANSWER');
-        console.log('='.repeat(70));
-        console.log(answer);
+        emit('final_answer', '\n' + '='.repeat(70));
+        emit('final_answer', 'FINAL ANSWER');
+        emit('final_answer', '='.repeat(70));
+        emit('final_answer', answer, { conclusion: answer });
 
         // Print the structured findings for auditability
         const findings = memory.getFindings();
@@ -885,8 +938,9 @@ async function runAgent(
         console.log('='.repeat(70) + '\n');
 
         // Phase 3: save the report to disk
-        saveReport(input, answer, findings, outputPath);
-        return;
+        const report = saveReport(input, answer, findings, outputPath);
+        emit('report_saved', `Report saved → ${outputPath}`, { path: outputPath });
+        return report;
       }
 
       // ── dispatch to WhtEnvironment ────────────────────────────────────────
@@ -967,63 +1021,80 @@ async function runAgent(
         result = JSON.stringify({ error: String(err) });
       }
 
-      console.log(`  [TOOL RESULT] ${result}`);
+      emit('tool_result', `  [TOOL RESULT] ${result}`, { name: call.name, result });
       memory.addMessage(Message.tool(result, call.id));
     }
   }
 
-  console.log('\n[AGENT STOPPED] Maximum iterations reached.');
-  saveReport(
+  emit('max_iterations', '\n[AGENT STOPPED] Maximum iterations reached.');
+  const incompleteReport = saveReport(
     input,
     '[INCOMPLETE — agent reached maximum iterations without a final answer]',
     memory.getFindings(),
     outputPath
   );
+  emit('report_saved', `Report saved → ${outputPath}`, { path: outputPath });
+  return incompleteReport;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ENTRY POINT
+// PUBLIC API — Phase 8: used by the web server (src/server/index.ts)
+//
+// runWhtAnalysis() is the single public entry point for running the WHT agent
+// from any context (CLI, web server, tests).
+//
+// Parameters:
+//   input      — validated AgentInput (use validateInput() to build it)
+//   ddqText    — DDQ file contents, or undefined (no DDQ → simulation mode)
+//   outputPath — where to save the JSON report on disk
+//   onEvent    — called for every progress event; server forwards these via SSE
+//
+// Returns a WhtReport with the conclusion and all structured findings.
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function main(): Promise<void> {
-  // Phase 2: read the task from a structured JSON file passed via --input.
-  // Phase 6: parseInput() also loads the DDQ text when ddq_path is set.
-  const { input, ddqText } = parseInput();
-  const task = buildTaskString(input);
-
-  // Phase 3: resolve where the report will be written.
-  // Default: reports/<entity_slug>_<date>.json
-  // Override: npm run tax:agent -- --input <file> --output <path>
-  const outputPath = resolveOutputPath(input);
-
-  // ── E: ENVIRONMENT ────────────────────────────────────────────────────────
-  // Phase 6: pass DDQ_SERVICE_URL and ddqText so the environment can call the
-  // Python extraction service for checkEntitySubstance and analyseDempe.
-  //   - ddqServiceUrl = process.env['DDQ_SERVICE_URL'] (undefined if not set)
-  //   - ddqText = DDQ file contents (undefined if ddq_path was not in input JSON)
-  // If either is absent, WhtEnvironment falls back to simulation silently.
+export async function runWhtAnalysis(
+  input: AgentInput,
+  ddqText: string | undefined,
+  outputPath: string,
+  onEvent: (event: AgentEvent) => void
+): Promise<WhtReport> {
   const env = new WhtEnvironment({
     simulate:      false,
     ddqServiceUrl: process.env['DDQ_SERVICE_URL'],
     ddqText,
   });
 
-  // ── M: MEMORY ─────────────────────────────────────────────────────────────
-  const memory = new Memory();
-
-  // Build system prompt from structured goals (G)
+  const memory       = new Memory();
   const systemPrompt = buildSystemPrompt(WHT_PERSONA, WHT_GOALS);
+  const tools        = buildWhtTools();
+  const fastLlm      = LLM.fast();
+  const powerfulLlm  = LLM.powerful();
+  const task         = buildTaskString(input);
 
-  // Tools (A)
-  const tools = buildWhtTools();
+  return runAgent(
+    systemPrompt, task, tools, env, memory,
+    input, outputPath, fastLlm, powerfulLlm,
+    20, onEvent
+  );
+}
 
-  // M: Model Efficiency — create both LLM tiers from .env config.
-  // LLM.fast() reads OPENAI_MODEL_FAST; LLM.powerful() reads OPENAI_MODEL_POWERFUL.
-  // If only OPENAI_MODEL is set, both tiers use the same model (backward-compatible).
-  const fastLlm    = LLM.fast();
-  const powerfulLlm = LLM.powerful();
+// ─────────────────────────────────────────────────────────────────────────────
+// ENTRY POINT — CLI only
+// ─────────────────────────────────────────────────────────────────────────────
 
-  await runAgent(systemPrompt, task, tools, env, memory, input, outputPath, fastLlm, powerfulLlm);
+async function main(): Promise<void> {
+  // Phase 2: read the task from a structured JSON file passed via --input.
+  // Phase 6: parseInput() also loads the DDQ text when ddq_path is set.
+  const { input, ddqText } = parseInput();
+
+  // Phase 3: resolve where the report will be written.
+  // Default: reports/<entity_slug>_<date>.json
+  // Override: npm run tax:agent -- --input <file> --output <path>
+  const outputPath = resolveOutputPath(input);
+
+  // Phase 8: runWhtAnalysis() owns GAME setup and the agent loop.
+  // The CLI passes a no-op onEvent — console.log already happens inside runAgent.
+  await runWhtAnalysis(input, ddqText, outputPath, (_event) => { /* logged by emit() */ });
 }
 
 main();

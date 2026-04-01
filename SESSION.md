@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 7 complete (FactCheckerAgent — Gemini + Google Search grounding). All phases 1–7 done. 86/86 tests passing. On master, pushed to GitHub.
+**Phase:** Phase 8 complete (Conversational Web UI). All phases 1–8 done. 86/86 tests passing. On branch feature/mate-improvements (to be merged to master).
 **Date of last session:** 2026-04-01
-**Branch:** master
+**Branch:** feature/mate-improvements
 
 ---
 
@@ -11,15 +11,16 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's continue — Phase 6 is done, start Phase 7 (FactChecker Persona Agent)."
+> "Let's continue — Phase 8 is done, what's next?"
 
 Then verify the environment is healthy:
 ```
 npm run build                                                     ← zero errors
-npm test                                                          ← 74/74 passing
-npm run tax:agent -- --input data/orange_polska_royalty.json      ← runs end-to-end (simulation mode)
+npm test                                                          ← 86/86 passing
+npm start                                                         ← web UI at http://localhost:3000
+npm run tax:agent -- --input data/orange_polska_royalty.json      ← CLI still works
 
-# To run with live DDQ (requires Python service):
+# To run with live DDQ (optional — requires Python service):
 pip install -r python/requirements.txt
 npm run ddq:service                                               ← starts service on port 8000
 # In .env: DDQ_SERVICE_URL=http://localhost:8000
@@ -171,6 +172,36 @@ npm run tax:agent -- --input data/orange_polska_royalty.json      ← uses real 
 - **`npm run ddq:service`** — starts the Python service via `python/run.py`.
 - **74 tests passing** — all substance/DEMPE tests updated to `async/await`, all green.
 - Backward compatible — `DDQ_SERVICE_URL` not set → simulation as before.
+
+### Phase 8 — Conversational Web UI ✓ COMPLETE
+- **`src/server/InputExtractor.ts`** — LLM-based parameter extraction from free-form user text.
+  - `extract(conversationHistory[])` → `{ status: 'need_more', question }` or `{ status: 'ready', input, summary }`
+  - Uses `response_format: json_object` on the fast model (gpt-4o-mini)
+  - Infers country from entity suffix (S.A. → France, GmbH → Germany, etc.)
+  - Validates extracted fields via `validateInput()` before returning ready
+- **`src/server/index.ts`** — Express.js server replacing the two-terminal workflow.
+  - `POST /session` — creates a session; returns `sessionId`
+  - `POST /session/:id/message` — chat turn; runs InputExtractor; returns question or ready card
+  - `POST /session/:id/confirm` — starts `runWhtAnalysis()` in background; returns immediately
+  - `GET  /session/:id/stream` — SSE stream; broadcasts `AgentEvent` objects as they fire
+  - `GET  /session/:id/report` — returns completed `WhtReport` as JSON
+- **`src/public/index.html`** — single-file conversational chat UI (vanilla HTML/CSS/JS).
+  - Dark monospace theme; chat bubbles (user / bot); right-panel agent log
+  - Confirmation card shows extracted parameters before analysis starts
+  - Live progress feed via SSE (iteration numbers, tool calls, tool results)
+  - Final answer displayed as a formatted report card with confidence badge
+  - Click-to-fill example prompts on the welcome screen
+- **`src/agents/BeneficialOwnerAgent.ts`** — exports added for web server integration:
+  - `export interface AgentInput` (type now publicly accessible)
+  - `export interface WhtReport` (structured analysis result)
+  - `export type AgentEvent` / `AgentEventType` (progress streaming)
+  - `export function runWhtAnalysis(input, ddqText, outputPath, onEvent)` — single public entry point;
+    both CLI (`main()`) and server use this function
+  - `saveReport()` now returns `WhtReport` instead of `void`
+  - `runAgent()` now returns `Promise<WhtReport>`, accepts optional `onEvent` callback
+- **`package.json`** — added `"start": "ts-node src/server/index.ts"` and `express` / `@types/express`
+- **86 tests passing** — no regressions; CLI path (`npm run tax:agent`) unchanged
+- Usage: `npm start` → browser opens → type in plain English → analysis runs → report displayed
 
 ### Phase 7 — FactChecker Agent (Gemini + Google Search) ✓ COMPLETE
 - **`src/agents/FactCheckerAgent.ts`** — specialist agent using Gemini REST API with `google_search` tool.
