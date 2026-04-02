@@ -19,7 +19,8 @@
     "rag:build": "ts-node scripts/build-knowledge-base.ts",
     "verify:treaties": "ts-node scripts/verifyTreaties.ts",
     "review:list": "ts-node scripts/listUnreviewed.ts",
-    "test:snapshot:update": "ts-node scripts/updateTreatySnapshot.ts"
+    "test:snapshot:update": "ts-node scripts/updateTreatySnapshot.ts",
+    "test:contract:update": "python python/service/export_schemas.py"
   },
   "keywords": [],
   "author": "",
