@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
+import { z } from 'zod';
 import { LLM, Message, Tool, ToolFactory } from '../shared';
 import { Goal, buildSystemPrompt } from '../shared/Goal';
 import { Memory } from '../shared/Memory';
@@ -425,102 +426,98 @@ function selectLlm(findings: Record<string, string>, fastLlm: LLM, powerfulLlm: 
 // buildTaskString() turns the structured input into the natural-language
 // task string that the agent loop receives.
 
-// AgentInput — the TypeScript type that mirrors the JSON schema.
-// 'dividend' | 'interest' | 'royalty' is a union type: only these three string
-// values are allowed for income_type. TypeScript enforces this at compile time.
-export interface AgentInput {
-  entity_name: string;
-  country: string;
-  income_type: 'dividend' | 'interest' | 'royalty';
-  shareholding_percentage: number;
-  substance_notes?: string;
-  // annual_payment_pln: used by check_pay_and_refund to determine whether the
-  // PLN 2,000,000 threshold is exceeded. Pass 0 (or omit) if unknown — the
-  // tool will apply a conservative assumption (threshold exceeded).
-  annual_payment_pln?: number;
-  // related_party: whether the recipient is a related party under Art. 11a CIT.
-  // When provided, the agent passes this value directly to check_pay_and_refund
-  // instead of having to infer it from substance_notes.
-  // If omitted, the agent must determine related-party status from context.
-  related_party?: boolean;
-  // ddq_path: path to a Due Diligence Questionnaire text file (Phase 6).
-  // When present, the DDQ is loaded at startup and forwarded to the Python
-  // extraction service, replacing simulated substance and DEMPE data with
-  // evidence extracted from the real document.
-  // Example: "data/ddqs/orange_sa_ddq.txt"
-  ddq_path?: string;
-}
+// ── QA-2: Zod schema replaces the hand-written validateInput() ────────────────
+//
+// Previously AgentInput was a plain TypeScript interface and validateInput() was
+// a 50-line function that checked each field manually.  The problem:
+//
+//   - The interface (compile-time) and the validator (runtime) were two separate
+//     things that had to be kept in sync by hand.  Add a field to one and forget
+//     to update the other → silent bug.
+//
+//   - TypeScript types disappear at runtime.  JSON from a file or a web form is
+//     `unknown` — any string could arrive as income_type, any number could be
+//     negative.  Only runtime validation catches this.
+//
+// Zod solves both problems in one step:
+//
+//   z.object({...})           ← the schema: defines the shape AND the validator
+//   z.infer<typeof Schema>    ← derives the TypeScript type from the schema
+//
+// Now there is one source of truth.  Change the schema → the type updates
+// automatically.  The validator is always in sync because it IS the schema.
+//
+// How z.object fields work:
+//   z.string().min(1)               — non-empty string
+//   z.enum([...])                   — one of a fixed set of string literals
+//   z.number().min(0).max(100)      — number within a range
+//   z.boolean()                     — must be true or false
+//   .optional()                     — field may be absent (undefined)
+//   errorMap: () => ({ message })   — custom error text for this field
 
-// validateInput() narrows an unknown value to AgentInput.
-// We receive JSON.parse() output as type `unknown` (we don't know its shape yet).
-// Each check confirms a field exists and has the right type, then TypeScript knows
-// the final object satisfies the interface.
+export const AgentInputSchema = z.object({
+  entity_name: z.string().min(1, 'entity_name must be a non-empty string.'),
+
+  country: z.string().min(1, 'country must be a non-empty string.'),
+
+  // z.enum enforces that only these three literal values are accepted.
+  // Anything else — including a typo like "dividends" — throws at runtime.
+  // 'as const' is required in Zod v4 to narrow the array to a readonly tuple
+  // of literal types rather than plain string[].
+  // The 'error' param (renamed from 'errorMap' in Zod v3) sets the message.
+  income_type: z.enum(['dividend', 'interest', 'royalty'] as const, {
+    error: 'income_type must be one of: dividend, interest, royalty.',
+  }),
+
+  // 'error' replaces the Zod v3 'invalid_type_error' / 'required_error' params.
+  shareholding_percentage: z
+    .number({ error: 'shareholding_percentage must be a number between 0 and 100.' })
+    .min(0, 'shareholding_percentage must be >= 0.')
+    .max(100, 'shareholding_percentage must be <= 100.'),
+
+  // Optional fields: .optional() means Zod accepts the field being absent
+  // entirely (undefined).  If it IS present, the type constraint still applies.
+  substance_notes: z.string().optional(),
+
+  annual_payment_pln: z
+    .number({ error: 'annual_payment_pln must be a number.' })
+    .min(0, 'annual_payment_pln must be a non-negative number.')
+    .optional(),
+
+  related_party: z.boolean({ error: 'related_party must be true or false.' }).optional(),
+
+  ddq_path: z.string().optional(),
+});
+
+// AgentInput is now derived from the schema rather than declared separately.
+// z.infer<T> reads the schema at the TypeScript level and produces the equivalent
+// interface automatically — so the runtime shape and the compile-time type are
+// always identical.
+export type AgentInput = z.infer<typeof AgentInputSchema>;
+
+// validateInput() is now a thin wrapper around Zod's .parse() method.
+//
+// .parse(raw) either:
+//   - Returns a fully typed AgentInput if validation passes, OR
+//   - Throws a ZodError listing every field that failed
+//
+// We catch the ZodError and reformat its .issues array into a single readable
+// message, so the developer sees all problems at once rather than one at a time.
+//
+// ZodError.issues is an array of objects like:
+//   { path: ['shareholding_percentage'], message: 'shareholding_percentage must be >= 0.' }
+// path is an array because Zod supports nested objects — for our flat schema
+// it always has exactly one element (the field name).
 export function validateInput(raw: unknown): AgentInput {
-  if (typeof raw !== 'object' || raw === null) {
-    throw new Error('Input file must contain a JSON object.');
+  try {
+    return AgentInputSchema.parse(raw);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const lines = err.issues.map((issue) => `  ${issue.path.join('.')}: ${issue.message}`);
+      throw new Error(`Invalid input:\n${lines.join('\n')}`);
+    }
+    throw err;
   }
-
-  // Cast to a record so we can access properties by name.
-  // Record<string, unknown> means: an object whose keys are strings and whose
-  // values are still unknown (we haven't checked them yet).
-  const obj = raw as Record<string, unknown>;
-
-  const { entity_name, country, income_type, shareholding_percentage, substance_notes } = obj;
-
-  if (typeof entity_name !== 'string' || entity_name.trim() === '') {
-    throw new Error('entity_name must be a non-empty string.');
-  }
-  if (typeof country !== 'string' || country.trim() === '') {
-    throw new Error('country must be a non-empty string.');
-  }
-
-  const validTypes = ['dividend', 'interest', 'royalty'] as const;
-  // 'as const' tells TypeScript to treat the array as a tuple of literal types,
-  // not just string[]. That lets .includes() accept 'dividend' | 'interest' | 'royalty'.
-  if (!validTypes.includes(income_type as (typeof validTypes)[number])) {
-    throw new Error(`income_type must be one of: ${validTypes.join(', ')}.`);
-  }
-
-  if (
-    typeof shareholding_percentage !== 'number' ||
-    shareholding_percentage < 0 ||
-    shareholding_percentage > 100
-  ) {
-    throw new Error('shareholding_percentage must be a number between 0 and 100.');
-  }
-
-  if (substance_notes !== undefined && typeof substance_notes !== 'string') {
-    throw new Error('substance_notes must be a string when provided.');
-  }
-
-  const { annual_payment_pln } = obj;
-  if (
-    annual_payment_pln !== undefined &&
-    (typeof annual_payment_pln !== 'number' || annual_payment_pln < 0)
-  ) {
-    throw new Error('annual_payment_pln must be a non-negative number when provided.');
-  }
-
-  const { related_party } = obj;
-  if (related_party !== undefined && typeof related_party !== 'boolean') {
-    throw new Error('related_party must be a boolean (true or false) when provided.');
-  }
-
-  const { ddq_path } = obj;
-  if (ddq_path !== undefined && typeof ddq_path !== 'string') {
-    throw new Error('ddq_path must be a string file path when provided.');
-  }
-
-  return {
-    entity_name,
-    country,
-    income_type: income_type as AgentInput['income_type'],
-    shareholding_percentage,
-    substance_notes: substance_notes as string | undefined,
-    annual_payment_pln: annual_payment_pln as number | undefined,
-    related_party: related_party as boolean | undefined,
-    ddq_path: ddq_path as string | undefined,
-  };
 }
 
 // parseInput() reads process.argv looking for --input <file>.
