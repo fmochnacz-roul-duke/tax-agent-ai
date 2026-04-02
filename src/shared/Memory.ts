@@ -55,7 +55,7 @@ export class Memory {
   }
 
   getFindings(): Record<string, string> {
-    return { ...this.findings };  // return a copy — callers cannot mutate our store
+    return { ...this.findings }; // return a copy — callers cannot mutate our store
   }
 
   hasFinding(key: string): boolean {
@@ -74,7 +74,7 @@ export class Memory {
     const keys = Object.keys(this.findings);
     if (keys.length === 0) return '';
 
-    const lines = keys.map(k => `  - ${k}: ${this.findings[k]}`);
+    const lines = keys.map((k) => `  - ${k}: ${this.findings[k]}`);
     return `## Findings so far\n${lines.join('\n')}\n\n`;
   }
 }

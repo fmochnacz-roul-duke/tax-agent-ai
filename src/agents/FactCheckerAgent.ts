@@ -34,10 +34,10 @@
 export type ClaimStatus = 'VERIFIED' | 'UNVERIFIED' | 'CONTRADICTED';
 
 export interface VerifiedClaim {
-  claim:         string;       // the exact claim from the DDQ
-  status:        ClaimStatus;  // triangulation result
-  sources:       string[];     // publication names or URLs that support the verdict
-  wht_relevance: string;       // how this claim affects the BO / WHT conclusion
+  claim: string; // the exact claim from the DDQ
+  status: ClaimStatus; // triangulation result
+  sources: string[]; // publication names or URLs that support the verdict
+  wht_relevance: string; // how this claim affects the BO / WHT conclusion
 }
 
 // Overall assessment: does public record confirm, qualify, or contradict
@@ -45,13 +45,13 @@ export interface VerifiedClaim {
 export type OverallAssessment = 'CONFIRMS' | 'INCONCLUSIVE' | 'UNDERMINES';
 
 export interface FactCheckResult {
-  entity:             string;
-  country:            string;
-  verification_date:  string;            // ISO date the check was run
-  claims:             VerifiedClaim[];
-  wht_risk_flags:     string[];          // specific red flags for WHT analysis
+  entity: string;
+  country: string;
+  verification_date: string; // ISO date the check was run
+  claims: VerifiedClaim[];
+  wht_risk_flags: string[]; // specific red flags for WHT analysis
   overall_assessment: OverallAssessment;
-  source:             string;
+  source: string;
 }
 
 // ── System prompt ─────────────────────────────────────────────────────────────
@@ -118,21 +118,30 @@ OUTPUT — return ONLY a valid JSON object, no markdown, no commentary outside t
 // We call the Gemini API directly via Node 18 built-in fetch — no SDK needed.
 // These interfaces cover the minimal response structure we parse.
 
-interface GeminiPart      { text: string; }
-interface GeminiContent   { role: string; parts: GeminiPart[]; }
-interface GeminiCandidate { content: GeminiContent; }
-interface GeminiResponse  { candidates?: GeminiCandidate[]; }
+interface GeminiPart {
+  text: string;
+}
+interface GeminiContent {
+  role: string;
+  parts: GeminiPart[];
+}
+interface GeminiCandidate {
+  content: GeminiContent;
+}
+interface GeminiResponse {
+  candidates?: GeminiCandidate[];
+}
 
 // ── FactCheckerAgent ──────────────────────────────────────────────────────────
 
 export interface FactCheckerOptions {
-  simulate: boolean;  // true = hardcoded result, no API calls; false = live Gemini
+  simulate: boolean; // true = hardcoded result, no API calls; false = live Gemini
 }
 
 export class FactCheckerAgent {
   private simulate: boolean;
-  private apiKey:   string | undefined;
-  private model:    string;
+  private apiKey: string | undefined;
+  private model: string;
 
   constructor(options: FactCheckerOptions) {
     this.simulate = options.simulate;
@@ -142,9 +151,7 @@ export class FactCheckerAgent {
       // If the key is absent, fall back to simulation silently.
       // This mirrors how WhtEnvironment handles a missing DDQ_SERVICE_URL.
       if (!this.apiKey) {
-        console.warn(
-          '[FACT CHECKER] GEMINI_API_KEY not set — falling back to simulation.'
-        );
+        console.warn('[FACT CHECKER] GEMINI_API_KEY not set — falling back to simulation.');
         this.simulate = true;
       }
     }
@@ -162,11 +169,7 @@ export class FactCheckerAgent {
   //
   // Returns a FactCheckResult whether or not the API call succeeds — simulation
   // is the safe fallback so the WHT agent always gets a valid tool result.
-  async verify(
-    entityName: string,
-    country:    string,
-    claims:     string[]
-  ): Promise<FactCheckResult> {
+  async verify(entityName: string, country: string, claims: string[]): Promise<FactCheckResult> {
     if (this.simulate) {
       return this.simulateResult(entityName, country, claims);
     }
@@ -177,8 +180,8 @@ export class FactCheckerAgent {
 
   private async liveVerify(
     entityName: string,
-    country:    string,
-    claims:     string[]
+    country: string,
+    claims: string[]
   ): Promise<FactCheckResult> {
     // Build the user message — entity context + numbered claim list.
     const claimList = claims.map((c, i) => `${i + 1}. ${c}`).join('\n');
@@ -206,16 +209,16 @@ export class FactCheckerAgent {
     let responseText: string;
     try {
       const response = await fetch(url, {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(requestBody),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
         throw new Error(`Gemini API: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json() as GeminiResponse;
+      const data = (await response.json()) as GeminiResponse;
       responseText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
 
       if (!responseText) {
@@ -242,10 +245,10 @@ export class FactCheckerAgent {
   //   4. Fall back to simulation if none parse correctly
 
   private extractResult(
-    text:       string,
+    text: string,
     entityName: string,
-    country:    string,
-    claims:     string[]
+    country: string,
+    claims: string[]
   ): FactCheckResult {
     const strategies: Array<() => string | null> = [
       () => text.trim(),
@@ -255,8 +258,8 @@ export class FactCheckerAgent {
       },
       () => {
         const start = text.indexOf('{');
-        const end   = text.lastIndexOf('}');
-        return (start !== -1 && end > start) ? text.slice(start, end + 1) : null;
+        const end = text.lastIndexOf('}');
+        return start !== -1 && end > start ? text.slice(start, end + 1) : null;
       },
     ];
 
@@ -289,21 +292,17 @@ export class FactCheckerAgent {
   // sources. The WHT agent sees an INCONCLUSIVE result and the report confidence
   // stays MEDIUM at most, which is correct when we have no real verification.
 
-  private simulateResult(
-    entityName: string,
-    country:    string,
-    claims:     string[]
-  ): FactCheckResult {
+  private simulateResult(entityName: string, country: string, claims: string[]): FactCheckResult {
     const today = new Date().toISOString().slice(0, 10);
 
     return {
-      entity:  entityName,
+      entity: entityName,
       country,
       verification_date: today,
-      claims: claims.map(claim => ({
+      claims: claims.map((claim) => ({
         claim,
-        status:        'UNVERIFIED' as ClaimStatus,
-        sources:       [],
+        status: 'UNVERIFIED' as ClaimStatus,
+        sources: [],
         wht_relevance: 'Could not verify — manual check against public filings recommended.',
       })),
       wht_risk_flags: [

@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --noEmit",
-    "test": "node --require ts-node/register --test src/**/*.test.ts",
+    "lint": "eslint src/ scripts/ && prettier --check \"src/**/*.ts\" \"scripts/**/*.ts\"",
+    "test": "tsc --noEmit && node --require ts-node/register --test src/**/*.test.ts",
+    "test:coverage": "tsc --noEmit && c8 node --require ts-node/register --test src/**/*.test.ts",
     "module1:prompting": "ts-node src/module1/ProgrammaticPrompting.ts",
     "module1:agent": "ts-node src/module1/AgentLoop.ts",
     "module2:tools": "ts-node src/module2/FunctionCallingExample.ts",
@@ -16,7 +18,8 @@
     "start": "ts-node src/server/index.ts",
     "rag:build": "ts-node scripts/build-knowledge-base.ts",
     "verify:treaties": "ts-node scripts/verifyTreaties.ts",
-    "review:list": "ts-node scripts/listUnreviewed.ts"
+    "review:list": "ts-node scripts/listUnreviewed.ts",
+    "test:snapshot:update": "ts-node scripts/updateTreatySnapshot.ts"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +33,12 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
+    "c8": "^11.0.0",
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
   }

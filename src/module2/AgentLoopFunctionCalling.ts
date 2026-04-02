@@ -110,10 +110,7 @@ export class AgentLoopFunctionCalling {
 
     const llm = new LLM();
 
-    const messages: Message[] = [
-      Message.system(systemPrompt),
-      Message.user(`Task: ${task}`),
-    ];
+    const messages: Message[] = [Message.system(systemPrompt), Message.user(`Task: ${task}`)];
 
     for (let iteration = 1; iteration <= this.maxIterations; iteration++) {
       console.log(`\n${'─'.repeat(70)}`);
@@ -230,7 +227,7 @@ function createWhtAgent(): AgentLoopFunctionCalling {
       name: 'get_treaty_rate',
       description:
         'Returns the withholding tax rate for a specific income type under the ' +
-        'tax treaty between Poland and the beneficial owner\'s country of residence. ' +
+        "tax treaty between Poland and the beneficial owner's country of residence. " +
         'Also returns the domestic Polish rate for comparison and the treaty article.',
       parameters: {
         type: 'object',
@@ -262,9 +259,10 @@ function createWhtAgent(): AgentLoopFunctionCalling {
         const rate = pct >= 10 ? 5 : 15;
         return JSON.stringify({
           treaty_rate_percent: rate,
-          condition: pct >= 10
-            ? 'Reduced rate: beneficial owner holds ≥10% of capital'
-            : 'Standard rate applies (shareholding below 10%)',
+          condition:
+            pct >= 10
+              ? 'Reduced rate: beneficial owner holds ≥10% of capital'
+              : 'Standard rate applies (shareholding below 10%)',
           domestic_rate_percent: 19,
           treaty_article: 'Art. 10(2) Poland–Luxembourg DTC',
           source: 'Simulated — to be replaced with OECD treaty database',
@@ -361,7 +359,10 @@ function createWhtAgent(): AgentLoopFunctionCalling {
           source: 'OECD MLI deposited positions — Poland (2018), Luxembourg (2019)',
         });
       }
-      return JSON.stringify({ mli_applies: false, note: `MLI status for ${country} not in simulation.` });
+      return JSON.stringify({
+        mli_applies: false,
+        note: `MLI status for ${country} not in simulation.`,
+      });
     }
   );
 
@@ -400,9 +401,9 @@ async function main(): Promise<void> {
   await agent.run(
     WHT_SYSTEM_PROMPT,
     'Analyse whether Alpine Holdings S.A., a Luxembourg-registered holding company ' +
-    'that holds 25% of the capital of Pol-Ops Sp. z o.o. (a Polish company), ' +
-    'qualifies as the beneficial owner of a dividend to be paid by Pol-Ops. ' +
-    'Determine the correct Polish WHT rate to apply.'
+      'that holds 25% of the capital of Pol-Ops Sp. z o.o. (a Polish company), ' +
+      'qualifies as the beneficial owner of a dividend to be paid by Pol-Ops. ' +
+      'Determine the correct Polish WHT rate to apply.'
   );
 }
 

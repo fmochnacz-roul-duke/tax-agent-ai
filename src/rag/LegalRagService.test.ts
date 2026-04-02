@@ -10,15 +10,15 @@ import { EmbedFunction } from './Embedder';
 
 function makeChunk(id: string, conceptIds: string[], module_relevance: string[] = ['WHT']): Chunk {
   return {
-    chunk_id:         id,
-    source_id:        'MF-OBJ-2025',
-    section_ref:      '§2.3',
-    section_title:    'Substance criteria',
-    concept_ids:      conceptIds,
+    chunk_id: id,
+    source_id: 'MF-OBJ-2025',
+    section_ref: '§2.3',
+    section_title: 'Substance criteria',
+    concept_ids: conceptIds,
     module_relevance,
-    language:         'pl',
-    text:             `Content of chunk ${id}.`,
-    char_count:       20,
+    language: 'pl',
+    text: `Content of chunk ${id}.`,
+    char_count: 20,
   };
 }
 
@@ -29,11 +29,11 @@ function makeVector(chunk_id: string, v: number[]): ChunkVector {
 // Taxonomy with two concepts, each with distinct keywords
 const testTaxonomy: TaxonomyConcept[] = [
   {
-    id:           'headcount',
+    id: 'headcount',
     rag_keywords: ['pracownicy', 'employees', 'personel', 'headcount'],
   },
   {
-    id:           'beneficial_owner',
+    id: 'beneficial_owner',
     rag_keywords: ['rzeczywisty właściciel', 'beneficial owner', 'Art. 4a pkt 29'],
   },
 ];
@@ -45,7 +45,7 @@ let capturedQueries: string[] = [];
 
 const mockEmbedFn: EmbedFunction = async (texts: string[]): Promise<number[][]> => {
   capturedQueries.push(...texts);
-  return texts.map(t => {
+  return texts.map((t) => {
     const x = t.length % 10;
     const y = (t.charCodeAt(0) ?? 0) % 10;
     const z = t.split('').reduce((s, c) => s + c.charCodeAt(0), 0) % 10;
@@ -59,37 +59,46 @@ const mockEmbedFn: EmbedFunction = async (texts: string[]): Promise<number[][]> 
 // ─────────────────────────────────────────────────────────────
 
 describe('LegalRagService — query expansion', () => {
-
   it('appends taxonomy rag_keywords to the query before embedding', async () => {
     capturedQueries = [];
 
-    const chunks  = [makeChunk('C1', ['headcount'])];
+    const chunks = [makeChunk('C1', ['headcount'])];
     const vectors = [makeVector('C1', [1, 0, 0])];
-    const service = LegalRagService.fromData({ chunks, vectors, taxonomy: testTaxonomy, embedFn: mockEmbedFn });
+    const service = LegalRagService.fromData({
+      chunks,
+      vectors,
+      taxonomy: testTaxonomy,
+      embedFn: mockEmbedFn,
+    });
 
     await service.retrieve('Does this entity have employees?', { concept_ids: ['headcount'] });
 
     // The captured query should contain the original text PLUS headcount keywords
     assert.ok(capturedQueries.length > 0);
     const expandedQuery = capturedQueries[0];
-    assert.ok(expandedQuery.includes('pracownicy'),     'should contain Polish keyword "pracownicy"');
-    assert.ok(expandedQuery.includes('employees'),      'should contain English keyword "employees"');
+    assert.ok(expandedQuery.includes('pracownicy'), 'should contain Polish keyword "pracownicy"');
+    assert.ok(expandedQuery.includes('employees'), 'should contain English keyword "employees"');
     assert.ok(expandedQuery.includes('Does this entity'), 'should preserve original query');
   });
 
   it('expands with keywords from multiple concepts', async () => {
     capturedQueries = [];
 
-    const chunks  = [makeChunk('C1', ['headcount', 'beneficial_owner'])];
+    const chunks = [makeChunk('C1', ['headcount', 'beneficial_owner'])];
     const vectors = [makeVector('C1', [1, 0, 0])];
-    const service = LegalRagService.fromData({ chunks, vectors, taxonomy: testTaxonomy, embedFn: mockEmbedFn });
+    const service = LegalRagService.fromData({
+      chunks,
+      vectors,
+      taxonomy: testTaxonomy,
+      embedFn: mockEmbedFn,
+    });
 
     await service.retrieve('BO test query', { concept_ids: ['headcount', 'beneficial_owner'] });
 
     const expandedQuery = capturedQueries[0];
-    assert.ok(expandedQuery.includes('pracownicy'),           'headcount PL keyword');
+    assert.ok(expandedQuery.includes('pracownicy'), 'headcount PL keyword');
     assert.ok(expandedQuery.includes('rzeczywisty właściciel'), 'beneficial_owner PL keyword');
-    assert.ok(expandedQuery.includes('Art. 4a pkt 29'),       'statutory reference');
+    assert.ok(expandedQuery.includes('Art. 4a pkt 29'), 'statutory reference');
   });
 
   it('does not expand when no concept_ids are provided', async () => {
@@ -97,10 +106,10 @@ describe('LegalRagService — query expansion', () => {
 
     const originalQuery = 'What is the headcount?';
     const service = LegalRagService.fromData({
-      chunks:   [makeChunk('C1', ['headcount'])],
-      vectors:  [makeVector('C1', [1, 0, 0])],
+      chunks: [makeChunk('C1', ['headcount'])],
+      vectors: [makeVector('C1', [1, 0, 0])],
       taxonomy: testTaxonomy,
-      embedFn:  mockEmbedFn,
+      embedFn: mockEmbedFn,
     });
 
     await service.retrieve(originalQuery);
@@ -120,10 +129,10 @@ describe('LegalRagService — query expansion', () => {
     ];
 
     const service = LegalRagService.fromData({
-      chunks:   [makeChunk('C1', ['c1', 'c2'])],
-      vectors:  [makeVector('C1', [1, 0, 0])],
+      chunks: [makeChunk('C1', ['c1', 'c2'])],
+      vectors: [makeVector('C1', [1, 0, 0])],
       taxonomy,
-      embedFn:  mockEmbedFn,
+      embedFn: mockEmbedFn,
     });
 
     await service.retrieve('query', { concept_ids: ['c1', 'c2'] });
@@ -133,7 +142,6 @@ describe('LegalRagService — query expansion', () => {
     const occurrences = expanded.split(sharedKeyword).length - 1;
     assert.equal(occurrences, 1, `"${sharedKeyword}" should appear exactly once`);
   });
-
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -141,46 +149,52 @@ describe('LegalRagService — query expansion', () => {
 // ─────────────────────────────────────────────────────────────
 
 describe('LegalRagService — retrieve', () => {
-
   it('returns CitedChunk objects with all required fields', async () => {
-    const chunk   = makeChunk('C1', ['headcount']);
+    const chunk = makeChunk('C1', ['headcount']);
     const vectors = [makeVector('C1', [1, 0, 0])];
-    const service = LegalRagService.fromData({ chunks: [chunk], vectors, taxonomy: testTaxonomy, embedFn: mockEmbedFn });
+    const service = LegalRagService.fromData({
+      chunks: [chunk],
+      vectors,
+      taxonomy: testTaxonomy,
+      embedFn: mockEmbedFn,
+    });
 
     const results = await service.retrieve('employees query', { concept_ids: ['headcount'] });
 
     assert.ok(results.length > 0);
     const r = results[0];
-    assert.ok(typeof r.chunk_id     === 'string');
-    assert.ok(typeof r.source_id    === 'string');
-    assert.ok(typeof r.section_ref  === 'string');
-    assert.ok(typeof r.text         === 'string');
-    assert.ok(typeof r.score        === 'number');
+    assert.ok(typeof r.chunk_id === 'string');
+    assert.ok(typeof r.source_id === 'string');
+    assert.ok(typeof r.section_ref === 'string');
+    assert.ok(typeof r.text === 'string');
+    assert.ok(typeof r.score === 'number');
     assert.ok(Array.isArray(r.concept_ids));
   });
 
   it('respects module filter', async () => {
     const chunks = [
-      makeChunk('WHT1',  ['headcount'], ['WHT']),
-      makeChunk('TP1',   ['headcount'], ['TP_screening']),
+      makeChunk('WHT1', ['headcount'], ['WHT']),
+      makeChunk('TP1', ['headcount'], ['TP_screening']),
     ];
-    const vectors = [
-      makeVector('WHT1', [1, 0, 0]),
-      makeVector('TP1',  [1, 0, 0]),
-    ];
-    const service = LegalRagService.fromData({ chunks, vectors, taxonomy: testTaxonomy, embedFn: mockEmbedFn });
+    const vectors = [makeVector('WHT1', [1, 0, 0]), makeVector('TP1', [1, 0, 0])];
+    const service = LegalRagService.fromData({
+      chunks,
+      vectors,
+      taxonomy: testTaxonomy,
+      embedFn: mockEmbedFn,
+    });
 
     const results = await service.retrieve('query', { module: 'WHT' });
-    assert.ok(results.every(r => r.module_relevance.includes('WHT')));
-    assert.ok(!results.some(r => r.chunk_id === 'TP1'));
+    assert.ok(results.every((r) => r.module_relevance.includes('WHT')));
+    assert.ok(!results.some((r) => r.chunk_id === 'TP1'));
   });
 
   it('returns empty array when knowledge base has no matching chunks', async () => {
     const service = LegalRagService.fromData({
-      chunks:   [],
-      vectors:  [],
+      chunks: [],
+      vectors: [],
       taxonomy: testTaxonomy,
-      embedFn:  mockEmbedFn,
+      embedFn: mockEmbedFn,
     });
 
     const results = await service.retrieve('any query');
@@ -188,12 +202,16 @@ describe('LegalRagService — retrieve', () => {
   });
 
   it('respects top_k option', async () => {
-    const chunks  = ['A', 'B', 'C', 'D', 'E'].map(id => makeChunk(id, ['headcount']));
+    const chunks = ['A', 'B', 'C', 'D', 'E'].map((id) => makeChunk(id, ['headcount']));
     const vectors = chunks.map((c, i) => makeVector(c.chunk_id, [1 - i * 0.1, 0, 0]));
-    const service = LegalRagService.fromData({ chunks, vectors, taxonomy: testTaxonomy, embedFn: mockEmbedFn });
+    const service = LegalRagService.fromData({
+      chunks,
+      vectors,
+      taxonomy: testTaxonomy,
+      embedFn: mockEmbedFn,
+    });
 
     const results = await service.retrieve('query', { top_k: 3 });
     assert.equal(results.length, 3);
   });
-
 });

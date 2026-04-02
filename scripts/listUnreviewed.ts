@@ -19,7 +19,7 @@ import { EntityRegistry } from '../src/server/EntityRegistry';
 // with no arguments.  Since npm scripts run from the project root, this works
 // without any path manipulation.
 const registry = new EntityRegistry();
-const drafts   = registry.listAll().filter(e => e.review_status === 'draft');
+const drafts = registry.listAll().filter((e) => e.review_status === 'draft');
 
 if (drafts.length === 0) {
   console.log('\n✓ No draft entries — all analyses have been reviewed or signed off.\n');
@@ -49,9 +49,10 @@ for (const entry of drafts) {
   }
 
   // Show up to 120 chars of the conclusion for context
-  const snippet = entry.conclusion_summary.length > 120
-    ? entry.conclusion_summary.slice(0, 120) + '...'
-    : entry.conclusion_summary;
+  const snippet =
+    entry.conclusion_summary.length > 120
+      ? entry.conclusion_summary.slice(0, 120) + '...'
+      : entry.conclusion_summary;
   console.log(`  Summary     : ${snippet}`);
 
   if (entry.report_path) {

@@ -27,21 +27,21 @@ dotenv.config();
 
 export type ExtractionResult =
   | { status: 'need_more'; question: string }
-  | { status: 'ready';     input: AgentInput; summary: string };
+  | { status: 'ready'; input: AgentInput; summary: string };
 
 // What the LLM sends back as JSON — all fields optional because the user
 // may not have provided them yet.
 interface LlmOutput {
-  status:                   'need_more' | 'ready';
-  question?:                string;
-  summary?:                 string;
-  entity_name?:             string;
-  country?:                 string;
-  income_type?:             string;
+  status: 'need_more' | 'ready';
+  question?: string;
+  summary?: string;
+  entity_name?: string;
+  country?: string;
+  income_type?: string;
   shareholding_percentage?: number;
-  substance_notes?:         string;
-  annual_payment_pln?:      number;
-  related_party?:           boolean;
+  substance_notes?: string;
+  annual_payment_pln?: number;
+  related_party?: boolean;
 }
 
 // ── System prompt ──────────────────────────────────────────────────────────────
@@ -110,7 +110,7 @@ beneficial owner of a royalty payment from a Polish company."
 
 export class InputExtractor {
   private client: OpenAI;
-  private model:  string;
+  private model: string;
 
   constructor() {
     this.client = new OpenAI({ apiKey: process.env['OPENAI_API_KEY'] });
@@ -138,12 +138,12 @@ export class InputExtractor {
     let rawText: string;
     try {
       const response = await this.client.chat.completions.create({
-        model:           this.model,
+        model: this.model,
         messages,
         // response_format: json_object tells the model to return only valid JSON.
         // No markdown wrapping, no prose — just the JSON object we defined above.
         response_format: { type: 'json_object' },
-        temperature:     0,   // deterministic — same input always gives same extraction
+        temperature: 0, // deterministic — same input always gives same extraction
       });
 
       rawText = response.choices[0]?.message?.content ?? '';
@@ -155,8 +155,8 @@ export class InputExtractor {
         status: 'need_more',
         question:
           "I couldn't process your message. Could you tell me the entity name, " +
-          "country, type of payment (dividend, interest, or royalty), and the " +
-          "shareholding percentage?",
+          'country, type of payment (dividend, interest, or royalty), and the ' +
+          'shareholding percentage?',
       };
     }
 
@@ -168,8 +168,8 @@ export class InputExtractor {
       return {
         status: 'need_more',
         question:
-          "Could you describe the transaction? I need the entity name, country, " +
-          "payment type, and shareholding percentage.",
+          'Could you describe the transaction? I need the entity name, country, ' +
+          'payment type, and shareholding percentage.',
       };
     }
 
@@ -186,24 +186,24 @@ export class InputExtractor {
     // got a field slightly wrong), treat it as need_more with a specific error.
     try {
       const input = validateInput({
-        entity_name:             parsed.entity_name,
-        country:                 parsed.country,
-        income_type:             parsed.income_type,
+        entity_name: parsed.entity_name,
+        country: parsed.country,
+        income_type: parsed.income_type,
         shareholding_percentage: parsed.shareholding_percentage,
-        substance_notes:         parsed.substance_notes,
-        annual_payment_pln:      parsed.annual_payment_pln,
-        related_party:           parsed.related_party,
+        substance_notes: parsed.substance_notes,
+        annual_payment_pln: parsed.annual_payment_pln,
+        related_party: parsed.related_party,
       });
 
       return {
-        status:  'ready',
+        status: 'ready',
         input,
         summary: parsed.summary ?? `Ready to analyse ${input.entity_name} (${input.country}).`,
       };
     } catch (err) {
       // Validation caught a bad field — ask for clarification
       return {
-        status:   'need_more',
+        status: 'need_more',
         question: `I need a small correction: ${String(err)} Could you clarify?`,
       };
     }

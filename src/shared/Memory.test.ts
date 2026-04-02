@@ -36,7 +36,7 @@ test('getFindings returns a copy — mutations do not affect internal state', ()
   memory.recordFinding('key', 'value');
 
   const findings = memory.getFindings();
-  findings['key'] = 'tampered';  // mutate the returned copy
+  findings['key'] = 'tampered'; // mutate the returned copy
 
   // Internal state should be unchanged
   assert.equal(memory.getFindings()['key'], 'value');
@@ -54,16 +54,16 @@ test('buildFindingsSummary includes all recorded findings', () => {
 
   const summary = memory.buildFindingsSummary();
   assert.ok(summary.includes('treaty_status'), 'should include treaty_status key');
-  assert.ok(summary.includes('confirmed'),     'should include treaty_status value');
-  assert.ok(summary.includes('wht_rate'),      'should include wht_rate key');
-  assert.ok(summary.includes('5%'),            'should include wht_rate value');
-  assert.ok(summary.includes('## Findings'),   'should include the section heading');
+  assert.ok(summary.includes('confirmed'), 'should include treaty_status value');
+  assert.ok(summary.includes('wht_rate'), 'should include wht_rate key');
+  assert.ok(summary.includes('5%'), 'should include wht_rate value');
+  assert.ok(summary.includes('## Findings'), 'should include the section heading');
 });
 
 test('recordFinding overwrites an existing key', () => {
   const memory = new Memory();
   memory.recordFinding('wht_rate', '15%');
-  memory.recordFinding('wht_rate', '5%');  // revised after checking shareholding
+  memory.recordFinding('wht_rate', '5%'); // revised after checking shareholding
 
   assert.equal(memory.getFindings()['wht_rate'], '5%');
 });

@@ -33,7 +33,7 @@ import { getRegistry, ReviewStatus } from './EntityRegistry';
 
 dotenv.config();
 
-const app  = express();
+const app = express();
 const PORT = process.env['PORT'] ?? 3000;
 
 app.use(express.json());
@@ -50,18 +50,18 @@ app.use(express.json());
 type SessionStatus = 'chatting' | 'confirmed' | 'interviewing' | 'running' | 'complete' | 'error';
 
 interface Session {
-  id:              string;
-  messages:        { role: 'user' | 'assistant'; content: string }[];
-  input?:          AgentInput;
-  status:          SessionStatus;
-  report?:         WhtReport;
-  error?:          string;
+  id: string;
+  messages: { role: 'user' | 'assistant'; content: string }[];
+  input?: AgentInput;
+  status: SessionStatus;
+  report?: WhtReport;
+  error?: string;
   // Phase 10: substance interview state
-  interviewer?:    SubstanceInterviewer;
+  interviewer?: SubstanceInterviewer;
   interviewState?: InterviewState;
-  ddqText?:        string;
+  ddqText?: string;
   // SSE: we keep Response objects open and write events to them
-  sseClients:      Response[];
+  sseClients: Response[];
 }
 
 // In-memory session store — good enough for single-server use
@@ -113,8 +113,8 @@ app.post('/session', (_req: Request, res: Response) => {
   const id: string = crypto.randomUUID();
   const session: Session = {
     id,
-    messages:   [],
-    status:     'chatting',
+    messages: [],
+    status: 'chatting',
     sseClients: [],
   };
   sessions.set(id, session);
@@ -132,7 +132,9 @@ app.post('/session/:id/message', async (req: Request, res: Response) => {
   if (!session) return;
 
   if (session.status !== 'chatting' && session.status !== 'interviewing') {
-    res.status(400).json({ error: `Session is in ${session.status} state — messages not accepted` });
+    res
+      .status(400)
+      .json({ error: `Session is in ${session.status} state — messages not accepted` });
     return;
   }
 
@@ -188,14 +190,21 @@ app.post('/session/:id/message', async (req: Request, res: Response) => {
         // getRegistry() returns the server-lifetime singleton so all sessions
         // share the same registry file (data/registry.json).
         getRegistry().save(report, outputPath);
-        broadcastEvent(session, { type: 'report_saved', message: 'Analysis complete.', data: { report } });
+        broadcastEvent(session, {
+          type: 'report_saved',
+          message: 'Analysis complete.',
+          data: { report },
+        });
         for (const client of session.sseClients) client.end();
         session.sseClients = [];
       })
       .catch((err: unknown) => {
         session.status = 'error';
-        session.error  = String(err);
-        broadcastEvent(session, { type: 'error' as AgentEvent['type'], message: `Analysis failed: ${String(err)}` });
+        session.error = String(err);
+        broadcastEvent(session, {
+          type: 'error' as AgentEvent['type'],
+          message: `Analysis failed: ${String(err)}`,
+        });
         for (const client of session.sseClients) client.end();
         session.sseClients = [];
       });
@@ -253,7 +262,7 @@ app.post('/session/:id/confirm', (req: Request, res: Response) => {
   session.status = 'interviewing';
 
   const iv = new SubstanceInterviewer();
-  session.interviewer    = iv;
+  session.interviewer = iv;
   session.interviewState = iv.start(
     session.input.entity_name,
     session.input.country,
@@ -281,7 +290,7 @@ app.get('/session/:id/stream', (req: Request, res: Response) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.flushHeaders();  // Send headers immediately so the browser starts reading
+  res.flushHeaders(); // Send headers immediately so the browser starts reading
 
   // If analysis already completed before the browser connected, send the
   // report immediately and close — this handles slow-connect edge cases.
@@ -302,7 +311,7 @@ app.get('/session/:id/stream', (req: Request, res: Response) => {
   // When the browser closes the connection (user navigates away), remove it
   // from the list so we do not try to write to a closed socket.
   req.on('close', () => {
-    session.sseClients = session.sseClients.filter(c => c !== res);
+    session.sseClients = session.sseClients.filter((c) => c !== res);
   });
 });
 
@@ -342,12 +351,8 @@ app.get('/registry', (_req: Request, res: Response) => {
 // Returns { entry: RegistryEntry } or 404.
 // Used by the review drawer to refresh the entry after an update.
 app.get('/registry/entry', (req: Request, res: Response) => {
-  const entityName = typeof req.query['entity_name'] === 'string'
-    ? req.query['entity_name']
-    : '';
-  const country = typeof req.query['country'] === 'string'
-    ? req.query['country']
-    : '';
+  const entityName = typeof req.query['entity_name'] === 'string' ? req.query['entity_name'] : '';
+  const country = typeof req.query['country'] === 'string' ? req.query['country'] : '';
 
   if (!entityName || !country) {
     res.status(400).json({ error: 'entity_name and country query params are required' });
@@ -374,8 +379,8 @@ app.post('/registry/review', (req: Request, res: Response) => {
   const body = req.body as Record<string, unknown>;
 
   const entityName = typeof body['entity_name'] === 'string' ? body['entity_name'].trim() : '';
-  const country    = typeof body['country']     === 'string' ? body['country'].trim()     : '';
-  const status     = typeof body['status']      === 'string' ? body['status']             : '';
+  const country = typeof body['country'] === 'string' ? body['country'].trim() : '';
+  const status = typeof body['status'] === 'string' ? body['status'] : '';
 
   if (!entityName || !country) {
     res.status(400).json({ error: 'entity_name and country are required' });
@@ -388,15 +393,15 @@ app.post('/registry/review', (req: Request, res: Response) => {
     return;
   }
 
-  const reviewerNote = typeof body['note']     === 'string' ? body['note'].trim()     : undefined;
-  const reviewedBy   = typeof body['reviewer'] === 'string' ? body['reviewer'].trim() : undefined;
+  const reviewerNote = typeof body['note'] === 'string' ? body['note'].trim() : undefined;
+  const reviewedBy = typeof body['reviewer'] === 'string' ? body['reviewer'].trim() : undefined;
 
   const updated = getRegistry().updateReviewStatus(
     entityName,
     country,
     status as ReviewStatus,
-    reviewerNote || undefined,  // treat empty string as "not provided"
-    reviewedBy   || undefined
+    reviewerNote || undefined, // treat empty string as "not provided"
+    reviewedBy || undefined
   );
 
   if (!updated) {

@@ -1,7 +1,14 @@
-import * as fs   from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { Chunk, ChunkVector, CitedChunk, Manifest, RetrieveOptions, TaxonomyConcept } from './types';
+import {
+  Chunk,
+  ChunkVector,
+  CitedChunk,
+  Manifest,
+  RetrieveOptions,
+  TaxonomyConcept,
+} from './types';
 import { Chunker } from './Chunker';
 import { Embedder, EmbedFunction, makeOpenAIEmbedFn } from './Embedder';
 import { Retriever } from './Retriever';
@@ -37,14 +44,14 @@ import { Retriever } from './Retriever';
 // ─────────────────────────────────────────────────────────────
 
 export interface RagServiceConfig {
-  knowledgeBasePath: string;  // absolute path to data/knowledge_base/
-  taxonomyPath:      string;  // absolute path to data/tax_taxonomy.json
-  embedFn?:          EmbedFunction;  // injectable — defaults to OpenAI
-  model?:            string;  // embedding model — defaults to text-embedding-3-small
+  knowledgeBasePath: string; // absolute path to data/knowledge_base/
+  taxonomyPath: string; // absolute path to data/tax_taxonomy.json
+  embedFn?: EmbedFunction; // injectable — defaults to OpenAI
+  model?: string; // embedding model — defaults to text-embedding-3-small
 }
 
 export interface RagBuildConfig extends RagServiceConfig {
-  embedFn: EmbedFunction;  // required for build (not optional)
+  embedFn: EmbedFunction; // required for build (not optional)
 }
 
 // Minimal shape of data/tax_taxonomy.json that we need to parse.
@@ -55,36 +62,36 @@ interface TaxonomyFile {
 export class LegalRagService {
   private constructor(
     private readonly retriever: Retriever,
-    private readonly embedder:  Embedder,
-    private readonly taxonomy:  TaxonomyConcept[],
+    private readonly embedder: Embedder,
+    private readonly taxonomy: TaxonomyConcept[]
   ) {}
 
   // ── Factory: production (loads from disk) ─────────────────
 
   static fromDisk(config: RagServiceConfig): LegalRagService {
-    const chunksPath   = path.join(config.knowledgeBasePath, 'chunks', 'index.json');
-    const vectorsPath  = path.join(config.knowledgeBasePath, 'embeddings', 'vectors.json');
+    const chunksPath = path.join(config.knowledgeBasePath, 'chunks', 'index.json');
+    const vectorsPath = path.join(config.knowledgeBasePath, 'embeddings', 'vectors.json');
 
     if (!fs.existsSync(chunksPath)) {
       throw new Error(
         `Chunk index not found at ${chunksPath}. ` +
-        'Run "npm run rag:build" to build the knowledge base first.'
+          'Run "npm run rag:build" to build the knowledge base first.'
       );
     }
     if (!fs.existsSync(vectorsPath)) {
       throw new Error(
         `Embedding vectors not found at ${vectorsPath}. ` +
-        'Run "npm run rag:build" to build the knowledge base first.'
+          'Run "npm run rag:build" to build the knowledge base first.'
       );
     }
 
-    const chunks:  Chunk[]       = JSON.parse(fs.readFileSync(chunksPath,  'utf-8'));
+    const chunks: Chunk[] = JSON.parse(fs.readFileSync(chunksPath, 'utf-8'));
     const vectors: ChunkVector[] = JSON.parse(fs.readFileSync(vectorsPath, 'utf-8'));
     const taxonomy = LegalRagService.loadTaxonomy(config.taxonomyPath);
 
     const embedFn = config.embedFn ?? LegalRagService.makeDefaultEmbedFn(config.model);
-    const embedder   = new Embedder(embedFn);
-    const retriever  = new Retriever(chunks, vectors);
+    const embedder = new Embedder(embedFn);
+    const retriever = new Retriever(chunks, vectors);
 
     return new LegalRagService(retriever, embedder, taxonomy);
   }
@@ -92,13 +99,13 @@ export class LegalRagService {
   // ── Factory: test (accepts in-memory data) ────────────────
 
   static fromData(options: {
-    chunks:   Chunk[];
-    vectors:  ChunkVector[];
+    chunks: Chunk[];
+    vectors: ChunkVector[];
     taxonomy: TaxonomyConcept[];
-    embedFn:  EmbedFunction;
+    embedFn: EmbedFunction;
   }): LegalRagService {
     const retriever = new Retriever(options.chunks, options.vectors);
-    const embedder  = new Embedder(options.embedFn);
+    const embedder = new Embedder(options.embedFn);
     return new LegalRagService(retriever, embedder, options.taxonomy);
   }
 
@@ -135,11 +142,11 @@ export class LegalRagService {
   //   {knowledgeBasePath}/embeddings/vectors.json — all chunk vectors
   //   {knowledgeBasePath}/embeddings/manifest.json — build metadata
   static async build(config: RagBuildConfig): Promise<void> {
-    const sourcesDir   = path.join(config.knowledgeBasePath, 'sources');
-    const chunksDir    = path.join(config.knowledgeBasePath, 'chunks');
+    const sourcesDir = path.join(config.knowledgeBasePath, 'sources');
+    const chunksDir = path.join(config.knowledgeBasePath, 'chunks');
     const embeddingDir = path.join(config.knowledgeBasePath, 'embeddings');
 
-    fs.mkdirSync(chunksDir,    { recursive: true });
+    fs.mkdirSync(chunksDir, { recursive: true });
     fs.mkdirSync(embeddingDir, { recursive: true });
 
     // Load existing manifest (or start fresh)
@@ -150,18 +157,22 @@ export class LegalRagService {
 
     const model = config.model ?? 'text-embedding-3-small';
     const embedder = new Embedder(config.embedFn);
-    const chunker  = new Chunker();
+    const chunker = new Chunker();
 
     // Load existing chunks and vectors (for unchanged sources)
-    const chunksPath  = path.join(chunksDir,    'index.json');
+    const chunksPath = path.join(chunksDir, 'index.json');
     const vectorsPath = path.join(embeddingDir, 'vectors.json');
-    const existingChunks:  Chunk[]       = fs.existsSync(chunksPath)  ? JSON.parse(fs.readFileSync(chunksPath,  'utf-8')) : [];
-    const existingVectors: ChunkVector[] = fs.existsSync(vectorsPath) ? JSON.parse(fs.readFileSync(vectorsPath, 'utf-8')) : [];
+    const existingChunks: Chunk[] = fs.existsSync(chunksPath)
+      ? JSON.parse(fs.readFileSync(chunksPath, 'utf-8'))
+      : [];
+    const existingVectors: ChunkVector[] = fs.existsSync(vectorsPath)
+      ? JSON.parse(fs.readFileSync(vectorsPath, 'utf-8'))
+      : [];
 
     // Index existing data by source_id for quick lookup
-    const chunksBySource  = new Map<string, Chunk[]>();
-    const vectorsByChunk  = new Map<string, ChunkVector>();
-    for (const c of existingChunks)  {
+    const chunksBySource = new Map<string, Chunk[]>();
+    const vectorsByChunk = new Map<string, ChunkVector>();
+    for (const c of existingChunks) {
       const arr = chunksBySource.get(c.source_id) ?? [];
       arr.push(c);
       chunksBySource.set(c.source_id, arr);
@@ -169,8 +180,9 @@ export class LegalRagService {
     for (const v of existingVectors) vectorsByChunk.set(v.chunk_id, v);
 
     // Discover source files
-    const sourceFiles = fs.readdirSync(sourcesDir)
-      .filter(f => f.endsWith('.md') && !f.startsWith('TEMPLATE'));
+    const sourceFiles = fs
+      .readdirSync(sourcesDir)
+      .filter((f) => f.endsWith('.md') && !f.startsWith('TEMPLATE'));
 
     if (sourceFiles.length === 0) {
       console.log('No source files found in', sourcesDir);
@@ -178,14 +190,14 @@ export class LegalRagService {
       return;
     }
 
-    const allChunks:  Chunk[]       = [];
+    const allChunks: Chunk[] = [];
     const allVectors: ChunkVector[] = [];
-    const newHashes:  Record<string, string> = {};
+    const newHashes: Record<string, string> = {};
 
     for (const file of sourceFiles) {
       const filePath = path.join(sourcesDir, file);
-      const content  = fs.readFileSync(filePath, 'utf-8');
-      const hash     = crypto.createHash('sha256').update(content).digest('hex');
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const hash = crypto.createHash('sha256').update(content).digest('hex');
 
       // Parse source_id from frontmatter to use as the key
       let sourceId: string;
@@ -199,14 +211,14 @@ export class LegalRagService {
       newHashes[sourceId] = hash;
 
       const previousHash = existingManifest.source_hashes[sourceId];
-      const hasChanged   = previousHash !== hash;
+      const hasChanged = previousHash !== hash;
       const modelChanged = existingManifest.model !== model;
 
       if (!hasChanged && !modelChanged) {
         // Reuse existing chunks and vectors for this source
-        const reusedChunks   = chunksBySource.get(sourceId) ?? [];
-        const reusedVectors  = reusedChunks
-          .map(c => vectorsByChunk.get(c.chunk_id))
+        const reusedChunks = chunksBySource.get(sourceId) ?? [];
+        const reusedVectors = reusedChunks
+          .map((c) => vectorsByChunk.get(c.chunk_id))
           .filter((v): v is ChunkVector => v !== undefined);
 
         allChunks.push(...reusedChunks);
@@ -216,7 +228,9 @@ export class LegalRagService {
       }
 
       // Re-chunk and re-embed this source
-      console.log(`  [indexing]  ${sourceId} (${hasChanged ? 'content changed' : 'model changed'})`);
+      console.log(
+        `  [indexing]  ${sourceId} (${hasChanged ? 'content changed' : 'model changed'})`
+      );
       let chunks: Chunk[];
       try {
         chunks = chunker.chunk(content);
@@ -234,16 +248,18 @@ export class LegalRagService {
 
     // Write outputs
     const manifest: Manifest = {
-      indexed_at:    new Date().toISOString(),
+      indexed_at: new Date().toISOString(),
       model,
       source_hashes: newHashes,
     };
 
-    fs.writeFileSync(chunksPath,   JSON.stringify(allChunks,   null, 2), 'utf-8');
-    fs.writeFileSync(vectorsPath,  JSON.stringify(allVectors,  null, 2), 'utf-8');
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest,    null, 2), 'utf-8');
+    fs.writeFileSync(chunksPath, JSON.stringify(allChunks, null, 2), 'utf-8');
+    fs.writeFileSync(vectorsPath, JSON.stringify(allVectors, null, 2), 'utf-8');
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
 
-    console.log(`\nKnowledge base built: ${allChunks.length} chunks across ${sourceFiles.length} source(s).`);
+    console.log(
+      `\nKnowledge base built: ${allChunks.length} chunks across ${sourceFiles.length} source(s).`
+    );
   }
 
   // ── Private helpers ────────────────────────────────────────
@@ -254,8 +270,8 @@ export class LegalRagService {
   private expandQuery(query: string, conceptIds: string[]): string {
     if (conceptIds.length === 0) return query;
 
-    const keywords = conceptIds.flatMap(id => {
-      const concept = this.taxonomy.find(c => c.id === id);
+    const keywords = conceptIds.flatMap((id) => {
+      const concept = this.taxonomy.find((c) => c.id === id);
       return concept?.rag_keywords ?? [];
     });
 
@@ -272,14 +288,14 @@ export class LegalRagService {
       return [];
     }
     const raw = JSON.parse(fs.readFileSync(taxonomyPath, 'utf-8')) as TaxonomyFile;
-    return raw.concepts.map(c => ({ id: c.id, rag_keywords: c.rag_keywords }));
+    return raw.concepts.map((c) => ({ id: c.id, rag_keywords: c.rag_keywords }));
   }
 
   private static makeDefaultEmbedFn(model?: string): EmbedFunction {
     // Import here to avoid requiring OpenAI in test environments
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const OpenAI = require('openai').default as typeof import('openai').default;
-    const client = new OpenAI();  // reads OPENAI_API_KEY from env
+    const client = new OpenAI(); // reads OPENAI_API_KEY from env
     return makeOpenAIEmbedFn(client, model ?? 'text-embedding-3-small');
   }
 }

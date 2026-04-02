@@ -50,7 +50,7 @@ export const ToolFactory = {
 export interface ToolCall {
   id: string;
   name: string;
-  arguments: Record<string, unknown>;   // parsed — ready to pass to your function
+  arguments: Record<string, unknown>; // parsed — ready to pass to your function
 }
 
 // When the model requests tool calls, we return:
@@ -70,10 +70,8 @@ export type LLMResponse =
 // all four cases.
 // ─────────────────────────────────────────────────────────────────────────────
 
-function toOpenAIMessages(
-  messages: Message[]
-): OpenAI.Chat.ChatCompletionMessageParam[] {
-  return messages.map(msg => {
+function toOpenAIMessages(messages: Message[]): OpenAI.Chat.ChatCompletionMessageParam[] {
+  return messages.map((msg) => {
     // tool: must include tool_call_id at the top level
     if (msg.role === 'tool') {
       if (!msg.tool_call_id) {
@@ -92,7 +90,7 @@ function toOpenAIMessages(
       return {
         role: 'assistant' as const,
         content: msg.content || null,
-        tool_calls: msg.storedToolCalls,   // StoredToolCall matches the API shape exactly
+        tool_calls: msg.storedToolCalls, // StoredToolCall matches the API shape exactly
       };
     }
 
@@ -134,15 +132,11 @@ export class LLM {
   // the old single-model setup.
 
   static fast(): LLM {
-    return new LLM(
-      process.env.OPENAI_MODEL_FAST ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini'
-    );
+    return new LLM(process.env.OPENAI_MODEL_FAST ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini');
   }
 
   static powerful(): LLM {
-    return new LLM(
-      process.env.OPENAI_MODEL_POWERFUL ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini'
-    );
+    return new LLM(process.env.OPENAI_MODEL_POWERFUL ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini');
   }
 
   // Exposes the active model name so the agent loop can log which tier is in use.
@@ -161,7 +155,7 @@ export class LLM {
 
   // Module 2: generate with tools
   async generateWithTools(messages: Message[], tools: Tool[]): Promise<LLMResponse> {
-    const openAiTools: OpenAI.Chat.ChatCompletionTool[] = tools.map(tool => ({
+    const openAiTools: OpenAI.Chat.ChatCompletionTool[] = tools.map((tool) => ({
       type: 'function' as const,
       function: {
         name: tool.name,
@@ -199,17 +193,14 @@ export class LLM {
           type: 'function',
           function: {
             name: tc.function.name,
-            arguments: tc.function.arguments,   // keep as raw JSON string
+            arguments: tc.function.arguments, // keep as raw JSON string
           },
         });
       }
 
       // Build the assistant message now, so callers just push it without
       // having to know about StoredToolCall at all
-      const assistantMessage = Message.assistantWithToolCalls(
-        message.content ?? '',
-        stored
-      );
+      const assistantMessage = Message.assistantWithToolCalls(message.content ?? '', stored);
 
       return { type: 'tool_calls', calls, assistantMessage };
     }

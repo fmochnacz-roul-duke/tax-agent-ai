@@ -27,15 +27,15 @@ import { LegalRagService } from '../rag';
 // read `entry.rates.dividnd` (typo), the compiler will error immediately.
 
 interface DividendRate {
-  reduced_rate: number;        // WHT rate when shareholding threshold is met
-  reduced_threshold: number;   // minimum shareholding % required (0 = flat rate)
-  standard_rate: number;       // WHT rate when threshold not met
-  treaty_article: string;      // e.g. "Art. 10(2) Poland–Germany DTC"
-  verified: boolean;           // false until confirmed against treaty PDF
-  note?: string;               // any caveat worth surfacing to the agent
-  verified_at?: string;        // ISO date the rate was last verified (e.g. "2026-04-02")
+  reduced_rate: number; // WHT rate when shareholding threshold is met
+  reduced_threshold: number; // minimum shareholding % required (0 = flat rate)
+  standard_rate: number; // WHT rate when threshold not met
+  treaty_article: string; // e.g. "Art. 10(2) Poland–Germany DTC"
+  verified: boolean; // false until confirmed against treaty PDF
+  note?: string; // any caveat worth surfacing to the agent
+  verified_at?: string; // ISO date the rate was last verified (e.g. "2026-04-02")
   verified_sources?: string[]; // sources used during verification
-  verification_note?: string;  // caveats or discrepancies found during verification
+  verification_note?: string; // caveats or discrepancies found during verification
 }
 
 interface FlatRate {
@@ -43,13 +43,13 @@ interface FlatRate {
   treaty_article: string;
   verified: boolean;
   note?: string;
-  verified_at?: string;        // ISO date the rate was last verified
+  verified_at?: string; // ISO date the rate was last verified
   verified_sources?: string[]; // sources used during verification
-  verification_note?: string;  // caveats or discrepancies found during verification
+  verification_note?: string; // caveats or discrepancies found during verification
 }
 
 interface TreatyRates {
-  dividend: DividendRate | null;  // null = not yet researched
+  dividend: DividendRate | null; // null = not yet researched
   interest: FlatRate | null;
   royalty: FlatRate | null;
 }
@@ -57,9 +57,9 @@ interface TreatyRates {
 interface TreatyEntry {
   treaty_in_force: boolean;
   treaty_name: string;
-  dz_u: string;                          // Polish Official Journal reference
+  dz_u: string; // Polish Official Journal reference
   mli_ppt_applies: 'YES' | 'NO' | 'VERIFY';
-  mli_flags: string[];                   // e.g. ["EXCLUDED_BY_POLAND", "NOT_RATIFIED"]
+  mli_flags: string[]; // e.g. ["EXCLUDED_BY_POLAND", "NOT_RATIFIED"]
   mli_note?: string;
   rates: TreatyRates;
 }
@@ -74,17 +74,17 @@ type TreatyDatabase = Record<string, TreatyEntry>;
 // normalise() converts everything to the key used in treaties.json.
 
 const ALIASES: Record<string, string> = {
-  'uk':                   'united kingdom',
-  'great britain':        'united kingdom',
-  'england':              'united kingdom',
-  'us':                   'united states',
-  'usa':                  'united states',
-  'america':              'united states',
+  uk: 'united kingdom',
+  'great britain': 'united kingdom',
+  england: 'united kingdom',
+  us: 'united states',
+  usa: 'united states',
+  america: 'united states',
   'united states of america': 'united states',
-  'uae':                  'united arab emirates',
-  'czechia':              'czech republic',
-  'holland':              'netherlands',
-  'the netherlands':      'netherlands',
+  uae: 'united arab emirates',
+  czechia: 'czech republic',
+  holland: 'netherlands',
+  'the netherlands': 'netherlands',
 };
 
 function normalise(country: string): string {
@@ -112,70 +112,70 @@ function normalise(country: string): string {
 // The four archetypal entity profiles the simulation recognises.
 // TypeScript string literal union type: only these exact strings are allowed.
 type EntityType =
-  | 'large_operating_company'   // full business functions, own IP/assets, many employees
-  | 'ip_holdco'                  // dedicated IP holding with DEMPE control
-  | 'holding_company'            // intermediate holding; lower substance threshold applies
-  | 'shell_company'              // minimal substance, high conduit risk
-  | 'unknown';                   // entity not in any known profile
+  | 'large_operating_company' // full business functions, own IP/assets, many employees
+  | 'ip_holdco' // dedicated IP holding with DEMPE control
+  | 'holding_company' // intermediate holding; lower substance threshold applies
+  | 'shell_company' // minimal substance, high conduit risk
+  | 'unknown'; // entity not in any known profile
 
-type SubstanceTier    = 'STRONG' | 'ADEQUATE' | 'WEAK' | 'CONDUIT';
-type BoConditionResult = 'PASS'  | 'FAIL'     | 'UNCERTAIN';
-type DataConfidence   = 'HIGH'   | 'MEDIUM'   | 'LOW';
+type SubstanceTier = 'STRONG' | 'ADEQUATE' | 'WEAK' | 'CONDUIT';
+type BoConditionResult = 'PASS' | 'FAIL' | 'UNCERTAIN';
+type DataConfidence = 'HIGH' | 'MEDIUM' | 'LOW';
 
 // A single substance factor (universal criteria per MF Objaśnienia §2.3).
 // 'present: true' means the factor supports BO status.
 interface SubstanceFactor {
   present: boolean;
-  note:    string;
+  note: string;
 }
 
 // EmployeeFactor extends SubstanceFactor — it has all fields from SubstanceFactor
 // PLUS the additional 'count' field. This is TypeScript's interface inheritance.
 interface EmployeeFactor extends SubstanceFactor {
-  count: number | null;   // null when count is unknown
+  count: number | null; // null when count is unknown
 }
 
 // Physical office factor — adds the ownership flag
 interface PhysicalOfficeFactor {
-  present:      boolean;
+  present: boolean;
   own_premises: boolean;
-  note:         string;
+  note: string;
 }
 
 // A conduit red flag from MF Objaśnienia §2.2.1
 interface ConduitIndicator {
-  present:  boolean;
+  present: boolean;
   evidence: string;
 }
 
 // One of the three BO conditions — result and supporting reasoning
 interface BoCondition {
   result: BoConditionResult;
-  note:   string;
+  note: string;
 }
 
 // Full structured output of checkEntitySubstance
 interface SubstanceResult {
-  entity:      string;
-  country:     string;
+  entity: string;
+  country: string;
   entity_type: EntityType;
 
   // MF Objaśnienia §2.3 — universal substance criteria
   substance_factors: {
-    employees:               EmployeeFactor;
-    physical_office:         PhysicalOfficeFactor;
+    employees: EmployeeFactor;
+    physical_office: PhysicalOfficeFactor;
     management_independence: SubstanceFactor;
-    own_assets:              SubstanceFactor;
-    operating_costs:         SubstanceFactor;
-    own_capital_financing:   SubstanceFactor;
+    own_assets: SubstanceFactor;
+    operating_costs: SubstanceFactor;
+    own_capital_financing: SubstanceFactor;
   };
 
   // MF Objaśnienia §2.2.1 — conduit red flags
   conduit_indicators: {
     pass_through_obligation: ConduitIndicator;
-    rapid_forwarding:        ConduitIndicator;
-    nominal_margin:          ConduitIndicator;
-    capital_insufficiency:   ConduitIndicator;
+    rapid_forwarding: ConduitIndicator;
+    nominal_margin: ConduitIndicator;
+    capital_insufficiency: ConduitIndicator;
   };
 
   // Aggregate risk level
@@ -183,27 +183,27 @@ interface SubstanceResult {
 
   // Art. 4a pkt 29 CIT — three-condition BO test (preliminary, based on simulated data)
   bo_preliminary: {
-    condition_1_own_benefit:      BoCondition;
-    condition_2_not_conduit:      BoCondition;
+    condition_1_own_benefit: BoCondition;
+    condition_2_not_conduit: BoCondition;
     condition_3_genuine_activity: BoCondition;
-    overall:                      BoConditionResult;
-    legal_basis:                  string;
+    overall: BoConditionResult;
+    legal_basis: string;
   };
 
-  confidence:      DataConfidence;
+  confidence: DataConfidence;
   confidence_note: string;
-  source:          string;
+  source: string;
 }
 
 // ── WhtEnvironment ────────────────────────────────────────────────────────────
 
 export interface WhtEnvironmentOptions {
-  simulate:       boolean;     // true = use hard-coded data; false = load from treaties.json
-  ddqServiceUrl?: string;      // URL of the Python DDQ extraction service, e.g. "http://localhost:8000"
-  ddqText?:       string;      // pre-loaded DDQ document content forwarded to the service
+  simulate: boolean; // true = use hard-coded data; false = load from treaties.json
+  ddqServiceUrl?: string; // URL of the Python DDQ extraction service, e.g. "http://localhost:8000"
+  ddqText?: string; // pre-loaded DDQ document content forwarded to the service
   // Phase 9: injectable for tests — pass LegalRagService.fromData() to avoid disk/API calls.
   // When omitted in live mode, the service is initialised from data/knowledge_base/ automatically.
-  ragService?:    LegalRagService;
+  ragService?: LegalRagService;
 }
 
 export class WhtEnvironment {
@@ -212,16 +212,16 @@ export class WhtEnvironment {
   private db: TreatyDatabase = {};
   // Phase 6: DDQ service connection — both must be set to enable live DDQ mode
   private ddqServiceUrl: string | undefined;
-  private ddqText:       string | undefined;
+  private ddqText: string | undefined;
   // Phase 7: FactChecker agent — verifies substance claims against public records
   private factChecker: FactCheckerAgent;
   // Phase 9: Legal RAG service — retrieves relevant chunks from the knowledge base
   private ragService: LegalRagService | undefined;
 
   constructor(options: WhtEnvironmentOptions) {
-    this.simulate      = options.simulate;
+    this.simulate = options.simulate;
     this.ddqServiceUrl = options.ddqServiceUrl;
-    this.ddqText       = options.ddqText;
+    this.ddqText = options.ddqText;
     // Phase 7 — FactCheckerAgent shares the same simulate flag.
     // When simulate:true (tests), no Gemini API calls are made.
     // When simulate:false and GEMINI_API_KEY is absent, the agent self-degrades
@@ -242,9 +242,12 @@ export class WhtEnvironment {
       this.ragService = options.ragService;
     } else if (!this.simulate) {
       try {
-        const kbPath  = path.join(__dirname, '..', '..', 'data', 'knowledge_base');
+        const kbPath = path.join(__dirname, '..', '..', 'data', 'knowledge_base');
         const taxPath = path.join(__dirname, '..', '..', 'data', 'tax_taxonomy.json');
-        this.ragService = LegalRagService.fromDisk({ knowledgeBasePath: kbPath, taxonomyPath: taxPath });
+        this.ragService = LegalRagService.fromDisk({
+          knowledgeBasePath: kbPath,
+          taxonomyPath: taxPath,
+        });
       } catch {
         // Knowledge base not yet built — degrade gracefully.
         this.ragService = undefined;
@@ -264,7 +267,8 @@ export class WhtEnvironment {
 
       const db: TreatyDatabase = {};
       for (const [key, value] of Object.entries(parsed)) {
-        if (key !== '_meta') {           // _meta is documentation, not a treaty
+        if (key !== '_meta') {
+          // _meta is documentation, not a treaty
           db[key] = value as TreatyEntry;
         }
       }
@@ -304,12 +308,12 @@ export class WhtEnvironment {
     }
 
     return JSON.stringify({
-      treaty_in_force:  entry.treaty_in_force,
-      treaty_name:      entry.treaty_name,
-      dz_u:             entry.dz_u,
-      mli_ppt_applies:  entry.mli_ppt_applies,
-      mli_flags:        entry.mli_flags,
-      mli_note:         entry.mli_note ?? null,
+      treaty_in_force: entry.treaty_in_force,
+      treaty_name: entry.treaty_name,
+      dz_u: entry.dz_u,
+      mli_ppt_applies: entry.mli_ppt_applies,
+      mli_flags: entry.mli_flags,
+      mli_note: entry.mli_note ?? null,
       source: 'data/treaties.json — MoF treaty list + OECD MLI positions',
     });
   }
@@ -346,9 +350,10 @@ export class WhtEnvironment {
         const rate = shareholdingPercentage >= 10 ? 5 : 15;
         return JSON.stringify({
           treaty_rate_percent: rate,
-          condition: shareholdingPercentage >= 10
-            ? 'Reduced rate: beneficial owner holds ≥10% of capital'
-            : 'Standard rate applies (shareholding below 10%)',
+          condition:
+            shareholdingPercentage >= 10
+              ? 'Reduced rate: beneficial owner holds ≥10% of capital'
+              : 'Standard rate applies (shareholding below 10%)',
           domestic_rate_percent: 19,
           treaty_article: 'Art. 10(2) Poland–Luxembourg DTC',
           source: 'Simulated — to be replaced with OECD treaty database',
@@ -398,10 +403,11 @@ export class WhtEnvironment {
 
       // When reduced_threshold === 0 the treaty has a flat rate (no shareholding condition).
       // Otherwise, apply the reduced rate only if the holding meets or exceeds the threshold.
-      const qualifies = div.reduced_threshold > 0 && shareholdingPercentage >= div.reduced_threshold;
-      const isFlat    = div.reduced_threshold === 0;
+      const qualifies =
+        div.reduced_threshold > 0 && shareholdingPercentage >= div.reduced_threshold;
+      const isFlat = div.reduced_threshold === 0;
 
-      const rate = (isFlat || qualifies) ? div.reduced_rate : div.standard_rate;
+      const rate = isFlat || qualifies ? div.reduced_rate : div.standard_rate;
       const condition = isFlat
         ? 'Flat rate — no shareholding threshold in this treaty'
         : qualifies
@@ -409,11 +415,11 @@ export class WhtEnvironment {
           : `Standard rate applies (shareholding ${shareholdingPercentage}% is below the ${div.reduced_threshold}% threshold)`;
 
       return JSON.stringify({
-        treaty_rate_percent:  rate,
+        treaty_rate_percent: rate,
         condition,
         domestic_rate_percent: 19,
-        treaty_article:       div.treaty_article,
-        verified:             div.verified,
+        treaty_article: div.treaty_article,
+        verified: div.verified,
         ...(div.note !== undefined ? { verification_note: div.note } : {}),
         source: 'data/treaties.json',
       });
@@ -427,11 +433,11 @@ export class WhtEnvironment {
         });
       }
       return JSON.stringify({
-        treaty_rate_percent:  interest.rate,
-        condition:            'Beneficial owner test must be met',
+        treaty_rate_percent: interest.rate,
+        condition: 'Beneficial owner test must be met',
         domestic_rate_percent: 20,
-        treaty_article:       interest.treaty_article,
-        verified:             interest.verified,
+        treaty_article: interest.treaty_article,
+        verified: interest.verified,
         ...(interest.note !== undefined ? { verification_note: interest.note } : {}),
         source: 'data/treaties.json',
       });
@@ -445,11 +451,11 @@ export class WhtEnvironment {
         });
       }
       return JSON.stringify({
-        treaty_rate_percent:  royalty.rate,
-        condition:            'Beneficial owner test must be met',
+        treaty_rate_percent: royalty.rate,
+        condition: 'Beneficial owner test must be met',
         domestic_rate_percent: 20,
-        treaty_article:       royalty.treaty_article,
-        verified:             royalty.verified,
+        treaty_article: royalty.treaty_article,
+        verified: royalty.verified,
         ...(royalty.note !== undefined ? { verification_note: royalty.note } : {}),
         source: 'data/treaties.json',
       });
@@ -481,12 +487,12 @@ export class WhtEnvironment {
     // ── Profile: Orange S.A. — large operating company ────────────────────────
     if (normalised === 'orange s.a.') {
       return {
-        entity:      entityName,
+        entity: entityName,
         country,
         entity_type: 'large_operating_company',
         substance_factors: {
           employees: {
-            count:   140000,
+            count: 140000,
             present: true,
             note:
               'Orange S.A. employs approximately 140,000 people worldwide. ' +
@@ -494,7 +500,7 @@ export class WhtEnvironment {
               'that control DEMPE functions globally.',
           },
           physical_office: {
-            present:      true,
+            present: true,
             own_premises: true,
             note:
               'HQ at 78 rue Olivier de Serres, Paris — own premises. ' +
@@ -529,26 +535,26 @@ export class WhtEnvironment {
         },
         conduit_indicators: {
           pass_through_obligation: {
-            present:  false,
+            present: false,
             evidence:
               'Orange S.A. is publicly listed — royalty income is recognised as revenue ' +
               'and deployed for general corporate purposes. No contractual or factual ' +
               'obligation to forward royalties to any single upstream entity identified.',
           },
           rapid_forwarding: {
-            present:  false,
+            present: false,
             evidence:
               'No evidence of systematic rapid forwarding of royalty receipts. ' +
               'Royalties form part of consolidated group revenue, not a pass-through stream.',
           },
           nominal_margin: {
-            present:  false,
+            present: false,
             evidence:
               'Orange S.A. generates material profit from its IP portfolio. ' +
               'Royalty income is one of several revenue streams, not a pure intermediary margin.',
           },
           capital_insufficiency: {
-            present:  false,
+            present: false,
             evidence:
               'Own equity capital base exceeds €25B. No dependence on Polish subsidiary ' +
               'royalties to meet any upstream obligation.',
@@ -576,13 +582,13 @@ export class WhtEnvironment {
               'independent management). DEMPE functions controlled centrally in France — character ' +
               'and scale of activity are proportionate to royalty income received.',
           },
-          overall:     'PASS',
+          overall: 'PASS',
           legal_basis:
             'Art. 4a pkt 29 CIT (Dz.U. 2025 poz. 278); ' +
             'MF Objaśnienia podatkowe z 3 lipca 2025 r. §2, §2.3; ' +
             'CJEU C-115/16 et al. (Danish cases).',
         },
-        confidence:      'LOW',
+        confidence: 'LOW',
         confidence_note:
           'Simulated profile based on publicly available information about Orange S.A. ' +
           'Real BO determination requires a formal Due Diligence Questionnaire (DDQ), ' +
@@ -594,12 +600,12 @@ export class WhtEnvironment {
     // ── Profile: Alpine Holdings S.A. — intermediate holding company ──────────
     if (normalised === 'alpine holdings s.a.') {
       return {
-        entity:      entityName,
+        entity: entityName,
         country,
         entity_type: 'holding_company',
         substance_factors: {
           employees: {
-            count:   2,
+            count: 2,
             present: false,
             note:
               '2 employees — borderline under MF Objaśnienia §2.3.1 lower holding company ' +
@@ -607,7 +613,7 @@ export class WhtEnvironment {
               'in investment management decisions.',
           },
           physical_office: {
-            present:      true,
+            present: true,
             own_premises: false,
             note:
               'Leased office in Luxembourg City — satisfies the physical presence criterion ' +
@@ -642,27 +648,27 @@ export class WhtEnvironment {
         },
         conduit_indicators: {
           pass_through_obligation: {
-            present:  true,
+            present: true,
             evidence:
               'Dividend income forwarded to German parent within 30 days of receipt — strong ' +
               'factual indicator of pass-through obligation per MF Objaśnienia §2.2.1 and ' +
               'OECD Commentary 2014 (dependent payment, not independent debt).',
           },
           rapid_forwarding: {
-            present:  true,
+            present: true,
             evidence:
               '30-day forwarding interval is rapid relative to the dividend payment cycle. ' +
               'Consistent with conduit characterisation per NSA II FSK 27/23 (DutchCo) and ' +
               'CJEU C-116/16, C-117/16 (Danish cases).',
           },
           nominal_margin: {
-            present:  true,
+            present: true,
             evidence:
               'Pure holding structure with income solely from dividends. ' +
               'No evidence of material profit retention after forwarding to German parent.',
           },
           capital_insufficiency: {
-            present:  false,
+            present: false,
             evidence:
               'Insufficient information to confirm or deny — capital structure data not available.',
           },
@@ -690,13 +696,13 @@ export class WhtEnvironment {
               'experienced, genuinely engaged personnel + appropriate office equipment required. ' +
               '2 employees + quarterly board + leased office is borderline; expertise not confirmed.',
           },
-          overall:     'FAIL',
+          overall: 'FAIL',
           legal_basis:
             'Art. 4a pkt 29 CIT (Dz.U. 2025 poz. 278); ' +
             'MF Objaśnienia podatkowe z 3 lipca 2025 r. §2.2.1, §2.3.1; ' +
             'NSA II FSK 27/23 (DutchCo, Nov 2023); CJEU C-116/16, C-117/16.',
         },
-        confidence:      'LOW',
+        confidence: 'LOW',
         confidence_note:
           'Simulated profile. FAIL on condition (ii) is based on reported 30-day dividend ' +
           'forwarding pattern. Real determination requires review of group contracts, ' +
@@ -711,52 +717,52 @@ export class WhtEnvironment {
     // The conservative default is CONDUIT — this ensures the agent flags the need
     // for real due diligence instead of silently accepting treaty benefits.
     return {
-      entity:      entityName,
+      entity: entityName,
       country,
       entity_type: 'unknown',
       substance_factors: {
         employees: {
-          count:   null,
+          count: null,
           present: false,
-          note:    'No employee data available for this entity in the simulation.',
+          note: 'No employee data available for this entity in the simulation.',
         },
         physical_office: {
-          present:      false,
+          present: false,
           own_premises: false,
-          note:         'No office or premises data available.',
+          note: 'No office or premises data available.',
         },
         management_independence: {
           present: false,
-          note:    'No management structure data available.',
+          note: 'No management structure data available.',
         },
         own_assets: {
           present: false,
-          note:    'No asset data available.',
+          note: 'No asset data available.',
         },
         operating_costs: {
           present: false,
-          note:    'No operating cost data available.',
+          note: 'No operating cost data available.',
         },
         own_capital_financing: {
           present: false,
-          note:    'No capital structure data available.',
+          note: 'No capital structure data available.',
         },
       },
       conduit_indicators: {
         pass_through_obligation: {
-          present:  false,
+          present: false,
           evidence: 'Unable to assess — no contract or payment flow data available.',
         },
         rapid_forwarding: {
-          present:  false,
+          present: false,
           evidence: 'Unable to assess — no payment timing data available.',
         },
         nominal_margin: {
-          present:  false,
+          present: false,
           evidence: 'Unable to assess — no financial data available.',
         },
         capital_insufficiency: {
-          present:  false,
+          present: false,
           evidence: 'Unable to assess — no capital structure data available.',
         },
       },
@@ -764,20 +770,21 @@ export class WhtEnvironment {
       bo_preliminary: {
         condition_1_own_benefit: {
           result: 'UNCERTAIN',
-          note:   'Cannot assess — no substance data available for this entity.',
+          note: 'Cannot assess — no substance data available for this entity.',
         },
         condition_2_not_conduit: {
           result: 'UNCERTAIN',
-          note:   'Cannot assess — no payment flow or contract data available.',
+          note: 'Cannot assess — no payment flow or contract data available.',
         },
         condition_3_genuine_activity: {
           result: 'UNCERTAIN',
-          note:   'Cannot assess — no business activity data available.',
+          note: 'Cannot assess — no business activity data available.',
         },
-        overall:     'UNCERTAIN',
-        legal_basis: 'Art. 4a pkt 29 CIT (Dz.U. 2025 poz. 278); MF Objaśnienia podatkowe z 3 lipca 2025 r. §2',
+        overall: 'UNCERTAIN',
+        legal_basis:
+          'Art. 4a pkt 29 CIT (Dz.U. 2025 poz. 278); MF Objaśnienia podatkowe z 3 lipca 2025 r. §2',
       },
-      confidence:      'LOW',
+      confidence: 'LOW',
       confidence_note:
         'No profile available for this entity. Conservative CONDUIT tier applied. ' +
         'Real substance assessment requires a formal Due Diligence Questionnaire (Phase 5).',
@@ -812,9 +819,9 @@ export class WhtEnvironment {
         // fetch is Node 18+ built-in — no extra dependency needed.
         // The Python service returns JSON matching the SubstanceResult shape.
         const response = await fetch(`${this.ddqServiceUrl}/substance`, {
-          method:  'POST',
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
+          body: JSON.stringify({
             entity_name: entityName,
             country,
             ddq_text: this.ddqText,
@@ -881,13 +888,13 @@ export class WhtEnvironment {
     if (!this.simulate && this.ddqServiceUrl !== undefined && this.ddqText !== undefined) {
       try {
         const response = await fetch(`${this.ddqServiceUrl}/dempe`, {
-          method:  'POST',
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
+          body: JSON.stringify({
             entity_name: entityName,
             country,
-            ip_type:     ipType,
-            ddq_text:    this.ddqText,
+            ip_type: ipType,
+            ddq_text: this.ddqText,
           }),
         });
         if (!response.ok) {
@@ -902,15 +909,20 @@ export class WhtEnvironment {
     }
 
     return JSON.stringify({
-      entity:   entityName,
-      country:  country,
-      ip_type:  ipType,
+      entity: entityName,
+      country: country,
+      ip_type: ipType,
       dempe_functions: {
-        development:  'Entity directs IP development strategy and controls R&D investment decisions at group level',
-        enhancement:  'Entity manages global brand/technology enhancement; local entities implement under central governance',
-        maintenance:  'Entity holds IP registrations; maintenance budget and renewal decisions made centrally',
-        protection:   'Entity enforces IP rights; trademark and patent litigation managed by group legal team',
-        exploitation: 'Entity signs licence agreements with subsidiaries; sets royalty rates and licence terms centrally',
+        development:
+          'Entity directs IP development strategy and controls R&D investment decisions at group level',
+        enhancement:
+          'Entity manages global brand/technology enhancement; local entities implement under central governance',
+        maintenance:
+          'Entity holds IP registrations; maintenance budget and renewal decisions made centrally',
+        protection:
+          'Entity enforces IP rights; trademark and patent litigation managed by group legal team',
+        exploitation:
+          'Entity signs licence agreements with subsidiaries; sets royalty rates and licence terms centrally',
       },
       control_test:
         'PASS — entity makes all key DEMPE decisions; local subsidiaries are operational ' +
@@ -927,7 +939,8 @@ export class WhtEnvironment {
         'Treaties predating the 1977 OECD Model Convention may omit Art. 12 entirely. ' +
         'If absent or inapplicable, income falls to Art. 7 Business Profits — ' +
         'Poland has no withholding right unless the recipient has a Polish permanent establishment.',
-      source: 'Simulated DEMPE analysis — real analysis requires TP documentation and DDQ (Phase 6)',
+      source:
+        'Simulated DEMPE analysis — real analysis requires TP documentation and DDQ (Phase 6)',
     });
   }
 
@@ -977,51 +990,73 @@ export class WhtEnvironment {
 
     // EU-27 member states (as of 2026)
     const EU27 = new Set([
-      'austria', 'belgium', 'bulgaria', 'croatia', 'cyprus',
-      'czech republic', 'czechia', 'denmark', 'estonia', 'finland',
-      'france', 'germany', 'greece', 'hungary', 'ireland', 'italy',
-      'latvia', 'lithuania', 'luxembourg', 'malta', 'netherlands',
-      'poland', 'portugal', 'romania', 'slovakia', 'slovenia',
-      'spain', 'sweden',
+      'austria',
+      'belgium',
+      'bulgaria',
+      'croatia',
+      'cyprus',
+      'czech republic',
+      'czechia',
+      'denmark',
+      'estonia',
+      'finland',
+      'france',
+      'germany',
+      'greece',
+      'hungary',
+      'ireland',
+      'italy',
+      'latvia',
+      'lithuania',
+      'luxembourg',
+      'malta',
+      'netherlands',
+      'poland',
+      'portugal',
+      'romania',
+      'slovakia',
+      'slovenia',
+      'spain',
+      'sweden',
     ]);
 
     const country = residenceCountry.toLowerCase();
-    const isEU             = EU27.has(country);
-    const typeIsCovered    = incomeType === 'interest' || incomeType === 'royalty';
-    const shareholdingMet  = shareholdingPercentage >= 25;
-    const holdingMet       = holdingYears >= 2;
+    const isEU = EU27.has(country);
+    const typeIsCovered = incomeType === 'interest' || incomeType === 'royalty';
+    const shareholdingMet = shareholdingPercentage >= 25;
+    const holdingMet = holdingYears >= 2;
     const exemptionAvailable = isEU && typeIsCovered && shareholdingMet && holdingMet;
 
     return JSON.stringify({
-      directive:    'EU Interest and Royalties Directive 2003/49/EC',
-      legal_basis:  'Art. 21 Polish CIT Act',
+      directive: 'EU Interest and Royalties Directive 2003/49/EC',
+      legal_basis: 'Art. 21 Polish CIT Act',
       conditions: {
         eu_member_state: {
           required: true,
-          met:      isEU,
-          value:    residenceCountry,
+          met: isEU,
+          value: residenceCountry,
         },
         income_type_covered: {
           required: true,
-          met:      typeIsCovered,
-          value:    incomeType,
-          note:     'Directive covers interest and royalties only — dividends fall under the Parent-Subsidiary Directive (Art. 22 CIT)',
+          met: typeIsCovered,
+          value: incomeType,
+          note: 'Directive covers interest and royalties only — dividends fall under the Parent-Subsidiary Directive (Art. 22 CIT)',
         },
         shareholding_threshold: {
-          required:  true,
-          met:       shareholdingMet,
-          value:     `${shareholdingPercentage}%`,
+          required: true,
+          met: shareholdingMet,
+          value: `${shareholdingPercentage}%`,
           threshold: '25%',
         },
         holding_period: {
-          required:  true,
-          met:       holdingMet,
-          value:     `${holdingYears} year(s)`,
+          required: true,
+          met: holdingMet,
+          value: `${holdingYears} year(s)`,
           threshold: '2 uninterrupted years',
         },
       },
       exemption_available: exemptionAvailable,
-      exemption_rate:      exemptionAvailable ? 0 : null,
+      exemption_rate: exemptionAvailable ? 0 : null,
       anti_avoidance_note:
         'Art. 5 of the Directive allows Poland to deny the exemption for artificial ' +
         'arrangements. This test is co-extensive with the MLI PPT: a PPT failure ' +
@@ -1033,7 +1068,8 @@ export class WhtEnvironment {
             'Beneficial owner declaration signed by the recipient',
           ]
         : [],
-      source: 'Simulated — verify holding period and shareholding structure against company register and intercompany agreements',
+      source:
+        'Simulated — verify holding period and shareholding structure against company register and intercompany agreements',
     });
   }
 
@@ -1057,11 +1093,7 @@ export class WhtEnvironment {
   //
   // Pass annual_payment_pln = 0 if the amount is unknown — the method will
   // apply a conservative assumption (threshold exceeded).
-  checkPayAndRefund(
-    incomeType: string,
-    relatedParty: boolean,
-    annualPaymentPln: number
-  ): string {
+  checkPayAndRefund(incomeType: string, relatedParty: boolean, annualPaymentPln: number): string {
     // ── Parameter validation ───────────────────────────────────────────────────
     const VALID_INCOME = new Set(['dividend', 'interest', 'royalty']);
     if (!VALID_INCOME.has(incomeType.toLowerCase())) {
@@ -1079,29 +1111,27 @@ export class WhtEnvironment {
 
     // Domestic WHT rates that apply when Pay and Refund is triggered
     const domesticRate: Record<string, number> = {
-      royalty:  20,
+      royalty: 20,
       interest: 20,
       dividend: 19,
     };
     const rate = domesticRate[incomeType] ?? 20;
 
     // Conservative: unknown amount (0) is treated as exceeding the threshold
-    const exceedsThreshold =
-      annualPaymentPln === 0 || annualPaymentPln > THRESHOLD_PLN;
+    const exceedsThreshold = annualPaymentPln === 0 || annualPaymentPln > THRESHOLD_PLN;
     const applies = relatedParty && exceedsThreshold;
 
     return JSON.stringify({
-      mechanism:   'Pay and Refund (Art. 26 §2c Polish CIT Act)',
-      applies:     applies,
+      mechanism: 'Pay and Refund (Art. 26 §2c Polish CIT Act)',
+      applies: applies,
       threshold_pln: THRESHOLD_PLN,
       conditions: {
-        related_party:      { required: true, met: relatedParty },
-        exceeds_threshold:  {
-          required:  true,
-          met:       exceedsThreshold,
-          value_pln: annualPaymentPln === 0
-            ? 'unknown — conservative assumption applied'
-            : annualPaymentPln,
+        related_party: { required: true, met: relatedParty },
+        exceeds_threshold: {
+          required: true,
+          met: exceedsThreshold,
+          value_pln:
+            annualPaymentPln === 0 ? 'unknown — conservative assumption applied' : annualPaymentPln,
           threshold: 'PLN 2,000,000 per recipient per tax year',
         },
       },
@@ -1114,23 +1144,25 @@ export class WhtEnvironment {
       relief_options: applies
         ? [
             {
-              option:              'Opinion on WHT Exemption',
-              legal_basis:         'Art. 26b Polish CIT Act',
-              effect:              'Payer applies reduced treaty/directive rate without upfront withholding',
-              issuing_authority:   'Head of National Revenue Administration (KAS)',
-              validity:            '36 months from date of issue',
-              processing_time:     'Approx. 6 months — apply well in advance of first payment',
+              option: 'Opinion on WHT Exemption',
+              legal_basis: 'Art. 26b Polish CIT Act',
+              effect: 'Payer applies reduced treaty/directive rate without upfront withholding',
+              issuing_authority: 'Head of National Revenue Administration (KAS)',
+              validity: '36 months from date of issue',
+              processing_time: 'Approx. 6 months — apply well in advance of first payment',
             },
             {
-              option:      'WH-OS Management Statement',
+              option: 'WH-OS Management Statement',
               legal_basis: 'Art. 26 §7a Polish CIT Act',
-              effect:      'Management declares under penalty of perjury that all conditions for the reduced rate are met',
-              risk:        'Personal criminal and financial liability of signatories if declaration proves incorrect',
-              validity:    '2 months from date of statement — must be renewed for each payment period',
+              effect:
+                'Management declares under penalty of perjury that all conditions for the reduced rate are met',
+              risk: 'Personal criminal and financial liability of signatories if declaration proves incorrect',
+              validity: '2 months from date of statement — must be renewed for each payment period',
             },
           ]
         : [],
-      source: 'Simulated — verify payment amounts against intercompany licence agreements and actual invoices',
+      source:
+        'Simulated — verify payment amounts against intercompany licence agreements and actual invoices',
     });
   }
 
@@ -1183,22 +1215,28 @@ export class WhtEnvironment {
     const applies = pptStatus === 'YES';
 
     return JSON.stringify({
-      mli_applies:     applies,
-      mli_ppt_status:  pptStatus,
-      flags:           entry.mli_flags,
-      note:            entry.mli_note ?? null,
-      ...(pptStatus === 'VERIFY' ? {
-        caution: 'PPT status unconfirmed — treated as NO pending OECD MLI Matching Database verification.',
-      } : {}),
-      ...(applies ? {
-        article: 'Article 7 MLI (Principal Purpose Test)',
-        effect: 'Treaty benefit denied if obtaining it was one of the principal purposes of the arrangement.',
-        substance_requirements: [
-          'Genuine business activity in the residence country',
-          'Local board with real decision-making authority',
-          'No contractual obligation to pass income upstream',
-        ],
-      } : {}),
+      mli_applies: applies,
+      mli_ppt_status: pptStatus,
+      flags: entry.mli_flags,
+      note: entry.mli_note ?? null,
+      ...(pptStatus === 'VERIFY'
+        ? {
+            caution:
+              'PPT status unconfirmed — treated as NO pending OECD MLI Matching Database verification.',
+          }
+        : {}),
+      ...(applies
+        ? {
+            article: 'Article 7 MLI (Principal Purpose Test)',
+            effect:
+              'Treaty benefit denied if obtaining it was one of the principal purposes of the arrangement.',
+            substance_requirements: [
+              'Genuine business activity in the residence country',
+              'Local board with real decision-making authority',
+              'No contractual obligation to pass income upstream',
+            ],
+          }
+        : {}),
       source: 'data/treaties.json — OECD MLI Poland positions + MoF synthesized texts',
     });
   }
@@ -1219,11 +1257,7 @@ export class WhtEnvironment {
   // Returns a JSON string of FactCheckResult.
   // In simulate mode (or when GEMINI_API_KEY is absent), returns INCONCLUSIVE
   // with all claims marked UNVERIFIED — conservatively safe, never fabricated.
-  async factCheckSubstance(
-    entityName: string,
-    country:    string,
-    claims:     string[]
-  ): Promise<string> {
+  async factCheckSubstance(entityName: string, country: string, claims: string[]): Promise<string> {
     if (!entityName || entityName.trim() === '') {
       return JSON.stringify({ error: 'entity_name must be a non-empty string.' });
     }
@@ -1251,45 +1285,41 @@ export class WhtEnvironment {
   //
   // When the knowledge base has not been built (rag:build not run), or in simulate
   // mode, returns { available: false } rather than throwing.
-  async consultLegalSources(
-    query:      string,
-    conceptIds?: string[],
-    topK?:       number
-  ): Promise<string> {
+  async consultLegalSources(query: string, conceptIds?: string[], topK?: number): Promise<string> {
     if (!query || query.trim() === '') {
       return JSON.stringify({ error: 'query must be a non-empty string.', source: 'validation' });
     }
 
     if (!this.ragService) {
       return JSON.stringify({
-        source:    'legal_knowledge_base',
+        source: 'legal_knowledge_base',
         available: false,
-        note:      'RAG knowledge base not available. Run "npm run rag:build" to build it.',
-        chunks:    [],
+        note: 'RAG knowledge base not available. Run "npm run rag:build" to build it.',
+        chunks: [],
       });
     }
 
     try {
       const results = await this.ragService.retrieve(query, {
         concept_ids: conceptIds,
-        module:      'WHT',
-        top_k:       Math.min(topK ?? 3, 5),
+        module: 'WHT',
+        top_k: Math.min(topK ?? 3, 5),
       });
 
       return JSON.stringify({
         source: 'legal_knowledge_base',
         query,
-        chunks: results.map(c => ({
-          source_id:     c.source_id,
-          section_ref:   c.section_ref,
+        chunks: results.map((c) => ({
+          source_id: c.source_id,
+          section_ref: c.section_ref,
           section_title: c.section_title,
-          text:          c.text,
-          score:         Math.round(c.score * 100) / 100,
+          text: c.text,
+          score: Math.round(c.score * 100) / 100,
         })),
       });
     } catch (err) {
       return JSON.stringify({
-        error:  `RAG retrieval failed: ${String(err)}`,
+        error: `RAG retrieval failed: ${String(err)}`,
         source: 'legal_knowledge_base',
       });
     }

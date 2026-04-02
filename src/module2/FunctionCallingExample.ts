@@ -39,7 +39,7 @@ const tools: Tool[] = [
     name: 'get_treaty_rate',
     description:
       'Returns the withholding tax rate for a specific income type under the ' +
-      'applicable tax treaty between Poland and the beneficial owner\'s country ' +
+      "applicable tax treaty between Poland and the beneficial owner's country " +
       'of residence. Also returns the treaty article reference.',
     parameters: {
       type: 'object',
@@ -105,9 +105,10 @@ function getTreatyRate(
     const rate = shareholdingPercentage >= 10 ? 5 : 15;
     return JSON.stringify({
       rate_percent: rate,
-      condition: shareholdingPercentage >= 10
-        ? 'Reduced rate: beneficial owner holds ≥10% of capital'
-        : 'Standard rate: shareholding below 10% threshold',
+      condition:
+        shareholdingPercentage >= 10
+          ? 'Reduced rate: beneficial owner holds ≥10% of capital'
+          : 'Standard rate: shareholding below 10% threshold',
       treaty_article: 'Art. 10(2) Poland–Luxembourg DTC (1995, as amended)',
       domestic_rate_percent: 19,
       source: 'Simulated — to be replaced with OECD treaty database lookup',
@@ -200,13 +201,13 @@ async function functionCallingDemo(): Promise<void> {
   const messages: Message[] = [
     Message.system(
       'You are a Polish withholding tax advisor. ' +
-      'Use the available tools to answer questions accurately. ' +
-      'Always use tools rather than relying on your own knowledge for rates and treaty details.'
+        'Use the available tools to answer questions accurately. ' +
+        'Always use tools rather than relying on your own knowledge for rates and treaty details.'
     ),
     Message.user(
       'A Polish company is about to pay a dividend to Alpine Holdings S.A. ' +
-      '(Luxembourg), which holds 25% of its capital. ' +
-      'What is the correct Polish WHT rate, and does the MLI PPT apply?'
+        '(Luxembourg), which holds 25% of its capital. ' +
+        'What is the correct Polish WHT rate, and does the MLI PPT apply?'
     ),
   ];
 

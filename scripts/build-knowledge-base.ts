@@ -39,7 +39,7 @@ async function main(): Promise<void> {
   const model = process.env['OPENAI_EMBEDDING_MODEL'] ?? 'text-embedding-3-small';
 
   const knowledgeBasePath = path.resolve(__dirname, '..', 'data', 'knowledge_base');
-  const taxonomyPath      = path.resolve(__dirname, '..', 'data', 'tax_taxonomy.json');
+  const taxonomyPath = path.resolve(__dirname, '..', 'data', 'tax_taxonomy.json');
 
   console.log('Building RAG knowledge base...');
   console.log(`  Sources:   ${knowledgeBasePath}/sources/`);
@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   console.log(`  Model:     ${model}`);
   console.log('');
 
-  const client  = new OpenAI({ apiKey });
+  const client = new OpenAI({ apiKey });
   const embedFn = makeOpenAIEmbedFn(client, model);
 
   await LegalRagService.build({

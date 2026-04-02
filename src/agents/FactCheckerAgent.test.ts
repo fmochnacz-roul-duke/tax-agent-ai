@@ -18,7 +18,7 @@ const ORANGE_CLAIMS = [
 test('FactCheckerAgent simulation: returns correct entity and country', async () => {
   const result = await agent.verify('Orange S.A.', 'France', ORANGE_CLAIMS);
 
-  assert.equal(result.entity,  'Orange S.A.');
+  assert.equal(result.entity, 'Orange S.A.');
   assert.equal(result.country, 'France');
 });
 
@@ -58,9 +58,9 @@ test('FactCheckerAgent simulation: each claim entry has all required fields', as
   const VALID_STATUSES = new Set(['VERIFIED', 'UNVERIFIED', 'CONTRADICTED']);
 
   for (const c of result.claims) {
-    assert.ok(typeof c.claim === 'string',         'claim must be a string');
-    assert.ok(VALID_STATUSES.has(c.status),        'status must be VERIFIED/UNVERIFIED/CONTRADICTED');
-    assert.ok(Array.isArray(c.sources),            'sources must be an array');
+    assert.ok(typeof c.claim === 'string', 'claim must be a string');
+    assert.ok(VALID_STATUSES.has(c.status), 'status must be VERIFIED/UNVERIFIED/CONTRADICTED');
+    assert.ok(Array.isArray(c.sources), 'sources must be an array');
     assert.ok(typeof c.wht_relevance === 'string', 'wht_relevance must be a string');
   }
 });

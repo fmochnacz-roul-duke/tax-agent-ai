@@ -157,14 +157,13 @@ note: "Not mentioned in DDQ." — do not invent information.
 
 export class SubstanceExtractor {
   private client: OpenAI;
-  private model:  string;
+  private model: string;
 
   constructor() {
     this.client = new OpenAI({ apiKey: process.env['OPENAI_API_KEY'] });
     // Use the powerful model: multi-condition legal reasoning
-    this.model = process.env['OPENAI_MODEL_POWERFUL']
-      ?? process.env['OPENAI_MODEL']
-      ?? 'gpt-4o-mini';
+    this.model =
+      process.env['OPENAI_MODEL_POWERFUL'] ?? process.env['OPENAI_MODEL'] ?? 'gpt-4o-mini';
   }
 
   // extract() takes the DDQ text and returns a SubstanceResult JSON string.
@@ -183,16 +182,16 @@ export class SubstanceExtractor {
     let rawText: string;
     try {
       const response = await this.client.chat.completions.create({
-        model:  this.model,
+        model: this.model,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user',   content: userMessage },
+          { role: 'user', content: userMessage },
         ],
         // json_object mode: the model is guaranteed to return valid JSON.
         // Combined with the detailed schema in the system prompt, this produces
         // a SubstanceResult that can be parsed and used directly.
         response_format: { type: 'json_object' },
-        temperature:     0,   // legal extraction must be deterministic
+        temperature: 0, // legal extraction must be deterministic
       });
 
       rawText = response.choices[0]?.message?.content ?? '';
@@ -218,34 +217,34 @@ export class SubstanceExtractor {
   // is unavailable, report LOW confidence rather than crashing.
   private fallbackResult(entityName: string, country: string, reason: string): string {
     return JSON.stringify({
-      entity:      entityName,
+      entity: entityName,
       country,
       entity_type: 'unknown',
       substance_factors: {
-        employees:               { present: false, count: null,  note: 'Extraction failed.' },
-        physical_office:         { present: false, own_premises: false, note: 'Extraction failed.' },
+        employees: { present: false, count: null, note: 'Extraction failed.' },
+        physical_office: { present: false, own_premises: false, note: 'Extraction failed.' },
         management_independence: { present: false, note: 'Extraction failed.' },
-        own_assets:              { present: false, note: 'Extraction failed.' },
-        operating_costs:         { present: false, note: 'Extraction failed.' },
-        own_capital_financing:   { present: false, note: 'Extraction failed.' },
+        own_assets: { present: false, note: 'Extraction failed.' },
+        operating_costs: { present: false, note: 'Extraction failed.' },
+        own_capital_financing: { present: false, note: 'Extraction failed.' },
       },
       conduit_indicators: {
         pass_through_obligation: { present: false, evidence: 'Extraction failed.' },
-        rapid_forwarding:        { present: false, evidence: 'Extraction failed.' },
-        nominal_margin:          { present: false, evidence: 'Extraction failed.' },
-        capital_insufficiency:   { present: false, evidence: 'Extraction failed.' },
+        rapid_forwarding: { present: false, evidence: 'Extraction failed.' },
+        nominal_margin: { present: false, evidence: 'Extraction failed.' },
+        capital_insufficiency: { present: false, evidence: 'Extraction failed.' },
       },
       substance_tier: 'CONDUIT',
       bo_preliminary: {
-        condition_1_own_benefit:      { result: 'UNCERTAIN', note: `Extraction failed: ${reason}` },
-        condition_2_not_conduit:      { result: 'UNCERTAIN', note: `Extraction failed: ${reason}` },
+        condition_1_own_benefit: { result: 'UNCERTAIN', note: `Extraction failed: ${reason}` },
+        condition_2_not_conduit: { result: 'UNCERTAIN', note: `Extraction failed: ${reason}` },
         condition_3_genuine_activity: { result: 'UNCERTAIN', note: `Extraction failed: ${reason}` },
-        overall:     'UNCERTAIN',
+        overall: 'UNCERTAIN',
         legal_basis: 'Art. 4a pkt 29 Polish CIT Act; MF Objaśnienia podatkowe 2025',
       },
-      confidence:      'LOW',
+      confidence: 'LOW',
       confidence_note: `TypeScript extraction failed — ${reason}. Substance assessment is not reliable.`,
-      source:          'ddq_interview_typescript_extractor_fallback',
+      source: 'ddq_interview_typescript_extractor_fallback',
     });
   }
 }

@@ -14,19 +14,19 @@ test('buildSystemPrompt includes the persona', () => {
 
 test('buildSystemPrompt sorts goals highest priority first', () => {
   const goals: Goal[] = [
-    { name: 'Low',    description: 'Low priority task',    priority: 1 },
-    { name: 'High',   description: 'High priority task',   priority: 10 },
+    { name: 'Low', description: 'Low priority task', priority: 1 },
+    { name: 'High', description: 'High priority task', priority: 10 },
     { name: 'Medium', description: 'Medium priority task', priority: 5 },
   ];
 
   const prompt = buildSystemPrompt('Persona.', goals);
 
-  const highPos   = prompt.indexOf('High');
+  const highPos = prompt.indexOf('High');
   const mediumPos = prompt.indexOf('Medium');
-  const lowPos    = prompt.indexOf('Low');
+  const lowPos = prompt.indexOf('Low');
 
   assert.ok(highPos < mediumPos, 'High should appear before Medium');
-  assert.ok(mediumPos < lowPos,  'Medium should appear before Low');
+  assert.ok(mediumPos < lowPos, 'Medium should appear before Low');
 });
 
 test('buildSystemPrompt handles goals with no priority (defaults to 0)', () => {
@@ -38,19 +38,19 @@ test('buildSystemPrompt handles goals with no priority (defaults to 0)', () => {
   const prompt = buildSystemPrompt('Persona.', goals);
 
   const hasPos = prompt.indexOf('HasPriority');
-  const noPos  = prompt.indexOf('NoPriority');
+  const noPos = prompt.indexOf('NoPriority');
 
   assert.ok(hasPos < noPos, 'Goal with priority 5 should appear before goal with priority 0');
 });
 
 test('buildSystemPrompt includes all goal names', () => {
   const goals: Goal[] = [
-    { name: 'Verify treaty',  description: 'Check treaty',  priority: 10 },
+    { name: 'Verify treaty', description: 'Check treaty', priority: 10 },
     { name: 'Determine rate', description: 'Find the rate', priority: 8 },
   ];
 
   const prompt = buildSystemPrompt('Tax advisor.', goals);
 
-  assert.ok(prompt.includes('Verify treaty'),  'should include goal name 1');
+  assert.ok(prompt.includes('Verify treaty'), 'should include goal name 1');
   assert.ok(prompt.includes('Determine rate'), 'should include goal name 2');
 });
