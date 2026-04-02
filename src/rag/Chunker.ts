@@ -96,6 +96,7 @@ export class Chunker {
       language: str('language') || 'en',
       module_relevance: arr('module_relevance'),
       concept_ids: arr('concept_ids'),
+      last_verified: str('last_verified') || undefined,
     };
   }
 
@@ -138,6 +139,7 @@ export class Chunker {
         concept_ids: [...fm.concept_ids],
         module_relevance: [...fm.module_relevance],
         language: fm.language,
+        last_verified: fm.last_verified,
         text,
         char_count: text.length,
       });
