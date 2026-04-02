@@ -97,14 +97,15 @@ weight system prompt tokens more heavily than mid-conversation context.
 ```
 runAgent() dispatch switch
     │
-    ├── 'check_treaty'            env.checkTreaty(country)
-    ├── 'get_treaty_rate'         env.getTreatyRate(country, type, pct)
-    ├── 'check_mli_ppt'           env.checkMliPpt(country)
+    ├── 'check_treaty'              env.checkTreaty(country)
+    ├── 'get_treaty_rate'           env.getTreatyRate(country, type, pct)
+    ├── 'check_mli_ppt'             env.checkMliPpt(country)
     ├── 'check_directive_exemption' env.checkDirectiveExemption(...)
-    ├── 'check_pay_and_refund'    env.checkPayAndRefund(...)
-    ├── 'check_entity_substance'  await env.checkEntitySubstance(entity, country)
-    ├── 'analyse_dempe'           await env.analyseDempe(entity, country, ipType)
-    └── 'fact_check_substance'    await env.factCheckSubstance(entity, country, claims)
+    ├── 'check_pay_and_refund'      env.checkPayAndRefund(...)
+    ├── 'check_entity_substance'    await env.checkEntitySubstance(entity, country)
+    ├── 'analyse_dempe'             await env.analyseDempe(entity, country, ipType)
+    ├── 'fact_check_substance'      await env.factCheckSubstance(entity, country, claims)
+    └── 'consult_legal_sources'     await env.consultLegalSources(query, concept_ids?, module?)
 ```
 
 Three methods are `async` because they call external services:
@@ -253,56 +254,85 @@ single-server development use. For production, replace with Redis or a database.
 ## 8. Data Confidence Scoring
 
 Every report includes `data_confidence: 'HIGH' | 'MEDIUM' | 'LOW'` derived from the
-findings collected during the run. The logic in `computeReportConfidence()`:
+findings and citation metadata collected during the run.
+The logic in `computeReportConfidence(findings, citations)` (Phase 13 extended):
 
 ```
 FactCheckResult present?
   └─ overall_assessment === 'UNDERMINES'  →  LOW  (public source contradicted DDQ)
   └─ overall_assessment === 'CONFIRMS'
-       └─ treaty rate verified?  →  HIGH / MEDIUM
+       └─ treaty rate verified AND RAG legal grounding?  →  HIGH
+       └─ otherwise  →  MEDIUM
   └─ INCONCLUSIVE or absent  →  fall through ↓
 
 entity_substance.confidence === 'LOW'?  →  LOW  (simulated substance data)
 
 wht_rate.verified === false?  →  MEDIUM  (unverified treaty rate)
 
+RAG legal grounding absent?   →  MEDIUM  (no statutory text cited)
+  [grounding = consult_legal_sources returned ≥2 chunks, top_score ≥0.55]
+
 Otherwise  →  HIGH
 ```
 
-**Practical meaning today:**
-- Most runs without a DDQ file → `confidence: LOW` (substance is simulated)
-- Runs with DDQ via Python service, no Gemini key → `MEDIUM` (substance real, rates unverified)
-- Runs with DDQ + Gemini confirms + verified rate → `HIGH`
+**Phase 13 addition — the RAG legal grounding gate:**
+Every report now carries `citations: Citation[]` (one entry per tool call). A citation
+from `consult_legal_sources` carries `chunk_count` and `top_score`. `hasRagLegalGrounding()`
+checks that the agent retrieved meaningful legal text — at least 2 chunks with a similarity
+score above 0.55. Without this gate, HIGH confidence could be awarded even when the agent
+never consulted the actual statutory text.
 
-The note attached to each confidence level explicitly states the limitation and whether the
-report is suitable for filing or client advice.
+**Practical meaning today:**
+- Run without DDQ → `LOW` (substance simulated)
+- Run with DDQ + no RAG call → `MEDIUM` (substance real but no statutory grounding)
+- Run with DDQ + RAG (strong hits) + verified rate → `HIGH`
+- Any run where FactChecker `UNDERMINES` → `LOW` regardless of other signals
+
+The note attached to each confidence level explicitly states the limitation.
 
 ---
 
 ## 9. Test Coverage Map
 
-All 169 tests run without network calls. The test boundary is `WhtEnvironment` — the
+All 246 tests run without network calls. The test boundary is `WhtEnvironment` — the
 Environment class is tested exhaustively; the agent loop and LLM are not unit tested.
 
 ```
-Test file                      Count  What it covers
-─────────────────────────────  ─────  ──────────────────────────────────────────
-WhtEnvironment.test.ts            74  All 8 tool implementations (simulate + live modes)
-                                       Parameter validation (invalid enum, out-of-range)
-                                       Country alias resolution (UK, USA, Czechia, etc.)
-                                       Regression guards (valid inputs do not return errors)
-                                       factCheckSubstance delegation + error handling
-FactCheckerAgent.test.ts           8  Simulation mode: entity/country, claim count,
-                                       all UNVERIFIED, INCONCLUSIVE overall, risk flags,
-                                       required field shapes, source text, ISO date format
-EntityRegistry.test.ts            26  Upsert semantics, lookup key normalisation,
-                                       audit trail (created_at preserved on re-analysis),
-                                       substance_tier + bo_overall extraction, run_count
-SubstanceInterviewer.test.ts      13  State machine flow, question sequencing,
-                                       DDQ text compilation from interview answers
-Goal.test.ts                       3  Priority sorting, persona inclusion, goal names
-Memory.test.ts                     4  Findings store, getFindings() copy isolation,
-                                       buildFindingsSummary() format
+Test file                            Count  What it covers
+───────────────────────────────────  ─────  ──────────────────────────────────────────
+WhtEnvironment.test.ts                  74  All 8 tool implementations (simulate + live modes)
+                                            Parameter validation (invalid enum, out-of-range)
+                                            Country alias resolution (UK, USA, Czechia, etc.)
+                                            Regression guards (valid inputs do not return errors)
+                                            factCheckSubstance delegation + error handling
+FactCheckerAgent.test.ts                 8  Simulation mode: entity/country, claim count,
+                                            all UNVERIFIED, INCONCLUSIVE overall, risk flags,
+                                            required field shapes, source text, ISO date format
+TreatyVerifierAgent.test.ts             15  Simulate mode: shape, status NOT_FOUND,
+                                            null confirmed_rate, echoed fields, ISO date format
+                                            All three income types, zero rate, unusual countries
+EntityRegistry.test.ts                  38  Upsert semantics, lookup key normalisation,
+                                            audit trail (created_at preserved on re-analysis),
+                                            substance_tier + bo_overall extraction, run_count
+                                            updateReviewStatus: review/sign-off/reset,
+                                            reviewer_note, reviewed_by, disk persistence
+BeneficialOwnerAgent.test.ts            36  validateInput (Zod v4): valid path, all rejections,
+                                            boundary values (0/100), multi-field error messages
+                                            computeReportConfidence: LOW/MEDIUM/HIGH paths,
+                                            RAG grounding gate (≥2 chunks, top_score ≥0.55),
+                                            FactChecker interaction (CONFIRMS/UNDERMINES)
+                                            parseFindings: JSON/non-JSON, empty map, copy isolation
+contract.test.ts                        13  Category A: simulation output validates against Zod schemas
+                                            Category B: Python field names + enum values match TypeScript
+treaties.snapshot.test.ts               1  SHA-256 hash of treaties.json (change detector)
+SubstanceInterviewer.test.ts            13  State machine flow, question sequencing,
+                                            DDQ text compilation from interview answers
+Chunker.test.ts + LegalRagService.test  30  Frontmatter parsing, body splitting, chunk_id generation,
+                                            extractSectionRef, cosine similarity, filtering, top_k
+Retriever.test.ts                       17  Similarity score, filter combinations, top_k ordering
+Goal.test.ts                             3  Priority sorting, persona inclusion, goal names
+Memory.test.ts                           4  Findings store, getFindings() copy isolation,
+                                            buildFindingsSummary() format
 ```
 
 **What is intentionally not unit tested:**
@@ -328,7 +358,7 @@ interface AgentInput {
   ddq_path?:               string;         // path to DDQ file
 }
 
-// Output from the agent
+// Output from the agent (Phase 13 extended)
 interface WhtReport {
   generated_at:            string;         // ISO timestamp
   entity_name:             string;
@@ -341,6 +371,18 @@ interface WhtReport {
   data_confidence_note:    string;         // human-readable explanation
   conclusion:              string;         // agent's full narrative conclusion
   findings:                Record<string, unknown>;  // parsed tool results
+  citations:               Citation[];    // one entry per tool call, in order
+}
+
+// One citation entry — links a conclusion to its data source
+interface Citation {
+  tool:          string;         // e.g. "get_treaty_rate", "consult_legal_sources"
+  source:        string;         // data origin text from the tool result
+  finding_key?:  string;         // key in memory.findings (undefined for RAG)
+  section_ref?:  string;         // statutory section (from RAG chunks)
+  source_id?:    string;         // legal source ID (e.g. "MF-OBJ-2025")
+  chunk_count?:  number;         // how many RAG chunks were returned
+  top_score?:    number;         // cosine similarity score of the best chunk
 }
 
 // Progress event emitted during the agent loop
@@ -408,11 +450,14 @@ LegalRagService.retrieve(query)
   production scale.
 - OpenAI `text-embedding-3-small` — 1536 dimensions, low cost, high quality for legal text.
 - Rebuild trigger: run `npm run rag:build` after editing any file in `src/rag/sources/`.
-- `last_verified` frontmatter (planned, DOCS-2): each source file will carry the date it was
-  last checked against the official consolidated text, so stale sources are detectable.
+- `last_verified` frontmatter (DOCS-2, v0.16.0): each source file carries the date it was
+  last checked against the official consolidated text. The field is parsed by `Chunker`,
+  stored on every `Chunk` and `CitedChunk`, and ready to be surfaced in tool results.
+  **Ghost note (Phase 14):** the field is not yet shown in `consultLegalSources` output —
+  wiring this is planned for Phase 14 (Ghost Activation).
 
-**Planned enhancement (Phase 13):** retrieval metadata (chunk count, similarity scores) will
-feed into `computeReportConfidence()` — more hits = higher confidence in the legal basis.
+**Phase 13 (v0.13.0):** retrieval metadata (chunk count, similarity scores) now feeds
+`computeReportConfidence()` via the RAG legal grounding gate (≥2 chunks, top_score ≥0.55).
 
 ---
 

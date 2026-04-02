@@ -530,3 +530,124 @@ The LLM extraction is a UI convenience layer — it is not trusted to produce co
 
 **Temperature = 0.** Extraction is a deterministic transformation; temperature should be 0
 to ensure the same user message always produces the same extraction.
+
+---
+
+## 14. Runtime Input Validation with Zod
+
+Using Zod (v4) to validate agent input gives a single source of truth for both the
+TypeScript compile-time type and the runtime validation logic — no drift possible.
+
+```typescript
+// Single definition — both type AND validator
+export const AgentInputSchema = z.object({
+  entity_name: z.string().min(1, 'entity_name must be a non-empty string.'),
+  income_type: z.enum(['dividend', 'interest', 'royalty'] as const, {
+    error: 'income_type must be one of: dividend, interest, royalty.',
+  }),
+  shareholding_percentage: z.number().min(0).max(100),
+  // ...
+});
+
+// Type derived — not separately declared
+export type AgentInput = z.infer<typeof AgentInputSchema>;
+```
+
+**Why `z.infer<>` instead of a separate `interface`:** If you declare the interface
+separately, it can drift from the schema. `z.infer` makes TypeScript generate the type
+directly from the schema structure — they are guaranteed to be identical.
+
+**Error reporting pattern:** Zod collects ALL validation errors in one pass.
+Wrap the parse in a try/catch and extract `error.issues.map(i => i.message).join('; ')`
+to give callers a single string listing every problem at once.
+
+**Zod v4 API notes (breaking changes from v3):**
+- Custom messages use `error: 'message'` (not `errorMap` or `invalid_type_error`)
+- `z.enum()` requires `as const` on the array literal to preserve the tuple type
+- `z.number({ error: '...' })` for type-level custom error on non-numbers
+
+---
+
+## 15. Python/TypeScript Contract Tests
+
+When a Python service returns JSON consumed by TypeScript without runtime validation,
+schema drift is a silent failure. The fix: a committed JSON Schema snapshot.
+
+**The three-file pattern:**
+
+```
+python/service/export_schemas.py    ← generates contract.json from Pydantic model_json_schema()
+python/service/contract.json        ← committed snapshot — the Python side of the contract
+src/agents/contracts.ts             ← Zod schemas — the TypeScript side of the contract
+src/agents/contract.test.ts         ← tests that compare both sides
+```
+
+**Category A tests** — simulation validates against Zod:
+```typescript
+const raw = await env.checkEntitySubstance('Orange S.A.', 'France');
+const result = SubstanceResultSchema.safeParse(JSON.parse(raw));
+assert.ok(result.success, JSON.stringify(result.error?.issues, null, 2));
+```
+
+**Category B tests** — Python fields match TypeScript:
+```typescript
+const contract = loadContract();  // reads contract.json
+const pythonFields = new Set(contract.SubstanceResult.required);
+const tsFields = new Set(Object.keys(SubstanceResultSchema.shape));
+const missingInTs = [...pythonFields].filter(f => !tsFields.has(f));
+assert.deepEqual(missingInTs, []);
+```
+
+**Update workflow** after an intentional Pydantic model change:
+```
+npm run test:contract:update   ← regenerates contract.json
+npm test                       ← verify both sides now agree
+git add python/service/contract.json src/agents/contracts.ts
+```
+
+**Key rule:** `contract.json` is committed alongside every Pydantic model change.
+Reviewers see both sides of the schema change in the same diff.
+
+---
+
+## 16. Provenance and Citations
+
+Every tool result should be traceable to its data source. Phase 13 formalises this
+as a `Citation` array on `WhtReport`.
+
+**The citation collection pattern:**
+
+```typescript
+// After every tool dispatch in the agent loop:
+const citation = extractCitation(toolName, result);
+citations.push(citation);
+
+// extractCitation() parses the result JSON and pulls the source field
+function extractCitation(toolName: string, result: string): Citation {
+  const parsed = JSON.parse(result) as Record<string, unknown>;
+  return {
+    tool: toolName,
+    source: typeof parsed['source'] === 'string' ? parsed['source'] : 'unknown',
+    // RAG-specific fields:
+    chunk_count: typeof parsed['chunk_count'] === 'number' ? parsed['chunk_count'] : undefined,
+    top_score:   typeof parsed['top_score'] === 'number'   ? parsed['top_score']   : undefined,
+  };
+}
+```
+
+**The RAG legal grounding gate:** For HIGH confidence, the agent must have retrieved
+meaningful legal text — not just called the tool. The gate checks the RAG citation:
+
+```typescript
+function hasRagLegalGrounding(citations: Citation[]): boolean {
+  const rag = citations.find(c => c.tool === 'consult_legal_sources');
+  return rag !== undefined
+    && (rag.chunk_count ?? 0) >= 2
+    && (rag.top_score ?? 0) >= 0.55;
+}
+```
+
+**Why this matters:** The `source` field tells a reviewer where each fact came from.
+The RAG gate prevents HIGH confidence from being awarded when the agent consulted a
+knowledge base that returned low-relevance results — which would be worse than not
+consulting it at all (false certainty).

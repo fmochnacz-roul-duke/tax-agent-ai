@@ -48,13 +48,21 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 9 | Legal Knowledge RAG — tax taxonomy, Chunker/Embedder/Retriever/LegalRagService, consult_legal_sources tool | ✓ Complete |
 | 10 | Substance interview — 5-question chat flow, TypeScript LLM extractor, any entity assessed | ✓ Complete |
 | 11 | Entity Registry — JSON persistence, audit trail, collapsible web UI panel | ✓ Complete |
-| 12 | Treaty rate verification + human review workflow | Planned |
-| 13 | Provenance/citations field on `WhtReport`; RAG retrieval metadata feeds `computeReportConfidence()` | Planned |
-| QA-1 | ESLint + Prettier + `npm run lint`; c8 coverage; build-as-precondition in `npm test`; treaty data snapshot test | Planned |
-| QA-2 | Zod runtime validation replacing `validateInput()`; Python/TS contract tests for `SubstanceResult` / `DempeResult` schema drift | Planned |
+| 12a | TreatyVerifierAgent — Gemini rate verification, batch verify script | ✓ Complete |
+| 12b | Human review workflow — review drawer, `/registry/review` endpoint, CLI list | ✓ Complete |
+| 13 | Provenance/citations field on `WhtReport`; RAG legal grounding gate in confidence scoring | ✓ Complete |
+| QA-1 | ESLint + Prettier + `npm run lint`; c8 coverage; build-as-precondition; treaty snapshot test | ✓ Complete |
+| QA-2 | Zod runtime validation; Python/TS contract tests for `SubstanceResult` / `DempeResult` | ✓ Complete |
 | DOCS-1 | CHANGELOG.md + LICENSE + SECURITY.md | ✓ Complete |
-| DOCS-2 | `docs/api.md` (REST endpoints + SSE + WhtReport schema); RAG pipeline section in `docs/architecture.md`; `last_verified` frontmatter on RAG source files | Planned |
-| GITHUB-1 | `.github/` issue template + PR template; README feedback section + docs table update | ✓ Complete |
+| DOCS-2 | `docs/api.md`; `last_verified` frontmatter on RAG source files | ✓ Complete |
+| GITHUB-1 | `.github/` issue template + PR template; README feedback section + docs table | ✓ Complete |
+| **14** | **Ghost Activation** — wire TreatyVerifierAgent into live flow; surface `last_verified` | **Next** |
+| 15 | Third-party vendor UC2 — risk classification, document checklist | Planned |
+| 16 | Batch processing — CSV input, multi-entity report | Planned |
+| 17 | Data quality — verify top-10 treaty rates against DzU PDFs | Planned |
+| 18 | Jurisdiction expansion — treaties.json 36 → 50+ countries | Planned |
+| 19 | Production hardening — session persistence, SSE reconnect, rate limiting | Planned |
+| 20 | Major review — end-to-end demo, Tax OS Module 2 planning | Planned |
 
 ---
 
@@ -88,19 +96,25 @@ src/
     index.ts      ← re-exports everything from shared
 
   agents/
-    BeneficialOwnerAgent.ts  ← WHT agent (GAME framework); exports runWhtAnalysis(), AgentInput, WhtReport
-    WhtEnvironment.ts        ← All tool implementations; simulate: true/false switch; DDQ service + FactChecker
-    WhtEnvironment.test.ts   ← Unit tests for all environment methods (74 tests)
-    FactCheckerAgent.ts      ← Phase 7: Gemini REST API + Google Search grounding; simulate fallback
-    FactCheckerAgent.test.ts ← Unit tests for FactCheckerAgent (8 tests, simulate mode)
+    BeneficialOwnerAgent.ts     ← WHT agent (GAME); exports runWhtAnalysis(), AgentInput, WhtReport, Citation
+    BeneficialOwnerAgent.test.ts ← Phase 13 + QA-2: 36 tests (validateInput, computeReportConfidence, parseFindings)
+    WhtEnvironment.ts           ← All 9 tool implementations; simulate: true/false; DDQ service + FactChecker
+    WhtEnvironment.test.ts      ← Unit tests for all tool implementations (74 tests)
+    FactCheckerAgent.ts         ← Phase 7: Gemini REST API + Google Search grounding; simulate fallback
+    FactCheckerAgent.test.ts    ← 8 tests, simulate mode
+    TreatyVerifierAgent.ts      ← Phase 12a: Gemini rate verification; verifyRate() + simulate fallback
+    TreatyVerifierAgent.test.ts ← 15 simulate-mode tests
+    contracts.ts                ← QA-2: SubstanceResultSchema + DempeResultSchema (Zod v4); SubstanceResult type
+    contract.test.ts            ← QA-2: 13 tests — simulation output vs. Zod + Python contract.json
+    treaties.snapshot.test.ts   ← QA-1: SHA-256 hash guard for treaties.json
 
   server/
-    index.ts                  ← Phase 8+10+11: Express web server; adds 'interviewing' state and GET /registry
+    index.ts                  ← Phase 8+10+11+12b: Express server; review endpoints; interview state
     InputExtractor.ts         ← Phase 8: LLM extracts AgentInput from free-form user text
     SubstanceInterviewer.ts   ← Phase 10: 5-question interview state machine; compiles DDQ text
     SubstanceExtractor.ts     ← Phase 10: TypeScript LLM extractor — DDQ text → SubstanceResult JSON
-    EntityRegistry.ts         ← Phase 11: JSON-backed entity registry; upsert + audit trail
-    EntityRegistry.test.ts    ← Phase 11: 26 unit tests (pure logic, temp files)
+    EntityRegistry.ts         ← Phase 11+12b: JSON-backed registry; upsert + audit trail + review workflow
+    EntityRegistry.test.ts    ← 38 unit tests (save/findBy/listAll/updateReviewStatus)
 
   public/
     index.html    ← Phase 8: single-file conversational chat UI (HTML + CSS + vanilla JS)
@@ -168,7 +182,13 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run tax:agent` | CLI agent — requires `--input <file>` |
 | `npm run ddq:service` | Python DDQ extraction service on port 8000 (optional) |
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
-| `npm test` | Unit tests — 169 tests, no API calls, ~2s |
+| `npm test` | Unit tests — 246 tests, no API calls, ~2s |
+| `npm run lint` | ESLint + Prettier check across all TS files |
+| `npm run test:coverage` | c8 coverage report (text + lcov) |
+| `npm run test:snapshot:update` | Recompute SHA-256 hash of treaties.json after intentional changes |
+| `npm run test:contract:update` | Regenerate python/service/contract.json after Pydantic model changes |
+| `npm run verify:treaties` | Batch-verify treaty rates via Gemini (requires GEMINI_API_KEY) |
+| `npm run review:list` | CLI: list all registry entries with `review_status: draft` |
 | `npm run module1:prompting` | Scaffolding: basic prompting examples |
 | `npm run module1:agent` | Scaffolding: text-based agent loop |
 | `npm run module2:tools` | Scaffolding: function calling demo |

@@ -68,40 +68,40 @@ content licences from US or UK entities.
 
 ---
 
-## Honest current state (as of Phase 10)
+## Honest current state (as of v0.16.0 — Phase 14 starting next)
 
 ### What genuinely works
 
 | Capability | Status | What it means |
 |---|---|---|
 | Treaty lookup (check_treaty) | ✅ Live | Correct for all 36 countries in database |
-| Treaty rate (get_treaty_rate) | ✅ Live logic, ⚠ unverified rates | Rate logic correct; amounts need PDF confirmation |
+| Treaty rate (get_treaty_rate) | ✅ Live logic, ⚠ unverified rates | Rate logic correct; amounts still need PDF confirmation |
 | MLI/PPT check (check_mli_ppt) | ✅ Live | Correct from MoF + OECD positions cross-check |
-| EU I&R Directive (check_directive_exemption) | ✅ Live logic | Rules correctly implemented; depends on user input |
+| EU I&R Directive (check_directive_exemption) | ✅ Live logic | Rules correctly implemented |
 | Pay and Refund check (check_pay_and_refund) | ✅ Live logic | Correctly flags trigger + relief options |
+| Entity substance — any entity | ✅ Phase 10 interview | 5-question chat compiles DDQ text; LLM extractor produces SubstanceResult |
+| DEMPE analysis | ⚠ DDQ service / simulated | Live via Python service; simulation fallback |
+| FactChecker (web search) | ⚠ Optional/GEMINI_API_KEY | Triangulates DDQ claims against public records |
+| Legal citations (RAG) | ✅ Phase 9 | `consult_legal_sources` retrieves exact MF Objaśnienia / CIT Act text; confidence gate |
+| Entity registry | ✅ Phase 11 | JSON persistence; audit trail; "Past Analyses" web panel |
+| Human review workflow | ✅ Phase 12b | Review drawer; `review_status`: draft/reviewed/signed_off; reviewer metadata |
+| Treaty rate verifier | ⚠ Batch script only | `TreatyVerifierAgent` exists + tests; batch `verifyTreaties` script exists; NOT yet wired into live agent flow |
+| Provenance/citations | ✅ Phase 13 | Every WhtReport carries `citations[]`; RAG legal grounding gate for HIGH confidence |
 | Conversational input (web UI) | ✅ Live | Extracts parameters from free text, asks follow-ups |
 | Progress streaming (SSE) | ✅ Live | Live agent log in browser |
-| Report output (JSON) | ✅ Live | Structured, timestamped, machine-readable |
+| Report output (JSON) | ✅ Live | Structured, timestamped, machine-readable, cited |
 
-### What does NOT work — remaining gaps
+### Remaining gaps heading into Phase 14
 
-| Capability | Status | Why it matters |
+| Gap | Planned phase | Description |
 |---|---|---|
-| Entity substance assessment | ✅ Phase 10 — interview-based | Any entity can now be assessed via 5-question chat; TypeScript LLM extractor converts answers to SubstanceResult |
-| DEMPE analysis | ❌ Simulated | Returns structured template, not real functional analysis. |
-| FactChecker (web search) | ⚠ Optional | Only useful for large publicly-listed entities with abundant public data. Not reliable for most holding companies. |
-| Entity registry | ❌ Missing | No persistence. Same entity re-interviewed from scratch every run. |
-| Treaty rate verification | ⚠ All unverified | Every rate in treaties.json is `verified: false`. |
-| Human review workflow | ❌ Missing | No approval step, no annotation, no professional sign-off. |
-| Legal citations in substance reasoning | ❌ Missing | Substance conclusions are based on user answers only — not cited to MF Objaśnienia or case law (Phase 9 RAG). |
-
-### The remaining core problem
-
-Phase 10 closes the data-entry gap — real entity data can now be collected via the chat interview.
-The next gap is **cited legal reasoning**: substance conclusions are as good as the user's answers,
-but they are not yet grounded in the actual legal text (MF Objaśnienia §2.2–2.3, Art. 4a pkt 29 CIT).
-Phase 9 (RAG) addresses this — the extractor will cite the exact legal criteria rather than applying
-a generic framework. Phase 11 (entity registry) makes the tool practical for repeat use.
+| TreatyVerifierAgent not in live flow | Phase 14 | Verifier exists as batch tool; agent never calls it; rates still `verified: false` |
+| `last_verified` not surfaced to user | Phase 14 | Parsed by Chunker, stored on chunks, but not shown in `consult_legal_sources` output |
+| Third-party vendor workflow (UC2) | Phase 15 | No lighter-touch path for unrelated vendors; risk classification not implemented |
+| Batch processing | Phase 16 | One entity at a time only; no CSV input |
+| Treaty rates unverified | Phase 17 | All 36 countries still `verified: false` in treaties.json |
+| Jurisdiction coverage | Phase 18 | 36 of 91 Polish treaties covered |
+| Session persistence | Phase 19 | In-memory sessions lost on server restart |
 
 ---
 
@@ -110,24 +110,24 @@ a generic framework. Phase 11 (entity registry) makes the tool practical for rep
 A "Beneficial Owner Scanner" that a tax team can actually use must meet all of these:
 
 **Functional requirements:**
-- [ ] Any entity can be assessed, not just two hardcoded ones
-- [ ] Substance data entered via browser (no DDQ files, no Python service for basic use)
-- [ ] Entity profiles persist — same holding is not re-entered each quarter
-- [ ] Treaty rates verified against at least the top 10 commercially relevant treaties
-- [ ] Report includes a "reviewed and approved by" field that a professional fills in
+- [x] Any entity can be assessed, not just two hardcoded ones *(Phase 10)*
+- [x] Substance data entered via browser (no DDQ files, no Python service for basic use) *(Phase 10)*
+- [x] Entity profiles persist — same holding is not re-entered each quarter *(Phase 11)*
+- [ ] Treaty rates verified against at least the top 10 commercially relevant treaties *(Phase 17)*
+- [x] Report includes a "reviewed and approved by" field that a professional fills in *(Phase 12b)*
 - [ ] Output format suitable for a tax file (not just developer-readable JSON)
-- [ ] Intercompany and third-party workflows are explicitly different
+- [ ] Intercompany and third-party workflows are explicitly different *(Phase 15)*
 
 **Quality requirements:**
-- [ ] Every BO conclusion cites the specific MF Objaśnienia and/or OECD criteria it applied
-- [ ] Confidence levels reflect real data quality, not just whether simulation mode is active
-- [ ] The agent never states a conclusion with HIGH confidence based on simulated substance
-- [ ] Conservative fallback is explicit — "cannot confirm" is better than a wrong answer
+- [x] Every BO conclusion cites the specific MF Objaśnienia and/or OECD criteria it applied *(Phase 9 RAG + Phase 13 citations)*
+- [x] Confidence levels reflect real data quality, not just simulation mode *(Phase 13 RAG gate)*
+- [x] The agent never states HIGH confidence based on simulated substance *(RAG gate + substance confidence check)*
+- [x] Conservative fallback is explicit — "cannot confirm" is better than a wrong answer *(CONDUIT fallback, LOW confidence)*
 
 **Process requirements:**
-- [ ] A new payment can be analysed in under 5 minutes if entity data is already stored
-- [ ] A new entity can be onboarded in under 15 minutes
-- [ ] Output is suitable for review by a professional who did not run the analysis
+- [ ] A new payment can be analysed in under 5 minutes if entity data is already stored *(depends on Phase 16 batch + Phase 11 cache hit)*
+- [ ] A new entity can be onboarded in under 15 minutes *(Phase 10 interview is ~5min; feasible today)*
+- [x] Output is suitable for review by a professional who did not run the analysis *(Phase 12b review workflow)*
 
 ---
 

@@ -5,6 +5,81 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.16.0] — 2026-04-02 — DOCS-2: last_verified frontmatter
+
+- `last_verified?: string` added to `SourceFrontmatter` and `Chunk` interfaces (`src/rag/types.ts`)
+- `parseFmFields()` in `Chunker.ts` parses and propagates the field into every chunk
+- `MF-OBJ-2025.md` and `PL-CIT-2026-WHT.md` frontmatter updated: `last_verified: 2026-04-02`
+- `TEMPLATE.md` documents the field with usage guidance
+- `CitedChunk` inherits `last_verified` automatically via `Omit<Chunk, 'char_count'>`
+- 246/246 tests passing — no regressions
+
+## [v0.15.0] — 2026-04-02 — QA-2: Zod validation + Python/TS contract tests
+
+### Zod runtime validation (Part 1)
+- `AgentInputSchema` (Zod v4) replaces hand-written `validateInput()` and the `interface AgentInput`
+- `AgentInput` type is now `z.infer<typeof AgentInputSchema>` — single source of truth, no drift
+- `AgentInputSchema.parse()` reports all invalid fields at once (not first-error-only)
+- 17 new tests for the Zod path — all validation cases, boundary values, multi-field errors
+
+### Python/TypeScript contract tests (Part 2)
+- `src/agents/contracts.ts` — `SubstanceResultSchema` + `DempeResultSchema` (Zod v4 schemas)
+  - `DempeResult` type defined in TypeScript for the first time (previously only existed in Python)
+- `python/service/export_schemas.py` — generates `python/service/contract.json` from Pydantic `model_json_schema()`
+- `npm run test:contract:update` — regenerates snapshot after intentional Pydantic model changes
+- `src/agents/contract.test.ts` — 13 tests in two categories:
+  - Category A: WhtEnvironment simulation output validates against Zod schemas (3 substance + 3 DEMPE)
+  - Category B: Python `required[]` field names and enum values match TypeScript schema (7 tests)
+- 246/246 tests passing
+
+## [v0.14.0] — 2026-04-02 — QA-1: Linting, coverage, snapshot test
+
+- `eslint.config.js` — ESLint 10 flat config; `@typescript-eslint/flat/recommended`; `no-explicit-any: error`; `no-console: off`; `eslint-config-prettier` last
+- `.prettierrc.json` — single quotes, trailing commas (es5), 100-char line width
+- `npm run lint` — ESLint + Prettier check in one command; all 39 TS files formatted
+- `.c8rc.json` + `npm run test:coverage` — V8 coverage via c8; text + lcov reporters; all source files included
+- `npm test` now prefixed with `tsc --noEmit &&` — type errors block the test run
+- `src/agents/treaties.snapshot.test.ts` — SHA-256 hash of `treaties.json`; clear recovery instructions on mismatch
+- `scripts/updateTreatySnapshot.ts` + `npm run test:snapshot:update` — recomputes and patches the hash
+- 216/216 tests passing
+
+## [v0.13.0] — 2026-04-02 — Phase 13: Provenance/Citations on WhtReport
+
+- `Citation` interface — tracks tool name, source, finding_key, section_ref, source_id, chunk_count, top_score
+- `FINDING_KEY_FOR_TOOL` map — maps each tool to its memory key (or `undefined` for RAG)
+- `extractCitation(toolName, result)` — parses tool result JSON and extracts citation metadata
+- `computeReportConfidence(findings, citations)` — extended with RAG legal grounding gate:
+  `consult_legal_sources` must return ≥2 chunks with top_score ≥0.55 for HIGH confidence
+- `hasRagLegalGrounding(citations)` — helper function for the RAG threshold check
+- `WhtReport.citations: Citation[]` — one entry per executed tool call, in order
+- `buildReport` / `saveReport` — accept and include `citations`
+- `require.main === module` guard on `main()` — fixes import side-effect (tests can import the module)
+- `src/agents/BeneficialOwnerAgent.test.ts` — 19 tests: LOW/MEDIUM/HIGH confidence paths,
+  FactChecker interaction, exact threshold tests, `parseFindings` edge cases
+- 215/215 tests passing
+
+## [v0.12b.0] — 2026-04-02 — Phase 12b: Human Review Workflow
+
+- `EntityRegistry.ts` — extended `RegistryEntry` with `reviewer_note?`, `reviewed_at?`, `reviewed_by?`
+- `EntityRegistry.updateReviewStatus()` — changes `review_status` to `reviewed` or `signed_off`
+- `GET /registry/entry` endpoint — fetch a single registry entry by entity + country
+- `POST /registry/review` endpoint — update review status programmatically
+- `scripts/listUnreviewed.ts` — CLI: lists all draft entries pending professional review
+- `npm run review:list`
+- Web UI: review drawer with reviewer name input, note textarea, "Mark Reviewed" / "Sign Off" / "Reset to Draft" buttons; panel refreshes after action
+- 12 new unit tests for `updateReviewStatus` — 196/196 total
+
+## [v0.12a.0] — 2026-04-02 — Phase 12a: TreatyVerifierAgent
+
+- `src/agents/TreatyVerifierAgent.ts` — `verifyRate(country, incomeType, claimedRate, treatyArticle)` → `TreatyRateVerification`
+  - Uses Gemini REST API + Google Search grounding
+  - Status: `CONFIRMED` | `DIFFERS` | `NOT_FOUND`
+  - Graceful fallback to simulation if `GEMINI_API_KEY` absent
+- `verified_at?`, `verified_sources?`, `verification_note?` added to `DividendRate` and `FlatRate` interfaces
+- `scripts/verifyTreaties.ts` — batch script: loops 36 countries × 3 income types, writes results to `treaties.json`
+- `npm run verify:treaties`
+- 15 new simulate-mode tests — TreatyVerifierAgent
+
 ## [v0.11.0] — 2026-04-02 — Entity Registry
 
 - `EntityRegistry.ts` — JSON-backed entity store with upsert semantics and audit trail

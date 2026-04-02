@@ -259,7 +259,7 @@ npm run ddq:service     # starts FastAPI service on port 8000 (requires Python 3
 # Type-check (zero errors required before any commit)
 npm run build
 
-# Unit tests — 169 tests, no API calls, ~2s
+# Unit tests — 246 tests, no API calls, ~2s
 npm test
 ```
 
@@ -278,25 +278,50 @@ npm test
 
 ## Roadmap
 
-| Phase | Description | Status |
+### Completed (v0.1 – v0.16)
+
+| Phase | Description | Tag |
 |---|---|---|
-| 1 | Live treaty data (`treaties.json` wired into `WhtEnvironment`) | ✓ Complete |
-| 2 | Real CLI input (`--input` JSON file, `AgentInput` validation) | ✓ Complete |
-| 3 | Structured JSON report output (`reports/`) | ✓ Complete |
-| 4 | Refined substance test — entity-aware profiles, three-condition BO test, DEMPE, Pay and Refund | ✓ Complete |
-| 5 | MATE improvements — model tiering, environment-level parameter validation | ✓ Complete |
-| 6 | Document ingestion — Python/FastAPI microservice for DDQ substance and DEMPE extraction | ✓ Complete |
-| 7 | FactChecker Persona Agent — Gemini + Google Search grounding, multi-agent call_agent pattern | ✓ Complete |
-| 8 | Conversational web UI — Express, InputExtractor, SSE streaming, chat interface | ✓ Complete |
-| 10 | Substance interview — 5-question chat, TypeScript LLM extractor, any entity assessed | ✓ Complete |
-| 9 | Legal knowledge RAG — tax taxonomy, MF Objaśnienia 2025, CIT Act provisions | ✓ Complete |
-| 11 | Entity registry — JSON persistence, audit trail, "Past Analyses" panel in web UI | ✓ Complete |
-| 12 | Treaty rate verification + human review workflow | Next |
-| 13 | Provenance/citations field on `WhtReport`; RAG retrieval metadata feeds confidence scoring | Planned |
-| QA-1 | ESLint + Prettier + c8 coverage + build-as-precondition in `npm test` + treaty snapshot test | Planned |
-| QA-2 | Zod runtime validation; Python/TS contract tests for schema drift | Planned |
-| DOCS-2 | `docs/api.md` (REST + SSE + schemas); RAG pipeline docs; `last_verified` on RAG sources | Planned |
-| Future | Pillar Two (GloBE) module; TP screening; PE risk; CbCR analysis; batch processing | Future |
+| 1 | Live treaty data (`treaties.json` wired into `WhtEnvironment`) | v0.1.0 |
+| 2 | Real CLI input (`--input` JSON file, `AgentInput` validation) | v0.2.0 |
+| 3 | Structured JSON report output (`reports/`) | v0.3.0 |
+| 4 | Refined substance test — entity-aware profiles, three-condition BO test, DEMPE, Pay and Refund | v0.4.0 |
+| 5 | MATE improvements — model tiering, environment-level parameter validation | v0.5.0 |
+| 6 | Document ingestion — Python/FastAPI microservice for DDQ substance and DEMPE extraction | v0.6.0 |
+| 7 | FactChecker Persona Agent — Gemini + Google Search grounding, multi-agent call_agent pattern | v0.7.0 |
+| 8 | Conversational web UI — Express, InputExtractor, SSE streaming, chat interface | v0.8.0 |
+| 9 | Legal knowledge RAG — tax taxonomy, MF Objaśnienia 2025, CIT Act provisions | v0.9.0 |
+| 10 | Substance interview — 5-question chat, TypeScript LLM extractor, any entity assessed | v0.10.0 |
+| 11 | Entity registry — JSON persistence, audit trail, "Past Analyses" panel in web UI | v0.11.0 |
+| 12a | TreatyVerifierAgent — Gemini rate verification, batch `verifyTreaties` script | v0.12a.0 |
+| 12b | Human review workflow — review drawer, `/registry/review` endpoint, CLI list script | v0.12b.0 |
+| 13 | Provenance/citations on `WhtReport`; RAG legal grounding gate in confidence scoring | v0.13.0 |
+| QA-1 | ESLint + Prettier + c8 coverage + build-as-precondition + treaty snapshot test | v0.14.0 |
+| QA-2 | Zod runtime validation; Python/TS contract tests for schema drift | v0.15.0 |
+| DOCS-2 | `last_verified` frontmatter on RAG source files; docs/api.md; architecture docs | v0.16.0 |
+
+### Upcoming (7 sessions planned)
+
+| Session | Phase | Description |
+|---|---|---|
+| 1 | 14 — Ghost Activation | Wire `TreatyVerifierAgent` into live agent flow; surface `last_verified` in `consult_legal_sources` results |
+| 2 | 15 — Third-party vendor UC2 | Lighter-touch workflow for unrelated vendors: risk classification, document checklist |
+| 3 | 16 — Batch processing | CSV input, multi-entity summary report, entity registry cache hit |
+| 4 | 17 — Data quality pass | Manually verify top-10 treaty rates against DzU PDFs; remove `verified: false` |
+| 5 | 18 — Jurisdiction expansion | Expand `treaties.json` from 36 → 50+ countries |
+| 6 | 19 — Production hardening | Session persistence, SSE reconnect, rate limiting, error recovery |
+| 7 | 20 — Major review | End-to-end demo, full docs pass, Tax OS Module 2 planning |
+
+*After session 7 a major review is planned before the next phase roadmap is set.*
+
+### Future (Tax OS expansion)
+
+| Module | Description |
+|---|---|
+| Pillar Two / GloBE | In-scope analysis, effective tax rate per jurisdiction |
+| Transfer Pricing screening | Arm's-length first-pass, interquartile range flags |
+| PE risk | Permanent establishment risk from foreign entity activity in Poland |
+| CbCR analysis | Country-by-Country Report parser; low-substance / high-profit mismatch flags |
 
 ---
 
