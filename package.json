@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc --noEmit",
     "lint": "eslint src/ scripts/ && prettier --check \"src/**/*.ts\" \"scripts/**/*.ts\"",
-    "test": "node --require ts-node/register --test src/**/*.test.ts",
-    "test:coverage": "c8 node --require ts-node/register --test src/**/*.test.ts",
+    "test": "tsc --noEmit && node --require ts-node/register --test src/**/*.test.ts",
+    "test:coverage": "tsc --noEmit && c8 node --require ts-node/register --test src/**/*.test.ts",
     "module1:prompting": "ts-node src/module1/ProgrammaticPrompting.ts",
     "module1:agent": "ts-node src/module1/AgentLoop.ts",
     "module2:tools": "ts-node src/module2/FunctionCallingExample.ts",
