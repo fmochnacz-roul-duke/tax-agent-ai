@@ -377,6 +377,16 @@ logic or treaty data, include the entity name, country, and income type.
 
 ---
 
+## License
+
+This project is licensed under the [ISC License](./LICENSE).
+
+> **Disclaimer:**  
+> See [NOTICE](./NOTICE) for important disclaimers regarding the use of this software.  
+> This software is provided for informational purposes only and does not constitute legal, tax, or financial advice.
+
+---
+
 ## Status
 
 Active development. Not production-ready. All outputs must be reviewed by a qualified tax professional before use in any compliance or advisory context.
