@@ -55,11 +55,16 @@ Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. 
 
 ## How to Resume Next Session
 
+**FIRST — validate the golden dataset before writing any code.**
+
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's start Phase 15 — QA-3: Evals + Negative Tests. Use the 7-case golden dataset
-> from SESSION.md. Create data/golden_cases/ with all cases, a runEvals.ts script,
+> "Let's start Phase 15. First, let's validate the 7-case golden dataset in SESSION.md —
+> review each case's expected bo_overall and legal reasoning together before we write
+> any JSON files or code. Then we'll build data/golden_cases/, scripts/runEvals.ts,
 > Triangulation Rule calibration tests, and negative test cases."
+
+**REMINDER (Frank): You said you need more time to review the golden dataset cases and may want to add more. Do the case review first before proceeding to code.**
 
 ### Verify environment is healthy first:
 ```
