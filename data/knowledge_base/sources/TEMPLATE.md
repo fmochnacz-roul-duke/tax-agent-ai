@@ -3,6 +3,7 @@ source_id: REPLACE-WITH-ID-FROM-LEGAL-SOURCES-REGISTRY
 language: pl
 module_relevance: [WHT]
 concept_ids: [beneficial_owner, condition_i_economic_title]
+last_verified: YYYY-MM-DD
 ---
 
 # Document Title (optional — not a chunk boundary, skipped by the Chunker)
@@ -42,6 +43,9 @@ HOW TO USE THIS TEMPLATE
      language        — "pl" for Polish, "en" for English
      module_relevance — [WHT] for this project; add [TP_screening] etc. for future modules
      concept_ids     — IDs from data/tax_taxonomy.json that this document covers
+     last_verified   — ISO 8601 date (YYYY-MM-DD) when you last confirmed this source
+                        reflects current law. Update whenever you re-check the source.
+                        Propagates into every Chunk and CitedChunk from this file.
 
 3. For finer concept_id tagging:
      Create one file per major section (e.g. MF-OBJ-2025-§2.2.md, MF-OBJ-2025-§2.3.md)

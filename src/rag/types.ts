@@ -30,6 +30,10 @@ export interface Chunk {
   // Source language: "pl" (Polish) or "en" (English)
   language: string;
 
+  // ISO 8601 date when a human last confirmed this source reflects current law.
+  // Propagated from the source file's frontmatter into every chunk it produces.
+  last_verified?: string;
+
   // The full section text, including the heading line.
   // Sent to the embedding model and injected into the agent prompt as a citation.
   text: string;
@@ -74,6 +78,11 @@ export interface SourceFrontmatter {
   // Default concept_ids applied to every chunk in this document.
   // Can be refined by creating one file per sub-section.
   concept_ids: string[];
+
+  // ISO 8601 date when a human last confirmed this source reflects current law.
+  // Optional — not every source has been reviewed since initial import.
+  // Surfaces in CitedChunk so the agent prompt can warn when a source is unverified.
+  last_verified?: string;
 }
 
 // Options for LegalRagService.retrieve()
