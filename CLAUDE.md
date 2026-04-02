@@ -56,13 +56,22 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | DOCS-1 | CHANGELOG.md + LICENSE + SECURITY.md | ✓ Complete |
 | DOCS-2 | `docs/api.md`; `last_verified` frontmatter on RAG source files | ✓ Complete |
 | GITHUB-1 | `.github/` issue template + PR template; README feedback section + docs table | ✓ Complete |
-| **14** | **Ghost Activation** — wire TreatyVerifierAgent into live flow; surface `last_verified` | **Next** |
-| 15 | Third-party vendor UC2 — risk classification, document checklist | Planned |
-| 16 | Batch processing — CSV input, multi-entity report | Planned |
-| 17 | Data quality — verify top-10 treaty rates against DzU PDFs | Planned |
-| 18 | Jurisdiction expansion — treaties.json 36 → 50+ countries | Planned |
-| 19 | Production hardening — session persistence, SSE reconnect, rate limiting | Planned |
-| 20 | Major review — end-to-end demo, Tax OS Module 2 planning | Planned |
+| **14** | **Ghost Activation** — wire TreatyVerifierAgent into live flow; surface `last_verified`; confidence drops on rate mismatch | **Next** |
+| 15 | QA-3: Evals + Negative Tests — `data/golden_cases/` (5 cases); `scripts/runEvals.ts`; negative test cases | Planned |
+| 16 | Legal Source Hierarchy — `source_type` on `consult_legal_sources`; Art./Sec. refs in `Citation`; Zod domain-narrowing | Planned |
+| 17 | Confidence UX + HITL — UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft registry on UNCERTAIN | Planned |
+| 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; document checklist; no-DDQ path | Planned |
+| 19 | Due Diligence Module — DD checklist tool per payment type; DD gap analysis in report | Planned |
+| 20 | Data quality — verify top-10 treaty rates against official sources; `verified: true` in treaties.json | Planned |
+| 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report | Planned |
+| 22 | Production hardening — session persistence, SSE reconnect, rate limiting, memory pruning | Planned |
+| 23 | Intangibles / Business Profits Layer — Art. 21 ust. 1 pkt 2a CIT; management fees, advisory, technical services | Planned |
+| 24 | Legal Source Management Workflow — source update protocol; new source onboarding; hierarchy documentation | Planned |
+| 25 | Jurisdiction expansion — treaties.json 36 → 50+ countries | Planned |
+| 26 | WHT v1.0 Major Review — end-to-end demo, all acceptance criteria, `CHANGELOG.md` v1.0, MBA prototype declaration | Planned |
+| 27 | GLOBAL VISION Documentation — private `docs/GLOBAL_VISION.md` (gitignored); Tax OS architecture + system prompt guidelines | Planned |
+| 28 | EU Jurisdiction Engine Concept — architecture for multi-jurisdiction; pilot jurisdiction design; Tax OS Module 2 scope | Planned |
+| 29 | Tax OS Module 2 Planning — next tax regime scoping; cross-module shared framework design | Planned |
 
 ---
 

@@ -14,6 +14,7 @@ Express Server (src/server/index.ts)
     │
     ├── InputExtractor          ← Free-text → AgentInput (fast model)
     ├── SubstanceInterviewer    ← 5-question substance chat state machine
+    ├── SubstanceExtractor      ← DDQ text → SubstanceResult (TS LLM extractor)
     ├── EntityRegistry          ← JSON registry; saved after every analysis
     │
     ▼
@@ -27,7 +28,8 @@ BeneficialOwnerAgent (src/agents/BeneficialOwnerAgent.ts)
     ├── analyse_dempe           ─── Python DDQ service (optional)
     ├── check_directive_exemption
     ├── check_pay_and_refund
-    └── fact_check_substance    ─── FactCheckerAgent (Gemini + Google Search)
+    ├── fact_check_substance    ─── FactCheckerAgent (Gemini + Google Search)
+    └── consult_legal_sources   ─── LegalRagService (cosine search over CIT + MF chunks)
 ```
 
 ---
@@ -39,18 +41,21 @@ BeneficialOwnerAgent (src/agents/BeneficialOwnerAgent.ts)
 Seven goals with explicit priorities:
 
 1. (Priority 1) Treaty existence and BO status — do not conclude without these
-2. (Priority 2) Treaty rate — correct rate under the treaty
-3. (Priority 3) Beneficial owner substance assessment — the factual core
-4. (Priority 4) DEMPE analysis — for royalties
-5. (Priority 5) EU Directive — 0% pathway
-6. (Priority 6) MLI/PPT — anti-avoidance check
-7. (Priority 7) Pay and Refund — compliance obligation
+2. (Priority 2) Consult legal sources — retrieve statutory text before final BO determination
+3. (Priority 3) Treaty rate — correct rate under the treaty
+4. (Priority 4) Beneficial owner substance assessment — the factual core
+5. (Priority 5) DEMPE analysis — for royalties
+6. (Priority 6) EU Directive — 0% pathway
+7. (Priority 7) MLI/PPT — anti-avoidance check
+8. (Priority 8) Pay and Refund — compliance obligation
 
 Goals are injected into the system prompt via `buildSystemPrompt()`.
 
 ### Actions — tool definitions
 
-Eight tools defined in `BeneficialOwnerAgent.ts` with JSON Schema. All tool implementations are in `WhtEnvironment.ts`. The agent never directly accesses external data — it calls tools, tools call the environment.
+Nine tools defined in `BeneficialOwnerAgent.ts` with JSON Schema. All tool implementations are in `WhtEnvironment.ts`. The agent never directly accesses external data — it calls tools, tools call the environment.
+
+**Zod validation layer (QA-2):** `AgentInput` is validated at entry via `AgentInputSchema` (Zod v4). `SubstanceResult` and `DempeResult` are validated at environment boundaries via `contracts.ts`. `z.infer<>` derives the TypeScript types — no separate interfaces to drift.
 
 ### Memory — `Memory.ts`
 
@@ -62,12 +67,13 @@ Two stores:
 
 ### Environment — `WhtEnvironment.ts`
 
-All tool implementations. The environment is the isolation boundary between the agent loop and external data sources. Key design property: switching `simulate: true → false` changes every tool from simulated to live without touching the agent.
+All tool implementations. The environment is the isolation boundary between the agent loop and external data sources. Switching `simulate: true → false` changes every tool from simulated to live without touching the agent.
 
-The environment has three data tiers:
+**Data tiers:**
 1. **Live**: `check_treaty`, `get_treaty_rate`, `check_mli_ppt` — reads `data/treaties.json`
-2. **Live + fallback**: `check_entity_substance`, `analyse_dempe` — calls Python DDQ service if configured, falls back to simulation
+2. **Live + fallback**: `check_entity_substance`, `analyse_dempe` — calls Python DDQ service if configured, falls back to TypeScript extractor, then simulation
 3. **Optional live**: `fact_check_substance` — calls FactCheckerAgent (Gemini) if `GEMINI_API_KEY` is set
+4. **Semantic retrieval**: `consult_legal_sources` — cosine search over pre-embedded legal chunks (CIT Act + MF Objaśnienia)
 
 ---
 
@@ -84,7 +90,7 @@ Two model tiers via `LLM.fast()` / `LLM.powerful()`:
 ### A — Action specificity
 
 Tools have narrow, precise schemas — no "do everything" tools. Every tool has:
-- Enum-constrained parameters (income_type: "dividend" | "interest" | "royalty")
+- Enum-constrained parameters (`income_type: "dividend" | "interest" | "royalty"`)
 - Server-side validation in the environment method before execution
 - Structured result objects with a `source` field
 
@@ -102,24 +108,56 @@ Tools have narrow, precise schemas — no "do everything" tools. Every tool has:
 
 ---
 
-## Multi-agent topology (Phase 7)
+## Multi-agent topology (Phase 7 + Phase 12a)
 
-The WHT Agent (OpenAI GPT-4o) is the orchestrator. It can call the FactCheckerAgent (Google Gemini) via the `fact_check_substance` tool. This implements the `call_agent` pattern:
+The WHT Agent (OpenAI GPT-4o) is the orchestrator. It calls two sub-agents:
 
 ```
 WHT Agent (OpenAI)
-    └── fact_check_substance tool
-            └── FactCheckerAgent (Gemini + Google Search)
-                    → FactCheckResult { verified: true/false, sources: [...], confidence: ... }
+    │
+    ├── fact_check_substance tool
+    │       └── FactCheckerAgent (Gemini + Google Search)
+    │               → FactCheckResult { verified, sources, confidence }
+    │
+    └── [Phase 14] TreatyVerifierAgent called from WhtEnvironment.getTreatyRate()
+                └── TreatyVerifierAgent (Gemini + Google Search)
+                        → TreatyRateVerification { verified, confidence, note, sources }
 ```
 
-Triangulation rule: 2+ web sources = VERIFIED, 1 = UNVERIFIED, 0 = CONTRADICTED.
+**FactCheckerAgent** (Phase 7): triangulation rule — 2+ web sources = VERIFIED, 1 = UNVERIFIED, 0 = CONTRADICTED.
+
+**TreatyVerifierAgent** (Phase 12a): verifies treaty rates against official sources. Batch script (`npm run verify:treaties`) works now. Wired into live agent flow in Phase 14.
 
 ---
 
-## Web server (Phase 8)
+## Legal knowledge RAG (Phase 9)
 
-Express.js with four endpoints:
+The `consult_legal_sources` tool retrieves relevant chunks from embedded legal source files:
+
+```
+LegalRagService
+    │
+    ├── Chunker      ← parses .md files at section boundaries; extracts frontmatter (last_verified)
+    ├── Embedder     ← text-embedding-3-small via OpenAI API; incremental via SHA-256 manifest
+    └── Retriever    ← cosine similarity search; returns top-K CitedChunk[]
+
+Source files (data/legal_sources/):
+    ├── PL-CIT-2026-WHT.md    ← CIT Act Arts. 4a, 21, 22, 22c, 26 (9 chunks)
+    └── MF-OBJ-2025.md        ← MF Objaśnienia 2025 §2–§4 (14 chunks)
+
+Each chunk carries:
+    ├── source_id, section_ref, content
+    ├── last_verified: "2026-04-02"   ← parsed from frontmatter (Phase 16 will surface this)
+    └── embedding vector (in vectors.json — gitignored)
+```
+
+**RAG confidence gate (Phase 13):** `WhtReport.data_confidence` can only reach `HIGH` if `consult_legal_sources` returned ≥2 chunks with top cosine score ≥0.55. This ensures HIGH confidence is never based on simulated data alone.
+
+---
+
+## Web server (Phase 8+10+11+12b)
+
+Express.js with endpoints:
 
 | Endpoint | Purpose |
 |---|---|
@@ -129,6 +167,8 @@ Express.js with four endpoints:
 | `GET /session/:id/stream` | SSE stream — live agent events |
 | `GET /session/:id/report` | Completed WhtReport JSON |
 | `GET /registry` | All past analyses (EntityRegistry entries, newest-first) |
+| `GET /registry/entry` | Single registry entry by entity + country |
+| `POST /registry/review` | Update review_status (draft / reviewed / signed_off) |
 
 Session state machine: `chatting` → `interviewing` → `running` → `complete` / `error`
 
@@ -146,7 +186,39 @@ Session state machine: `chatting` → `interviewing` → `running` → `complete
 | 4 — Operating costs | iii | §2.3 |
 | 5 — Pass-through obligation | ii | §2.2.1 |
 
-After all answers are collected, `SubstanceExtractor.ts` converts the compiled DDQ text to a `SubstanceResult` JSON using the powerful model with `json_object` output mode.
+After all answers, `SubstanceExtractor.ts` converts the compiled DDQ text to a `SubstanceResult` JSON using the powerful model with `json_object` output mode.
+
+---
+
+## Citations and provenance (Phase 13)
+
+Every `WhtReport` carries a `citations: Citation[]` array:
+
+```typescript
+interface Citation {
+  tool: string;         // which tool produced this finding
+  source: string;       // e.g. "MF-OBJ-2025"
+  finding_key: string;  // matches a key in the findings store
+  section_ref?: string; // e.g. "§2.3" — populated when RAG returns section metadata
+  source_id?: string;   // canonical ID from legal_sources_registry.json
+  chunk_count?: number; // how many RAG chunks supported this finding
+  top_score?: number;   // highest cosine similarity score
+}
+```
+
+Phase 16 will enhance citations with specific Art./Sec. references (e.g. `Art. 26 ust. 1 CIT`) and add a `legal_hierarchy` field (statute / administrative_guidance / case_law).
+
+---
+
+## Entity registry (Phase 11+12b)
+
+`EntityRegistry.ts` — JSON-backed store at `data/registry.json` (gitignored):
+
+- Lookup key: `entity_name::country` (normalised, case-insensitive)
+- Upsert semantics: `created_at` and `review_status` preserved on re-analysis
+- `review_status`: `draft` (default) → `reviewed` → `signed_off`
+- Every entry carries a full `WhtReport` snapshot + extracted `substance_tier` + `bo_overall`
+- `getRegistry()` singleton — web server and CLI share state within a process
 
 ---
 
@@ -154,16 +226,20 @@ After all answers are collected, `SubstanceExtractor.ts` converts the compiled D
 
 | File | Role |
 |---|---|
-| `src/agents/BeneficialOwnerAgent.ts` | GAME definition: goals, tools, agent loop, runWhtAnalysis() |
-| `src/agents/WhtEnvironment.ts` | All tool implementations, environment isolation boundary |
-| `src/agents/FactCheckerAgent.ts` | Gemini multi-agent — fact verification |
-| `src/server/index.ts` | Express server, session state machine |
+| `src/agents/BeneficialOwnerAgent.ts` | GAME definition: goals, tools, agent loop, `runWhtAnalysis()` |
+| `src/agents/WhtEnvironment.ts` | All 9 tool implementations; environment isolation boundary |
+| `src/agents/contracts.ts` | Zod schemas: `AgentInputSchema`, `SubstanceResultSchema`, `DempeResultSchema` |
+| `src/agents/FactCheckerAgent.ts` | Gemini multi-agent — substance fact verification |
+| `src/agents/TreatyVerifierAgent.ts` | Gemini multi-agent — treaty rate verification (Phase 14: wired in) |
+| `src/server/index.ts` | Express server, session state machine, review endpoints |
 | `src/server/InputExtractor.ts` | Free-text → AgentInput via LLM |
 | `src/server/SubstanceInterviewer.ts` | 5-question interview state machine |
 | `src/server/SubstanceExtractor.ts` | DDQ text → SubstanceResult via LLM |
 | `src/server/EntityRegistry.ts` | JSON entity registry — upsert, audit trail, `getRegistry()` singleton |
-| `src/shared/LLM.ts` | generate(), generateWithTools(), LLM.fast/powerful, ToolFactory |
+| `src/shared/LLM.ts` | `generate()`, `generateWithTools()`, `LLM.fast/powerful`, `ToolFactory` |
 | `src/shared/Memory.ts` | Conversation history + findings store |
 | `data/treaties.json` | Treaty database: 36 countries, rates, MLI flags |
 | `data/tax_taxonomy.json` | Tax taxonomy: ~40 concepts, rag_keywords, legal refs |
 | `data/legal_sources_registry.json` | All legal sources with verification status |
+| `data/legal_sources/PL-CIT-2026-WHT.md` | RAG source: CIT Act WHT provisions (9 chunks) |
+| `data/legal_sources/MF-OBJ-2025.md` | RAG source: MF Objaśnienia 2025 (14 chunks) |

@@ -1,6 +1,6 @@
 # Phase Roadmap
 
-Each phase corresponds to a git tag. All completed phases are available as GitHub Releases.
+Each phase corresponds to a git tag. Completed phases are available as GitHub Releases.
 
 ---
 
@@ -70,7 +70,7 @@ Each phase corresponds to a git tag. All completed phases are available as GitHu
 
 **Key decisions:**
 - Service is optional — `DDQ_SERVICE_URL` not set → simulation, no error
-- This means Phase 6 is additive and backward-compatible
+- Additive and backward-compatible
 
 ---
 
@@ -106,6 +106,23 @@ Each phase corresponds to a git tag. All completed phases are available as GitHu
 
 ---
 
+### v0.9.0 — Phase 9: Legal knowledge RAG
+
+**What:**
+- Tax taxonomy (`data/tax_taxonomy.json`) — 40 controlled concepts with Polish/English terms and RAG keywords
+- RAG infrastructure — `Chunker`, `Embedder`, `Retriever`, `LegalRagService`
+- Source `.md` files: `MF-OBJ-2025.md` (14 chunks) and `PL-CIT-2026-WHT.md` (9 chunks)
+- `consult_legal_sources` tool — agent retrieves statutory text before final BO determination; goal priority 2
+- RAG results flow as reasoning context; citations appear in the final answer
+- `npm run rag:build` — embeds 23 chunks using `text-embedding-3-small`; incremental rebuild via SHA-256 manifest
+
+**Key decisions:**
+- Knowledge base = authoritative sources only (CIT Act, MF Objaśnienia). Academic commentary deliberately excluded — not legislation.
+- `vectors.json` gitignored (905 KB generated file); `chunks/index.json` and `manifest.json` tracked
+- RAG results not stored as findings — citations appear in the final answer text
+
+---
+
 ### v0.10.0 — Phase 10: Substance interview
 
 **What:**
@@ -116,22 +133,8 @@ Each phase corresponds to a git tag. All completed phases are available as GitHu
 
 **Key decisions:**
 - Phase 10 closes the data-entry gap: any entity can now be assessed without a DDQ file
-- The interview replaces Phase 6's DDQ upload as the primary substance data entry path for basic use
-- TypeScript extractor as fallback means Phase 6 Python service is no longer required for any basic use
-
----
-
-### v0.9.0 — Phase 9: Legal knowledge RAG
-
-**What:**
-- 9a: Tax taxonomy (`data/tax_taxonomy.json`) — 40 controlled concepts with Polish/English terms and RAG keywords
-- 9b: RAG infrastructure — `Chunker`, `Embedder`, `Retriever`, `LegalRagService`; source .md files for MF-OBJ-2025 (14 chunks) and PL-CIT-2026-WHT (9 chunks); `npm run rag:build` embeds 23 chunks using `text-embedding-3-small`; incremental rebuild via SHA-256 manifest
-- 9c: `consult_legal_sources` tool — agent retrieves statutory text before final BO determination; goal priority 2; RAG results flow as reasoning context (not persisted finding); smoke test retrieved Art. 4a pkt 29 with score 0.58
-
-**Key decisions:**
-- Knowledge base = authoritative sources only (CIT Act, MF Objaśnienia). Academic commentary (Jankowski & Smoleń) deliberately excluded — not legislation.
-- `vectors.json` gitignored (905 KB generated file); `chunks/index.json` and `manifest.json` tracked (human-readable, enables incremental rebuild)
-- RAG results not stored as findings — tool may be called multiple times with different queries; citations appear in the final answer text
+- The interview replaces DDQ upload as the primary substance data entry path for basic use
+- TypeScript extractor as fallback means Python service is no longer required for basic use
 
 ---
 
@@ -139,43 +142,130 @@ Each phase corresponds to a git tag. All completed phases are available as GitHu
 
 **What:**
 - `EntityRegistry.ts` — JSON-backed registry; persists to `data/registry.json` (gitignored)
-- Upsert semantics: re-running for the same entity updates the entry but preserves `created_at` and `review_status` (so a professional's sign-off is not wiped by a re-analysis)
+- Upsert semantics: re-running for the same entity updates the entry but preserves `created_at` and `review_status`
 - Lookup key: `entity_name::country` (lowercased) — case-insensitive
-- Extracts `substance_tier` and `bo_overall` from the parsed findings map
-- `getRegistry()` singleton for the web server; CLI creates its own instance
 - `GET /registry` endpoint — returns all entries as JSON, newest-first
-- "Past Analyses" collapsible panel in the web UI right column — loads on init, refreshes after each analysis
-- 26 new unit tests (all pure logic, temp file paths, no API calls)
+- "Past Analyses" collapsible panel in the web UI right column
 
 **Key decisions:**
 - JSON (not SQLite) — zero new dependencies, human-readable, sufficient for 1–3 analysts
-- Circular import avoided: `EntityRegistry` defines its own `AnalysisReport` interface; `WhtReport` satisfies it via structural typing
-- `review_status` preserved on upsert — `draft` by default; a professional can set `reviewed` or `signed_off` in the JSON file
+- `review_status` preserved on upsert — a professional's sign-off survives re-analysis
 - `data/registry.json` gitignored — runtime artifact, not source code
 
 ---
 
-## Planned
+### v0.12a.0 — Phase 12a: TreatyVerifierAgent
 
-### Phase 12 — Treaty rate verification + human review workflow
+**What:**
+- `TreatyVerifierAgent.ts` — `verifyRate()` via Gemini REST API + Google Search
+- `TreatyRateVerification` type: `{ verified: boolean, confidence: string, note: string, sources: [] }`
+- `scripts/verifyTreaties.ts` — batch runner; `npm run verify:treaties`
+- `verified_at?`, `verified_sources?`, `verification_note?` added to rate interfaces in `WhtEnvironment.ts`
+- 15 simulate-mode tests
 
-- Verify top 10 treaty rates against official treaty PDFs (DzU references in treaties.json)
-- Add `reviewed_by` + `review_status` + `signed_off_at` fields to the registry
-- "Review and approve" button in web UI — entry not `signed_off` until a professional clicks it
+**Key decisions:**
+- Batch script works and is correct; NOT yet wired into the live agent flow (Phase 14 does this)
+- All 36 treaty rates remain `verified: false` until Phase 14 + Phase 20
 
+---
 
-### Phase 13 — Third-party vendor workflow
+### v0.12b.0 — Phase 12b: Human review workflow
 
-Distinct lighter-touch flow: company name + payment type → treaty check → risk classification (LOW/MEDIUM/HIGH) → document checklist. Based on the distinction between related-party (full substance) and third-party (cert + declaration) due diligence standards.
+**What:**
+- `EntityRegistry.updateReviewStatus()` — `review_status: draft | reviewed | signed_off`
+- `GET /registry/entry` + `POST /registry/review` endpoints
+- `scripts/listUnreviewed.ts` + `npm run review:list`
+- Web UI review drawer with reviewer name, note, and action buttons
+- 12 new tests
 
-### Phase 14 — Batch payment processing
+---
 
-CSV input → one report per row → summary table + individual reports. Cached entity profiles used where available.
+### v0.13.0 — Phase 13: Provenance and citations
 
-### Phase 15+ — Tax AI OS expansion
+**What:**
+- `Citation` interface — tool, source, finding_key, section_ref, source_id, chunk_count, top_score
+- `FINDING_KEY_FOR_TOOL` map + `extractCitation()` + `hasRagLegalGrounding()`
+- `computeReportConfidence(findings, citations)` — RAG legal grounding gate: ≥2 chunks, top_score ≥0.55 required for HIGH
+- `WhtReport.citations: Citation[]`
+- `require.main === module` guard on `main()`
+- 19 new tests
 
-New analysis modules sharing the same GAME framework, web UI, entity registry, and RAG knowledge base:
-- Pillar Two / GloBE effective tax rate per jurisdiction
-- Transfer Pricing first-pass screening
-- Permanent establishment risk
-- CbCR analysis — low-substance / high-profit mismatches
+---
+
+### v0.14.0 — QA-1: Lint, coverage, snapshot
+
+**What:**
+- `eslint.config.js` — flat config, `@typescript-eslint/flat/recommended`, `no-explicit-any: error`
+- `.prettierrc.json` — single quotes, trailing commas, 100-char line width
+- `npm run lint` — ESLint + Prettier check in one command
+- `.c8rc.json` + `npm run test:coverage` — V8 coverage, text + lcov
+- `tsc --noEmit &&` prefix on `npm test` — type errors block test run
+- `treaties.snapshot.test.ts` — SHA-256 hash guard for treaties.json
+
+---
+
+### v0.15.0 — QA-2: Zod validation and contract tests
+
+**What:**
+- `AgentInputSchema` (Zod v4) — single source of truth for shape + validation; `AgentInput` type derived via `z.infer<>`
+- `src/agents/contracts.ts` — `SubstanceResultSchema` + `DempeResultSchema` (Zod v4)
+- `python/service/export_schemas.py` → `contract.json` snapshot (Python/TS contract parity test)
+- `src/agents/contract.test.ts` — 13 tests (simulation output vs. Zod; Python vs. TypeScript schemas)
+
+---
+
+### DOCS-1 + GITHUB-1
+
+**What:**
+- `CHANGELOG.md` + `LICENSE` (MIT) + `SECURITY.md`
+- `.github/ISSUE_TEMPLATE/` — bug + feature request templates
+- `.github/pull_request_template.md`
+- README feedback section + docs table
+
+---
+
+### v0.16.0 — DOCS-2: last_verified frontmatter
+
+**What:**
+- `last_verified?: string` added to `SourceFrontmatter`, `Chunk`, propagated to `CitedChunk`
+- `parseFmFields()` in `Chunker.ts` parses and includes the field
+- `MF-OBJ-2025.md` + `PL-CIT-2026-WHT.md`: `last_verified: 2026-04-02`
+- `TEMPLATE.md` documents the field
+- Field parsed and stored on every chunk — surfacing to tool results is Phase 14
+
+**246/246 tests passing.**
+
+---
+
+## Planned phases
+
+### Arc 1 — WHT Core Completion (Phases 14–22)
+
+| Phase | Title | Key deliverable |
+|---|---|---|
+| **14** | Ghost Activation | `TreatyVerifierAgent` wired into live agent flow; `last_verified` surfaced in `consult_legal_sources` output; confidence → LOW on rate mismatch |
+| 15 | QA-3: Evals + Negative Tests | `data/golden_cases/` (5 curated cases); `scripts/runEvals.ts`; `bo_overall` + confidence calibration checks; negative tests (unsupported country, missing DDQ) |
+| 16 | Legal Source Hierarchy | `source_type` parameter on `consult_legal_sources`; Art./Sec. refs in `Citation`; `legal_hierarchy` field; Zod domain-narrowing for `paymentType`, `countryCode` |
+| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW analysis |
+| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
+| 19 | Due Diligence Module | DD checklist tool per payment type (dividend, royalty, management fee); DD gap analysis in report |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` in treaties.json |
+| 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache hits |
+| 22 | Production Hardening | Session persistence; SSE reconnect; rate limiting; memory pruning (`maxMessageHistory`) |
+
+### Arc 2 — WHT Professional Features (Phases 23–26)
+
+| Phase | Title | Key deliverable |
+|---|---|---|
+| 23 | Intangibles / Business Profits Layer | Art. 21 ust. 1 pkt 2a CIT — management fees, advisory, technical services; PE article analysis hook |
+| 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow |
+| 25 | Jurisdiction Expansion | `treaties.json` 36 → 50+ countries |
+| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria verified; `CHANGELOG.md` v1.0; MBA prototype declaration |
+
+### Arc 3 — Tax OS Foundation (Phases 27–29)
+
+| Phase | Title | Key deliverable |
+|---|---|---|
+| 27 | GLOBAL VISION Documentation | `docs/GLOBAL_VISION.md` (gitignored — private); Tax OS architecture, legal hierarchy system, system prompt guidelines |
+| 28 | EU Jurisdiction Engine Concept | Architecture design for multi-jurisdiction support; pilot jurisdiction (Germany or Netherlands); Tax OS Module 2 scope |
+| 29 | Tax OS Module 2 Planning | Next tax regime scoping; cross-module shared framework design; Tax OS v1.0 roadmap |

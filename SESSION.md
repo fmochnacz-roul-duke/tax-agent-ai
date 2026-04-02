@@ -1,8 +1,8 @@
 # Session State
 
 ## Current Status
-**Phase:** DOCS-2 COMPLETE — last_verified frontmatter on RAG source files.
-**Date of last session:** 2026-04-02
+**Phase:** Strategy review complete (2026-04-02). Roadmap restructured to 16 phases across 3 arcs. Phase 14 is next.
+**Last code session:** DOCS-2 (v0.16.0, 2026-04-02)
 **Branch:** master (feature/docs2-last-verified merged, tagged v0.16.0)
 **Tests:** 246/246 passing
 
@@ -25,22 +25,40 @@ npm start        ← web UI at http://localhost:3000
 
 ---
 
-## 7-Session Roadmap (Phases 14–20)
+## Revised Roadmap (Phases 14–29)
 
-After completing v0.16.0, all planned phases from the original roadmap are done.
-The next 7 sessions address ghost/inactive functions and move toward tax-team readiness.
+Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 to 16 phases across 3 arcs. Each phase = one session. End of every session: update all knowledge files + push to GitHub.
 
-| Session | Phase | Title | Key deliverable |
-|---|---|---|---|
-| **1** | **14** | **Ghost Activation** | `TreatyVerifierAgent` wired into live agent flow; `last_verified` surfaced in RAG tool results |
-| 2 | 15 | Third-party vendor UC2 | `classify_vendor_risk` tool; document checklist; lightweight non-DDQ workflow |
-| 3 | 16 | Batch processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache hits |
-| 4 | 17 | Data quality pass | Verify top-10 treaty rates against DzU PDFs; update `verified: true` in treaties.json |
-| 5 | 18 | Jurisdiction expansion | Expand treaties.json 36 → 50+ countries |
-| 6 | 19 | Production hardening | Session persistence, SSE reconnect, rate limiting, error recovery |
-| 7 | 20 | Major review | End-to-end demo; full docs pass; Tax OS Module 2 planning |
+### Arc 1 — WHT Core Completion (Phases 14–22)
 
-*After session 7: major review before the next phase roadmap is set.*
+| Phase | Title | Key deliverable |
+|---|---|---|
+| **14** | **Ghost Activation** | `TreatyVerifierAgent` in live agent flow; `last_verified` in RAG output; confidence → LOW on rate mismatch |
+| 15 | QA-3: Evals + Negative Tests | `data/golden_cases/` (5 cases); `scripts/runEvals.ts`; bo_overall + confidence calibration checks; negative tests |
+| 16 | Legal Source Hierarchy | `source_type` param on `consult_legal_sources`; Art./Sec. refs in `Citation`; `legal_hierarchy` field; Zod domain-narrowing |
+| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW |
+| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
+| 19 | Due Diligence Module | DD checklist tool per payment type; DD gap analysis in `WhtReport` |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` in treaties.json |
+| 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache |
+| 22 | Production Hardening | Session persistence; SSE reconnect; rate limiting; memory pruning (`maxMessageHistory`) |
+
+### Arc 2 — WHT Professional Features (Phases 23–26)
+
+| Phase | Title | Key deliverable |
+|---|---|---|
+| 23 | Intangibles / Business Profits Layer | Art. 21 ust. 1 pkt 2a CIT — management fees, advisory, technical services; PE analysis hook |
+| 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow |
+| 25 | Jurisdiction Expansion | treaties.json 36 → 50+ countries |
+| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria; CHANGELOG v1.0; MBA prototype declaration |
+
+### Arc 3 — Tax OS Foundation (Phases 27–29)
+
+| Phase | Title | Key deliverable |
+|---|---|---|
+| 27 | GLOBAL VISION Documentation | `docs/GLOBAL_VISION.md` (gitignored); Tax OS architecture, legal hierarchy, system prompt guidelines |
+| 28 | EU Jurisdiction Engine Concept | Architecture for multi-jurisdiction; pilot jurisdiction (Germany or Netherlands); Module 2 scope |
+| 29 | Tax OS Module 2 Planning | Next tax regime scoping; cross-module framework; Tax OS v1.0 roadmap |
 
 ---
 

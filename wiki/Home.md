@@ -22,28 +22,28 @@ This agent automates the first-layer research for any WHT-relevant payment — i
 
 ## Two use cases
 
-### 1 — Intercompany payment review
+### UC1 — Intercompany payment review
 
 Polish entity → related holding / IP / finance company
 
 - Same entities appear every quarter
-- Highest due diligence standard (Art. 26 CIT)
+- Highest due diligence standard (Art. 26 CIT + MF Objaśnienia §4)
 - Pay and Refund almost always triggers
-- Full substance assessment required
-- **Target: any entity assessed via 5-question interview or DDQ upload**
+- Full substance assessment via 5-question interview or DDQ upload
+- **Status: fully supported as of Phase 10**
 
-### 2 — Third-party vendor scan
+### UC2 — Third-party vendor scan
 
 Polish entity → unrelated foreign vendor (software licences, content fees, SaaS)
 
 - New entity on each vendor onboarding
 - Lower due diligence standard (residence cert + BO declaration sufficient)
 - Risk classification drives document checklist
-- **Target: company name + payment type → risk tier → document checklist**
+- **Status: planned Phase 18**
 
 ---
 
-## Current status
+## Current status (v0.16.0)
 
 | Phase | Description | Status |
 |---|---|---|
@@ -54,13 +54,21 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 | 6 | Python DDQ extraction service | ✅ v0.6.0 |
 | 7 | FactChecker Agent — Gemini + Google Search | ✅ v0.7.0 |
 | 8 | Conversational web UI, SSE streaming | ✅ v0.8.0 |
+| 9 | Legal knowledge RAG + tax taxonomy | ✅ v0.9.0 |
 | 10 | Substance interview — 5-question chat, any entity | ✅ v0.10.0 |
-| **9** | **Legal knowledge RAG + tax taxonomy** | ✅ v0.9.0 |
-| **11** | **Entity registry — JSON persistence, audit trail** | ✅ v0.11.0 |
-| 12 | Treaty rate verification + human review workflow | Next |
-| 13 | Third-party vendor workflow | Planned |
-| 14 | Batch payment processing | Planned |
-| 15+ | Tax AI OS (Pillar Two, TP, PE, CbCR) | Vision |
+| 11 | Entity registry — JSON persistence, audit trail | ✅ v0.11.0 |
+| 12a | TreatyVerifierAgent — Gemini rate verification | ✅ v0.12a.0 |
+| 12b | Human review workflow — drawer, sign-off, CLI | ✅ v0.12b.0 |
+| 13 | Citations on WhtReport; RAG legal grounding gate | ✅ v0.13.0 |
+| QA-1 | ESLint + Prettier + c8 coverage + snapshot test | ✅ v0.14.0 |
+| QA-2 | Zod validation; Python/TS contract tests | ✅ v0.15.0 |
+| DOCS-1/2 | CHANGELOG, LICENSE, last_verified frontmatter | ✅ v0.16.0 |
+| **14** | **Ghost Activation** — wire TreatyVerifier; surface last_verified | **Next** |
+| 15–22 | QA-3 Evals, Legal Hierarchy, UC2, DD Module, Batch, Hardening | Planned |
+| 23–26 | Intangibles layer, Legal source workflow, Jurisdiction expansion, WHT v1.0 | Planned |
+| 27–29 | Tax OS Foundation — GLOBAL VISION, EU engine, Module 2 | Vision |
+
+**Tests: 246/246 passing. Build: zero errors.**
 
 ---
 
@@ -74,12 +82,22 @@ npm start
 # CLI
 npm run tax:agent -- --input data/orange_polska_royalty.json
 
-# Tests
-npm test         # 169/169 tests, ~3s, no API calls
-npm run build    # TypeScript type-check
+# Tests (no API keys needed)
+npm test         # 246/246 tests, ~3s
+npm run build    # TypeScript type-check — zero errors required
+
+# Code quality
+npm run lint                    # ESLint + Prettier
+npm run test:coverage           # c8 coverage report
+
+# Optional — requires GEMINI_API_KEY
+npm run verify:treaties         # batch-verify treaty rates via Gemini
+
+# Registry management
+npm run review:list             # list all draft-status registry entries
 ```
 
-Environment variables: `OPENAI_API_KEY` (required), `GEMINI_API_KEY` (optional — enables FactChecker).
+Environment variables: `OPENAI_API_KEY` (required), `GEMINI_API_KEY` (optional — enables FactChecker + TreatyVerifier).
 
 ---
 
@@ -91,7 +109,7 @@ Environment variables: `OPENAI_API_KEY` (required), `GEMINI_API_KEY` (optional �
 | [[Legal Sources]] | All authoritative sources used in the agent with verification status |
 | [[WHT Legal Framework]] | The 3-condition BO test, Art. 4a pkt 29, MLI PPT, EU Directives, Pay and Refund |
 | [[Architecture]] | GAME/MATE framework, agent design, multi-agent topology, data flows |
-| [[Phase Roadmap]] | Detailed description of each phase, decisions made, open questions |
+| [[Phase Roadmap]] | Detailed description of each phase, decisions made, and planned phases |
 | [[How to Run]] | Full developer and non-developer setup instructions |
 
 ---

@@ -3,6 +3,8 @@
 > This document defines the strategic direction and product vision for the WHT Beneficial Owner
 > Agent. It guides phase prioritisation and design decisions. It is a living document — update it
 > when the vision changes, not just when a phase completes.
+>
+> **Last updated: 2026-04-02 (v0.16.0 — strategy review; roadmap extended to 29 phases across 3 arcs)**
 
 ---
 
@@ -85,23 +87,38 @@ content licences from US or UK entities.
 | Legal citations (RAG) | ✅ Phase 9 | `consult_legal_sources` retrieves exact MF Objaśnienia / CIT Act text; confidence gate |
 | Entity registry | ✅ Phase 11 | JSON persistence; audit trail; "Past Analyses" web panel |
 | Human review workflow | ✅ Phase 12b | Review drawer; `review_status`: draft/reviewed/signed_off; reviewer metadata |
-| Treaty rate verifier | ⚠ Batch script only | `TreatyVerifierAgent` exists + tests; batch `verifyTreaties` script exists; NOT yet wired into live agent flow |
+| Treaty rate verifier | ⚠ Batch script only | `TreatyVerifierAgent` exists + tests; NOT yet wired into live flow (Phase 14) |
 | Provenance/citations | ✅ Phase 13 | Every WhtReport carries `citations[]`; RAG legal grounding gate for HIGH confidence |
+| Zod runtime validation | ✅ QA-2 | `AgentInputSchema`, `SubstanceResultSchema`, `DempeResultSchema`; Python/TS contract tests |
 | Conversational input (web UI) | ✅ Live | Extracts parameters from free text, asks follow-ups |
 | Progress streaming (SSE) | ✅ Live | Live agent log in browser |
 | Report output (JSON) | ✅ Live | Structured, timestamped, machine-readable, cited |
+| `last_verified` on RAG chunks | ⚠ Parsed only | Stored on chunks (DOCS-2); NOT yet shown in tool output (Phase 14) |
 
-### Remaining gaps heading into Phase 14
+### Remaining gaps by arc
 
-| Gap | Planned phase | Description |
+**Arc 1 — WHT Core (Phases 14–22):**
+
+| Gap | Phase | Description |
 |---|---|---|
-| TreatyVerifierAgent not in live flow | Phase 14 | Verifier exists as batch tool; agent never calls it; rates still `verified: false` |
-| `last_verified` not surfaced to user | Phase 14 | Parsed by Chunker, stored on chunks, but not shown in `consult_legal_sources` output |
-| Third-party vendor workflow (UC2) | Phase 15 | No lighter-touch path for unrelated vendors; risk classification not implemented |
-| Batch processing | Phase 16 | One entity at a time only; no CSV input |
-| Treaty rates unverified | Phase 17 | All 36 countries still `verified: false` in treaties.json |
-| Jurisdiction coverage | Phase 18 | 36 of 91 Polish treaties covered |
-| Session persistence | Phase 19 | In-memory sessions lost on server restart |
+| TreatyVerifierAgent not in live flow | 14 | Verifier + batch script work; agent never calls it; rates still `verified: false` |
+| `last_verified` not surfaced to user | 14 | Parsed by Chunker; not shown in `consult_legal_sources` output |
+| No eval harness / golden cases | 15 | Agent correctness untested at the output level — only code paths tested |
+| Legal source hierarchy not reflected in tool | 16 | `consult_legal_sources` does not distinguish statute from guidance; no Art./Sec. refs |
+| No UI signal for LOW confidence | 17 | User sees confidence label but no visual emphasis on uncertain conclusions |
+| No third-party vendor workflow (UC2) | 18 | No lighter-touch path for unrelated vendors; no risk classification |
+| No Due Diligence checklist tool | 19 | DD requirements not surfaced per payment type |
+| Treaty rates unverified | 20 | All 36 countries still `verified: false` in treaties.json |
+| No batch processing | 21 | One entity at a time only; no CSV input |
+| Session persistence | 22 | In-memory sessions lost on server restart |
+
+**Arc 2 — WHT Professional (Phases 23–26):**
+
+| Gap | Phase | Description |
+|---|---|---|
+| Intangibles / management fees not covered | 23 | Art. 21 ust. 1 pkt 2a CIT — advisory, technical services, know-how not in scope |
+| Legal source update workflow not defined | 24 | No protocol for adding new sources, updating guidance, managing `last_verified` |
+| Jurisdiction coverage | 25 | 36 of 91 Polish treaties; 55 countries with no treaty support |
 
 ---
 
@@ -113,30 +130,36 @@ A "Beneficial Owner Scanner" that a tax team can actually use must meet all of t
 - [x] Any entity can be assessed, not just two hardcoded ones *(Phase 10)*
 - [x] Substance data entered via browser (no DDQ files, no Python service for basic use) *(Phase 10)*
 - [x] Entity profiles persist — same holding is not re-entered each quarter *(Phase 11)*
-- [ ] Treaty rates verified against at least the top 10 commercially relevant treaties *(Phase 17)*
 - [x] Report includes a "reviewed and approved by" field that a professional fills in *(Phase 12b)*
-- [ ] Output format suitable for a tax file (not just developer-readable JSON)
-- [ ] Intercompany and third-party workflows are explicitly different *(Phase 15)*
+- [ ] Treaty rates verified against at least the top 10 commercially relevant treaties *(Phase 20)*
+- [ ] Output format suitable for a tax file (not just developer-readable JSON) *(Phase 26)*
+- [ ] Intercompany and third-party workflows are explicitly different *(Phase 18)*
+- [ ] Eval harness confirms correct `bo_overall` on curated golden cases *(Phase 15)*
+- [ ] Citations include specific Art./Sec. references (e.g. Art. 26 ust. 1 CIT) *(Phase 16)*
+- [ ] Management fees / technical services covered (Art. 21 ust. 1 pkt 2a CIT) *(Phase 23)*
 
 **Quality requirements:**
 - [x] Every BO conclusion cites the specific MF Objaśnienia and/or OECD criteria it applied *(Phase 9 RAG + Phase 13 citations)*
 - [x] Confidence levels reflect real data quality, not just simulation mode *(Phase 13 RAG gate)*
 - [x] The agent never states HIGH confidence based on simulated substance *(RAG gate + substance confidence check)*
 - [x] Conservative fallback is explicit — "cannot confirm" is better than a wrong answer *(CONDUIT fallback, LOW confidence)*
+- [ ] UI signals LOW confidence visually — grey-out or "Draft Only" watermark *(Phase 17)*
+- [ ] UNCERTAIN analysis automatically triggers human review workflow *(Phase 17)*
 
 **Process requirements:**
-- [ ] A new payment can be analysed in under 5 minutes if entity data is already stored *(depends on Phase 16 batch + Phase 11 cache hit)*
-- [ ] A new entity can be onboarded in under 15 minutes *(Phase 10 interview is ~5min; feasible today)*
-- [x] Output is suitable for review by a professional who did not run the analysis *(Phase 12b review workflow)*
+- [x] A new entity can be onboarded in under 15 minutes *(Phase 10 interview ~5min — feasible today)*
+- [x] Output is suitable for review by a professional who did not run the analysis *(Phase 12b)*
+- [ ] A new payment can be analysed in under 5 minutes if entity data is already stored *(Phase 21 batch + Phase 11 cache)*
 
 ---
 
-## Phase roadmap — revised
+## Phase roadmap — completed
 
-The original Phase 9 plan was "simple RAG." This section refines the full roadmap based on
-the gap analysis above.
+Phases 1–16 (including QA-1, QA-2, DOCS-1, DOCS-2, GITHUB-1) are complete as of v0.16.0.
+The reasoning below is preserved for reference — it explains *why* each phase was prioritised
+the way it was. For the current forward-looking roadmap see [[Phase Roadmap]] in the wiki.
 
-### Phase 9 — Legal knowledge RAG (originally planned)
+### Phase 9 — Legal knowledge RAG (completed v0.9.0)
 
 **What it does:** Replace hardcoded substance and DEMPE logic with retrieval from the actual
 legal texts — MF Objaśnienia 2025, Jankowski & Smoleń 2025, OECD TP Guidelines Ch. VI.
@@ -163,7 +186,7 @@ business activity assessed on: [list from document]."
 
 ---
 
-### Phase 10 — Substance questionnaire (HIGHEST IMPACT)
+### Phase 10 — Substance questionnaire (completed v0.10.0)
 
 **What it does:** Replace both the hardcoded entity profiles AND the DDQ file approach with
 a structured web UI questionnaire that any user can complete in 5-10 minutes.
@@ -196,7 +219,7 @@ from the legal text). Phase 10 gives users the UI to ANSWER them. Together they 
 
 ---
 
-### Phase 11 — Entity registry and profile persistence
+### Phase 11 — Entity registry and profile persistence (completed v0.11.0)
 
 **What it does:** Store assessed entity profiles in a persistent store (file-based JSON or
 SQLite). When the same holding appears next quarter, load the cached profile instead of
@@ -218,7 +241,7 @@ every payment run. Re-entering their data every time is not a product — it is 
 
 ---
 
-### Phase 12 — Treaty rate verification and human review workflow
+### Phase 12 — Treaty rate verification and human review workflow (completed v0.12a.0 + v0.12b.0)
 
 **What it does (part A — treaty rates):** Verify the 10-15 most commercially important
 treaty rates against the official treaty PDFs, update `verified: true` in `treaties.json`,
@@ -240,7 +263,13 @@ report is not finalised until a professional has reviewed it.
 
 ---
 
-### Phase 13 — Third-party vendor workflow
+### Phase 13 — Provenance/citations (completed v0.13.0)
+
+See [[Phase Roadmap]] for the full Phase 13 delivery details. `WhtReport.citations[]` and the RAG legal grounding gate for HIGH confidence are live.
+
+---
+
+### Phase 18 (previously Phase 13 in early plans) — Third-party vendor workflow
 
 **What it does:** A distinct, lighter-touch onboarding flow for unrelated third-party vendors.
 
@@ -265,7 +294,7 @@ is later found inapplicable. This creates a different risk profile:
 
 ---
 
-### Phase 14 — Batch payment processing
+### Phase 21 (previously Phase 14 in early plans) — Batch payment processing
 
 **What it does:** Accept a spreadsheet or CSV of payments and produce a report for each one,
 using stored entity profiles where available and flagging new entities that need analysis.
@@ -282,54 +311,57 @@ analysis." The current one-at-a-time UI is correct for Phase 8 but not for volum
 
 ---
 
-### Phase 15+ — Tax AI OS expansion
+### Phases 27–29 — Tax OS Foundation
 
-The longer-term vision (Tax OS) adds new analysis modules that share the same GAME
-framework, web UI, entity registry, and RAG knowledge base:
+After WHT v1.0 (Phase 26), the project expands beyond Poland-centric WHT analysis:
 
-| Module | What it analyses |
-|---|---|
-| **Pillar Two / GloBE** | Is the group within scope? What is the effective tax rate per jurisdiction? |
-| **Transfer Pricing screening** | Are intercompany transactions within arm's length ranges? First-pass risk flag. |
-| **PE risk** | Does the foreign entity's activity in Poland create a permanent establishment? |
-| **CbCR analysis** | Parse Country-by-Country Reports; flag low-substance / high-profit mismatches |
+**Phase 27 — GLOBAL VISION Documentation:** Proprietary Tax OS architecture, legal hierarchy system, and system prompt guidelines. Stored as `docs/GLOBAL_VISION.md` (gitignored — not public).
 
-These modules reuse:
+**Phase 28 — EU Jurisdiction Engine Concept:** Architecture for multi-jurisdiction support. One pilot jurisdiction (Germany or Netherlands) as a design exercise. Tax OS Module 2 scope definition.
+
+**Phase 29 — Tax OS Module 2 Planning:** Next tax regime scoping (candidates: PE risk, Transfer Pricing first-pass screening, Pillar Two). Cross-module shared framework design. Tax OS v1.0 roadmap.
+
+The Tax OS modules share:
 - The same GAME agent framework
-- The same web UI (different analysis type selected)
-- The same entity registry (entity substance data is reusable across modules)
-- The RAG knowledge base (extended with Pillar Two, TP, PE guidance)
+- The same web UI (analysis type selector)
+- The same entity registry (substance data reusable across modules)
+- The same RAG infrastructure (extended with new-regime guidance)
 
 ---
 
-## The correct phase sequence — a decision framework
+## Phase sequencing rationale (updated 2026-04-02)
 
-Not all phases are equal. This is the recommended order based on impact and dependencies:
+Phases 1–16 complete. The sequence below explains the current arc priority ordering.
 
 ```
-TODAY:    Phases 1-8 complete — treaty mechanics, web UI, streaming
-          Tool is useful for treaty/directive/P&R lookup only
+DONE (v0.16.0):
+  Phases 1–13, QA-1, QA-2, DOCS-1, DOCS-2, GITHUB-1
+  Treaty mechanics, web UI, RAG, substance interview, entity registry,
+  human review, citations, Zod validation, treaty verifier (batch only).
+  Tool is production-capable for UC1 intercompany analysis.
 
-NEXT:     Phase 9 + 10 together (RAG + substance questionnaire)
-          These are co-dependent — RAG gives the right questions,
-          Phase 10 gives the UI to answer them.
-          Together: any entity can be assessed with cited legal reasoning.
-          This is the transition from "demo" to "actually useful."
+NEXT (Phase 14 — Ghost Activation):
+  Wire TreatyVerifierAgent into live flow; surface last_verified.
+  Closes the gap between what exists and what works end-to-end.
 
-THEN:     Phase 11 (entity registry)
-          Once Phase 10 exists, persistence makes it practical for
-          real recurring use. Without Phase 10, Phase 11 stores nothing useful.
+THEN (Phase 15 — QA-3 Evals):
+  HIGHEST PRIORITY after Phase 14. Agent correctness at the output level
+  is untested. Golden cases + eval runner before adding new features.
 
-THEN:     Phase 12 (treaty rates + human review)
-          Treaty rates should be verified before anything goes near a real
-          filing. The review workflow should be in place before Phase 13.
+THEN (Phase 16 — Legal Source Hierarchy):
+  Citations with Art./Sec. refs are the most impactful professional-quality
+  upgrade. Legal hierarchy in tool design matters for LLM reasoning quality.
 
-THEN:     Phase 13 (third-party vendor flow)
-          Builds on Phase 12's risk classification logic.
-          A genuinely new use case, not just an improvement to the existing one.
+THEN (Phases 17–22 — Core completion):
+  Confidence UX, UC2 vendor flow, Due Diligence module, data quality,
+  batch processing, production hardening. Order is impact-driven.
 
-FUTURE:   Phase 14 (batch processing) and Phase 15+ (Tax OS modules)
-          These require Phases 9-13 to be solid first.
+FUTURE (Phases 23–26 — Professional features):
+  Intangibles layer, legal source workflow, jurisdiction expansion, WHT v1.0.
+
+VISION (Phases 27–29 — Tax OS):
+  GLOBAL VISION (private), EU jurisdiction engine, Module 2 planning.
+  Begins after WHT v1.0 is complete and battle-tested.
 ```
 
 ---
@@ -373,21 +405,32 @@ Today, when MF publishes updated guidance, someone must recode the substance che
 With RAG, you re-index the document. This is the architectural property that makes the tool
 maintainable and extensible to new tax regimes (Pillar Two, PE, CbCR) without starting from scratch.
 
+**8. Legal source hierarchy must be reflected in the tool design.**
+A citation that says "per CIT Act" and a citation that says "per MF Objaśnienia" carry different
+legal weight. The tool must distinguish statute (primary law) from administrative guidance (binding
+interpretation) from case law (judicial precedent). This distinction is professional-grade quality — a
+tax authority audit will care which category the agent cited. Phase 16 implements this via the
+`source_type` and `legal_hierarchy` fields.
+
 ---
 
-## Appendix — comparative summary: Orange S.A. vs. XTB Malta Holdings today
+## Appendix — comparative summary: Orange S.A. vs. XTB Malta Holdings (v0.16.0)
 
-| Factor | Orange S.A. (works today) | XTB Malta Holdings (does not work) |
+Phase 10 (substance interview) closed the XTB Malta gap. Any entity can now be assessed.
+
+| Factor | Orange S.A. | XTB Malta Holdings |
 |---|---|---|
 | Treaty lookup | ✅ France in database | ✅ Malta in database |
 | Treaty rate | ✅ France royalty 10% | ✅ Malta interest rate (e.g. 5%) |
 | MLI/PPT | ✅ France: YES, PPT applies | ✅ Malta: MLI status checked |
 | EU Directive | ✅ Royalty, France EU, 50.67% ≥25% | ✅ Interest, Malta EU, 100% ≥25% |
 | Pay and Refund | ✅ Related party flagged correctly | ✅ Related party flagged correctly |
-| Entity substance | ✅ Hardcoded: STRONG profile | ❌ Unknown → CONDUIT (no data) |
-| BO conclusion | ✅ PASS (3/3 conditions) | ❌ UNCERTAIN (0/3 conditions) |
-| Report confidence | MEDIUM (rates unverified) | LOW (substance simulated) |
-| Usable for filing? | With professional review | No — substance conclusion worthless |
+| Entity substance | ✅ Via interview or DDQ | ✅ Via 5-question interview (Phase 10) |
+| BO conclusion | ✅ Cited legal reasoning | ✅ Cited legal reasoning |
+| Report confidence | MEDIUM → HIGH with RAG grounding | MEDIUM → HIGH with RAG grounding |
+| Usable for filing? | With professional review + sign-off | With professional review + sign-off |
 
-The gap is entirely in entity substance. Everything else works for both cases.
-Phases 9+10 close that gap.
+**Remaining limitation for both cases (Phase 20):** All treaty rates still `verified: false`.
+Report confidence cannot reach HIGH on rate-dependent conclusions until Phase 20 verifies the top-10 treaties.
+
+**New gap opened (Phase 23):** If XTB Malta charges management fees or advisory fees (not pure interest), those payments fall under Art. 21 ust. 1 pkt 2a CIT — not currently in scope. Phase 23 adds this analysis layer.

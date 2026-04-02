@@ -136,9 +136,33 @@ All three can apply to the same arrangement. Even if the BO test and PPT are sat
 
 ## DEMPE framework — OECD TP Guidelines Ch. VI
 
-For royalty payments, the agent also runs a DEMPE analysis (currently simulated — Phase 9b will add real retrieval). DEMPE assesses whether the IP holding performing **D**evelopment, **E**nhancement, **M**aintenance, **P**rotection, and **E**xploitation of the intangible — or whether those functions sit elsewhere in the group while the holding merely holds legal title.
+For royalty payments, the agent also runs a DEMPE analysis. DEMPE assesses whether the IP holding is performing **D**evelopment, **E**nhancement, **M**aintenance, **P**rotection, and **E**xploitation of the intangible — or whether those functions sit elsewhere in the group while the holding merely holds legal title.
+
+The DEMPE tool (`analyse_dempe`) calls the Python DDQ service when available; falls back to simulation. Full RAG-grounded DEMPE reasoning is dependent on Phase 6 (Python service) and accurate DDQ input.
 
 Key principle: legal ownership of IP does not, by itself, entitle an entity to royalty income at arm's length if it does not perform or control DEMPE functions.
+
+---
+
+---
+
+## Intangible services and management fees — Art. 21 ust. 1 pkt 2a CIT (Phase 23)
+
+> **Status: Planned — Phase 23.** The agent currently covers dividends, interest, and royalties (classic passive income). The provisions below are documented here for planning purposes and will be implemented in Phase 23.
+
+Polish CIT applies a 20% WHT rate not only to interest and royalties but also to payments for **intangible services** defined in Art. 21 ust. 1 pkt 2a CIT:
+
+- Advisory and consulting fees
+- Management and control fees (usługi zarządzania i kontroli)
+- Data processing services
+- Guarantees and insurance
+- Services of similar nature
+
+**Key practical implication:** A payment described as a "management fee" from a Polish subsidiary to a foreign parent may fall under this provision — not under the royalty or dividend articles. Treaty relief still applies (under the "business profits" article, typically Art. 7 OECD MC), but only if the foreign entity has no permanent establishment in Poland and the payment is a genuine arm's length charge.
+
+**Interaction with the BO test:** The BO analysis applies equally to management fee recipients. A holding company that merely rechannels management fees without performing the underlying services fails condition (ii) — no pass-through obligation.
+
+**Phase 23 deliverable:** A new tool or extended payment type in the agent to handle intangible services; PE analysis hook (Art. 5 OECD MC / Art. 26 CIT domestic PE rules); updated `income_type` enum.
 
 ---
 

@@ -97,7 +97,7 @@ Key findings from Jankowski & Smoleń used in agent:
 
 ## Treaty rates — verification priority
 
-All 36 entries in `data/treaties.json` have `verified: false`. Priority order for Phase 12 verification:
+All 36 entries in `data/treaties.json` have `verified: false`. Priority order for Phase 20 verification:
 
 | Priority | Country | Reason |
 |---|---|---|
@@ -116,16 +116,18 @@ Sources for verification: DzU references in `data/treaties.json` → official tr
 
 ---
 
-## RAG roadmap (Phase 9)
+## RAG — live as of Phase 9
 
-Documents to ingest in Phase 9:
+The following documents are indexed and active in the `consult_legal_sources` tool:
 
-| Phase | Document | Purpose |
-|---|---|---|
-| 9a | MF Objaśnienia 2025 (full text) | Substance assessment — cited conclusions |
-| 9a | Jankowski & Smoleń 2025 (key chapters) | Case law + BO vs. TP analysis |
-| 9b | OECD TP Guidelines Ch. VI | DEMPE analysis |
-| 9c | EU I&R Directive 2003/49/EC | Directive exemption logic |
-| 9c | CIT Act Arts. 21, 22, 26, 4a pkt 29 | Statutory citations in conclusions |
+| Source ID | Document | Chunks | Last verified |
+|---|---|---|---|
+| `PL-CIT-2026-WHT` | CIT Act Arts. 4a, 21, 22, 22c, 26 | 9 | 2026-04-02 |
+| `MF-OBJ-2025` | MF Objaśnienia podatkowe 2025 — BO | 14 | 2026-04-02 |
 
-Chunking strategy: split at section boundaries matching taxonomy concept IDs. Each chunk tagged with `concept_ids[]`. Retrieval returns concept-level results, not raw semantic matches.
+Chunking: split at section boundaries matching taxonomy concept IDs (`data/tax_taxonomy.json`). Each chunk carries `source_id`, `section_ref`, and `last_verified` frontmatter (DOCS-2, Phase 16 will surface this in tool output).
+
+**Planned additions (Phase 24 — Legal Source Management Workflow):**
+- Protocol for adding new sources: frontmatter template, chunking, rebuild, `last_verified` tracking
+- Case law ingestion: key NSA / CJEU rulings on BO definition
+- Phase 23 (Intangibles): additional CIT Act provisions (Art. 21 ust. 1 pkt 2a)
