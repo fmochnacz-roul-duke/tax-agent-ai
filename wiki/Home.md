@@ -43,11 +43,11 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 
 ---
 
-## Current status (v0.16.0)
+## Current status (v0.18.0)
 
 | Phase | Description | Status |
 |---|---|---|
-| 1 | Live treaty data — 36 countries, MLI flags | ✅ v0.1.0 |
+| 1 | Live treaty data — 37 countries, MLI flags | ✅ v0.1.0 |
 | 2+3 | Structured CLI input, JSON report output | ✅ v0.3.0 |
 | 4 | Entity substance profiles, 3-condition BO test | ✅ v0.4.0 |
 | 5 | MATE — model tiering, environment validation | ✅ v0.5.0 |
@@ -63,12 +63,14 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 | QA-1 | ESLint + Prettier + c8 coverage + snapshot test | ✅ v0.14.0 |
 | QA-2 | Zod validation; Python/TS contract tests | ✅ v0.15.0 |
 | DOCS-1/2 | CHANGELOG, LICENSE, last_verified frontmatter | ✅ v0.16.0 |
-| **14** | **Ghost Activation** — wire TreatyVerifier; surface last_verified | **Next** |
-| 15–22 | QA-3 Evals, Legal Hierarchy, UC2, DD Module, Batch, Hardening | Planned |
-| 23–26 | Intangibles layer, Legal source workflow, Jurisdiction expansion, WHT v1.0 | Planned |
+| 14 | Ghost Activation — wire TreatyVerifier; surface last_verified | ✅ v0.17.0 |
+| 15 | QA-3 Evals — `bo_overall`, `conduit_risk`, golden dataset (9 cases), eval harness | ✅ v0.18.0 |
+| **16** | **Legal Source Hierarchy** — `source_type` on RAG tool; Art./Sec. refs in Citation | **Next** |
+| 17–22 | Confidence UX, UC2, DD Module, Data Quality, Batch, Hardening | Planned |
+| 23–26 | Intangibles layer, GAAR tool, Jurisdiction expansion, WHT v1.0 | Planned |
 | 27–29 | Tax OS Foundation — GLOBAL VISION, EU engine, Module 2 | Vision |
 
-**Tests: 246/246 passing. Build: zero errors.**
+**Tests: 284/284 passing. Build: zero errors.**
 
 ---
 
@@ -83,12 +85,15 @@ npm start
 npm run tax:agent -- --input data/orange_polska_royalty.json
 
 # Tests (no API keys needed)
-npm test         # 246/246 tests, ~3s
+npm test         # 284/284 tests, ~5s
 npm run build    # TypeScript type-check — zero errors required
 
 # Code quality
 npm run lint                    # ESLint + Prettier
 npm run test:coverage           # c8 coverage report
+
+# Golden dataset evaluation (requires OPENAI_API_KEY)
+npm run eval                    # run 9-case eval harness with Triangulation Rule
 
 # Optional — requires GEMINI_API_KEY
 npm run verify:treaties         # batch-verify treaty rates via Gemini

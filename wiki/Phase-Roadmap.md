@@ -237,15 +237,39 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ---
 
+### v0.18.0 — Phase 15: QA-3 Evals + Negative Tests
+
+**What:**
+- `BoOverall` type exported from `BeneficialOwnerAgent.ts`: `'CONFIRMED' | 'UNCERTAIN' | 'REJECTED' | 'NO_TREATY'`
+- `bo_overall: BoOverall` added to `WhtReport` — deterministic derivation from structured findings; never parsed from LLM free text
+- `conduit_risk: boolean` added to `WhtReport` — `true` when REJECTED + entity/country is in a known routing jurisdiction or is a holding/shell/unknown entity type; no LLM judgment
+- `computeBoOverall()` — decision order: NO_TREATY → LOW confidence → substance FAIL/PASS → UNCERTAIN fallback
+- `computeConduitRisk()` — 16-country `KNOWN_ROUTING_JURISDICTIONS` set OR entity_type in `['holding_company', 'shell_company', 'unknown']`
+- `EntityRegistry.save()` — force-draft on REJECTED: incoming REJECTED verdict resets `review_status` to `'draft'` even when previously `'signed_off'`; protects against unreviewed conduit rejections
+- `data/golden_cases/` — 9 JSON cases: France/CONFIRMED, Luxembourg/UNCERTAIN, Germany/CONFIRMED (EU Directive), Netherlands/UNCERTAIN, Malta/REJECTED, Hong Kong/NO_TREATY, Ireland/UNCERTAIN, Cyprus SPV conduit (8a/REJECTED), Canada ultimate BO (8b/CONFIRMED)
+- `scripts/runEvals.ts` + `npm run eval` — Triangulation Rule: fails if either `bo_overall` OR rate is wrong
+- 8 negative tests: Hong Kong no-treaty, Brazil rates (10%/15% split), France 10% royalty guard, Malta MLI PPT confirmation, input validation
+- Brazil added to `treaties.json` — PL-BR DTC (2022); in force 01.01.2026; no MLI PPT; rates verified via Tax@Hand/Deloitte Aug 2025
+
+**Key decisions:**
+- `bo_overall` is derived deterministically — never from an LLM enum. Compliance verdicts must not depend on the LLM correctly applying a label.
+- LOW confidence unconditionally blocks CONFIRMED. No partial credit in tax law.
+- `conduit_risk` uses a static jurisdiction set + entity_type field because the agent evaluates single nodes and cannot see outbound payment flows to reliably identify conduit structures.
+- The conduit scenario (Cyprus SPV → Canada ultimate BO) is split into two independent eval cases (8a, 8b). Automated look-through deferred to Phase 23b (`check_look_through` tool).
+- Brazil's treaty was caught as a "training data ghost" — the PL-BR DTT entered into force 01.01.2026 and was absent from the initial golden dataset proposal. All treaty facts must be cross-checked against `treaties.json` before use in golden cases or documentation.
+
+**33 new tests — 284/284 passing.**
+
+---
+
 ## Planned phases
 
-### Arc 1 — WHT Core Completion (Phases 15–22)
+### Arc 1 — WHT Core Completion (Phases 16–22)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **15** | **QA-3: Evals + Negative Tests** | `data/golden_cases/` (7 curated cases); `scripts/runEvals.ts`; `bo_overall` + confidence calibration; Triangulation Rule calibration; negative tests (unsupported country, missing DDQ) |
-| 16 | Legal Source Hierarchy | `source_type` parameter on `consult_legal_sources`; Art./Sec. refs in `Citation`; `legal_hierarchy` field; Zod domain-narrowing for `paymentType`, `countryCode` |
-| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW analysis |
+| **16** | **Legal Source Hierarchy** | `source_type` parameter on `consult_legal_sources`; Art./Sec. refs in `Citation`; `legal_hierarchy` field; Zod domain-narrowing |
+| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW |
 | 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path; CSV batch schema defined |
 | 19 | Due Diligence Module | DD checklist tool per payment type (dividend, royalty, management fee); DD gap analysis in report |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |

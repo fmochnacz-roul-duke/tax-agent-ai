@@ -153,6 +153,10 @@ Each chunk carries:
 
 **RAG confidence gate (Phase 13):** `WhtReport.data_confidence` can only reach `HIGH` if `consult_legal_sources` returned ≥2 chunks with top cosine score ≥0.55. This ensures HIGH confidence is never based on simulated data alone.
 
+**Machine-readable BO verdict (Phase 15):** `WhtReport` carries two new fields derived deterministically from structured findings — never from LLM free text:
+- `bo_overall: BoOverall` — `'CONFIRMED' | 'UNCERTAIN' | 'REJECTED' | 'NO_TREATY'`. Decision order: no treaty → LOW confidence → substance FAIL/PASS → UNCERTAIN fallback.
+- `conduit_risk: boolean` — `true` when REJECTED + country is in `KNOWN_ROUTING_JURISDICTIONS` (16 entries) OR `entity_type` is holding/shell/unknown. Signals that a human reviewer should investigate whether an ultimate BO exists in another jurisdiction.
+
 ---
 
 ## Web server (Phase 8+10+11+12b)
@@ -215,7 +219,7 @@ Phase 16 will enhance citations with specific Art./Sec. references (e.g. `Art. 2
 `EntityRegistry.ts` — JSON-backed store at `data/registry.json` (gitignored):
 
 - Lookup key: `entity_name::country` (normalised, case-insensitive)
-- Upsert semantics: `created_at` and `review_status` preserved on re-analysis
+- Upsert semantics: `created_at` preserved on re-analysis; `review_status` preserved unless incoming `bo_overall === 'REJECTED'` — in which case the status is reset to `'draft'` (conduit risk: a prior sign-off is no longer valid when a new analysis rejects the entity)
 - `review_status`: `draft` (default) → `reviewed` → `signed_off`
 - Every entry carries a full `WhtReport` snapshot + extracted `substance_tier` + `bo_overall`
 - `getRegistry()` singleton — web server and CLI share state within a process
@@ -238,7 +242,7 @@ Phase 16 will enhance citations with specific Art./Sec. references (e.g. `Art. 2
 | `src/server/EntityRegistry.ts` | JSON entity registry — upsert, audit trail, `getRegistry()` singleton |
 | `src/shared/LLM.ts` | `generate()`, `generateWithTools()`, `LLM.fast/powerful`, `ToolFactory` |
 | `src/shared/Memory.ts` | Conversation history + findings store |
-| `data/treaties.json` | Treaty database: 36 countries, rates, MLI flags |
+| `data/treaties.json` | Treaty database: 37 countries (Brazil added v0.18.0), rates, MLI flags |
 | `data/tax_taxonomy.json` | Tax taxonomy: ~40 concepts, rag_keywords, legal refs |
 | `data/legal_sources_registry.json` | All legal sources with verification status |
 | `data/legal_sources/PL-CIT-2026-WHT.md` | RAG source: CIT Act WHT provisions (9 chunks) |
