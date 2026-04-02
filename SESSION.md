@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** QA-1 COMPLETE — ESLint, Prettier, c8 coverage, build precondition, treaty snapshot test.
+**Phase:** QA-2 COMPLETE — Zod validation + Python/TS contract tests.
 **Date of last session:** 2026-04-02
-**Branch:** master (feature/qa1-eslint-prettier merged, tagged v0.14.0)
+**Branch:** master (feature/qa2-zod-contracts merged, tagged v0.15.0)
 
 ### Phase 13 summary — Provenance/Citations on WhtReport
 - `src/agents/BeneficialOwnerAgent.ts`:
@@ -47,14 +47,28 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "QA-1 is merged. Let's start QA-2 — Zod validation and contract tests."
+> "QA-2 is merged. Let's start DOCS-2 — last_verified frontmatter on RAG source files."
 
 ### Upcoming phases (planned, in order)
 
 | Phase | Description |
 |---|---|
-| QA-2 | Zod runtime validation replacing `validateInput()`; Python/TS contract tests for `SubstanceResult` / `DempeResult` schema drift |
 | DOCS-2 | Add `last_verified` frontmatter to RAG source `.md` files |
+
+### QA-2 summary (2026-04-02)
+- **Part 1 — Zod runtime validation:**
+  - `AgentInputSchema` (Zod v4) in `BeneficialOwnerAgent.ts` — single source of truth for shape + validation
+  - `AgentInput` type is now `z.infer<typeof AgentInputSchema>` — no separate interface to drift
+  - `validateInput()` replaced with `AgentInputSchema.parse()` + ZodError formatting (all fields reported at once)
+  - 17 new tests covering valid path, every rejection case, boundary values, multi-field error message
+- **Part 2 — Python/TS contract tests:**
+  - `src/agents/contracts.ts` — Zod schemas `SubstanceResultSchema` + `DempeResultSchema`; exports `SubstanceResult` and `DempeResult` types (first formal TS definition of `DempeResult`)
+  - `python/service/export_schemas.py` — generates `python/service/contract.json` from Pydantic `model_json_schema()`
+  - `npm run test:contract:update` — regenerates snapshot after intentional model changes
+  - `src/agents/contract.test.ts` — 13 tests in two categories:
+    - Category A: simulation output validates against Zod schemas (3 substance + 3 DEMPE)
+    - Category B: Python field names and enum values match TypeScript (7 field + enum comparison tests)
+- **246/246 tests passing**
 
 ### QA-1 summary (2026-04-02)
 - `eslint.config.js` — ESLint 10 flat config; `@typescript-eslint/flat/recommended`; `no-explicit-any: error`; `no-console: off`; `eslint-config-prettier` last
