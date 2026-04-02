@@ -692,26 +692,119 @@ export function parseFindings(findings: Record<string, string>): Record<string, 
   return parsed;
 }
 
+// ── Phase 13: Provenance / Citations ─────────────────────────────────────────
+//
+// Citation — one provenance record per tool call.
+// Collected during the agent loop and included in every WhtReport.
+//
+// Fields:
+//   tool         — the tool name ("get_treaty_rate", "consult_legal_sources", etc.)
+//   source       — the 'source' field from the tool result JSON (e.g. "treaties.json",
+//                  "legal_knowledge_base", "Simulated")
+//   finding_key  — the memory key the result was stored under ("wht_rate", etc.)
+//                  undefined for tools that are not stored as findings (e.g. RAG)
+//   section_ref  — for RAG results: the top-matched chunk's section reference ("§2.3")
+//   source_id    — for RAG results: the top-matched chunk's source document ID
+//   chunk_count  — for RAG results: total chunks returned for this query
+//   top_score    — for RAG results: highest cosine similarity score (0–1)
+
+export interface Citation {
+  tool:         string;
+  source:       string;
+  finding_key?: string;
+  section_ref?: string;
+  source_id?:   string;
+  chunk_count?: number;
+  top_score?:   number;
+}
+
+// Maps each tool name to the memory key used when recording its result.
+// undefined means the result is injected into conversation only, not stored
+// as a named finding (consult_legal_sources is intentionally not stored so
+// the agent can call it multiple times with different queries).
+const FINDING_KEY_FOR_TOOL: Readonly<Record<string, string | undefined>> = {
+  check_treaty:              'treaty_status',
+  get_treaty_rate:           'wht_rate',
+  check_entity_substance:    'entity_substance',
+  check_mli_ppt:             'mli_ppt_status',
+  analyse_dempe:             'dempe_analysis',
+  check_directive_exemption: 'directive_exemption',
+  check_pay_and_refund:      'pay_and_refund',
+  fact_check_substance:      'fact_check_result',
+  consult_legal_sources:     undefined,
+};
+
+// extractCitation — builds a Citation from a tool result string.
+//
+// Every Environment method embeds a 'source' field in its JSON output.
+// For RAG results, the chunks[] array carries additional provenance metadata
+// (source_id, section_ref, score) for the top result.
+//
+// If the result string is not valid JSON (e.g. an error path), the tool name
+// is used as the source fallback so we always produce a valid Citation.
+function extractCitation(toolName: string, result: string): Citation {
+  const findingKey = FINDING_KEY_FOR_TOOL[toolName];
+
+  // Start with the tool name as a fallback source in case JSON parsing fails
+  const citation: Citation = {
+    tool:   toolName,
+    source: toolName,
+    ...(findingKey !== undefined ? { finding_key: findingKey } : {}),
+  };
+
+  try {
+    const parsed = JSON.parse(result) as Record<string, unknown>;
+
+    if (typeof parsed['source'] === 'string') {
+      citation.source = parsed['source'];
+    }
+
+    // For RAG results: extract chunk-level metadata from the returned chunks array.
+    // chunks[] is already sorted by score descending (Retriever guarantees this),
+    // so index 0 is always the best match.
+    if (toolName === 'consult_legal_sources') {
+      const chunks = parsed['chunks'];
+      if (Array.isArray(chunks)) {
+        citation.chunk_count = chunks.length;
+        const top = chunks[0] as Record<string, unknown> | undefined;
+        if (top !== undefined) {
+          if (typeof top['score']       === 'number') citation.top_score   = top['score'] as number;
+          if (typeof top['section_ref'] === 'string') citation.section_ref = top['section_ref'] as string;
+          if (typeof top['source_id']   === 'string') citation.source_id   = top['source_id'] as string;
+        }
+      }
+    }
+  } catch {
+    // JSON parse failed — keep the fallback source set above
+  }
+
+  return citation;
+}
+
 // computeReportConfidence — inspects the findings collected during the run and
 // derives an overall data quality level for the report.
 //
-// Logic:
-//   - If substance data is simulated (confidence === 'LOW' in the substance result)
-//     → LOW. Phase 4 will always land here until Phase 5 connects real DDQs.
-//   - If all substance is real but some treaty rates are unverified → MEDIUM.
-//   - If everything is verified → HIGH.
+// Logic (applied in order):
+//   1. Fact-check UNDERMINES → unconditionally LOW (public source contradicted DDQ)
+//   2. Substance simulated (confidence === 'LOW') → LOW
+//   3. Treaty rates unverified → MEDIUM
+//   4. Phase 13: no RAG legal grounding → cap at MEDIUM
+//      (legal grounding = consult_legal_sources returned ≥2 chunks, top score ≥0.55)
+//   5. All checks pass → HIGH
 //
-// The function accepts Record<string, string> — the raw findings map — and returns
-// a union type so TypeScript enforces that only 'HIGH', 'MEDIUM', or 'LOW' can
-// come back.
+// The function accepts Record<string, string> — the raw findings map — and
+// Citation[] from the agent loop (defaults to [] so existing call sites compile
+// without change).  Returns a union type so TypeScript enforces only the three
+// valid values.
 export function computeReportConfidence(
-  findings: Record<string, string>
+  findings:  Record<string, string>,
+  citations: Citation[] = []
 ): 'HIGH' | 'MEDIUM' | 'LOW' {
   // Phase 7: fact-check result takes priority when present.
   //
   // UNDERMINES — a public source contradicted a DDQ claim → unconditionally LOW.
   // CONFIRMS   — public records verified the DDQ claims → skip substance-confidence
-  //              check and go straight to treaty rate verification.
+  //              check and go straight to treaty rate + legal grounding checks.
   // INCONCLUSIVE (or absent) → fall through to the standard substance-first logic.
   const factCheckRaw = findings['fact_check_result'];
   if (factCheckRaw !== undefined) {
@@ -721,7 +814,7 @@ export function computeReportConfidence(
       if (factCheck['overall_assessment'] === 'UNDERMINES') return 'LOW';
 
       if (factCheck['overall_assessment'] === 'CONFIRMS') {
-        // Public records confirm the DDQ — check only treaty rate verification
+        // Public records confirm the DDQ — check treaty rates and legal grounding only
         const rateRaw = findings['wht_rate'];
         if (rateRaw !== undefined) {
           try {
@@ -731,6 +824,8 @@ export function computeReportConfidence(
             return 'MEDIUM';
           }
         }
+        // Phase 13: require RAG legal grounding even when fact-check CONFIRMS
+        if (!hasRagLegalGrounding(citations)) return 'MEDIUM';
         return 'HIGH';
       }
       // INCONCLUSIVE: fall through to standard logic below
@@ -762,7 +857,30 @@ export function computeReportConfidence(
     }
   }
 
+  // Phase 13: legal grounding is the final gate for HIGH confidence.
+  // If consult_legal_sources was not called or returned too few / low-scoring chunks,
+  // cap at MEDIUM — the conclusion is not grounded in the statutory text.
+  if (!hasRagLegalGrounding(citations)) return 'MEDIUM';
+
   return 'HIGH';
+}
+
+// hasRagLegalGrounding — returns true when the agent called consult_legal_sources
+// and retrieved ≥2 chunks with a top cosine similarity score of ≥0.55.
+//
+// Thresholds:
+//   chunk_count ≥ 2 — at least two matching sections were found; one match may
+//     be a coincidence, two or more indicate the query is genuinely covered.
+//   top_score ≥ 0.55 — cosine similarity above chance for text-embedding-3-small.
+//     Scores below 0.55 mean the query and the retrieved text are only weakly
+//     related — not strong enough to claim statutory grounding.
+function hasRagLegalGrounding(citations: Citation[]): boolean {
+  const ragCitation = citations.find(c => c.tool === 'consult_legal_sources');
+  if (ragCitation === undefined) return false;
+  return (
+    (ragCitation.chunk_count ?? 0) >= 2 &&
+    (ragCitation.top_score   ?? 0) >= 0.55
+  );
 }
 
 // ── WhtReport — the structured output of every analysis run ──────────────────
@@ -782,6 +900,9 @@ export interface WhtReport {
   data_confidence_note:    string;
   conclusion:              string;
   findings:                Record<string, unknown>;
+  // Phase 13: one Citation per tool call, in the order calls were made.
+  // Links every finding and RAG result back to its data source.
+  citations:               Citation[];
 }
 
 // ── AgentEvent — streaming progress events emitted during the agent loop ──────
@@ -807,9 +928,11 @@ export interface AgentEvent {
 // Confidence note lookup — used both in saveReport() and returned in WhtReport.
 const CONFIDENCE_NOTES: Record<'HIGH' | 'MEDIUM' | 'LOW', string> = {
   HIGH:
-    'All data verified. This report is suitable for internal decision-making.',
+    'All data verified and conclusions grounded in statutory text. ' +
+    'This report is suitable for internal decision-making.',
   MEDIUM:
-    'Treaty rates have not been verified against official treaty texts. ' +
+    'One or more of: treaty rates unverified, or conclusions not grounded in ' +
+    'the statutory text (consult_legal_sources was not called or returned weak results). ' +
     'Verify before relying on these conclusions for filing or client advice.',
   LOW:
     'Substance data is simulated and treaty rates are unverified. ' +
@@ -818,11 +941,12 @@ const CONFIDENCE_NOTES: Record<'HIGH' | 'MEDIUM' | 'LOW', string> = {
 };
 
 function buildReport(
-  input: AgentInput,
+  input:      AgentInput,
   conclusion: string,
-  findings: Record<string, string>
+  findings:   Record<string, string>,
+  citations:  Citation[]
 ): WhtReport {
-  const dataConfidence = computeReportConfidence(findings);
+  const dataConfidence = computeReportConfidence(findings, citations);
   return {
     generated_at:            new Date().toISOString(),
     entity_name:             input.entity_name,
@@ -835,16 +959,18 @@ function buildReport(
     data_confidence_note:    CONFIDENCE_NOTES[dataConfidence],
     conclusion,
     findings:                parseFindings(findings),
+    citations,
   };
 }
 
 function saveReport(
-  input: AgentInput,
+  input:      AgentInput,
   conclusion: string,
-  findings: Record<string, string>,
-  outputPath: string
+  findings:   Record<string, string>,
+  outputPath: string,
+  citations:  Citation[]
 ): WhtReport {
-  const report = buildReport(input, conclusion, findings);
+  const report = buildReport(input, conclusion, findings, citations);
 
   ensureDir(outputPath);
   fs.writeFileSync(outputPath, JSON.stringify(report, null, 2), 'utf-8');
@@ -897,6 +1023,10 @@ async function runAgent(
   // Used to detect and skip exact duplicate calls — a common LLM loop pattern.
   const calledTools = new Set<string>();
 
+  // Phase 13: collects one Citation per executed tool call (skipped duplicates
+  // are not cited — they produced no new data).
+  const citations: Citation[] = [];
+
   // Initialise conversation memory with the system prompt and task.
   memory.addMessage(Message.system(systemPrompt));
   memory.addMessage(Message.user(task));
@@ -932,7 +1062,7 @@ async function runAgent(
     // using the terminate tool. We treat it as a final answer and save the report.
     if (response.type === 'text') {
       emit('final_answer', `\nAgent responded directly:\n${response.content}`, { conclusion: response.content });
-      const report = saveReport(input, response.content, memory.getFindings(), outputPath);
+      const report = saveReport(input, response.content, memory.getFindings(), outputPath, citations);
       emit('report_saved', `Report saved → ${outputPath}`, { path: outputPath });
       return report;
     }
@@ -987,7 +1117,7 @@ async function runAgent(
         console.log('='.repeat(70) + '\n');
 
         // Phase 3: save the report to disk
-        const report = saveReport(input, answer, findings, outputPath);
+        const report = saveReport(input, answer, findings, outputPath, citations);
         emit('report_saved', `Report saved → ${outputPath}`, { path: outputPath });
         return report;
       }
@@ -1084,6 +1214,12 @@ async function runAgent(
       }
 
       emit('tool_result', `  [TOOL RESULT] ${result}`, { name: call.name, result });
+
+      // Phase 13: record provenance for this tool call.
+      // extractCitation() parses the result JSON and picks out the 'source' field
+      // (present in every Environment method) plus RAG-specific metadata.
+      citations.push(extractCitation(call.name, result));
+
       memory.addMessage(Message.tool(result, call.id));
     }
   }
@@ -1093,7 +1229,8 @@ async function runAgent(
     input,
     '[INCOMPLETE — agent reached maximum iterations without a final answer]',
     memory.getFindings(),
-    outputPath
+    outputPath,
+    citations
   );
   emit('report_saved', `Report saved → ${outputPath}`, { path: outputPath });
   return incompleteReport;
@@ -1166,4 +1303,13 @@ async function main(): Promise<void> {
   console.log(`[Registry] Entry saved for ${input.entity_name} (${input.country})`);
 }
 
-main();
+// Guard: only run main() when this file is executed directly as the CLI entry
+// point.  When imported by tests or the web server, require.main !== module
+// and main() is NOT called — no side effects on import.
+//
+// require.main is the Module object for the file Node.js started with.
+// module is the Module object for THIS file.
+// They are equal only when this file is the direct entry point.
+if (require.main === module) {
+  main();
+}
