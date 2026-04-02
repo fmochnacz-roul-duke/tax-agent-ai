@@ -5,6 +5,52 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.18.0] — 2026-04-02 — Phase 15: QA-3 Evals + Negative Tests
+
+### Machine-readable BO verdict
+- **`BoOverall` type** exported from `BeneficialOwnerAgent.ts`: `'CONFIRMED' | 'UNCERTAIN' | 'REJECTED' | 'NO_TREATY'`
+- **`bo_overall: BoOverall`** added to `WhtReport` — deterministic derivation, never parsed from LLM free text
+- **`conduit_risk: boolean`** added to `WhtReport` — `true` when REJECTED + entity/country indicates conduit structure
+- **`computeBoOverall()`** — decision order: NO_TREATY → LOW confidence → substance FAIL/PASS → UNCERTAIN fallback
+- **`computeConduitRisk()`** — checks 16-country `KNOWN_ROUTING_JURISDICTIONS` set OR `entity_type` in `['holding_company', 'shell_company', 'unknown']`; no LLM judgment
+
+### EntityRegistry: force-draft on REJECTED
+- `AnalysisReport.bo_overall?: string` added — `WhtReport` satisfies it via structural typing
+- `save()` resets `review_status` to `'draft'` when incoming `bo_overall === 'REJECTED'`; previously signed-off entries are cleared — a REJECTED verdict may reflect a conduit structure requiring human look-through
+
+### Golden dataset — `data/golden_cases/` (9 cases)
+- `case_01`: Orange S.A. — France — Royalty — CONFIRMED (10% rate, real substance)
+- `case_02`: Alpine Holdings — Luxembourg — Dividend — UNCERTAIN (MLI PPT + thin holding)
+- `case_03`: IP GmbH — Germany — Royalty — CONFIRMED (EU I&R Directive 0%, fallback treaty 5%)
+- `case_04`: TechFinance B.V. — Netherlands — Interest — UNCERTAIN (MLI PPT + back-to-back loan)
+- `case_05`: XTB Malta Ltd — Malta — Royalty — REJECTED (MLI PPT + EXISTING_ANTIABUSE + zero substance)
+- `case_06`: HK Royalties Ltd — Hong Kong — Royalty — NO_TREATY (domestic 20%)
+- `case_07`: SPV Ireland Ltd — Ireland — Interest — UNCERTAIN (EU Directive vs. thin substance conflict)
+- `case_08a`: Cyprus IP SPV — Cyprus — Royalty — REJECTED (conduit leg 1; `conduit_risk: true`)
+- `case_08b`: Canada Tech Corp — Canada — Royalty — CONFIRMED (conduit leg 2; ultimate BO qualifies at 10%)
+
+### Eval harness
+- **`scripts/runEvals.ts`** + **`npm run eval`** — Triangulation Rule: fails if `bo_overall` OR applied rate is wrong; `conduit_risk` check on cases that specify it; exits with code 1 for CI
+
+### Negative tests (8 new in `WhtEnvironment.test.ts`)
+- Hong Kong returns `treaty_in_force: false` (no PL-HK treaty)
+- `getTreatyRate` for Hong Kong returns an error (no rate to look up)
+- Brazil is now a treaty country (`treaty_in_force: true`, `mli_ppt_applies: 'NO'`)
+- Brazil royalty rate is 10% with trademark exception documented in `verification_note`
+- Brazil interest rate is 15% with bank-loan exception in `verification_note`
+- France royalty rate is 10% — not 5% (hallucination guard)
+- Malta MLI PPT is YES (refutes "no MLI" assumption)
+- Invalid `income_type` and out-of-range `shareholding_percentage` return structured errors
+
+### Treaty data
+- **Brazil added to `treaties.json`** — PL-BR DTC (2022); in force 01.01.2026; `mli_ppt_applies: 'NO'` (treaty post-MLI deposit window); rates verified via Tax@Hand/Deloitte Aug 2025: dividend 10%/15%, interest 15% (10% bank-loan exception), royalty 10% (15% trademark exception)
+- SHA-256 snapshot updated
+
+### Tests
+- 33 new tests — 284/284 passing
+
+---
+
 ## [v0.17.0] — 2026-04-02 — Phase 14: Ghost Activation
 
 - **`TreatyVerifierAgent` wired into live agent flow** (`WhtEnvironment.ts`, `BeneficialOwnerAgent.ts`)

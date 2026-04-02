@@ -1,0 +1,20 @@
+{
+  "case_id": "case_03",
+  "description": "IP GmbH — Germany — Royalty — CONFIRMED (EU I&R Directive; fallback treaty 5%)",
+  "legal_notes": "German resident company. EU Interest & Royalties Directive (2003/49/EC, implemented in Poland as Art. 21 ust. 3 CIT Act) applies: EU subsidiary paying EU associated company, ≥25% for >2 years. Directive rate: 0%. Fallback: Art. 12(2) PL-DE DTC rate is 5%. Agent expected to identify Directive path first. BO conditions all met — entity has full IP management substance in Germany.",
+  "input": {
+    "entity_name": "IP GmbH",
+    "country": "Germany",
+    "income_type": "royalty",
+    "shareholding_percentage": 100,
+    "substance_notes": "German limited liability company, Munich HQ. 45 employees in IP licensing and R&D. Owns registered patents and trademarks. DEMPE functions performed in Germany: development decisions made locally, exploitation contracts signed by German management. Associated company relationship: IP GmbH holds 100% of Polish payer for over 3 years. EU resident, subject to German corporate tax."
+  },
+  "expected": {
+    "bo_overall": "CONFIRMED",
+    "treaty_rate_percent": 0,
+    "acceptable_rates": [0, 5],
+    "mli_ppt_applies": true,
+    "rate_basis": "EU_directive_or_treaty",
+    "eval_note": "0% is the preferred result (EU I&R Directive). 5% is acceptable if agent uses treaty fallback. Eval harness treats both as PASS for the rate check."
+  }
+}

@@ -45,9 +45,11 @@ import * as os from 'os';
 //   reviewed    — a professional has read it (not yet ready to act on)
 //   signed_off  — a professional has approved it; safe to act on
 //
-// We default to 'draft' and never downgrade a status automatically —
-// a professional who signed off stays signed off unless they explicitly
-// change it.
+// New entries default to 'draft'.  Phase 15 exception: if an incoming report
+// carries bo_overall === 'REJECTED', the status is forced back to 'draft' even
+// when the entry was previously 'reviewed' or 'signed_off'.  A REJECTED verdict
+// may reflect a conduit structure requiring investigation of the ultimate BO —
+// an existing sign-off is no longer valid until a human has reviewed the new result.
 export type ReviewStatus = 'draft' | 'reviewed' | 'signed_off';
 
 // RegistryEntry is what gets stored per entity/country pair.
@@ -79,6 +81,9 @@ export interface AnalysisReport {
   country: string;
   income_type: string;
   data_confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  // Phase 15: machine-readable verdict from computeBoOverall().
+  // Optional here so existing callers that do not yet pass this field still compile.
+  bo_overall?: string;
   conclusion: string;
   findings: Record<string, unknown>;
 }
@@ -129,8 +134,12 @@ export class EntityRegistry {
       entity_name: report.entity_name,
       country: report.country,
       income_type: report.income_type,
-      // Preserve the review status a professional set — never auto-downgrade.
-      review_status: existing?.review_status ?? 'draft',
+      // Force 'draft' on REJECTED verdicts: the conduit_risk flag may have fired,
+      // and a human must verify whether an ultimate BO exists in another jurisdiction.
+      // All other statuses are preserved — a sign-off is never cleared automatically
+      // unless the new analysis produces a REJECTED verdict.
+      review_status:
+        report.bo_overall === 'REJECTED' ? 'draft' : (existing?.review_status ?? 'draft'),
       data_confidence: report.data_confidence,
       // Spread optional fields only when they have values
       ...(substanceTier !== undefined ? { substance_tier: substanceTier } : {}),

@@ -1,0 +1,19 @@
+{
+  "case_id": "case_06",
+  "description": "HK Royalties Ltd — Hong Kong — Royalty — NO_TREATY (domestic 20% applies)",
+  "legal_notes": "Hong Kong is not in Poland's treaty network. Poland–Hong Kong DTC does not exist. The Polish-China DTC (1989) does not extend to Hong Kong (separate tax jurisdiction since 1997 handover). No EU I&R Directive (non-EU jurisdiction). Domestic WHT rate 20% applies unconditionally. BO test is not invoked — there is no treaty benefit to claim or deny.",
+  "input": {
+    "entity_name": "HK Royalties Ltd",
+    "country": "Hong Kong",
+    "income_type": "royalty",
+    "shareholding_percentage": 0,
+    "substance_notes": "Hong Kong company holding patents licensed to Polish subsidiary. Substance is irrelevant — no treaty exists between Poland and Hong Kong. Domestic Art. 21 ust. 1 pkt 1 CIT Act applies: 20% flat WHT on royalties paid to non-residents without a treaty."
+  },
+  "expected": {
+    "bo_overall": "NO_TREATY",
+    "treaty_rate_percent": 20,
+    "mli_ppt_applies": false,
+    "rate_basis": "domestic",
+    "eval_note": "No treaty → domestic rate 20%. BO test bypassed. agent must not hallucinate a PL-HK treaty."
+  }
+}

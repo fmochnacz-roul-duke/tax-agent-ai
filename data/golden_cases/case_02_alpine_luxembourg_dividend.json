@@ -1,0 +1,18 @@
+{
+  "case_id": "case_02",
+  "description": "Alpine Holdings S.A. — Luxembourg — Dividend — UNCERTAIN (MLI PPT + thin holding)",
+  "legal_notes": "Intermediate holding company. Luxembourg treaty: MLI PPT applies; Art. 8 MLI reserved. Reduced dividend rate: 0% at ≥25% threshold (2012 Protocol). Substance is limited — one office, two employees. BO condition (ii) — no pass-on obligation — is unclear. PPT risk: structure may be arranged primarily to obtain treaty benefit. Data file data/example_input.json used as source.",
+  "input": {
+    "entity_name": "Alpine Holdings S.A.",
+    "country": "Luxembourg",
+    "income_type": "dividend",
+    "shareholding_percentage": 100,
+    "substance_notes": "Luxembourg holding company. Registered office in Luxembourg City. Two employees (directors). No employees other than directors. IP and treasury functions managed by parent. Receives dividends from Polish subsidiary and on-distributes to parent. No independent decision-making on investment."
+  },
+  "expected": {
+    "bo_overall": "UNCERTAIN",
+    "treaty_rate_percent": 0,
+    "mli_ppt_applies": true,
+    "rate_basis": "treaty"
+  }
+}

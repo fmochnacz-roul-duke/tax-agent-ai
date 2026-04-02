@@ -1,0 +1,20 @@
+{
+  "case_id": "case_07",
+  "description": "SPV Ireland Ltd — Ireland — Interest — UNCERTAIN (EU Directive candidate vs. thin substance)",
+  "legal_notes": "Ireland treaty: MLI PPT applies. EU I&R Directive potentially applies (EU member; associated company test). However, SPV has minimal substance — one director, no employees. BO condition (ii): SPV has contractual obligation to pass interest to a non-EU parent, which may block both Directive and treaty benefit. Conflict: Directive could give 0% but anti-avoidance override may apply if SPV is used to channel payments to a third country. Treaty interest rate: 0% (Art. 11(2) PL-IE DTC with MLI modifications). Expected: UNCERTAIN — legal conflict between Directive path and BO test outcome.",
+  "input": {
+    "entity_name": "SPV Ireland Ltd",
+    "country": "Ireland",
+    "income_type": "interest",
+    "shareholding_percentage": 0,
+    "substance_notes": "Irish special purpose vehicle. Dublin registered address. One non-resident director. No employees, no local management. Issued bonds to raise funds; on-lends to Polish subsidiary. Interest received from Poland is used to service bonds held by non-EU investors. Thin capitalisation: 99% debt-financed. No independent treasury risk management in Ireland."
+  },
+  "expected": {
+    "bo_overall": "UNCERTAIN",
+    "treaty_rate_percent": 0,
+    "acceptable_rates": [0, 10],
+    "mli_ppt_applies": true,
+    "rate_basis": "treaty_or_domestic",
+    "eval_note": "0% (Directive or treaty) and 10% (domestic fallback if treaty denied) are both acceptable for the rate check. UNCERTAIN on BO is the key assertion."
+  }
+}

@@ -761,12 +761,111 @@ test('verifyTreatyRate: simulate mode returns NOT_FOUND without API call', async
   // simulate mode and returns NOT_FOUND conservatively.  This test ensures the
   // method is callable, returns the right shape, and does NOT lower confidence
   // (only DIFFERS would do that — NOT_FOUND is neutral).
-  const result = await env.verifyTreatyRate('france', 'royalty', '10%', 'Art. 12(2) Poland–France DTC');
+  const result = await env.verifyTreatyRate(
+    'france',
+    'royalty',
+    '10%',
+    'Art. 12(2) Poland–France DTC'
+  );
 
   assert.equal(result.status, 'NOT_FOUND', 'simulation should return NOT_FOUND conservatively');
   assert.equal(result.country, 'france', 'country should be echoed back');
   assert.equal(result.income_type, 'royalty', 'income_type should be echoed back');
   assert.equal(result.claimed_rate, '10%', 'claimed_rate should be echoed back');
   assert.equal(result.confirmed_rate, null, 'confirmed_rate should be null in simulation');
-  assert.ok(Array.isArray(result.sources) && result.sources.length === 0, 'sources should be empty');
+  assert.ok(
+    Array.isArray(result.sources) && result.sources.length === 0,
+    'sources should be empty'
+  );
+});
+
+// ── Phase 15: Negative tests — no-treaty path ──────────────────────────────────
+//
+// These tests use live mode (simulate: false) against the real treaties.json
+// to verify that the no-treaty code path works correctly for jurisdictions
+// not in the database and for known treaty entries.
+//
+// Live mode is safe here: no API calls are made — all data comes from
+// the static treaties.json file read from disk.
+
+const liveEnv = new WhtEnvironment({ simulate: false });
+
+test('Negative: checkTreaty returns treaty_in_force false for Hong Kong (no PL-HK treaty)', () => {
+  const result = parse(liveEnv.checkTreaty('Hong Kong'));
+  assert.equal(
+    result['treaty_in_force'],
+    false,
+    'Hong Kong has no treaty with Poland — treaty_in_force must be false'
+  );
+});
+
+test('Negative: getTreatyRate returns domestic rate error for Hong Kong', () => {
+  // When treaty_in_force is false, getTreatyRate returns an error — no treaty rate.
+  const result = parse(liveEnv.getTreatyRate('Hong Kong', 'royalty', 0));
+  assert.ok(
+    typeof result['error'] === 'string',
+    'Should return an error object when no treaty is in force'
+  );
+});
+
+test('Negative: Brazil is now a treaty country (PL-BR DTC 2022, applies 2026)', () => {
+  const result = parse(liveEnv.checkTreaty('Brazil'));
+  assert.equal(result['treaty_in_force'], true, 'PL-BR DTC (2022) is in force as of 01.01.2026');
+  assert.equal(
+    result['mli_ppt_applies'],
+    'NO',
+    'MLI PPT does not apply — treaty concluded after MLI deposit window'
+  );
+});
+
+test('Negative: Brazil royalty rate is 10% (general) with trademark exception in note', () => {
+  const result = parse(liveEnv.getTreatyRate('Brazil', 'royalty', 0));
+  assert.equal(result['treaty_rate_percent'], 10, 'Standard royalty rate for Brazil is 10%');
+  // The trademark exception (15%) must be documented in the verification_note.
+  const note = result['verification_note'] as string | undefined;
+  assert.ok(
+    typeof note === 'string' && note.toLowerCase().includes('trademark'),
+    'verification_note must mention the 15% trademark exception'
+  );
+});
+
+test('Negative: Brazil interest rate is 15% (standard) with bank loan exception in note', () => {
+  const result = parse(liveEnv.getTreatyRate('Brazil', 'interest', 0));
+  assert.equal(result['treaty_rate_percent'], 15, 'Standard interest rate for Brazil is 15%');
+  const note = result['verification_note'] as string | undefined;
+  assert.ok(
+    typeof note === 'string' && note.toLowerCase().includes('bank'),
+    'verification_note must mention the 10% bank loan reduced rate'
+  );
+});
+
+test('Negative: France royalty rate is 10% — not 5% (common hallucination target)', () => {
+  const result = parse(liveEnv.getTreatyRate('France', 'royalty', 0));
+  assert.equal(result['treaty_rate_percent'], 10, 'PL-FR DTC Art. 12(2) rate is 10% — not 5%');
+});
+
+test('Negative: Malta treaty is in force with MLI PPT YES (refutes "no MLI PPT" assumption)', () => {
+  const result = parse(liveEnv.checkTreaty('Malta'));
+  assert.equal(result['treaty_in_force'], true);
+  assert.equal(
+    result['mli_ppt_applies'],
+    'YES',
+    'Malta MLI PPT applies — refutes the false "no MLI" assumption'
+  );
+});
+
+test('Negative: getTreatyRate rejects unsupported income_type with structured error', () => {
+  const result = parse(liveEnv.getTreatyRate('France', 'salary', 0));
+  assert.ok(
+    typeof result['error'] === 'string' && result['error'].includes('Unsupported income_type'),
+    'Agent must not silently accept invalid income types'
+  );
+});
+
+test('Negative: getTreatyRate rejects shareholding_percentage > 100', () => {
+  const result = parse(liveEnv.getTreatyRate('France', 'dividend', 150));
+  assert.ok(
+    typeof result['error'] === 'string' && result['error'].includes('shareholding_percentage'),
+    'Agent must reject out-of-range shareholding values'
+  );
 });

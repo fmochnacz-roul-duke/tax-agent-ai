@@ -4,6 +4,8 @@
 // Tests for the exported pure functions:
 //   - validateInput        (QA-2: Zod schema replaces hand-written validation)
 //   - computeReportConfidence  (Phase 13: now also accepts Citation[])
+//   - computeBoOverall     (Phase 15: deterministic BO verdict from findings)
+//   - computeConduitRisk   (Phase 15: routing jurisdiction + entity type check)
 //   - parseFindings
 //
 // These functions are deterministic and require no LLM calls or file I/O.
@@ -11,7 +13,13 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { computeReportConfidence, parseFindings, validateInput } from './BeneficialOwnerAgent';
+import {
+  computeReportConfidence,
+  computeBoOverall,
+  computeConduitRisk,
+  parseFindings,
+  validateInput,
+} from './BeneficialOwnerAgent';
 import type { Citation } from './BeneficialOwnerAgent';
 
 // ── validateInput ─────────────────────────────────────────────────────────────
@@ -361,4 +369,140 @@ test('parseFindings: does not mutate the input findings map', () => {
   parseFindings(input);
   // The input should remain a string (not replaced with the parsed object)
   assert.equal(typeof input['key'], 'string');
+});
+
+// ── computeBoOverall — Phase 15 ───────────────────────────────────────────────
+
+// Helper: produces a raw findings entry from an object (matches how the agent
+// stores tool results in memory — each value is a JSON string).
+function finding(obj: Record<string, unknown>): string {
+  return JSON.stringify(obj);
+}
+
+test('computeBoOverall: NO_TREATY when treaty_in_force is false', () => {
+  const findings = {
+    treaty_status: finding({ treaty_in_force: false }),
+  };
+  assert.equal(computeBoOverall(findings, 'HIGH'), 'NO_TREATY');
+});
+
+test('computeBoOverall: NO_TREATY takes precedence over LOW confidence', () => {
+  // Even when data confidence is LOW, no-treaty is returned first.
+  const findings = {
+    treaty_status: finding({ treaty_in_force: false }),
+    entity_substance: finding({ overall: 'FAIL', confidence: 'LOW' }),
+  };
+  assert.equal(computeBoOverall(findings, 'LOW'), 'NO_TREATY');
+});
+
+test('computeBoOverall: UNCERTAIN when data_confidence is LOW (even with substance PASS)', () => {
+  const findings = {
+    treaty_status: finding({ treaty_in_force: true }),
+    entity_substance: finding({ overall: 'PASS', confidence: 'LOW' }),
+  };
+  assert.equal(computeBoOverall(findings, 'LOW'), 'UNCERTAIN');
+});
+
+test('computeBoOverall: REJECTED when entity_substance.overall is FAIL', () => {
+  const findings = {
+    treaty_status: finding({ treaty_in_force: true }),
+    entity_substance: finding({ overall: 'FAIL', confidence: 'HIGH' }),
+  };
+  assert.equal(computeBoOverall(findings, 'HIGH'), 'REJECTED');
+});
+
+test('computeBoOverall: CONFIRMED when entity_substance.overall is PASS and confidence HIGH', () => {
+  const findings = {
+    treaty_status: finding({ treaty_in_force: true }),
+    entity_substance: finding({ overall: 'PASS', confidence: 'HIGH' }),
+  };
+  assert.equal(computeBoOverall(findings, 'HIGH'), 'CONFIRMED');
+});
+
+test('computeBoOverall: CONFIRMED when entity_substance.overall is PASS and confidence MEDIUM', () => {
+  const findings = {
+    treaty_status: finding({ treaty_in_force: true }),
+    entity_substance: finding({ overall: 'PASS', confidence: 'HIGH' }),
+  };
+  assert.equal(computeBoOverall(findings, 'MEDIUM'), 'CONFIRMED');
+});
+
+test('computeBoOverall: UNCERTAIN when entity_substance.overall is UNCERTAIN', () => {
+  const findings = {
+    treaty_status: finding({ treaty_in_force: true }),
+    entity_substance: finding({ overall: 'UNCERTAIN', confidence: 'MEDIUM' }),
+  };
+  assert.equal(computeBoOverall(findings, 'MEDIUM'), 'UNCERTAIN');
+});
+
+test('computeBoOverall: UNCERTAIN when no substance finding is present', () => {
+  const findings = {
+    treaty_status: finding({ treaty_in_force: true }),
+  };
+  assert.equal(computeBoOverall(findings, 'MEDIUM'), 'UNCERTAIN');
+});
+
+test('computeBoOverall: UNCERTAIN when no findings at all', () => {
+  assert.equal(computeBoOverall({}, 'HIGH'), 'UNCERTAIN');
+});
+
+test('computeBoOverall: UNCERTAIN when treaty_status finding is unparseable JSON', () => {
+  const findings = { treaty_status: 'not-valid-json' };
+  // Falls through treaty check; no substance → safe default UNCERTAIN.
+  assert.equal(computeBoOverall(findings, 'HIGH'), 'UNCERTAIN');
+});
+
+// ── computeConduitRisk — Phase 15 ─────────────────────────────────────────────
+
+test('computeConduitRisk: false when bo_overall is not REJECTED', () => {
+  const findings = {
+    entity_substance: finding({ entity_type: 'holding_company', overall: 'PASS' }),
+  };
+  // CONFIRMED verdict — conduit risk only applies to REJECTED.
+  assert.equal(computeConduitRisk('CONFIRMED', findings, 'Cyprus'), false);
+});
+
+test('computeConduitRisk: true when REJECTED and country is a known routing jurisdiction', () => {
+  assert.equal(computeConduitRisk('REJECTED', {}, 'Cyprus'), true);
+  assert.equal(computeConduitRisk('REJECTED', {}, 'Luxembourg'), true);
+  assert.equal(computeConduitRisk('REJECTED', {}, 'Netherlands'), true);
+  assert.equal(computeConduitRisk('REJECTED', {}, 'Ireland'), true);
+});
+
+test('computeConduitRisk: routing jurisdiction check is case-insensitive', () => {
+  assert.equal(computeConduitRisk('REJECTED', {}, 'CYPRUS'), true);
+  assert.equal(computeConduitRisk('REJECTED', {}, ' hong kong '), true);
+});
+
+test('computeConduitRisk: true when REJECTED and entity_type is holding_company', () => {
+  const findings = {
+    entity_substance: finding({ entity_type: 'holding_company', overall: 'FAIL' }),
+  };
+  // Non-routing country (e.g. Brazil) but holding company structure.
+  assert.equal(computeConduitRisk('REJECTED', findings, 'Brazil'), true);
+});
+
+test('computeConduitRisk: true when REJECTED and entity_type is shell_company', () => {
+  const findings = {
+    entity_substance: finding({ entity_type: 'shell_company', overall: 'FAIL' }),
+  };
+  assert.equal(computeConduitRisk('REJECTED', findings, 'Canada'), true);
+});
+
+test('computeConduitRisk: true when REJECTED and entity_type is unknown', () => {
+  const findings = {
+    entity_substance: finding({ entity_type: 'unknown', overall: 'FAIL' }),
+  };
+  assert.equal(computeConduitRisk('REJECTED', findings, 'India'), true);
+});
+
+test('computeConduitRisk: false when REJECTED but large operating company in non-routing jurisdiction', () => {
+  const findings = {
+    entity_substance: finding({ entity_type: 'large_operating_company', overall: 'FAIL' }),
+  };
+  assert.equal(computeConduitRisk('REJECTED', findings, 'France'), false);
+});
+
+test('computeConduitRisk: false when REJECTED and no substance finding and non-routing jurisdiction', () => {
+  assert.equal(computeConduitRisk('REJECTED', {}, 'Australia'), false);
 });

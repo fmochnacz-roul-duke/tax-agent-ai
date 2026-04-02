@@ -889,6 +889,135 @@ function hasRagLegalGrounding(citations: Citation[]): boolean {
   return (ragCitation.chunk_count ?? 0) >= 2 && (ragCitation.top_score ?? 0) >= 0.55;
 }
 
+// ── BoOverall — machine-readable beneficial owner verdict ────────────────────
+//
+// A single enum value added to WhtReport so the eval harness and downstream
+// systems have a structured verdict to compare against expected outcomes.
+// Derived deterministically from findings — never parsed from LLM free text.
+//
+//   CONFIRMED  — substance PASS, data confidence not LOW, treaty in force
+//   UNCERTAIN  — substance UNCERTAIN, or data confidence LOW (even if substance PASS)
+//   REJECTED   — substance FAIL (entity does not meet the three BO conditions)
+//   NO_TREATY  — treaty not in force; domestic rate applies; BO test is bypassed
+//
+export type BoOverall = 'CONFIRMED' | 'UNCERTAIN' | 'REJECTED' | 'NO_TREATY';
+
+// Countries frequently used in conduit / routing structures.
+// Used by computeConduitRisk() to flag REJECTED verdicts that may reflect an
+// intermediate entity rather than an ultimate beneficial owner.
+// The check is deterministic — no LLM judgment required.
+const KNOWN_ROUTING_JURISDICTIONS = new Set([
+  'cyprus',
+  'netherlands',
+  'luxembourg',
+  'ireland',
+  'malta',
+  'cayman islands',
+  'british virgin islands',
+  'jersey',
+  'guernsey',
+  'liechtenstein',
+  'bermuda',
+  'bahamas',
+  'hong kong',
+  'singapore',
+  'switzerland',
+  'united arab emirates',
+]);
+
+// computeBoOverall — derives a BoOverall verdict from the structured findings map.
+//
+// Decision order (first match wins):
+//   1. treaty_status.treaty_in_force === false  →  NO_TREATY
+//      Domestic rate applies; the BO test is not invoked.
+//   2. dataConfidence === 'LOW'                 →  UNCERTAIN
+//      Cannot issue a CONFIRMED verdict on unreliable substance data.
+//   3. entity_substance.overall === 'FAIL'      →  REJECTED
+//      The entity failed at least one of the three BO conditions.
+//   4. entity_substance.overall === 'PASS'      →  CONFIRMED
+//      All three BO conditions are met and data quality is sufficient.
+//   5. fallback                                 →  UNCERTAIN
+//      No substance finding present, or overall === 'UNCERTAIN'.
+//
+export function computeBoOverall(
+  findings: Record<string, string>,
+  dataConfidence: 'HIGH' | 'MEDIUM' | 'LOW'
+): BoOverall {
+  // 1. No-treaty path — checked before anything else.
+  const treatyRaw = findings['treaty_status'];
+  if (treatyRaw !== undefined) {
+    try {
+      const treaty = JSON.parse(treatyRaw) as Record<string, unknown>;
+      if (treaty['treaty_in_force'] === false) return 'NO_TREATY';
+    } catch {
+      // Unparseable treaty_status — fall through; safe default is UNCERTAIN.
+    }
+  }
+
+  // 2. LOW confidence blocks CONFIRMED regardless of substance outcome.
+  if (dataConfidence === 'LOW') return 'UNCERTAIN';
+
+  // 3 & 4. Substance result determines REJECTED vs CONFIRMED.
+  const substanceRaw = findings['entity_substance'];
+  if (substanceRaw !== undefined) {
+    try {
+      const substance = JSON.parse(substanceRaw) as Record<string, unknown>;
+      if (substance['overall'] === 'FAIL') return 'REJECTED';
+      if (substance['overall'] === 'PASS') return 'CONFIRMED';
+      // overall === 'UNCERTAIN' falls through to the safe default below.
+    } catch {
+      // Unparseable substance — fall through.
+    }
+  }
+
+  // 5. Safe default — also covers substance UNCERTAIN and missing findings.
+  return 'UNCERTAIN';
+}
+
+// computeConduitRisk — returns true when a REJECTED verdict may reflect a
+// conduit / intermediate entity rather than an ultimate beneficial owner.
+//
+// Trigger conditions (OR logic — either is sufficient):
+//   A. The entity's residence country is in KNOWN_ROUTING_JURISDICTIONS.
+//   B. The entity type (from substance finding) is a holding or shell company.
+//
+// This check is deterministic.  It does NOT rely on the LLM having labelled
+// the entity as a "CONDUIT" substance tier — the CONDUIT tier is unreliable
+// for single-node analysis where outbound payment flows are not visible.
+//
+// Returns false unconditionally when bo_overall !== 'REJECTED'.
+//
+export function computeConduitRisk(
+  boOverall: BoOverall,
+  findings: Record<string, string>,
+  country: string
+): boolean {
+  if (boOverall !== 'REJECTED') return false;
+
+  // Condition A — known routing jurisdiction.
+  if (KNOWN_ROUTING_JURISDICTIONS.has(country.trim().toLowerCase())) return true;
+
+  // Condition B — entity type is a holding or shell structure.
+  const substanceRaw = findings['entity_substance'];
+  if (substanceRaw !== undefined) {
+    try {
+      const substance = JSON.parse(substanceRaw) as Record<string, unknown>;
+      const entityType = substance['entity_type'] as string | undefined;
+      if (
+        entityType === 'holding_company' ||
+        entityType === 'shell_company' ||
+        entityType === 'unknown'
+      ) {
+        return true;
+      }
+    } catch {
+      // Unparseable substance — cannot determine entity type; return false.
+    }
+  }
+
+  return false;
+}
+
 // ── WhtReport — the structured output of every analysis run ──────────────────
 //
 // Returned by runWhtAnalysis() and saved to disk by saveReport().
@@ -904,6 +1033,13 @@ export interface WhtReport {
   substance_notes?: string;
   data_confidence: 'HIGH' | 'MEDIUM' | 'LOW';
   data_confidence_note: string;
+  // Phase 15: machine-readable BO verdict derived deterministically from findings.
+  // Use this field (not `conclusion`) for automated evaluation and registry routing.
+  bo_overall: BoOverall;
+  // Phase 15: true when bo_overall === 'REJECTED' AND the entity or country suggests
+  // an intermediate / conduit structure.  Signals that a human reviewer should
+  // investigate whether an ultimate beneficial owner exists in another jurisdiction.
+  conduit_risk: boolean;
   conclusion: string;
   findings: Record<string, unknown>;
   // Phase 13: one Citation per tool call, in the order calls were made.
@@ -953,6 +1089,8 @@ function buildReport(
   citations: Citation[]
 ): WhtReport {
   const dataConfidence = computeReportConfidence(findings, citations);
+  const boOverall = computeBoOverall(findings, dataConfidence);
+  const conduitRisk = computeConduitRisk(boOverall, findings, input.country);
   return {
     generated_at: new Date().toISOString(),
     entity_name: input.entity_name,
@@ -963,6 +1101,8 @@ function buildReport(
     ...(input.substance_notes ? { substance_notes: input.substance_notes } : {}),
     data_confidence: dataConfidence,
     data_confidence_note: CONFIDENCE_NOTES[dataConfidence],
+    bo_overall: boOverall,
+    conduit_risk: conduitRisk,
     conclusion,
     findings: parseFindings(findings),
     citations,

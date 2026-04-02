@@ -1,0 +1,20 @@
+{
+  "case_id": "case_08b",
+  "description": "Canada Tech Corp — Canada — Royalty — CONFIRMED (conduit leg 2: ultimate BO qualifies)",
+  "legal_notes": "Conduit scenario, leg 2 of 2. See case_08a (Cyprus SPV, REJECTED). The ultimate beneficial owner is Canada Tech Corp, a Canadian operating company. Poland–Canada DTC (2012) applies; treaty royalty rate: 10%. MLI PPT YES but entity has full substance — existing anti-abuse provisions in treaty satisfied. Three BO conditions met: (i) receives royalties for own economic benefit; (ii) no contractual obligation to pass on to another party; (iii) genuine business activity in Canada. When the Polish payer applies look-through, Canada Tech Corp qualifies at 10% treaty rate. This case is evaluated as a standalone single-entity check — the link to the Cyprus conduit (case_08a) is documented in both files.",
+  "input": {
+    "entity_name": "Canada Tech Corp",
+    "country": "Canada",
+    "income_type": "royalty",
+    "shareholding_percentage": 0,
+    "substance_notes": "Canadian technology company, Toronto HQ. 320 employees. IP developed and owned in Canada — dedicated R&D department with 80 engineers. DEMPE functions: full development, enhancement, maintenance, protection and exploitation control performed in-house. No contractual obligation to pass royalties to any other party. Independent board of directors. Generates revenue from licensing IP to multiple unrelated parties globally, not exclusively from Polish group."
+  },
+  "expected": {
+    "bo_overall": "CONFIRMED",
+    "treaty_rate_percent": 10,
+    "mli_ppt_applies": true,
+    "rate_basis": "treaty",
+    "conduit_pair": "case_08a",
+    "eval_note": "Conduit leg 2. Ultimate BO qualifies at 10% treaty rate. When read together with case_08a, the agent should have flagged conduit_risk on case_08a and prompted look-through to this entity."
+  }
+}

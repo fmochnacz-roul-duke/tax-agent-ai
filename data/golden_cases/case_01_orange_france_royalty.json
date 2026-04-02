@@ -1,0 +1,18 @@
+{
+  "case_id": "case_01",
+  "description": "Orange S.A. — France — Royalty — baseline CONFIRMED",
+  "legal_notes": "Real operating entity, strong substance. Art. 12(2) PL-FR DTC (1975) rate is 10%. MLI PPT applies (France post-ratif notifications 2020 & 2024) but entity passes all three BO conditions. Data file data/orange_polska_royalty.json used as source.",
+  "input": {
+    "entity_name": "Orange S.A.",
+    "country": "France",
+    "income_type": "royalty",
+    "shareholding_percentage": 100,
+    "substance_notes": "Major multinational telecom operator headquartered in Paris. 137,000 employees. Owns and actively manages IP portfolio in France; dedicated R&D division. Full DEMPE functions performed in-country. Art. 4a pkt 29 CIT Act: all three BO conditions met."
+  },
+  "expected": {
+    "bo_overall": "CONFIRMED",
+    "treaty_rate_percent": 10,
+    "mli_ppt_applies": true,
+    "rate_basis": "treaty"
+  }
+}
