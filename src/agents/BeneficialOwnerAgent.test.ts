@@ -2,17 +2,147 @@
 // BeneficialOwnerAgent — unit tests
 //
 // Tests for the exported pure functions:
+//   - validateInput        (QA-2: Zod schema replaces hand-written validation)
 //   - computeReportConfidence  (Phase 13: now also accepts Citation[])
 //   - parseFindings
 //
 // These functions are deterministic and require no LLM calls or file I/O.
-// All 196 existing tests continue to pass alongside these.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { computeReportConfidence, parseFindings } from './BeneficialOwnerAgent';
+import { computeReportConfidence, parseFindings, validateInput } from './BeneficialOwnerAgent';
 import type { Citation } from './BeneficialOwnerAgent';
+
+// ── validateInput ─────────────────────────────────────────────────────────────
+
+// A minimal valid input object — all required fields present and correct.
+// Optional fields are omitted to test the happy path without extras.
+const VALID_INPUT = {
+  entity_name: 'Alpine Holdings S.A.',
+  country: 'Luxembourg',
+  income_type: 'dividend',
+  shareholding_percentage: 25,
+};
+
+test('validateInput: accepts a valid minimal input', () => {
+  const result = validateInput(VALID_INPUT);
+  assert.equal(result.entity_name, 'Alpine Holdings S.A.');
+  assert.equal(result.country, 'Luxembourg');
+  assert.equal(result.income_type, 'dividend');
+  assert.equal(result.shareholding_percentage, 25);
+});
+
+test('validateInput: accepts all optional fields when present and valid', () => {
+  const result = validateInput({
+    ...VALID_INPUT,
+    substance_notes: 'Large operating company',
+    annual_payment_pln: 3000000,
+    related_party: true,
+    ddq_path: 'data/ddqs/test.txt',
+  });
+  assert.equal(result.substance_notes, 'Large operating company');
+  assert.equal(result.annual_payment_pln, 3000000);
+  assert.equal(result.related_party, true);
+  assert.equal(result.ddq_path, 'data/ddqs/test.txt');
+});
+
+test('validateInput: rejects null', () => {
+  assert.throws(() => validateInput(null), /Invalid input/);
+});
+
+test('validateInput: rejects a non-object (string)', () => {
+  assert.throws(() => validateInput('not an object'), /Invalid input/);
+});
+
+test('validateInput: rejects empty entity_name', () => {
+  assert.throws(() => validateInput({ ...VALID_INPUT, entity_name: '' }), /non-empty/);
+});
+
+test('validateInput: rejects missing entity_name', () => {
+  const { entity_name: _omit, ...rest } = VALID_INPUT;
+  assert.throws(() => validateInput(rest), /Invalid input/);
+});
+
+test('validateInput: rejects empty country', () => {
+  assert.throws(() => validateInput({ ...VALID_INPUT, country: '' }), /non-empty/);
+});
+
+test('validateInput: rejects invalid income_type', () => {
+  assert.throws(
+    () => validateInput({ ...VALID_INPUT, income_type: 'gift' }),
+    /income_type must be one of/
+  );
+});
+
+test('validateInput: accepts all three valid income_type values', () => {
+  for (const type of ['dividend', 'interest', 'royalty'] as const) {
+    const result = validateInput({ ...VALID_INPUT, income_type: type });
+    assert.equal(result.income_type, type);
+  }
+});
+
+test('validateInput: rejects shareholding_percentage below 0', () => {
+  assert.throws(
+    () => validateInput({ ...VALID_INPUT, shareholding_percentage: -1 }),
+    /shareholding_percentage/
+  );
+});
+
+test('validateInput: rejects shareholding_percentage above 100', () => {
+  assert.throws(
+    () => validateInput({ ...VALID_INPUT, shareholding_percentage: 101 }),
+    /shareholding_percentage/
+  );
+});
+
+test('validateInput: accepts shareholding_percentage at boundary values (0 and 100)', () => {
+  assert.doesNotThrow(() => validateInput({ ...VALID_INPUT, shareholding_percentage: 0 }));
+  assert.doesNotThrow(() => validateInput({ ...VALID_INPUT, shareholding_percentage: 100 }));
+});
+
+test('validateInput: rejects shareholding_percentage as a string', () => {
+  assert.throws(
+    () => validateInput({ ...VALID_INPUT, shareholding_percentage: '25' }),
+    /shareholding_percentage/
+  );
+});
+
+test('validateInput: rejects negative annual_payment_pln', () => {
+  assert.throws(
+    () => validateInput({ ...VALID_INPUT, annual_payment_pln: -1 }),
+    /annual_payment_pln/
+  );
+});
+
+test('validateInput: accepts annual_payment_pln of 0 (unknown amount convention)', () => {
+  assert.doesNotThrow(() => validateInput({ ...VALID_INPUT, annual_payment_pln: 0 }));
+});
+
+test('validateInput: rejects related_party as a string', () => {
+  assert.throws(() => validateInput({ ...VALID_INPUT, related_party: 'yes' }), /related_party/);
+});
+
+test('validateInput: error message lists all invalid fields at once', () => {
+  // Zod validates all fields before throwing — so multiple errors are reported
+  // in a single throw rather than stopping at the first failure.
+  let message = '';
+  try {
+    validateInput({
+      entity_name: '',
+      country: '',
+      income_type: 'bad',
+      shareholding_percentage: -5,
+    });
+  } catch (err) {
+    message = (err as Error).message;
+  }
+  // All four bad fields should appear in the same error message
+  assert.match(message, /entity_name/);
+  assert.match(message, /country/);
+  assert.match(message, /income_type/);
+  assert.match(message, /shareholding_percentage/);
+});
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

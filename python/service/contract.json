@@ -1,0 +1,412 @@
+{
+  "SubstanceResult": {
+    "$defs": {
+      "BoCondition": {
+        "description": "One of the three cumulative BO conditions under Art. 4a pkt 29 CIT.",
+        "properties": {
+          "result": {
+            "description": "Binary result: PASS if condition is met, FAIL if not, UNCERTAIN if DDQ is insufficient",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "UNCERTAIN"
+            ],
+            "title": "Result",
+            "type": "string"
+          },
+          "note": {
+            "description": "Explanation citing DDQ evidence",
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result",
+          "note"
+        ],
+        "title": "BoCondition",
+        "type": "object"
+      },
+      "BoPreliminary": {
+        "description": "Preliminary three-condition BO test result (Art. 4a pkt 29 CIT).",
+        "properties": {
+          "condition_1_own_benefit": {
+            "$ref": "#/$defs/BoCondition"
+          },
+          "condition_2_not_conduit": {
+            "$ref": "#/$defs/BoCondition"
+          },
+          "condition_3_genuine_activity": {
+            "$ref": "#/$defs/BoCondition"
+          },
+          "overall": {
+            "description": "FAIL if ANY single condition fails; UNCERTAIN if any condition is UNCERTAIN and none fail",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "UNCERTAIN"
+            ],
+            "title": "Overall",
+            "type": "string"
+          },
+          "legal_basis": {
+            "description": "Cite the legal provisions assessed (Art. 4a pkt 29 CIT, MF Obja\u015bnienia 2025)",
+            "title": "Legal Basis",
+            "type": "string"
+          }
+        },
+        "required": [
+          "condition_1_own_benefit",
+          "condition_2_not_conduit",
+          "condition_3_genuine_activity",
+          "overall",
+          "legal_basis"
+        ],
+        "title": "BoPreliminary",
+        "type": "object"
+      },
+      "ConduitIndicator": {
+        "description": "A conduit red flag from MF Obja\u015bnienia \u00a72.2.1.",
+        "properties": {
+          "present": {
+            "description": "True if this red flag is present",
+            "title": "Present",
+            "type": "boolean"
+          },
+          "evidence": {
+            "description": "Evidence from DDQ supporting the assessment",
+            "title": "Evidence",
+            "type": "string"
+          }
+        },
+        "required": [
+          "present",
+          "evidence"
+        ],
+        "title": "ConduitIndicator",
+        "type": "object"
+      },
+      "ConduitIndicators": {
+        "description": "Four conduit red flags from MF Obja\u015bnienia \u00a72.2.1.",
+        "properties": {
+          "pass_through_obligation": {
+            "$ref": "#/$defs/ConduitIndicator"
+          },
+          "rapid_forwarding": {
+            "$ref": "#/$defs/ConduitIndicator"
+          },
+          "nominal_margin": {
+            "$ref": "#/$defs/ConduitIndicator"
+          },
+          "capital_insufficiency": {
+            "$ref": "#/$defs/ConduitIndicator"
+          }
+        },
+        "required": [
+          "pass_through_obligation",
+          "rapid_forwarding",
+          "nominal_margin",
+          "capital_insufficiency"
+        ],
+        "title": "ConduitIndicators",
+        "type": "object"
+      },
+      "EmployeeFactor": {
+        "description": "Extends SubstanceFactor with headcount (may be None if DDQ does not disclose).",
+        "properties": {
+          "present": {
+            "description": "True if this factor supports BO status",
+            "title": "Present",
+            "type": "boolean"
+          },
+          "note": {
+            "description": "Evidence from DDQ or explanation of absence",
+            "title": "Note",
+            "type": "string"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Number of employees; null when DDQ does not disclose a number",
+            "title": "Count"
+          }
+        },
+        "required": [
+          "present",
+          "note"
+        ],
+        "title": "EmployeeFactor",
+        "type": "object"
+      },
+      "PhysicalOfficeFactor": {
+        "description": "Physical presence factor \u2014 own_premises distinguishes owned vs. rented office.",
+        "properties": {
+          "present": {
+            "description": "True if entity has a physical office",
+            "title": "Present",
+            "type": "boolean"
+          },
+          "own_premises": {
+            "description": "True if premises are owned or long-term leased",
+            "title": "Own Premises",
+            "type": "boolean"
+          },
+          "note": {
+            "description": "Evidence from DDQ",
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "present",
+          "own_premises",
+          "note"
+        ],
+        "title": "PhysicalOfficeFactor",
+        "type": "object"
+      },
+      "SubstanceFactor": {
+        "description": "A single substance criterion from MF Obja\u015bnienia \u00a72.3.",
+        "properties": {
+          "present": {
+            "description": "True if this factor supports BO status",
+            "title": "Present",
+            "type": "boolean"
+          },
+          "note": {
+            "description": "Evidence from DDQ or explanation of absence",
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "present",
+          "note"
+        ],
+        "title": "SubstanceFactor",
+        "type": "object"
+      },
+      "SubstanceFactors": {
+        "description": "Six universal substance criteria from MF Obja\u015bnienia \u00a72.3.",
+        "properties": {
+          "employees": {
+            "$ref": "#/$defs/EmployeeFactor"
+          },
+          "physical_office": {
+            "$ref": "#/$defs/PhysicalOfficeFactor"
+          },
+          "management_independence": {
+            "$ref": "#/$defs/SubstanceFactor"
+          },
+          "own_assets": {
+            "$ref": "#/$defs/SubstanceFactor"
+          },
+          "operating_costs": {
+            "$ref": "#/$defs/SubstanceFactor"
+          },
+          "own_capital_financing": {
+            "$ref": "#/$defs/SubstanceFactor"
+          }
+        },
+        "required": [
+          "employees",
+          "physical_office",
+          "management_independence",
+          "own_assets",
+          "operating_costs",
+          "own_capital_financing"
+        ],
+        "title": "SubstanceFactors",
+        "type": "object"
+      }
+    },
+    "description": "Full substance profile \u2014 mirrors TypeScript SubstanceResult interface.\nReturned by POST /substance.",
+    "properties": {
+      "entity": {
+        "description": "Entity name as provided in the request",
+        "title": "Entity",
+        "type": "string"
+      },
+      "country": {
+        "description": "Country of registration",
+        "title": "Country",
+        "type": "string"
+      },
+      "entity_type": {
+        "description": "Archetypal entity classification derived from DDQ content",
+        "enum": [
+          "large_operating_company",
+          "ip_holdco",
+          "holding_company",
+          "shell_company",
+          "unknown"
+        ],
+        "title": "Entity Type",
+        "type": "string"
+      },
+      "substance_factors": {
+        "$ref": "#/$defs/SubstanceFactors"
+      },
+      "conduit_indicators": {
+        "$ref": "#/$defs/ConduitIndicators"
+      },
+      "substance_tier": {
+        "description": "STRONG: all six factors present, no red flags. ADEQUATE: most factors present, minor gaps. WEAK: significant gaps or some red flags. CONDUIT: entity appears to be a pass-through with minimal own substance.",
+        "enum": [
+          "STRONG",
+          "ADEQUATE",
+          "WEAK",
+          "CONDUIT"
+        ],
+        "title": "Substance Tier",
+        "type": "string"
+      },
+      "bo_preliminary": {
+        "$ref": "#/$defs/BoPreliminary"
+      },
+      "confidence": {
+        "description": "HIGH: DDQ explicitly covers all six substance factors and all three BO conditions. MEDIUM: most factors addressed but some gaps. LOW: DDQ is sparse or missing key evidence.",
+        "enum": [
+          "HIGH",
+          "MEDIUM",
+          "LOW"
+        ],
+        "title": "Confidence",
+        "type": "string"
+      },
+      "confidence_note": {
+        "description": "Explanation of the confidence rating",
+        "title": "Confidence Note",
+        "type": "string"
+      },
+      "source": {
+        "description": "Data source description (set by the extractor)",
+        "title": "Source",
+        "type": "string"
+      }
+    },
+    "required": [
+      "entity",
+      "country",
+      "entity_type",
+      "substance_factors",
+      "conduit_indicators",
+      "substance_tier",
+      "bo_preliminary",
+      "confidence",
+      "confidence_note",
+      "source"
+    ],
+    "title": "SubstanceResult",
+    "type": "object"
+  },
+  "DempeResult": {
+    "$defs": {
+      "DempeFunctions": {
+        "description": "DEMPE function descriptions extracted from DDQ.",
+        "properties": {
+          "development": {
+            "description": "Who directs R&D strategy and controls investment decisions?",
+            "title": "Development",
+            "type": "string"
+          },
+          "enhancement": {
+            "description": "Who manages brand/technology improvement programmes?",
+            "title": "Enhancement",
+            "type": "string"
+          },
+          "maintenance": {
+            "description": "Who maintains IP registrations and handles renewals?",
+            "title": "Maintenance",
+            "type": "string"
+          },
+          "protection": {
+            "description": "Who enforces IP rights and manages litigation?",
+            "title": "Protection",
+            "type": "string"
+          },
+          "exploitation": {
+            "description": "Who negotiates and signs licence agreements?",
+            "title": "Exploitation",
+            "type": "string"
+          }
+        },
+        "required": [
+          "development",
+          "enhancement",
+          "maintenance",
+          "protection",
+          "exploitation"
+        ],
+        "title": "DempeFunctions",
+        "type": "object"
+      }
+    },
+    "description": "DEMPE analysis result \u2014 mirrors TypeScript DempeResult shape.\nReturned by POST /dempe.",
+    "properties": {
+      "entity": {
+        "description": "Entity name as provided in the request",
+        "title": "Entity",
+        "type": "string"
+      },
+      "country": {
+        "description": "Country of registration",
+        "title": "Country",
+        "type": "string"
+      },
+      "ip_type": {
+        "description": "Type of intangible (brand, technology, patent, etc.)",
+        "title": "Ip Type",
+        "type": "string"
+      },
+      "dempe_functions": {
+        "$ref": "#/$defs/DempeFunctions"
+      },
+      "control_test": {
+        "description": "Assessment of whether the entity makes key DEMPE decisions. Format: 'PASS \u2014 ...' or 'FAIL \u2014 ...' with supporting evidence from DDQ.",
+        "title": "Control Test",
+        "type": "string"
+      },
+      "risk_bearing": {
+        "description": "Assessment of who bears IP development risk and exploitation risk",
+        "title": "Risk Bearing",
+        "type": "string"
+      },
+      "beneficial_owner_dempe": {
+        "description": "Overall DEMPE-based BO conclusion (STRONG / MODERATE / WEAK) with explanation",
+        "title": "Beneficial Owner Dempe",
+        "type": "string"
+      },
+      "art12_scope_warning": {
+        "description": "CRITICAL flag: remind the reader to verify the treaty has an Art. 12 royalties article and that it covers this payment type. Mention the Art. 7 fallback.",
+        "title": "Art12 Scope Warning",
+        "type": "string"
+      },
+      "source": {
+        "description": "Data source description (set by the extractor)",
+        "title": "Source",
+        "type": "string"
+      }
+    },
+    "required": [
+      "entity",
+      "country",
+      "ip_type",
+      "dempe_functions",
+      "control_test",
+      "risk_bearing",
+      "beneficial_owner_dempe",
+      "art12_scope_warning",
+      "source"
+    ],
+    "title": "DempeResult",
+    "type": "object"
+  }
+}
