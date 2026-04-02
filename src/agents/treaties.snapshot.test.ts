@@ -47,8 +47,7 @@ import * as path from 'path';
 // clearly in code review diffs when it changes.
 //
 // To update: run  npm run test:snapshot:update  and commit the result.
-const EXPECTED_HASH = '007bba6977dd5c5444b933b165ac42ee42c08336ce6e6dfa2e0f15d06ab85e19';
-
+const EXPECTED_HASH = 'b16cb43f47440754fadd4544e19243ac993a78ad6d95d2004295bfdb90703ab8';
 // Resolve treaties.json relative to the project root, not this test file.
 // __dirname here is  src/agents/  — two levels up reaches the project root.
 const TREATIES_PATH = path.resolve(__dirname, '..', '..', 'data', 'treaties.json');

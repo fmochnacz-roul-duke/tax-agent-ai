@@ -1,11 +1,11 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 14 complete (2026-04-02). Phase 15 (QA-3: Evals + Negative Tests) is next.
-**Last code session:** Phase 14 — Ghost Activation (v0.17.0, 2026-04-02)
+**Phase:** Phase 15 complete (2026-04-02). Phase 16 (Legal Source Hierarchy) is next.
+**Last code session:** Phase 15 — QA-3: Evals + Negative Tests (v0.18.0, 2026-04-02)
 **Last planning session:** 2026-04-02 — Phase 23 design decisions confirmed (23a/23b/23c); total phases 29 → 31
-**Branch:** master
-**Tests:** 251/251 passing
+**Branch:** phase-15-evals (merge to master before Phase 16)
+**Tests:** 284/284 passing
 
 ---
 
@@ -55,24 +55,22 @@ Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. 
 
 ## How to Resume Next Session
 
-**FIRST — validate the golden dataset before writing any code.**
+Merge `phase-15-evals` to master, then start Phase 16.
 
-Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
-
-> "Let's start Phase 15. First, let's validate the 7-case golden dataset in SESSION.md —
-> review each case's expected bo_overall and legal reasoning together before we write
-> any JSON files or code. Then we'll build data/golden_cases/, scripts/runEvals.ts,
-> Triangulation Rule calibration tests, and negative test cases."
-
-**REMINDER (Frank): You said you need more time to review the golden dataset cases and may want to add more. Do the case review first before proceeding to code.**
-
-### Verify environment is healthy first:
 ```
 git checkout master
+git merge phase-15-evals
+git push
 npm run build    ← zero errors
-npm test         ← 246/246 passing
+npm test         ← 284/284 passing
 npm start        ← web UI at http://localhost:3000
 ```
+
+Phase 16 — Legal Source Hierarchy:
+- `source_type` parameter on `consult_legal_sources` tool
+- Art./Sec. refs in `Citation` interface
+- `legal_hierarchy` field in RAG results
+- Zod domain-narrowing for `source_type`
 
 ---
 
@@ -127,6 +125,20 @@ official Polish treaty PDFs (DzU references).
 ---
 
 ## Completed Phases (full history)
+
+### Phase 15 — QA-3: Evals + Negative Tests (v0.18.0 — 2026-04-02)
+- `BoOverall` type: `'CONFIRMED' | 'UNCERTAIN' | 'REJECTED' | 'NO_TREATY'`
+- `bo_overall: BoOverall` + `conduit_risk: boolean` added to `WhtReport`
+- `computeBoOverall()`: deterministic derivation (NO_TREATY → LOW→UNCERTAIN → FAIL→REJECTED → PASS→CONFIRMED)
+- `computeConduitRisk()`: REJECTED + routing jurisdiction OR holding/shell/unknown entity type
+- `KNOWN_ROUTING_JURISDICTIONS`: 16 countries (Cyprus, Luxembourg, Netherlands, Ireland, Malta, etc.)
+- `EntityRegistry`: force-draft on REJECTED — clears prior sign-offs when new analysis returns REJECTED
+- `data/golden_cases/`: 9 files — cases 01–07, 08a (Cyprus conduit), 08b (Canada ultimate BO)
+- `scripts/runEvals.ts` + `npm run eval`: Triangulation Rule harness — fails on wrong `bo_overall` OR wrong rate
+- Negative tests (8): Hong Kong no-treaty, Brazil treaty data, France 10% royalty, Malta MLI PPT, input validation
+- `data/treaties.json`: Brazil added (PL-BR DTC 2022; in force 2026; no MLI PPT; rates verified via Tax@Hand)
+- SHA-256 snapshot updated
+- 284/284 tests passing (33 new tests)
 
 ### Phase 14 — Ghost Activation (v0.17.0 — 2026-04-02)
 - `TreatyVerifierAgent` wired into live agent flow: `WhtEnvironment.treatyVerifier` + `verifyTreatyRate()`

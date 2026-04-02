@@ -1,0 +1,21 @@
+{
+  "case_id": "case_08a",
+  "description": "Cyprus IP SPV Ltd — Cyprus — Royalty — REJECTED (conduit leg 1: immediate recipient fails BO)",
+  "legal_notes": "Conduit scenario, leg 1 of 2. Cyprus treaty: MLI PPT applies; Art. 8 MLI reserved. Treaty royalty rate: 5%. SPV has zero substance — registered address only. BO condition (iii) — genuine business activity — is not met. BO condition (ii) — no pass-on obligation — is violated: the SPV has a contractual back-to-back licence agreement obliging it to remit royalties to the Israeli ultimate parent. Expected: REJECTED. Conduit risk: true (Cyprus is a known routing jurisdiction, entity type = shell_company). See case_08b for ultimate BO assessment.",
+  "input": {
+    "entity_name": "Cyprus IP SPV Ltd",
+    "country": "Cyprus",
+    "income_type": "royalty",
+    "shareholding_percentage": 0,
+    "substance_notes": "Cyprus shell company. Registered address in Nicosia via a corporate services provider. Zero employees. IP registered in Cyprus but no management, R&D, or exploitation decisions made locally. Back-to-back licence: Cyprus entity sub-licenses IP from Israeli parent and licenses to Polish payer. All royalties received from Poland are contractually passed to Israeli parent under the back-to-back agreement. No economic substance in Cyprus."
+  },
+  "expected": {
+    "bo_overall": "REJECTED",
+    "treaty_rate_percent": 20,
+    "mli_ppt_applies": true,
+    "rate_basis": "domestic",
+    "conduit_risk": true,
+    "conduit_pair": "case_08b",
+    "eval_note": "Conduit leg 1. Domestic rate 20% applies. conduit_risk must be true. Eval harness links to case_08b for ultimate BO assessment."
+  }
+}

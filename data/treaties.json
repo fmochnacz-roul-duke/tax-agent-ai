@@ -72,6 +72,40 @@
     }
   },
 
+  "brazil": {
+    "treaty_in_force": true,
+    "treaty_name": "Poland–Brazil DTC (2022)",
+    "dz_u": "2025 poz. 1604",
+    "mli_ppt_applies": "NO",
+    "mli_flags": [],
+    "mli_note": "Treaty concluded after MLI deposit window — MLI does not apply. Brazil signed MLI 20-10-2025 but has not ratified; PPT cannot apply bilaterally. No LOB clause in this treaty.",
+    "rates": {
+      "dividend": {
+        "reduced_rate": 10,
+        "reduced_threshold": 25,
+        "standard_rate": 15,
+        "treaty_article": "Art. 10(2) Poland–Brazil DTC (2022)",
+        "verified": true,
+        "verified_sources": ["Tax@Hand/Deloitte: Brazil–Poland Treaty round-up, August 2025"],
+        "note": "10% rate requires ≥25% capital holding for 365 days. Otherwise 15% standard rate applies."
+      },
+      "interest": {
+        "rate": 15,
+        "treaty_article": "Art. 11(2) Poland–Brazil DTC (2022)",
+        "verified": true,
+        "verified_sources": ["Tax@Hand/Deloitte: Brazil–Poland Treaty round-up, August 2025"],
+        "note": "10% reduced rate applies to bank loans or credits granted for ≥5 years financing acquisition of equipment or public works. Standard rate is 15%."
+      },
+      "royalty": {
+        "rate": 10,
+        "treaty_article": "Art. 12(2) Poland–Brazil DTC (2022)",
+        "verified": true,
+        "verified_sources": ["Tax@Hand/Deloitte: Brazil–Poland Treaty round-up, August 2025"],
+        "note": "15% rate applies specifically to trademark royalties. Standard 10% rate applies to copyrights, patents, know-how, and industrial/commercial/scientific equipment."
+      }
+    }
+  },
+
   "bulgaria": {
     "treaty_in_force": true,
     "treaty_name": "Poland–Bulgaria DTC (1994)",

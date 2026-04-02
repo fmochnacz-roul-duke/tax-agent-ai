@@ -1,0 +1,19 @@
+{
+  "case_id": "case_05",
+  "description": "XTB Malta Ltd — Malta — Royalty — REJECTED (MLI PPT + EXISTING_ANTIABUSE + low substance)",
+  "legal_notes": "Malta treaty: MLI PPT applies (YES) and treaty contains existing anti-abuse provisions (Arts. 10(6), 11(8), 12(7)) — EXISTING_ANTIABUSE flag. Post-ratif notification 02-10-2024. Treaty royalty rate: 10%. Entity has minimal substance — shell-level. BO condition (iii) — genuine business activity in Malta — is not met. PPT applies: principal purpose of the structure is to obtain the 10% treaty rate rather than the 20% domestic rate. Expected outcome: REJECTED; domestic rate 20% applies.",
+  "input": {
+    "entity_name": "XTB Malta Ltd",
+    "country": "Malta",
+    "income_type": "royalty",
+    "shareholding_percentage": 0,
+    "substance_notes": "Malta-registered company. Registered agent address only — no physical office. Zero employees. IP registered in Malta but all management, exploitation decisions and R&D performed by parent outside Malta. No local payroll, no board meetings held in Malta. Annual accounts filed by a third-party administrator. Structure appears to exist solely to hold IP in a low-tax EU jurisdiction."
+  },
+  "expected": {
+    "bo_overall": "REJECTED",
+    "treaty_rate_percent": 20,
+    "mli_ppt_applies": true,
+    "rate_basis": "domestic",
+    "eval_note": "Rejected entity does not qualify for treaty rate. Domestic WHT rate 20% applies to royalties. Conduit risk flag expected: true (Malta is a known routing jurisdiction)."
+  }
+}

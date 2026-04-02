@@ -479,3 +479,83 @@ describe('extractSubstanceFields', () => {
     assert.equal(result.boOverall, undefined);
   });
 });
+
+// ── Phase 15: force-draft on REJECTED bo_overall ──────────────────────────────
+//
+// A REJECTED verdict may indicate a conduit structure — an existing sign-off
+// must not survive a re-analysis that returns REJECTED.
+//
+describe('EntityRegistry.save() — force-draft on REJECTED', () => {
+  let tmpPath: string;
+  let registry: EntityRegistry;
+
+  beforeEach(() => {
+    tmpPath = makeTempPath();
+    registry = new EntityRegistry(tmpPath);
+  });
+
+  afterEach(() => {
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+  });
+
+  it('new entry with REJECTED bo_overall starts as draft', () => {
+    const report = makeReport({ bo_overall: 'REJECTED' });
+    const entry = registry.save(report);
+    assert.equal(entry.review_status, 'draft');
+  });
+
+  it('re-analysis with REJECTED resets signed_off to draft', () => {
+    // First save — signed off by a reviewer.
+    const first = makeReport({ bo_overall: 'CONFIRMED' });
+    registry.save(first);
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'analyst');
+
+    // Second save — new analysis returns REJECTED.
+    const second = makeReport({ bo_overall: 'REJECTED' });
+    const entry = registry.save(second);
+
+    // Must be reset to draft regardless of prior sign-off.
+    assert.equal(entry.review_status, 'draft');
+  });
+
+  it('re-analysis with CONFIRMED preserves signed_off status', () => {
+    const first = makeReport({ bo_overall: 'CONFIRMED' });
+    registry.save(first);
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'analyst');
+
+    const second = makeReport({ bo_overall: 'CONFIRMED' });
+    const entry = registry.save(second);
+
+    // Non-REJECTED — sign-off is preserved.
+    assert.equal(entry.review_status, 'signed_off');
+  });
+
+  it('re-analysis with UNCERTAIN preserves signed_off status', () => {
+    const first = makeReport({ bo_overall: 'CONFIRMED' });
+    registry.save(first);
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'analyst');
+
+    const second = makeReport({ bo_overall: 'UNCERTAIN' });
+    const entry = registry.save(second);
+
+    assert.equal(entry.review_status, 'signed_off');
+  });
+
+  it('re-analysis with NO_TREATY preserves signed_off status', () => {
+    const first = makeReport({ bo_overall: 'CONFIRMED' });
+    registry.save(first);
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'analyst');
+
+    const second = makeReport({ bo_overall: 'NO_TREATY' });
+    const entry = registry.save(second);
+
+    assert.equal(entry.review_status, 'signed_off');
+  });
+
+  it('new entry with no bo_overall (undefined) defaults to draft', () => {
+    // Legacy callers that do not yet pass bo_overall should still get draft.
+    const report = makeReport({ bo_overall: undefined });
+    const entry = registry.save(report);
+    assert.equal(entry.review_status, 'draft');
+  });
+});

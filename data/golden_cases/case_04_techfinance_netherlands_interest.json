@@ -1,0 +1,18 @@
+{
+  "case_id": "case_04",
+  "description": "TechFinance B.V. — Netherlands — Interest — UNCERTAIN (MLI PPT + thin finance co.)",
+  "legal_notes": "Dutch finance subsidiary. Netherlands: MLI PPT YES. Treaty interest rate: 5% (Art. 11(2) PL-NL DTC). Thin finance company — no independent risk management, no local employees beyond one director, on-lends to group at minimal margin. PPT risk: structure may exist primarily to channel interest payments through a treaty-favourable jurisdiction. BO condition (ii) unclear — contractual obligation to pass on cash flows to parent.",
+  "input": {
+    "entity_name": "TechFinance B.V.",
+    "country": "Netherlands",
+    "income_type": "interest",
+    "shareholding_percentage": 0,
+    "substance_notes": "Dutch holding/finance company. Amsterdam registered office. One director (non-resident). No local employees. On-lends funds borrowed from parent to Polish subsidiary at a 0.2% margin. No independent credit risk management. Back-to-back loan structure: Dutch entity receives interest from Poland and remits (minus margin) to ultimate parent in a third country."
+  },
+  "expected": {
+    "bo_overall": "UNCERTAIN",
+    "treaty_rate_percent": 5,
+    "mli_ppt_applies": true,
+    "rate_basis": "treaty"
+  }
+}

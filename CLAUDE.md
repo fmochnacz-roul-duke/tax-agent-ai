@@ -57,7 +57,8 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | DOCS-2 | `docs/api.md`; `last_verified` frontmatter on RAG source files | ✓ Complete |
 | GITHUB-1 | `.github/` issue template + PR template; README feedback section + docs table | ✓ Complete |
 | 14 | Ghost Activation — wire TreatyVerifierAgent into live flow; surface `last_verified`; confidence drops on rate mismatch | ✓ Complete |
-| **15** | **QA-3: Evals + Negative Tests** — `data/golden_cases/` (7 curated cases); `scripts/runEvals.ts`; Triangulation Rule calibration; negative test cases | **Next** |
+| 15 | QA-3: Evals + Negative Tests — `BoOverall` type; `bo_overall`+`conduit_risk` on `WhtReport`; `data/golden_cases/` (9 cases); `scripts/runEvals.ts`; Triangulation Rule; 8 negative tests; Brazil in treaties.json | ✓ Complete |
+| **16** | **Legal Source Hierarchy** — `source_type` on `consult_legal_sources`; Art./Sec. refs in `Citation`; Zod domain-narrowing | **Next** |
 | 16 | Legal Source Hierarchy — `source_type` on `consult_legal_sources`; Art./Sec. refs in `Citation`; Zod domain-narrowing | Planned |
 | 17 | Confidence UX + HITL — UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft registry on UNCERTAIN | Planned |
 | 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; document checklist; no-DDQ path | Planned |
@@ -193,8 +194,9 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run tax:agent` | CLI agent — requires `--input <file>` |
 | `npm run ddq:service` | Python DDQ extraction service on port 8000 (optional) |
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
-| `npm test` | Unit tests — 246 tests, no API calls, ~2s |
+| `npm test` | Unit tests — 284 tests, no API calls, ~5s |
 | `npm run lint` | ESLint + Prettier check across all TS files |
+| `npm run eval` | Run golden dataset evaluation harness (9 cases, Triangulation Rule) — requires `OPENAI_API_KEY` |
 | `npm run test:coverage` | c8 coverage report (text + lcov) |
 | `npm run test:snapshot:update` | Recompute SHA-256 hash of treaties.json after intentional changes |
 | `npm run test:contract:update` | Regenerate python/service/contract.json after Pydantic model changes |
