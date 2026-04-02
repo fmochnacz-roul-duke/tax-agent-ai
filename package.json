@@ -14,7 +14,8 @@
     "module3:readme": "ts-node src/module3/ReadmeAgent.ts",
     "ddq:service": "python python/run.py",
     "start": "ts-node src/server/index.ts",
-    "rag:build": "ts-node scripts/build-knowledge-base.ts"
+    "rag:build": "ts-node scripts/build-knowledge-base.ts",
+    "verify:treaties": "ts-node scripts/verifyTreaties.ts"
   },
   "keywords": [],
   "author": "",

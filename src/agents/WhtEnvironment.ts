@@ -27,12 +27,15 @@ import { LegalRagService } from '../rag';
 // read `entry.rates.dividnd` (typo), the compiler will error immediately.
 
 interface DividendRate {
-  reduced_rate: number;       // WHT rate when shareholding threshold is met
-  reduced_threshold: number;  // minimum shareholding % required (0 = flat rate)
-  standard_rate: number;      // WHT rate when threshold not met
-  treaty_article: string;     // e.g. "Art. 10(2) Poland–Germany DTC"
-  verified: boolean;          // false until confirmed against treaty PDF
-  note?: string;              // any caveat worth surfacing to the agent
+  reduced_rate: number;        // WHT rate when shareholding threshold is met
+  reduced_threshold: number;   // minimum shareholding % required (0 = flat rate)
+  standard_rate: number;       // WHT rate when threshold not met
+  treaty_article: string;      // e.g. "Art. 10(2) Poland–Germany DTC"
+  verified: boolean;           // false until confirmed against treaty PDF
+  note?: string;               // any caveat worth surfacing to the agent
+  verified_at?: string;        // ISO date the rate was last verified (e.g. "2026-04-02")
+  verified_sources?: string[]; // sources used during verification
+  verification_note?: string;  // caveats or discrepancies found during verification
 }
 
 interface FlatRate {
@@ -40,6 +43,9 @@ interface FlatRate {
   treaty_article: string;
   verified: boolean;
   note?: string;
+  verified_at?: string;        // ISO date the rate was last verified
+  verified_sources?: string[]; // sources used during verification
+  verification_note?: string;  // caveats or discrepancies found during verification
 }
 
 interface TreatyRates {
