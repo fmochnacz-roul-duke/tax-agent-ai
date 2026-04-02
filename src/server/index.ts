@@ -29,7 +29,7 @@ import * as dotenv from 'dotenv';
 import { AgentInput, AgentEvent, WhtReport, runWhtAnalysis } from '../agents/BeneficialOwnerAgent';
 import { InputExtractor } from './InputExtractor';
 import { SubstanceInterviewer, InterviewState } from './SubstanceInterviewer';
-import { getRegistry } from './EntityRegistry';
+import { getRegistry, ReviewStatus } from './EntityRegistry';
 
 dotenv.config();
 
@@ -334,6 +334,77 @@ app.get('/session/:id/report', (req: Request, res: Response) => {
 app.get('/registry', (_req: Request, res: Response) => {
   const entries = getRegistry().listAll();
   res.json({ entries });
+});
+
+// ── GET /registry/entry — fetch a single entry ────────────────────────────────
+//
+// Query params: entity_name, country
+// Returns { entry: RegistryEntry } or 404.
+// Used by the review drawer to refresh the entry after an update.
+app.get('/registry/entry', (req: Request, res: Response) => {
+  const entityName = typeof req.query['entity_name'] === 'string'
+    ? req.query['entity_name']
+    : '';
+  const country = typeof req.query['country'] === 'string'
+    ? req.query['country']
+    : '';
+
+  if (!entityName || !country) {
+    res.status(400).json({ error: 'entity_name and country query params are required' });
+    return;
+  }
+
+  const entry = getRegistry().findByEntity(entityName, country);
+  if (!entry) {
+    res.status(404).json({ error: `No entry found for "${entityName}" / "${country}"` });
+    return;
+  }
+
+  res.json({ entry });
+});
+
+// ── POST /registry/review — update review status on an entry ─────────────────
+//
+// Body: { entity_name, country, status, note?, reviewer? }
+//   status must be one of: 'draft', 'reviewed', 'signed_off'
+//   note and reviewer are optional free-text fields
+//
+// Returns { entry: RegistryEntry } with the updated entry.
+app.post('/registry/review', (req: Request, res: Response) => {
+  const body = req.body as Record<string, unknown>;
+
+  const entityName = typeof body['entity_name'] === 'string' ? body['entity_name'].trim() : '';
+  const country    = typeof body['country']     === 'string' ? body['country'].trim()     : '';
+  const status     = typeof body['status']      === 'string' ? body['status']             : '';
+
+  if (!entityName || !country) {
+    res.status(400).json({ error: 'entity_name and country are required' });
+    return;
+  }
+
+  const validStatuses = new Set<string>(['draft', 'reviewed', 'signed_off']);
+  if (!validStatuses.has(status)) {
+    res.status(400).json({ error: 'status must be one of: draft, reviewed, signed_off' });
+    return;
+  }
+
+  const reviewerNote = typeof body['note']     === 'string' ? body['note'].trim()     : undefined;
+  const reviewedBy   = typeof body['reviewer'] === 'string' ? body['reviewer'].trim() : undefined;
+
+  const updated = getRegistry().updateReviewStatus(
+    entityName,
+    country,
+    status as ReviewStatus,
+    reviewerNote || undefined,  // treat empty string as "not provided"
+    reviewedBy   || undefined
+  );
+
+  if (!updated) {
+    res.status(404).json({ error: `No registry entry found for "${entityName}" / "${country}"` });
+    return;
+  }
+
+  res.json({ entry: updated });
 });
 
 // ── Start server ──────────────────────────────────────────────────────────────

@@ -65,6 +65,10 @@ export interface RegistryEntry {
   created_at:         string;    // ISO 8601 — set once on first analysis, never changed
   updated_at:         string;    // ISO 8601 — updated on every re-analysis
   report_path?:       string;    // path to the full JSON report on disk
+  // Phase 12b: human review fields — set by updateReviewStatus(), never by save()
+  reviewer_note?:     string;    // free-text note from the reviewer
+  reviewed_at?:       string;    // ISO 8601 — date of the last review action
+  reviewed_by?:       string;    // name of the reviewer (free text)
 }
 
 // AnalysisReport describes the fields EntityRegistry.save() needs from the
@@ -160,6 +164,47 @@ export class EntityRegistry {
   // size() — how many unique entity/country pairs are in the registry.
   size(): number {
     return this.entries.size;
+  }
+
+  // updateReviewStatus() allows a human reviewer to progress an entry through
+  // the review workflow: draft → reviewed → signed_off (or back to draft).
+  //
+  // Parameters:
+  //   entityName   — must match the entity_name used when save() was called
+  //   country      — same case-insensitive match as save()
+  //   status       — the new ReviewStatus to set
+  //   reviewerNote — optional free-text note (overwrites any previous note)
+  //   reviewedBy   — optional reviewer name (overwrites any previous name)
+  //
+  // Returns the updated entry, or undefined if the entity/country pair is not
+  // found in the registry.
+  updateReviewStatus(
+    entityName:   string,
+    country:      string,
+    status:       ReviewStatus,
+    reviewerNote?: string,
+    reviewedBy?:   string
+  ): RegistryEntry | undefined {
+    const key     = this.makeKey(entityName, country);
+    const existing = this.entries.get(key);
+    if (existing === undefined) return undefined;
+
+    // Build the updated entry. The spread operator (...existing) copies all
+    // current fields, then we override only the review-related ones.
+    // The conditional spreads (...(x !== undefined ? { field: x } : {})) only
+    // add the field when a value was provided — passing undefined does NOT
+    // clear a previously-set reviewer_note or reviewed_by.
+    const updated: RegistryEntry = {
+      ...existing,
+      review_status: status,
+      reviewed_at:   new Date().toISOString(),
+      ...(reviewerNote !== undefined ? { reviewer_note: reviewerNote } : {}),
+      ...(reviewedBy   !== undefined ? { reviewed_by:   reviewedBy }   : {}),
+    };
+
+    this.entries.set(key, updated);
+    this.persist();
+    return updated;
   }
 
   // ── Private helpers ─────────────────────────────────────────────────────────

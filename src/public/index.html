@@ -524,6 +524,127 @@
     .inc-dividend  { background: #1c2e6b; color: #93b4ff; }
     .inc-interest  { background: #1c2e1c; color: #86efac; }
     .inc-royalty   { background: #2a1c40; color: #d0a0f0; }
+
+    /* ── Review drawer (Phase 12b) ────────────────────────────────────────────── */
+
+    .reg-entry { cursor: pointer; }
+
+    #review-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    #review-overlay.open { display: flex; }
+
+    #review-drawer {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 500px;
+      max-width: 95vw;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    #review-drawer::-webkit-scrollbar { width: 4px; }
+    #review-drawer::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .drawer-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .drawer-titlebar h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+    }
+    .drawer-close {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 6px;
+      padding: 3px 10px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    .drawer-close:hover { border-color: var(--accent); color: var(--text); }
+
+    .drawer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .drawer-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .drawer-conclusion {
+      font-size: 12px;
+      color: var(--text);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      line-height: 1.6;
+    }
+    .drawer-prev-note {
+      font-size: 12px;
+      color: var(--text-dim);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      line-height: 1.5;
+    }
+    .drawer-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: inherit;
+      width: 100%;
+    }
+    .drawer-input:focus { outline: none; border-color: var(--accent); }
+    .drawer-textarea {
+      resize: vertical;
+      min-height: 72px;
+    }
+
+    .drawer-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn-reviewed  { background: #1c2e6b; color: #93b4ff; border: 1px solid #2a3e9b; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; }
+    .btn-signedoff { background: #14532d; color: #4ade80; border: 1px solid #1a6d3a; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; }
+    .btn-resetdraft { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-family: inherit; font-size: 11px; }
+    .btn-reviewed:hover  { background: #2a3e9b; }
+    .btn-signedoff:hover { background: #1a6d3a; }
+    .btn-resetdraft:hover { background: var(--border); }
+
+    #drawer-feedback {
+      font-size: 11px;
+      min-height: 16px;
+    }
+    .feedback-ok  { color: var(--success); }
+    .feedback-err { color: var(--error); }
   </style>
 </head>
 <body>
@@ -598,6 +719,63 @@
     </div>
   </div>
 </main>
+
+<!-- Phase 12b: Human review drawer ─────────────────────────────────────────────
+     Hidden by default. Opened when user clicks a registry entry.
+     The overlay background click closes the drawer (handleOverlayClick).
+────────────────────────────────────────────────────────────────────────────── -->
+<div id="review-overlay" onclick="handleOverlayClick(event)">
+  <div id="review-drawer">
+
+    <div class="drawer-titlebar">
+      <h3 id="drawer-title">Review Analysis</h3>
+      <button class="drawer-close" onclick="closeReviewDrawer()">✕ Close</button>
+    </div>
+
+    <!-- Entity meta row: badges -->
+    <div class="drawer-section">
+      <div class="drawer-label">Analysis</div>
+      <div id="drawer-badges" class="reg-badges" style="margin-top: 0;"></div>
+    </div>
+
+    <!-- Full conclusion text -->
+    <div class="drawer-section">
+      <div class="drawer-label">Conclusion Summary</div>
+      <div id="drawer-conclusion" class="drawer-conclusion"></div>
+    </div>
+
+    <!-- Previous review note (shown only when one exists) -->
+    <div class="drawer-section" id="drawer-prev-section" style="display: none;">
+      <div class="drawer-label">Previous Review Note</div>
+      <div id="drawer-prev-note" class="drawer-prev-note"></div>
+    </div>
+
+    <!-- Reviewer name input -->
+    <div class="drawer-section">
+      <div class="drawer-label">Your Name (optional)</div>
+      <input type="text" id="drawer-reviewer-name" class="drawer-input"
+             placeholder="e.g. Jan Kowalski">
+    </div>
+
+    <!-- Reviewer note textarea -->
+    <div class="drawer-section">
+      <div class="drawer-label">Review Note (optional)</div>
+      <textarea id="drawer-reviewer-note" class="drawer-input drawer-textarea"
+                placeholder="Notes, caveats, follow-up actions, or references…"></textarea>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="drawer-actions">
+      <button class="btn-reviewed"   onclick="submitReview('reviewed')">Mark Reviewed</button>
+      <button class="btn-signedoff"  onclick="submitReview('signed_off')">Sign Off</button>
+      <button class="btn-resetdraft" onclick="submitReview('draft')">Reset to Draft</button>
+    </div>
+
+    <!-- Feedback message (success / error) -->
+    <div id="drawer-feedback"></div>
+
+  </div>
+</div>
 
 <script>
 // ── State ──────────────────────────────────────────────────────────────────────
@@ -929,6 +1107,10 @@ function escapeHtml(str) {
 
 // ── Registry panel ─────────────────────────────────────────────────────────────
 
+// registryEntries stores the current entries by index so the review drawer
+// can look up a full entry when the user clicks one.
+let registryEntries = [];
+
 function toggleRegistry() {
   const panel = document.getElementById('registry-panel');
   panel.classList.toggle('collapsed');
@@ -950,6 +1132,8 @@ function renderRegistry(entries) {
   const body  = document.getElementById('registry-body');
   const count = document.getElementById('registry-count');
 
+  // Store entries for the review drawer to access by index
+  registryEntries = entries;
   count.textContent = String(entries.length);
 
   if (entries.length === 0) {
@@ -957,7 +1141,7 @@ function renderRegistry(entries) {
     return;
   }
 
-  body.innerHTML = entries.map(e => {
+  body.innerHTML = entries.map((e, idx) => {
     // Format the date as YYYY-MM-DD
     const date = e.updated_at ? e.updated_at.slice(0, 10) : '';
 
@@ -980,8 +1164,9 @@ function renderRegistry(entries) {
     // Review status badge
     const revBadge = `<span class="reg-badge rev-${escapeHtml(e.review_status)}">${escapeHtml(e.review_status.replace('_', ' '))}</span>`;
 
+    // Each entry is clickable — onclick passes the array index to the drawer
     return `
-      <div class="reg-entry" title="${escapeHtml(e.conclusion_summary)}">
+      <div class="reg-entry" onclick="openReviewDrawer(${idx})" title="Click to review">
         <div class="reg-entity">${escapeHtml(e.entity_name)}</div>
         <div class="reg-meta">
           <span>${escapeHtml(e.country)}</span>
@@ -993,6 +1178,117 @@ function renderRegistry(entries) {
         </div>
       </div>`;
   }).join('');
+}
+
+// ── Review drawer ──────────────────────────────────────────────────────────────
+
+// openReviewDrawer() populates the drawer with the entry at the given index
+// and makes the overlay visible.
+function openReviewDrawer(idx) {
+  const e = registryEntries[idx];
+  if (!e) return;
+
+  // Title
+  document.getElementById('drawer-title').textContent =
+    escapeHtml(e.entity_name) + ' — ' + escapeHtml(e.country);
+
+  // Badges row (same logic as renderRegistry)
+  const tierBadge = e.substance_tier
+    ? `<span class="reg-badge tier-${escapeHtml(e.substance_tier)}">${escapeHtml(e.substance_tier)}</span>`
+    : '';
+  const boBadge = e.bo_overall
+    ? `<span class="reg-badge bo-${escapeHtml(e.bo_overall)}">BO: ${escapeHtml(e.bo_overall)}</span>`
+    : '';
+  const confBadge = `<span class="reg-badge badge-${escapeHtml(e.data_confidence)}">${escapeHtml(e.data_confidence)}</span>`;
+  const incBadge  = `<span class="reg-badge inc-${escapeHtml(e.income_type)}">${escapeHtml(e.income_type)}</span>`;
+  const revBadge  = `<span class="reg-badge rev-${escapeHtml(e.review_status)}">${escapeHtml(e.review_status.replace('_', ' '))}</span>`;
+  document.getElementById('drawer-badges').innerHTML =
+    incBadge + confBadge + tierBadge + boBadge + revBadge;
+
+  // Conclusion summary
+  document.getElementById('drawer-conclusion').textContent = e.conclusion_summary || '(no conclusion)';
+
+  // Previous review note (only shown when one was set before)
+  const prevSection = document.getElementById('drawer-prev-section');
+  const prevNote    = document.getElementById('drawer-prev-note');
+  if (e.reviewer_note || e.reviewed_by) {
+    const who  = e.reviewed_by  ? `Reviewed by: ${e.reviewed_by}` : '';
+    const when = e.reviewed_at  ? ` on ${e.reviewed_at.slice(0, 10)}` : '';
+    const note = e.reviewer_note || '';
+    prevNote.textContent = [who + when, note].filter(Boolean).join('\n');
+    prevSection.style.display = '';
+  } else {
+    prevSection.style.display = 'none';
+  }
+
+  // Clear inputs and feedback from previous drawer use
+  document.getElementById('drawer-reviewer-name').value = '';
+  document.getElementById('drawer-reviewer-note').value = '';
+  document.getElementById('drawer-feedback').textContent = '';
+  document.getElementById('drawer-feedback').className  = '';
+
+  // Store entity info so submitReview() knows which entry to update
+  document.getElementById('review-overlay').dataset.entityName = e.entity_name;
+  document.getElementById('review-overlay').dataset.country    = e.country;
+
+  // Show the overlay
+  document.getElementById('review-overlay').classList.add('open');
+}
+
+function closeReviewDrawer() {
+  document.getElementById('review-overlay').classList.remove('open');
+}
+
+// Close the drawer when user clicks the dark overlay background (not the drawer itself).
+function handleOverlayClick(event) {
+  if (event.target.id === 'review-overlay') closeReviewDrawer();
+}
+
+// submitReview() POSTs to POST /registry/review and refreshes the panel.
+async function submitReview(status) {
+  const overlay    = document.getElementById('review-overlay');
+  const entityName = overlay.dataset.entityName;
+  const country    = overlay.dataset.country;
+  const reviewer   = document.getElementById('drawer-reviewer-name').value.trim();
+  const note       = document.getElementById('drawer-reviewer-note').value.trim();
+  const feedback   = document.getElementById('drawer-feedback');
+
+  feedback.textContent = 'Saving…';
+  feedback.className   = '';
+
+  try {
+    const res = await fetch('/registry/review', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        entity_name: entityName,
+        country,
+        status,
+        note:     note     || undefined,
+        reviewer: reviewer || undefined,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      feedback.textContent = 'Error: ' + (err.error || res.statusText);
+      feedback.className   = 'feedback-err';
+      return;
+    }
+
+    const label = { reviewed: 'Marked as reviewed', signed_off: 'Signed off', draft: 'Reset to draft' }[status] ?? status;
+    feedback.textContent = '✓ ' + label;
+    feedback.className   = 'feedback-ok';
+
+    // Refresh the registry panel so the badge updates are visible immediately
+    await loadRegistry();
+
+    // Close the drawer after a short delay so the user sees the success message
+    setTimeout(closeReviewDrawer, 900);
+  } catch (err) {
+    feedback.textContent = 'Network error — try again';
+    feedback.className   = 'feedback-err';
+  }
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────────

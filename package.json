@@ -15,7 +15,8 @@
     "ddq:service": "python python/run.py",
     "start": "ts-node src/server/index.ts",
     "rag:build": "ts-node scripts/build-knowledge-base.ts",
-    "verify:treaties": "ts-node scripts/verifyTreaties.ts"
+    "verify:treaties": "ts-node scripts/verifyTreaties.ts",
+    "review:list": "ts-node scripts/listUnreviewed.ts"
   },
   "keywords": [],
   "author": "",

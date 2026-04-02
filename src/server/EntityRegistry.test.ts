@@ -294,6 +294,131 @@ describe('EntityRegistry', () => {
   });
 });
 
+// ── updateReviewStatus() ─────────────────────────────────────────────────────
+
+describe('updateReviewStatus', () => {
+
+  // Each test uses its own temp file, same pattern as the EntityRegistry suite.
+  let tempPath: string;
+  beforeEach(() => { tempPath = makeTempPath(); });
+  afterEach(()  => { try { fs.unlinkSync(tempPath); } catch { /* already gone */ } });
+
+  it('returns undefined for an unknown entity', () => {
+    const registry = new EntityRegistry(tempPath);
+    const result   = registry.updateReviewStatus('Unknown Corp', 'Germany', 'reviewed');
+    assert.equal(result, undefined);
+  });
+
+  it('changes review_status from draft to reviewed', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    const updated = registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'reviewed');
+    assert.ok(updated !== undefined);
+    assert.equal(updated.review_status, 'reviewed');
+  });
+
+  it('changes review_status from draft to signed_off', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    const updated = registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off');
+    assert.ok(updated !== undefined);
+    assert.equal(updated.review_status, 'signed_off');
+  });
+
+  it('allows resetting signed_off back to draft', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off');
+    const reset = registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'draft');
+    assert.ok(reset !== undefined);
+    assert.equal(reset.review_status, 'draft');
+  });
+
+  it('sets reviewed_at to a valid ISO datetime string', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    const updated = registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'reviewed');
+    assert.ok(updated?.reviewed_at !== undefined);
+    // ISO 8601 datetime contains a T separator between date and time
+    assert.ok(updated!.reviewed_at!.includes('T'), 'reviewed_at must be a full ISO datetime');
+  });
+
+  it('stores reviewer_note when provided', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    const updated = registry.updateReviewStatus(
+      'Alpine Holdings S.A.', 'Luxembourg', 'reviewed', 'Checked against treaty PDF — rates confirmed'
+    );
+    assert.equal(updated?.reviewer_note, 'Checked against treaty PDF — rates confirmed');
+  });
+
+  it('stores reviewed_by when provided', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    const updated = registry.updateReviewStatus(
+      'Alpine Holdings S.A.', 'Luxembourg', 'reviewed', undefined, 'Jan Kowalski'
+    );
+    assert.equal(updated?.reviewed_by, 'Jan Kowalski');
+  });
+
+  it('stores both reviewer_note and reviewed_by when provided', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    const updated = registry.updateReviewStatus(
+      'Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'All conditions verified', 'Anna Nowak'
+    );
+    assert.equal(updated?.reviewer_note, 'All conditions verified');
+    assert.equal(updated?.reviewed_by,   'Anna Nowak');
+  });
+
+  it('does not clear an existing reviewer_note when none is provided', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    // First update: set a note
+    registry.updateReviewStatus(
+      'Alpine Holdings S.A.', 'Luxembourg', 'reviewed', 'First note'
+    );
+    // Second update: no note argument — should keep the first note
+    const updated = registry.updateReviewStatus(
+      'Alpine Holdings S.A.', 'Luxembourg', 'signed_off'
+    );
+    assert.equal(updated?.reviewer_note, 'First note');
+  });
+
+  it('persists to disk — review_status survives a registry reload', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off');
+
+    // Reload from disk — simulates server restart
+    const reloaded = new EntityRegistry(tempPath);
+    const entry    = reloaded.findByEntity('Alpine Holdings S.A.', 'Luxembourg');
+    assert.equal(entry?.review_status, 'signed_off');
+  });
+
+  it('is case-insensitive — matches regardless of capitalisation', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    const updated = registry.updateReviewStatus('ALPINE HOLDINGS S.A.', 'LUXEMBOURG', 'reviewed');
+    assert.ok(updated !== undefined);
+    assert.equal(updated.review_status, 'reviewed');
+  });
+
+  it('does not change created_at or updated_at from save()', () => {
+    const registry = new EntityRegistry(tempPath);
+    registry.save(makeReport());
+    const before  = registry.findByEntity('Alpine Holdings S.A.', 'Luxembourg')!;
+
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'reviewed');
+    const after   = registry.findByEntity('Alpine Holdings S.A.', 'Luxembourg')!;
+
+    // The analysis timestamp must not change when someone just updates review status
+    assert.equal(after.created_at, before.created_at);
+    assert.equal(after.updated_at, before.updated_at);
+  });
+
+});
+
 // ── extractSubstanceFields() ─────────────────────────────────────────────────
 
 describe('extractSubstanceFields', () => {
