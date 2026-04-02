@@ -1,9 +1,9 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 13 COMPLETE — Provenance/citations on WhtReport.
+**Phase:** QA-1 COMPLETE — ESLint, Prettier, c8 coverage, build precondition, treaty snapshot test.
 **Date of last session:** 2026-04-02
-**Branch:** master (feature/phase13-provenance merged, tagged v0.13.0)
+**Branch:** master (feature/qa1-eslint-prettier merged, tagged v0.14.0)
 
 ### Phase 13 summary — Provenance/Citations on WhtReport
 - `src/agents/BeneficialOwnerAgent.ts`:
@@ -47,15 +47,24 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Phase 13 is merged. Let's start QA-1 — ESLint, Prettier, coverage, snapshot test."
+> "QA-1 is merged. Let's start QA-2 — Zod validation and contract tests."
 
 ### Upcoming phases (planned, in order)
 
 | Phase | Description |
 |---|---|
-| QA-1 | ESLint + Prettier + `npm run lint`; c8 coverage; build-as-precondition in `npm test`; treaty data snapshot test |
 | QA-2 | Zod runtime validation replacing `validateInput()`; Python/TS contract tests for `SubstanceResult` / `DempeResult` schema drift |
-| DOCS-2 | `docs/api.md` already done; add `last_verified` frontmatter to RAG source `.md` files |
+| DOCS-2 | Add `last_verified` frontmatter to RAG source `.md` files |
+
+### QA-1 summary (2026-04-02)
+- `eslint.config.js` — ESLint 10 flat config; `@typescript-eslint/flat/recommended`; `no-explicit-any: error`; `no-console: off`; `eslint-config-prettier` last
+- `.prettierrc.json` — single quotes, trailing commas (es5), 100-char line width
+- `npm run lint` — ESLint + Prettier check in one command; all 39 TS files formatted
+- `.c8rc.json` + `npm run test:coverage` — V8 coverage via c8; text + lcov reporters; excludes test files; `all: true`
+- `npm test` now prefixed with `tsc --noEmit &&` — type errors block the test run
+- `src/agents/treaties.snapshot.test.ts` — SHA-256 snapshot of treaties.json; fails with clear message + recovery instructions if file changes
+- `scripts/updateTreatySnapshot.ts` + `npm run test:snapshot:update` — recomputes and patches the hash after intentional treaty changes
+- **216/216 tests passing**
 
 ### Planning session decisions (2026-04-02)
 
