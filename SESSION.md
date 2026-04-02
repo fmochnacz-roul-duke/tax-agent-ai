@@ -1,10 +1,10 @@
 # Session State
 
 ## Current Status
-**Phase:** Strategy review complete (2026-04-02). Roadmap restructured to 16 phases across 3 arcs. Phase 14 is next.
-**Last code session:** DOCS-2 (v0.16.0, 2026-04-02)
-**Branch:** master (feature/docs2-last-verified merged, tagged v0.16.0)
-**Tests:** 246/246 passing
+**Phase:** Phase 14 complete (2026-04-02). Phase 15 (QA-3: Evals + Negative Tests) is next.
+**Last code session:** Phase 14 — Ghost Activation (v0.17.0, 2026-04-02)
+**Branch:** master
+**Tests:** 251/251 passing
 
 ---
 
@@ -12,8 +12,8 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's start Phase 14 — Ghost Activation. Wire TreatyVerifierAgent into the live agent
-> flow and surface last_verified in consult_legal_sources results."
+> "Let's start Phase 15 — QA-3: Evals + Negative Tests. Create data/golden_cases/ with 5
+> golden cases, a runEvals.ts script, and negative test cases for the agent."
 
 ### Verify environment is healthy first:
 ```
@@ -62,28 +62,27 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 
 ---
 
-## Ghost / Inactive Items (as of v0.16.0)
+## Ghost / Inactive Items (as of v0.17.0)
 
-These exist in the codebase but are not active in the main agent flow:
+1. **`verified_at` / `verified_sources` / `verification_note`** on `DividendRate` and `FlatRate`
+   interfaces in `WhtEnvironment.ts`. These become meaningful once Phase 20 (Data Quality Pass)
+   runs real verifications and writes confirmed rates back to `treaties.json`.
 
-1. **`TreatyVerifierAgent.verifyRate()`** — has 15 tests, batch script `scripts/verifyTreaties.ts`
-   uses it. NEVER called from `BeneficialOwnerAgent` or `WhtEnvironment`. All 36 treaty rates
-   remain `verified: false`. Phase 14 fixes this.
-
-2. **`last_verified` on Chunk / CitedChunk** — parsed by Chunker (v0.16.0), stored on every
-   chunk. But `consultLegalSources` tool result text does NOT include this field. The agent and
-   user never see it. Phase 14 surfaces it in the formatted tool result.
-
-3. **`verified_at` / `verified_sources` / `verification_note`** on rate interfaces — added to
-   `DividendRate` and `FlatRate` in `WhtEnvironment.ts`. The `getTreatyRate` output already
-   includes `verification_note` conditionally. These become meaningful once Phase 17 runs
-   the real verification.
+All 36 treaty rates remain `verified: false` pending Phase 20 manual verification against
+official Polish treaty PDFs (DzU references).
 
 ---
 
 ## Completed Phases (full history)
 
-### Phase 14 — Not yet started
+### Phase 14 — Ghost Activation (v0.17.0 — 2026-04-02)
+- `TreatyVerifierAgent` wired into live agent flow: `WhtEnvironment.treatyVerifier` + `verifyTreatyRate()`
+- `case 'get_treaty_rate'` in agent loop calls `verifyTreatyRate()` and merges `treaty_verification_status` + `treaty_verification_note` into the `wht_rate` finding
+- `Retriever.search()` now forwards `last_verified` from `Chunk` to `CitedChunk` (was silently dropped)
+- `consultLegalSources()` surfaces `last_verified` in chunk output when present
+- `computeReportConfidence()`: DIFFERS → unconditionally LOW (before all other checks); NOT_FOUND → neutral
+- 5 new tests — 251/251 passing
+
 ### DOCS-2 (v0.16.0 — 2026-04-02)
 - `last_verified?: string` added to `SourceFrontmatter`, `Chunk`, propagated to `CitedChunk`
 - `parseFmFields()` in `Chunker.ts` parses and includes the field
@@ -169,4 +168,4 @@ These exist in the codebase but are not active in the main agent flow:
 - OECD MLI Matching Database check needed for Netherlands, Sweden, Switzerland (VERIFY cases).
 - Session persistence: in-memory Map is fine for dev; Redis or DB needed for multi-user production use.
 - Third-party vendor UC2: currently no distinct workflow for unrelated parties (Phase 15).
-- `last_verified` in RAG tool result: currently parsed but not surfaced (Phase 14).
+- `last_verified` in RAG tool result: now surfaced in `consultLegalSources` output (Phase 14 ✓).

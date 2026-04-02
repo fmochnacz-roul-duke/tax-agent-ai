@@ -69,6 +69,10 @@ export class Retriever {
       concept_ids: chunk.concept_ids,
       module_relevance: chunk.module_relevance,
       language: chunk.language,
+      // Phase 14: forward last_verified so consultLegalSources can surface it.
+      // The spread only adds the key when the source file carries the date —
+      // absence is intentional (source not yet reviewed by a human).
+      ...(chunk.last_verified !== undefined ? { last_verified: chunk.last_verified } : {}),
       text: chunk.text,
       score,
     }));

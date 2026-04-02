@@ -793,6 +793,22 @@ export function computeReportConfidence(
   findings: Record<string, string>,
   citations: Citation[] = []
 ): 'HIGH' | 'MEDIUM' | 'LOW' {
+  // Phase 14: Ghost Activation — treaty rate mismatch is unconditionally LOW.
+  //
+  // If TreatyVerifierAgent found that the actual treaty rate DIFFERS from what
+  // treaties.json claims, the rate shown in the report is wrong.  That is more
+  // serious than an unverified rate (MEDIUM), so we return LOW immediately —
+  // even before checking fact-check results or substance confidence.
+  const rateMismatchRaw = findings['wht_rate'];
+  if (rateMismatchRaw !== undefined) {
+    try {
+      const rp = JSON.parse(rateMismatchRaw) as Record<string, unknown>;
+      if (rp['treaty_verification_status'] === 'DIFFERS') return 'LOW';
+    } catch {
+      // Unparseable wht_rate will be caught by the standard logic below.
+    }
+  }
+
   // Phase 7: fact-check result takes priority when present.
   //
   // UNDERMINES — a public source contradicted a DDQ claim → unconditionally LOW.
@@ -1138,14 +1154,56 @@ async function runAgent(
             memory.recordFinding('treaty_status', result);
             break;
 
-          case 'get_treaty_rate':
-            result = env.getTreatyRate(
+          case 'get_treaty_rate': {
+            // getTreatyRate() is synchronous — no await needed.
+            const rateJson = env.getTreatyRate(
               args['residence_country'] as string,
               args['income_type'] as string,
               args['shareholding_percentage'] as number
             );
+
+            // Phase 14: Ghost Activation — cross-check the rate via TreatyVerifierAgent.
+            //
+            // We only verify when the rate JSON parsed cleanly and contains a
+            // treaty_article (present in all live-mode successes).  If it is an
+            // error response (e.g. country not found) there is nothing to verify.
+            //
+            // verifyTreatyRate() mirrors factCheckSubstance: live when GEMINI_API_KEY
+            // is set, simulation otherwise.  Simulation returns NOT_FOUND, which does
+            // NOT lower confidence — only DIFFERS does.
+            let parsedRate: Record<string, unknown>;
+            try {
+              parsedRate = JSON.parse(rateJson) as Record<string, unknown>;
+            } catch {
+              parsedRate = {};
+            }
+
+            if (
+              typeof parsedRate['treaty_article'] === 'string' &&
+              typeof parsedRate['treaty_rate_percent'] === 'number'
+            ) {
+              const claimedRate = `${parsedRate['treaty_rate_percent']}%`;
+              const verification = await env.verifyTreatyRate(
+                args['residence_country'] as string,
+                args['income_type'] as string,
+                claimedRate,
+                parsedRate['treaty_article']
+              );
+              // Merge the verification outcome into the rate result so it is
+              // stored in the findings and appears in the report's citations.
+              result = JSON.stringify({
+                ...parsedRate,
+                treaty_verification_status: verification.status,
+                treaty_verification_note: verification.note,
+              });
+            } else {
+              // Error response or simulate mode — pass through unchanged.
+              result = rateJson;
+            }
+
             memory.recordFinding('wht_rate', result);
             break;
+          }
 
           case 'check_entity_substance':
             result = await env.checkEntitySubstance(

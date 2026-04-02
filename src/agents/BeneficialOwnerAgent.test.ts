@@ -196,6 +196,41 @@ test('computeReportConfidence: LOW when fact_check UNDERMINES — overrides ever
   assert.equal(computeReportConfidence(findings, citations), 'LOW');
 });
 
+// Phase 14: Ghost Activation — treaty rate mismatch tests.
+
+test('computeReportConfidence: LOW when wht_rate has treaty_verification_status DIFFERS', () => {
+  // DIFFERS means TreatyVerifierAgent found the actual treaty rate is different
+  // from what treaties.json claims.  The report rate is wrong → unconditionally LOW,
+  // regardless of substance or RAG grounding.
+  const findings = {
+    wht_rate: JSON.stringify({
+      treaty_rate_percent: 5,
+      verified: false,
+      source: 'treaties.json',
+      treaty_verification_status: 'DIFFERS',
+      treaty_verification_note: 'Gemini found 10% in treaty text, not 5%',
+    }),
+  };
+  const citations = [ragCitation(3, 0.8)];
+  assert.equal(computeReportConfidence(findings, citations), 'LOW');
+});
+
+test('computeReportConfidence: NOT_FOUND verification status does NOT lower confidence', () => {
+  // NOT_FOUND is the simulate-mode fallback — no API key or Gemini unavailable.
+  // It means "we could not verify" — neutral, not a contradiction.  The report
+  // should still reach MEDIUM (rates unverified, no RAG) rather than drop to LOW.
+  const findings = {
+    wht_rate: JSON.stringify({
+      treaty_rate_percent: 5,
+      verified: false,
+      source: 'treaties.json',
+      treaty_verification_status: 'NOT_FOUND',
+      treaty_verification_note: 'Simulation mode — GEMINI_API_KEY not configured.',
+    }),
+  };
+  assert.equal(computeReportConfidence(findings, []), 'MEDIUM');
+});
+
 // ── computeReportConfidence — MEDIUM cases ────────────────────────────────────
 
 test('computeReportConfidence: MEDIUM when treaty rates are unverified', () => {

@@ -17,6 +17,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { FactCheckerAgent } from './FactCheckerAgent';
+import { TreatyVerifierAgent, TreatyRateVerification } from './TreatyVerifierAgent';
 import { SubstanceExtractor } from '../server/SubstanceExtractor';
 import { LegalRagService } from '../rag';
 
@@ -215,6 +216,8 @@ export class WhtEnvironment {
   private ddqText: string | undefined;
   // Phase 7: FactChecker agent — verifies substance claims against public records
   private factChecker: FactCheckerAgent;
+  // Phase 14: TreatyVerifier agent — cross-checks treaty rates via Gemini + Google Search
+  private treatyVerifier: TreatyVerifierAgent;
   // Phase 9: Legal RAG service — retrieves relevant chunks from the knowledge base
   private ragService: LegalRagService | undefined;
 
@@ -227,6 +230,12 @@ export class WhtEnvironment {
     // When simulate:false and GEMINI_API_KEY is absent, the agent self-degrades
     // to simulation and logs a warning — backward-compatible.
     this.factChecker = new FactCheckerAgent({ simulate: this.simulate });
+
+    // Phase 14 — TreatyVerifierAgent mirrors FactCheckerAgent exactly:
+    // same simulate flag, same silent self-degradation when GEMINI_API_KEY is absent.
+    // In simulate mode the verifier returns NOT_FOUND (conservative — never falsely
+    // marks a rate as CONFIRMED or DIFFERS), so confidence is not affected.
+    this.treatyVerifier = new TreatyVerifierAgent({ simulate: this.simulate });
 
     // Phase 9 — LegalRagService: initialise once here so every tool call can reuse
     // the loaded chunks and vectors without re-reading the files from disk.
@@ -1269,6 +1278,27 @@ export class WhtEnvironment {
     return JSON.stringify(result);
   }
 
+  // ── Phase 14: verifyTreatyRate ───────────────────────────────────────────────
+  //
+  // Thin wrapper around TreatyVerifierAgent.verifyRate().  Called from the agent
+  // loop immediately after getTreatyRate() to cross-check the rate against official
+  // sources via Gemini + Google Search.
+  //
+  // Returns a TreatyRateVerification in all cases — live or simulated.  In
+  // simulate mode (or when GEMINI_API_KEY is absent) the verifier self-degrades to
+  // NOT_FOUND, which has NO effect on report confidence (only DIFFERS lowers it).
+  //
+  // Parameters mirror the shape of the get_treaty_rate tool arguments so the agent
+  // loop can call this directly with the same args it already has.
+  async verifyTreatyRate(
+    country: string,
+    incomeType: string,
+    claimedRate: string,
+    treatyArticle: string
+  ): Promise<TreatyRateVerification> {
+    return this.treatyVerifier.verifyRate(country, incomeType, claimedRate, treatyArticle);
+  }
+
   // ── Phase 9: consultLegalSources ─────────────────────────────────────────────
   //
   // Retrieves the most relevant chunks from the built-in legal knowledge base
@@ -1315,6 +1345,9 @@ export class WhtEnvironment {
           section_title: c.section_title,
           text: c.text,
           score: Math.round(c.score * 100) / 100,
+          // Phase 14: surface last_verified so the agent (and user) can see
+          // when each source was last confirmed against current law.
+          ...(c.last_verified !== undefined ? { last_verified: c.last_verified } : {}),
         })),
       });
     } catch (err) {

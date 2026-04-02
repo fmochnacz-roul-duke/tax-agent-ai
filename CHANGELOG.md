@@ -5,6 +5,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.17.0] — 2026-04-02 — Phase 14: Ghost Activation
+
+- **`TreatyVerifierAgent` wired into live agent flow** (`WhtEnvironment.ts`, `BeneficialOwnerAgent.ts`)
+  - `WhtEnvironment` now instantiates `TreatyVerifierAgent` alongside `FactCheckerAgent` (same simulate flag, same self-degradation when `GEMINI_API_KEY` is absent)
+  - New `verifyTreatyRate()` method on `WhtEnvironment` — thin wrapper around `TreatyVerifierAgent.verifyRate()`
+  - `case 'get_treaty_rate'` in the agent loop calls `verifyTreatyRate()` after the lookup and merges `treaty_verification_status` and `treaty_verification_note` into the `wht_rate` finding
+- **`last_verified` surfaced in `consult_legal_sources` results**
+  - `Retriever.search()` now forwards `last_verified` from `Chunk` to `CitedChunk` (was silently dropped before)
+  - `consultLegalSources()` in `WhtEnvironment` includes `last_verified` in each chunk object when present; absent when the source has not been reviewed
+- **Confidence drops to LOW on rate mismatch**
+  - `computeReportConfidence()` checks `wht_rate.treaty_verification_status === 'DIFFERS'` before all other checks → `'LOW'`; `NOT_FOUND` (simulate fallback) is neutral
+- **5 new tests** — 251/251 passing
+  - `computeReportConfidence: LOW when wht_rate has treaty_verification_status DIFFERS`
+  - `computeReportConfidence: NOT_FOUND verification status does NOT lower confidence`
+  - `consultLegalSources: last_verified is included in chunk output when set`
+  - `consultLegalSources: last_verified is absent from output when not set on chunk`
+  - `verifyTreatyRate: simulate mode returns NOT_FOUND without API call`
+
 ## [v0.16.0] — 2026-04-02 — DOCS-2: last_verified frontmatter
 
 - `last_verified?: string` added to `SourceFrontmatter` and `Chunk` interfaces (`src/rag/types.ts`)

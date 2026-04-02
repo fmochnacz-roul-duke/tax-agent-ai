@@ -683,3 +683,90 @@ test('consultLegalSources: returns formatted chunks from injected RAG service', 
   assert.ok(typeof first['score'] === 'number', 'score should be a number');
   assert.ok(first['text'], 'text should be present');
 });
+
+// ── Phase 14: consultLegalSources — last_verified surfaced ───────────────────
+
+test('consultLegalSources: last_verified is included in chunk output when set', async () => {
+  // Build a chunk that carries a last_verified date (set in DOCS-2).
+  // The field is optional on Chunk — this test ensures it is passed through
+  // to the JSON result so the agent and user can see when the source was
+  // last confirmed against current law.
+  const embedding: number[] = [0.5, 0.5];
+  const chunkWithDate: Chunk = {
+    chunk_id: 'PL-CIT-2026-WHT::art4a-pkt29',
+    source_id: 'PL-CIT-2026-WHT',
+    section_ref: 'Art. 4a pkt 29',
+    section_title: 'Definicja rzeczywistego właściciela',
+    concept_ids: ['beneficial_owner'],
+    module_relevance: ['WHT'],
+    language: 'pl',
+    last_verified: '2026-04-02',
+    text: '## Art. 4a pkt 29\n\nTest text.',
+    char_count: 40,
+  };
+  const mockEmbedFn = async (texts: string[]): Promise<number[][]> => texts.map(() => embedding);
+  const ragService = LegalRagService.fromData({
+    chunks: [chunkWithDate],
+    vectors: [{ chunk_id: 'PL-CIT-2026-WHT::art4a-pkt29', embedding }],
+    taxonomy: [],
+    embedFn: mockEmbedFn,
+  });
+
+  const ragEnv = new WhtEnvironment({ simulate: true, ragService });
+  const result = parse(await ragEnv.consultLegalSources('beneficial owner definition'));
+
+  const chunks = result['chunks'] as Record<string, unknown>[];
+  assert.ok(chunks.length > 0, 'should return at least one chunk');
+  assert.equal(chunks[0]['last_verified'], '2026-04-02', 'last_verified should be surfaced');
+});
+
+test('consultLegalSources: last_verified is absent from output when not set on chunk', async () => {
+  // A chunk without last_verified (not yet reviewed) should NOT emit the field —
+  // absence is meaningful: it tells the user no human has verified this source yet.
+  const embedding: number[] = [0.5, 0.5];
+  const chunkNoDate: Chunk = {
+    chunk_id: 'SOME-SRC::section-1',
+    source_id: 'SOME-SRC',
+    section_ref: '§1',
+    section_title: 'Test section',
+    concept_ids: ['beneficial_owner'],
+    module_relevance: ['WHT'],
+    language: 'en',
+    text: '## §1\n\nSome text.',
+    char_count: 20,
+  };
+  const mockEmbedFn = async (texts: string[]): Promise<number[][]> => texts.map(() => embedding);
+  const ragService = LegalRagService.fromData({
+    chunks: [chunkNoDate],
+    vectors: [{ chunk_id: 'SOME-SRC::section-1', embedding }],
+    taxonomy: [],
+    embedFn: mockEmbedFn,
+  });
+
+  const ragEnv = new WhtEnvironment({ simulate: true, ragService });
+  const result = parse(await ragEnv.consultLegalSources('some query'));
+
+  const chunks = result['chunks'] as Record<string, unknown>[];
+  assert.ok(chunks.length > 0, 'should return at least one chunk');
+  assert.ok(
+    !Object.prototype.hasOwnProperty.call(chunks[0], 'last_verified'),
+    'last_verified should not appear when absent from the chunk'
+  );
+});
+
+// ── Phase 14: verifyTreatyRate ────────────────────────────────────────────────
+
+test('verifyTreatyRate: simulate mode returns NOT_FOUND without API call', async () => {
+  // In simulate mode (env.simulate = true), TreatyVerifierAgent also runs in
+  // simulate mode and returns NOT_FOUND conservatively.  This test ensures the
+  // method is callable, returns the right shape, and does NOT lower confidence
+  // (only DIFFERS would do that — NOT_FOUND is neutral).
+  const result = await env.verifyTreatyRate('france', 'royalty', '10%', 'Art. 12(2) Poland–France DTC');
+
+  assert.equal(result.status, 'NOT_FOUND', 'simulation should return NOT_FOUND conservatively');
+  assert.equal(result.country, 'france', 'country should be echoed back');
+  assert.equal(result.income_type, 'royalty', 'income_type should be echoed back');
+  assert.equal(result.claimed_rate, '10%', 'claimed_rate should be echoed back');
+  assert.equal(result.confirmed_rate, null, 'confirmed_rate should be null in simulation');
+  assert.ok(Array.isArray(result.sources) && result.sources.length === 0, 'sources should be empty');
+});
