@@ -56,8 +56,8 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | DOCS-1 | CHANGELOG.md + LICENSE + SECURITY.md | ✓ Complete |
 | DOCS-2 | `docs/api.md`; `last_verified` frontmatter on RAG source files | ✓ Complete |
 | GITHUB-1 | `.github/` issue template + PR template; README feedback section + docs table | ✓ Complete |
-| **14** | **Ghost Activation** — wire TreatyVerifierAgent into live flow; surface `last_verified`; confidence drops on rate mismatch | **Next** |
-| 15 | QA-3: Evals + Negative Tests — `data/golden_cases/` (5 cases); `scripts/runEvals.ts`; negative test cases | Planned |
+| 14 | Ghost Activation — wire TreatyVerifierAgent into live flow; surface `last_verified`; confidence drops on rate mismatch | ✓ Complete |
+| **15** | **QA-3: Evals + Negative Tests** — `data/golden_cases/` (7 curated cases); `scripts/runEvals.ts`; Triangulation Rule calibration; negative test cases | **Next** |
 | 16 | Legal Source Hierarchy — `source_type` on `consult_legal_sources`; Art./Sec. refs in `Citation`; Zod domain-narrowing | Planned |
 | 17 | Confidence UX + HITL — UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft registry on UNCERTAIN | Planned |
 | 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; document checklist; no-DDQ path | Planned |
@@ -65,7 +65,8 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 20 | Data quality — verify top-10 treaty rates against official sources; `verified: true` in treaties.json | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report | Planned |
 | 22 | Production hardening — session persistence, SSE reconnect, rate limiting, memory pruning | Planned |
-| 23 | Intangibles / Business Profits Layer — Art. 21 ust. 1 pkt 2a CIT; management fees, advisory, technical services | Planned |
+| 23a | Intangibles — Legal & Data Layer: Art. 21 ust. 1 pkt 2a CIT framework; management fee treaty classification (Art. 7 vs Art. 12); MDR hallmarks; RAG source enrichment | Planned |
+| 23b | Intangibles — Code Layer: new `payment_type` options; treaty lookup logic for business profits/PE hook; MDR flag in `WhtReport` | Planned |
 | 24 | Legal Source Management Workflow — source update protocol; new source onboarding; hierarchy documentation | Planned |
 | 25 | Jurisdiction expansion — treaties.json 36 → 50+ countries | Planned |
 | 26 | WHT v1.0 Major Review — end-to-end demo, all acceptance criteria, `CHANGELOG.md` v1.0, MBA prototype declaration | Planned |

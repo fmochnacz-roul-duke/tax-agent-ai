@@ -3,8 +3,49 @@
 ## Current Status
 **Phase:** Phase 14 complete (2026-04-02). Phase 15 (QA-3: Evals + Negative Tests) is next.
 **Last code session:** Phase 14 — Ghost Activation (v0.17.0, 2026-04-02)
+**Last planning session:** 2026-04-02 — roadmap refinement and Phase 23 split (23a/23b)
 **Branch:** master
 **Tests:** 251/251 passing
+
+---
+
+## Roadmap Refinements (2026-04-02 planning session)
+
+Key decisions from reviewer feedback analysis:
+
+1. **Verification Paradox clarified:** Phase 14 resolved *runtime* verification (TreatyVerifier in live flow). `verified: false` in `treaties.json` is *static data quality* — pending Phase 20. These are distinct layers. Quick win: UI/report note distinguishing the two (no new phase — micro-fix in Phase 16 or 17).
+
+2. **Observation 2 closed:** `last_verified` surfaced in `consultLegalSources` output — done in Phase 14. No action.
+
+3. **Phase 15 scope extended:** Triangulation Rule calibration added. Test FactChecker + TreatyVerifier outputs against known-correct treaty rates in the golden cases. 7 cases instead of 5 (see Golden Dataset proposal in SESSION.md).
+
+4. **Phase 23 split into 23a + 23b:** Art. 21 ust. 1 pkt 2a is too complex for one session. 23a = legal research + data layer (no code changes to agent core). 23b = code implementation. Total phases: 29 → 30.
+
+5. **Phase 21 (Batch) stays at position 21:** Quality before throughput. CSV schema should be defined during Phase 18 (UC2 workflow) to avoid redesigning it twice.
+
+6. **Architectural scaling:** Redis + pgvector tracked in Phase 22. No new phase needed at current RAG corpus size (23 chunks).
+
+### Open questions for Frank (Phase 23a prerequisite):
+- Should MDR reporting obligation be a tool output flag or a report note only?
+- Scope: intercompany management fees only, or also third-party consultants?
+- Ambiguous services (catchall "similar nature"): classify conservatively (treat as Art. 21.1.2a) or ask user?
+- GAAR (Art. 119a Ordynacja podatkowa): flag risk on management fee structures, or WHT statute only?
+
+---
+
+## Golden Dataset — Phase 15 Proposal (7 cases)
+
+| # | Entity | Country | Payment type | Key legal issue | Expected bo_overall |
+|---|---|---|---|---|---|
+| 1 | Orange S.A. | France | Royalty | Real substance, Art. 12 FR treaty | CONFIRMED |
+| 2 | Alpine Holdings | Luxembourg | Dividend | Holding company, BO test, MLI PPT | UNCERTAIN |
+| 3 | IP GmbH | Germany | Royalty | EU I&R Directive + Art. 12 DE treaty | CONFIRMED |
+| 4 | TechFinance B.V. | Netherlands | Interest | VERIFY MLI status, PPT risk | UNCERTAIN |
+| 5 | XTB Malta Ltd | Malta | Royalty | No MLI PPT, low substance, treaty rate 10% | REJECTED |
+| 6 | No-Treaty Co. | Brazil | Dividend | No Poland–Brazil treaty | CONFIRMED (20% domestic) |
+| 7 | SPV Ireland | Ireland | Interest | EU I&R Directive candidate, thin substance | UNCERTAIN |
+
+Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. Case 6 tests no-treaty path. Case 7 tests EU Directive + substance conflict. All to be validated with Frank before coding the harness.
 
 ---
 
@@ -12,8 +53,9 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Let's start Phase 15 — QA-3: Evals + Negative Tests. Create data/golden_cases/ with 5
-> golden cases, a runEvals.ts script, and negative test cases for the agent."
+> "Let's start Phase 15 — QA-3: Evals + Negative Tests. Use the 7-case golden dataset
+> from SESSION.md. Create data/golden_cases/ with all cases, a runEvals.ts script,
+> Triangulation Rule calibration tests, and negative test cases."
 
 ### Verify environment is healthy first:
 ```
@@ -33,8 +75,8 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **14** | **Ghost Activation** | `TreatyVerifierAgent` in live agent flow; `last_verified` in RAG output; confidence → LOW on rate mismatch |
-| 15 | QA-3: Evals + Negative Tests | `data/golden_cases/` (5 cases); `scripts/runEvals.ts`; bo_overall + confidence calibration checks; negative tests |
+| 14 | Ghost Activation | `TreatyVerifierAgent` in live agent flow; `last_verified` in RAG output; confidence → LOW on rate mismatch | ✓ v0.17.0 |
+| **15** | **QA-3: Evals + Negative Tests** | `data/golden_cases/` (7 cases); `scripts/runEvals.ts`; Triangulation Rule calibration; negative tests | **Next** |
 | 16 | Legal Source Hierarchy | `source_type` param on `consult_legal_sources`; Art./Sec. refs in `Citation`; `legal_hierarchy` field; Zod domain-narrowing |
 | 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW |
 | 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
@@ -47,7 +89,8 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 23 | Intangibles / Business Profits Layer | Art. 21 ust. 1 pkt 2a CIT — management fees, advisory, technical services; PE analysis hook |
+| 23a | Intangibles — Legal & Data Layer | Art. 21.1.2a framework; management fee treaty classification (Art. 7 vs Art. 12); MDR hallmarks; RAG source enrichment |
+| 23b | Intangibles — Code Layer | New `payment_type` options; business profits/PE hook; MDR flag in `WhtReport` |
 | 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow |
 | 25 | Jurisdiction Expansion | treaties.json 36 → 50+ countries |
 | 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria; CHANGELOG v1.0; MBA prototype declaration |

@@ -239,25 +239,25 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ## Planned phases
 
-### Arc 1 — WHT Core Completion (Phases 14–22)
+### Arc 1 — WHT Core Completion (Phases 15–22)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **14** | Ghost Activation | `TreatyVerifierAgent` wired into live agent flow; `last_verified` surfaced in `consult_legal_sources` output; confidence → LOW on rate mismatch |
-| 15 | QA-3: Evals + Negative Tests | `data/golden_cases/` (5 curated cases); `scripts/runEvals.ts`; `bo_overall` + confidence calibration checks; negative tests (unsupported country, missing DDQ) |
+| **15** | **QA-3: Evals + Negative Tests** | `data/golden_cases/` (7 curated cases); `scripts/runEvals.ts`; `bo_overall` + confidence calibration; Triangulation Rule calibration; negative tests (unsupported country, missing DDQ) |
 | 16 | Legal Source Hierarchy | `source_type` parameter on `consult_legal_sources`; Art./Sec. refs in `Citation`; `legal_hierarchy` field; Zod domain-narrowing for `paymentType`, `countryCode` |
 | 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW analysis |
-| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
+| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path; CSV batch schema defined |
 | 19 | Due Diligence Module | DD checklist tool per payment type (dividend, royalty, management fee); DD gap analysis in report |
-| 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` in treaties.json |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |
 | 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache hits |
-| 22 | Production Hardening | Session persistence; SSE reconnect; rate limiting; memory pruning (`maxMessageHistory`) |
+| 22 | Production Hardening | Session persistence (Redis); SSE reconnect; rate limiting; memory pruning; pgvector migration if RAG corpus > 100 chunks |
 
-### Arc 2 — WHT Professional Features (Phases 23–26)
+### Arc 2 — WHT Professional Features (Phases 23a–26)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 23 | Intangibles / Business Profits Layer | Art. 21 ust. 1 pkt 2a CIT — management fees, advisory, technical services; PE article analysis hook |
+| 23a | Intangibles — Legal & Data Layer | Art. 21 ust. 1 pkt 2a CIT framework; management fee treaty classification rules (Art. 7 Business Profits vs Art. 12 Royalties); MDR hallmark identification; RAG source enrichment for management fees |
+| 23b | Intangibles — Code Layer | New `payment_type` options (`management_fee`, `advisory`, `technical_service`); treaty lookup for business profits / PE hook; MDR flag in `WhtReport` |
 | 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow |
 | 25 | Jurisdiction Expansion | `treaties.json` 36 → 50+ countries |
 | 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria verified; `CHANGELOG.md` v1.0; MBA prototype declaration |
@@ -269,3 +269,20 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 | 27 | GLOBAL VISION Documentation | `docs/GLOBAL_VISION.md` (gitignored — private); Tax OS architecture, legal hierarchy system, system prompt guidelines |
 | 28 | EU Jurisdiction Engine Concept | Architecture design for multi-jurisdiction support; pilot jurisdiction (Germany or Netherlands); Tax OS Module 2 scope |
 | 29 | Tax OS Module 2 Planning | Next tax regime scoping; cross-module shared framework design; Tax OS v1.0 roadmap |
+
+---
+
+### v0.17.0 — Phase 14: Ghost Activation
+
+**What:**
+- `TreatyVerifierAgent` wired into live agent flow: `WhtEnvironment.treatyVerifier` + `verifyTreatyRate()` called from `case 'get_treaty_rate'` in the agent loop
+- `treaty_verification_status` + `treaty_verification_note` merged into the `wht_rate` finding
+- `Retriever.search()` forwards `last_verified` from `Chunk` to `CitedChunk` (was silently dropped)
+- `consultLegalSources()` includes `last_verified` in chunk output when present
+- `computeReportConfidence()`: DIFFERS → unconditionally LOW (before all other checks); NOT_FOUND → neutral
+- 5 new tests — 251/251 passing
+
+**Key decisions:**
+- Runtime verification (Gemini check during analysis) is now live. Static data quality (`verified: true` in treaties.json) is a separate concern — pending Phase 20.
+- The `verified: false` field in treaties.json is a *data quality* flag, not a runtime status. Phase 20 will verify top-10 rates against official PDFs.
+- DIFFERS overrides confidence to LOW unconditionally — a rate mismatch is a red flag regardless of substance quality.
