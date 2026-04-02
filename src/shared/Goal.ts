@@ -35,9 +35,7 @@ export interface Goal {
 export function buildSystemPrompt(persona: string, goals: Goal[]): string {
   // Sort descending by priority — `(b.priority ?? 0) - (a.priority ?? 0)`
   // The `?? 0` means "treat missing priority as zero".
-  const sorted = [...goals].sort(
-    (a, b) => (b.priority ?? 0) - (a.priority ?? 0)
-  );
+  const sorted = [...goals].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
   const goalLines = sorted
     .map((g, i) => `  ${i + 1}. [Priority ${g.priority ?? 0}] ${g.name}: ${g.description}`)

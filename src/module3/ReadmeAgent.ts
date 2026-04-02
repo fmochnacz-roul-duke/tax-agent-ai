@@ -144,14 +144,15 @@ function readSourceFile(filePath: string): string {
   const resolved = path.resolve(PROJECT_ROOT, filePath);
   if (!resolved.startsWith(SRC_ROOT)) {
     return JSON.stringify({
-      error: `Access denied: "${filePath}" is outside src/. ` +
-             `Call list_typescript_files to get valid file paths.`,
+      error:
+        `Access denied: "${filePath}" is outside src/. ` +
+        `Call list_typescript_files to get valid file paths.`,
     });
   }
   if (!fs.existsSync(resolved)) {
     return JSON.stringify({
-      error: `File not found: "${filePath}". ` +
-             `Call list_typescript_files to get valid file paths.`,
+      error:
+        `File not found: "${filePath}". ` + `Call list_typescript_files to get valid file paths.`,
     });
   }
   const content = fs.readFileSync(resolved, 'utf-8');
@@ -181,9 +182,8 @@ function readProjectFile(fileName: string): string {
   const MAX_CHARS = 3000;
   return JSON.stringify({
     file: fileName,
-    content: content.length > MAX_CHARS
-      ? content.slice(0, MAX_CHARS) + '\n... [truncated]'
-      : content,
+    content:
+      content.length > MAX_CHARS ? content.slice(0, MAX_CHARS) + '\n... [truncated]' : content,
   });
 }
 
@@ -213,10 +213,12 @@ async function runReadmeAgent(maxIterations: number = 15): Promise<string | null
   const systemPrompt = buildSystemPrompt(README_PERSONA, README_GOALS);
 
   memory.addMessage(Message.system(systemPrompt));
-  memory.addMessage(Message.user(
-    'Analyse this TypeScript project and generate a complete README.md. ' +
-    'Start by listing the source files to understand the structure.'
-  ));
+  memory.addMessage(
+    Message.user(
+      'Analyse this TypeScript project and generate a complete README.md. ' +
+        'Start by listing the source files to understand the structure.'
+    )
+  );
 
   for (let iteration = 1; iteration <= maxIterations; iteration++) {
     console.log(`\n${'─'.repeat(70)}`);
@@ -238,9 +240,11 @@ async function runReadmeAgent(maxIterations: number = 15): Promise<string | null
     memory.addMessage(response.assistantMessage);
 
     for (const call of response.calls) {
-      console.log(`\n  [TOOL] ${call.name}(${
-        call.name === 'terminate' ? '...' : JSON.stringify(call.arguments)
-      })`);
+      console.log(
+        `\n  [TOOL] ${call.name}(${
+          call.name === 'terminate' ? '...' : JSON.stringify(call.arguments)
+        })`
+      );
 
       if (call.name === 'terminate') {
         const readme = call.arguments['answer'] as string;

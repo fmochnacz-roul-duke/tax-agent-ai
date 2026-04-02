@@ -25,9 +25,9 @@
 
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import * as fs   from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
-import * as os   from 'os';
+import * as os from 'os';
 
 import { EntityRegistry, extractSubstanceFields, AnalysisReport } from './EntityRegistry';
 
@@ -45,12 +45,12 @@ function makeTempPath(): string {
 // Uses TypeScript's Readonly<> to prevent accidental mutation in tests.
 function makeReport(overrides: Partial<AnalysisReport> = {}): AnalysisReport {
   return {
-    entity_name:     'Alpine Holdings S.A.',
-    country:         'Luxembourg',
-    income_type:     'dividend',
+    entity_name: 'Alpine Holdings S.A.',
+    country: 'Luxembourg',
+    income_type: 'dividend',
     data_confidence: 'LOW',
-    conclusion:      'The entity fails the beneficial owner test. Condition (ii) is not met.',
-    findings:        {},
+    conclusion: 'The entity fails the beneficial owner test. Condition (ii) is not met.',
+    findings: {},
     ...overrides,
   };
 }
@@ -89,14 +89,14 @@ describe('EntityRegistry', () => {
 
   it('save() creates a new entry for an unknown entity', () => {
     const registry = new EntityRegistry(tempPath);
-    const report   = makeReport();
+    const report = makeReport();
 
     const entry = registry.save(report);
 
-    assert.equal(entry.entity_name,    'Alpine Holdings S.A.');
-    assert.equal(entry.country,        'Luxembourg');
-    assert.equal(entry.income_type,    'dividend');
-    assert.equal(entry.review_status,  'draft');
+    assert.equal(entry.entity_name, 'Alpine Holdings S.A.');
+    assert.equal(entry.country, 'Luxembourg');
+    assert.equal(entry.income_type, 'dividend');
+    assert.equal(entry.review_status, 'draft');
     assert.equal(entry.data_confidence, 'LOW');
     assert.ok(entry.created_at.length > 0);
     assert.ok(entry.updated_at.length > 0);
@@ -108,7 +108,7 @@ describe('EntityRegistry', () => {
 
     // File must exist and parse correctly
     assert.ok(fs.existsSync(tempPath));
-    const raw    = fs.readFileSync(tempPath, 'utf-8');
+    const raw = fs.readFileSync(tempPath, 'utf-8');
     const parsed = JSON.parse(raw) as { entries: unknown[] };
     assert.equal(parsed.entries.length, 1);
   });
@@ -125,7 +125,7 @@ describe('EntityRegistry', () => {
 
   it('save() preserves created_at on upsert', () => {
     const registry = new EntityRegistry(tempPath);
-    const first    = registry.save(makeReport());
+    const first = registry.save(makeReport());
 
     // Small delay is not needed — we just want to confirm created_at is copied
     const second = registry.save(makeReport({ data_confidence: 'MEDIUM' }));
@@ -140,14 +140,14 @@ describe('EntityRegistry', () => {
     registry.save(makeReport());
 
     // Simulate a professional manually updating the status in the JSON
-    const raw  = fs.readFileSync(tempPath, 'utf-8');
+    const raw = fs.readFileSync(tempPath, 'utf-8');
     const data = JSON.parse(raw) as { entries: Array<{ review_status: string }> };
     data.entries[0].review_status = 'signed_off';
     fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
 
     // Re-run the analysis (re-analysis)
     const registry2 = new EntityRegistry(tempPath);
-    const entry     = registry2.save(makeReport({ data_confidence: 'HIGH' }));
+    const entry = registry2.save(makeReport({ data_confidence: 'HIGH' }));
 
     // The professional's sign-off must survive
     assert.equal(entry.review_status, 'signed_off');
@@ -155,23 +155,23 @@ describe('EntityRegistry', () => {
 
   it('save() truncates conclusion to 200 characters', () => {
     const longConclusion = 'A'.repeat(300);
-    const registry       = new EntityRegistry(tempPath);
-    const entry          = registry.save(makeReport({ conclusion: longConclusion }));
+    const registry = new EntityRegistry(tempPath);
+    const entry = registry.save(makeReport({ conclusion: longConclusion }));
 
     assert.equal(entry.conclusion_summary.length, 200);
   });
 
   it('save() stores conclusion verbatim when it is shorter than 200 characters', () => {
-    const short  = 'Short conclusion.';
+    const short = 'Short conclusion.';
     const registry = new EntityRegistry(tempPath);
-    const entry    = registry.save(makeReport({ conclusion: short }));
+    const entry = registry.save(makeReport({ conclusion: short }));
 
     assert.equal(entry.conclusion_summary, short);
   });
 
   it('save() stores the report_path when provided', () => {
     const registry = new EntityRegistry(tempPath);
-    const entry    = registry.save(makeReport(), 'reports/alpine_2026-04-02.json');
+    const entry = registry.save(makeReport(), 'reports/alpine_2026-04-02.json');
 
     assert.equal(entry.report_path, 'reports/alpine_2026-04-02.json');
   });
@@ -179,18 +179,18 @@ describe('EntityRegistry', () => {
   it('save() extracts substance_tier and bo_overall from findings', () => {
     const registry = new EntityRegistry(tempPath);
     const findings = makeSubstanceFinding('WEAK', 'FAIL');
-    const entry    = registry.save(makeReport({ findings }));
+    const entry = registry.save(makeReport({ findings }));
 
     assert.equal(entry.substance_tier, 'WEAK');
-    assert.equal(entry.bo_overall,     'FAIL');
+    assert.equal(entry.bo_overall, 'FAIL');
   });
 
   it('save() leaves substance_tier and bo_overall absent when findings is empty', () => {
     const registry = new EntityRegistry(tempPath);
-    const entry    = registry.save(makeReport({ findings: {} }));
+    const entry = registry.save(makeReport({ findings: {} }));
 
     assert.equal(entry.substance_tier, undefined);
-    assert.equal(entry.bo_overall,     undefined);
+    assert.equal(entry.bo_overall, undefined);
   });
 
   it('save() is case-insensitive — same entity with different capitalisation upserts', () => {
@@ -223,7 +223,7 @@ describe('EntityRegistry', () => {
 
   it('findByEntity() returns undefined for an unknown entity', () => {
     const registry = new EntityRegistry(tempPath);
-    const entry    = registry.findByEntity('Unknown Corp', 'Germany');
+    const entry = registry.findByEntity('Unknown Corp', 'Germany');
     assert.equal(entry, undefined);
   });
 
@@ -232,9 +232,9 @@ describe('EntityRegistry', () => {
   it('listAll() returns all entries sorted newest-first by updated_at', () => {
     const registry = new EntityRegistry(tempPath);
 
-    registry.save(makeReport({ entity_name: 'A Corp',     country: 'France' }));
+    registry.save(makeReport({ entity_name: 'A Corp', country: 'France' }));
     registry.save(makeReport({ entity_name: 'B Holdings', country: 'Germany' }));
-    registry.save(makeReport({ entity_name: 'C Ltd',      country: 'Malta' }));
+    registry.save(makeReport({ entity_name: 'C Ltd', country: 'Malta' }));
 
     const list = registry.listAll();
     assert.equal(list.length, 3);
@@ -297,15 +297,22 @@ describe('EntityRegistry', () => {
 // ── updateReviewStatus() ─────────────────────────────────────────────────────
 
 describe('updateReviewStatus', () => {
-
   // Each test uses its own temp file, same pattern as the EntityRegistry suite.
   let tempPath: string;
-  beforeEach(() => { tempPath = makeTempPath(); });
-  afterEach(()  => { try { fs.unlinkSync(tempPath); } catch { /* already gone */ } });
+  beforeEach(() => {
+    tempPath = makeTempPath();
+  });
+  afterEach(() => {
+    try {
+      fs.unlinkSync(tempPath);
+    } catch {
+      /* already gone */
+    }
+  });
 
   it('returns undefined for an unknown entity', () => {
     const registry = new EntityRegistry(tempPath);
-    const result   = registry.updateReviewStatus('Unknown Corp', 'Germany', 'reviewed');
+    const result = registry.updateReviewStatus('Unknown Corp', 'Germany', 'reviewed');
     assert.equal(result, undefined);
   });
 
@@ -347,7 +354,10 @@ describe('updateReviewStatus', () => {
     const registry = new EntityRegistry(tempPath);
     registry.save(makeReport());
     const updated = registry.updateReviewStatus(
-      'Alpine Holdings S.A.', 'Luxembourg', 'reviewed', 'Checked against treaty PDF — rates confirmed'
+      'Alpine Holdings S.A.',
+      'Luxembourg',
+      'reviewed',
+      'Checked against treaty PDF — rates confirmed'
     );
     assert.equal(updated?.reviewer_note, 'Checked against treaty PDF — rates confirmed');
   });
@@ -356,7 +366,11 @@ describe('updateReviewStatus', () => {
     const registry = new EntityRegistry(tempPath);
     registry.save(makeReport());
     const updated = registry.updateReviewStatus(
-      'Alpine Holdings S.A.', 'Luxembourg', 'reviewed', undefined, 'Jan Kowalski'
+      'Alpine Holdings S.A.',
+      'Luxembourg',
+      'reviewed',
+      undefined,
+      'Jan Kowalski'
     );
     assert.equal(updated?.reviewed_by, 'Jan Kowalski');
   });
@@ -365,23 +379,23 @@ describe('updateReviewStatus', () => {
     const registry = new EntityRegistry(tempPath);
     registry.save(makeReport());
     const updated = registry.updateReviewStatus(
-      'Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'All conditions verified', 'Anna Nowak'
+      'Alpine Holdings S.A.',
+      'Luxembourg',
+      'signed_off',
+      'All conditions verified',
+      'Anna Nowak'
     );
     assert.equal(updated?.reviewer_note, 'All conditions verified');
-    assert.equal(updated?.reviewed_by,   'Anna Nowak');
+    assert.equal(updated?.reviewed_by, 'Anna Nowak');
   });
 
   it('does not clear an existing reviewer_note when none is provided', () => {
     const registry = new EntityRegistry(tempPath);
     registry.save(makeReport());
     // First update: set a note
-    registry.updateReviewStatus(
-      'Alpine Holdings S.A.', 'Luxembourg', 'reviewed', 'First note'
-    );
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'reviewed', 'First note');
     // Second update: no note argument — should keep the first note
-    const updated = registry.updateReviewStatus(
-      'Alpine Holdings S.A.', 'Luxembourg', 'signed_off'
-    );
+    const updated = registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off');
     assert.equal(updated?.reviewer_note, 'First note');
   });
 
@@ -392,7 +406,7 @@ describe('updateReviewStatus', () => {
 
     // Reload from disk — simulates server restart
     const reloaded = new EntityRegistry(tempPath);
-    const entry    = reloaded.findByEntity('Alpine Holdings S.A.', 'Luxembourg');
+    const entry = reloaded.findByEntity('Alpine Holdings S.A.', 'Luxembourg');
     assert.equal(entry?.review_status, 'signed_off');
   });
 
@@ -407,60 +421,61 @@ describe('updateReviewStatus', () => {
   it('does not change created_at or updated_at from save()', () => {
     const registry = new EntityRegistry(tempPath);
     registry.save(makeReport());
-    const before  = registry.findByEntity('Alpine Holdings S.A.', 'Luxembourg')!;
+    const before = registry.findByEntity('Alpine Holdings S.A.', 'Luxembourg')!;
 
     registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'reviewed');
-    const after   = registry.findByEntity('Alpine Holdings S.A.', 'Luxembourg')!;
+    const after = registry.findByEntity('Alpine Holdings S.A.', 'Luxembourg')!;
 
     // The analysis timestamp must not change when someone just updates review status
     assert.equal(after.created_at, before.created_at);
     assert.equal(after.updated_at, before.updated_at);
   });
-
 });
 
 // ── extractSubstanceFields() ─────────────────────────────────────────────────
 
 describe('extractSubstanceFields', () => {
-
   it('extracts substance_tier and bo_overall when both are present', () => {
     const findings = makeSubstanceFinding('STRONG', 'PASS');
-    const result   = extractSubstanceFields(findings);
+    const result = extractSubstanceFields(findings);
 
     assert.equal(result.substanceTier, 'STRONG');
-    assert.equal(result.boOverall,     'PASS');
+    assert.equal(result.boOverall, 'PASS');
   });
 
   it('returns undefineds when entity_substance is absent', () => {
     const result = extractSubstanceFields({});
     assert.equal(result.substanceTier, undefined);
-    assert.equal(result.boOverall,     undefined);
+    assert.equal(result.boOverall, undefined);
   });
 
   it('returns undefineds when entity_substance is null', () => {
     const result = extractSubstanceFields({ entity_substance: null });
     assert.equal(result.substanceTier, undefined);
-    assert.equal(result.boOverall,     undefined);
+    assert.equal(result.boOverall, undefined);
   });
 
   it('returns undefined substanceTier when substance_tier is not a string', () => {
-    const findings = { entity_substance: { substance_tier: 42, bo_preliminary: { overall: 'PASS' } } };
-    const result   = extractSubstanceFields(findings);
+    const findings = {
+      entity_substance: { substance_tier: 42, bo_preliminary: { overall: 'PASS' } },
+    };
+    const result = extractSubstanceFields(findings);
     assert.equal(result.substanceTier, undefined);
-    assert.equal(result.boOverall,     'PASS');
+    assert.equal(result.boOverall, 'PASS');
   });
 
   it('returns undefined boOverall when bo_preliminary is absent', () => {
     const findings = { entity_substance: { substance_tier: 'ADEQUATE' } };
-    const result   = extractSubstanceFields(findings);
+    const result = extractSubstanceFields(findings);
     assert.equal(result.substanceTier, 'ADEQUATE');
-    assert.equal(result.boOverall,     undefined);
+    assert.equal(result.boOverall, undefined);
   });
 
   it('returns undefined boOverall when overall is not a string', () => {
-    const findings = { entity_substance: { substance_tier: 'WEAK', bo_preliminary: { overall: false } } };
-    const result   = extractSubstanceFields(findings);
+    const findings = {
+      entity_substance: { substance_tier: 'WEAK', bo_preliminary: { overall: false } },
+    };
+    const result = extractSubstanceFields(findings);
     assert.equal(result.boOverall, undefined);
   });
 });
-

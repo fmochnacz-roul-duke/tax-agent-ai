@@ -26,15 +26,15 @@
 export type RateVerificationStatus = 'CONFIRMED' | 'DIFFERS' | 'NOT_FOUND';
 
 export interface TreatyRateVerification {
-  country:         string;
-  income_type:     string;
-  claimed_rate:    string;         // what treaties.json currently says
-  treaty_article:  string;         // e.g. "Art. 10(2) Poland–Austria DTC"
-  status:          RateVerificationStatus;
-  confirmed_rate:  string | null;  // what Gemini found; null if NOT_FOUND
-  sources:         string[];       // URLs or publication names
-  note:            string;         // any caveat or discrepancy detail
-  verification_date: string;       // ISO date (YYYY-MM-DD)
+  country: string;
+  income_type: string;
+  claimed_rate: string; // what treaties.json currently says
+  treaty_article: string; // e.g. "Art. 10(2) Poland–Austria DTC"
+  status: RateVerificationStatus;
+  confirmed_rate: string | null; // what Gemini found; null if NOT_FOUND
+  sources: string[]; // URLs or publication names
+  note: string; // any caveat or discrepancy detail
+  verification_date: string; // ISO date (YYYY-MM-DD)
 }
 
 // ── System prompt ─────────────────────────────────────────────────────────────
@@ -80,10 +80,19 @@ OUTPUT — return ONLY a valid JSON object, no markdown, no commentary outside t
 //
 // These interface names match FactCheckerAgent exactly — same Gemini API shape.
 
-interface GeminiPart      { text: string; }
-interface GeminiContent   { role: string; parts: GeminiPart[]; }
-interface GeminiCandidate { content: GeminiContent; }
-interface GeminiResponse  { candidates?: GeminiCandidate[]; }
+interface GeminiPart {
+  text: string;
+}
+interface GeminiContent {
+  role: string;
+  parts: GeminiPart[];
+}
+interface GeminiCandidate {
+  content: GeminiContent;
+}
+interface GeminiResponse {
+  candidates?: GeminiCandidate[];
+}
 
 // ── TreatyVerifierAgent ───────────────────────────────────────────────────────
 
@@ -93,8 +102,8 @@ export interface TreatyVerifierOptions {
 
 export class TreatyVerifierAgent {
   private simulate: boolean;
-  private apiKey:   string | undefined;
-  private model:    string;
+  private apiKey: string | undefined;
+  private model: string;
 
   constructor(options: TreatyVerifierOptions) {
     this.simulate = options.simulate;
@@ -103,9 +112,7 @@ export class TreatyVerifierAgent {
       this.apiKey = process.env['GEMINI_API_KEY'];
       // Mirrors FactCheckerAgent: missing key → silent fallback to simulation.
       if (!this.apiKey) {
-        console.warn(
-          '[TREATY VERIFIER] GEMINI_API_KEY not set — falling back to simulation.'
-        );
+        console.warn('[TREATY VERIFIER] GEMINI_API_KEY not set — falling back to simulation.');
         this.simulate = true;
       }
     }
@@ -123,9 +130,9 @@ export class TreatyVerifierAgent {
   // Returns a TreatyRateVerification whether live or simulated — callers never
   // need to handle a null/undefined result.
   async verifyRate(
-    country:       string,
-    incomeType:    string,
-    claimedRate:   string,
+    country: string,
+    incomeType: string,
+    claimedRate: string,
     treatyArticle: string
   ): Promise<TreatyRateVerification> {
     if (this.simulate) {
@@ -137,9 +144,9 @@ export class TreatyVerifierAgent {
   // ── Live verification ──────────────────────────────────────────────────────
 
   private async liveVerify(
-    country:       string,
-    incomeType:    string,
-    claimedRate:   string,
+    country: string,
+    incomeType: string,
+    claimedRate: string,
     treatyArticle: string
   ): Promise<TreatyRateVerification> {
     // Build the user message — one specific rate claim for Gemini to look up.
@@ -165,16 +172,16 @@ export class TreatyVerifierAgent {
     let responseText: string;
     try {
       const response = await fetch(url, {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(requestBody),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
         throw new Error(`Gemini API: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json() as GeminiResponse;
+      const data = (await response.json()) as GeminiResponse;
       responseText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
 
       if (!responseText) {
@@ -199,10 +206,10 @@ export class TreatyVerifierAgent {
   //   4. Fall back to simulation if none work
 
   private extractResult(
-    text:          string,
-    country:       string,
-    incomeType:    string,
-    claimedRate:   string,
+    text: string,
+    country: string,
+    incomeType: string,
+    claimedRate: string,
     treatyArticle: string
   ): TreatyRateVerification {
     const strategies: Array<() => string | null> = [
@@ -213,8 +220,8 @@ export class TreatyVerifierAgent {
       },
       () => {
         const start = text.indexOf('{');
-        const end   = text.lastIndexOf('}');
-        return (start !== -1 && end > start) ? text.slice(start, end + 1) : null;
+        const end = text.lastIndexOf('}');
+        return start !== -1 && end > start ? text.slice(start, end + 1) : null;
       },
     ];
 
@@ -225,10 +232,7 @@ export class TreatyVerifierAgent {
         const parsed = JSON.parse(candidate) as TreatyRateVerification;
         // Minimal validation: must have country (string) and a valid status.
         const validStatuses = new Set(['CONFIRMED', 'DIFFERS', 'NOT_FOUND']);
-        if (
-          typeof parsed.country === 'string' &&
-          validStatuses.has(parsed.status)
-        ) {
+        if (typeof parsed.country === 'string' && validStatuses.has(parsed.status)) {
           return parsed;
         }
       } catch {
@@ -248,22 +252,22 @@ export class TreatyVerifierAgent {
   // This is conservative: simulation never falsely marks a rate as CONFIRMED.
 
   private simulateResult(
-    country:       string,
-    incomeType:    string,
-    claimedRate:   string,
+    country: string,
+    incomeType: string,
+    claimedRate: string,
     treatyArticle: string
   ): TreatyRateVerification {
     const today = new Date().toISOString().slice(0, 10);
 
     return {
       country,
-      income_type:      incomeType,
-      claimed_rate:     claimedRate,
-      treaty_article:   treatyArticle,
-      status:           'NOT_FOUND',
-      confirmed_rate:   null,
-      sources:          [],
-      note:             'Simulation mode — GEMINI_API_KEY not configured or API unavailable. Manual verification required.',
+      income_type: incomeType,
+      claimed_rate: claimedRate,
+      treaty_article: treatyArticle,
+      status: 'NOT_FOUND',
+      confirmed_rate: null,
+      sources: [],
+      note: 'Simulation mode — GEMINI_API_KEY not configured or API unavailable. Manual verification required.',
       verification_date: today,
     };
   }

@@ -43,11 +43,11 @@
 // InterviewState tracks where we are in the 5-question sequence.
 // This object lives on the Session — it is created by start() and mutated by answer().
 export interface InterviewState {
-  currentQuestionIndex: number;          // 0-based; 0..4 are the 5 questions
-  answers:              string[];        // collected user answers, one per question
-  entityName:           string;
-  country:              string;
-  incomeType:           string;
+  currentQuestionIndex: number; // 0-based; 0..4 are the 5 questions
+  answers: string[]; // collected user answers, one per question
+  entityName: string;
+  country: string;
+  incomeType: string;
 }
 
 // The server receives one of these after each call to answer().
@@ -55,7 +55,7 @@ export interface InterviewState {
 // If status is 'complete', the interview is done — ddqText is ready to use.
 export type InterviewResult =
   | { status: 'in_progress'; question: string; questionIndex: number; totalQuestions: number }
-  | { status: 'complete';    ddqText: string;  summary: string };
+  | { status: 'complete'; ddqText: string; summary: string };
 
 // ── Question templates ─────────────────────────────────────────────────────────
 //
@@ -138,7 +138,7 @@ export class SubstanceInterviewer {
   start(entityName: string, country: string, incomeType: string): InterviewState {
     return {
       currentQuestionIndex: 0,
-      answers:              [],
+      answers: [],
       entityName,
       country,
       incomeType,
@@ -170,16 +170,16 @@ export class SubstanceInterviewer {
     if (state.currentQuestionIndex < TOTAL_QUESTIONS) {
       // More questions remain — return the next one
       return {
-        status:         'in_progress',
-        question:       this.getQuestion(state),
-        questionIndex:  state.currentQuestionIndex,   // now 1-based for display
+        status: 'in_progress',
+        question: this.getQuestion(state),
+        questionIndex: state.currentQuestionIndex, // now 1-based for display
         totalQuestions: TOTAL_QUESTIONS,
       };
     }
 
     // All 5 answers collected — compile the DDQ text
-    const ddqText  = this.buildDdqText(state);
-    const summary  = this.buildSummary(state);
+    const ddqText = this.buildDdqText(state);
+    const summary = this.buildSummary(state);
     return { status: 'complete', ddqText, summary };
   }
 

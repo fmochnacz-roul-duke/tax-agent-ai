@@ -17,7 +17,7 @@
 // Requires: GEMINI_API_KEY in .env (falls back to simulation if absent)
 // ─────────────────────────────────────────────────────────────────────────────
 
-import * as fs   from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import { TreatyVerifierAgent, TreatyRateVerification } from '../src/agents/TreatyVerifierAgent';
@@ -32,8 +32,8 @@ dotenv.config();
 // their shape. `Record<string, unknown>` means "an object with string keys where
 // the values can be anything". We narrow the shape ourselves in helper functions.
 
-type RawRates    = Record<string, unknown>;
-type RawEntry    = { treaty_name?: string; rates?: RawRates };
+type RawRates = Record<string, unknown>;
+type RawEntry = { treaty_name?: string; rates?: RawRates };
 type RawDatabase = Record<string, unknown>;
 
 // ── Claim builders ────────────────────────────────────────────────────────────
@@ -52,14 +52,15 @@ function buildDividendClaim(rate: unknown): { claimedRate: string; treatyArticle
   if (!treatyArticle) return null;
 
   const reducedThreshold = typeof r['reduced_threshold'] === 'number' ? r['reduced_threshold'] : -1;
-  const reducedRate      = typeof r['reduced_rate']      === 'number' ? r['reduced_rate']      : null;
-  const standardRate     = typeof r['standard_rate']     === 'number' ? r['standard_rate']     : null;
+  const reducedRate = typeof r['reduced_rate'] === 'number' ? r['reduced_rate'] : null;
+  const standardRate = typeof r['standard_rate'] === 'number' ? r['standard_rate'] : null;
 
   if (reducedRate === null || standardRate === null || reducedThreshold < 0) return null;
 
-  const claimedRate = reducedThreshold === 0
-    ? `${reducedRate}% (flat rate, any shareholding)`
-    : `${reducedRate}% (reduced, shareholding ≥${reducedThreshold}%) / ${standardRate}% (standard)`;
+  const claimedRate =
+    reducedThreshold === 0
+      ? `${reducedRate}% (flat rate, any shareholding)`
+      : `${reducedRate}% (reduced, shareholding ≥${reducedThreshold}%) / ${standardRate}% (standard)`;
 
   return { claimedRate, treatyArticle };
 }
@@ -69,7 +70,7 @@ function buildFlatRateClaim(rate: unknown): { claimedRate: string; treatyArticle
   const r = rate as Record<string, unknown>;
 
   const treatyArticle = typeof r['treaty_article'] === 'string' ? r['treaty_article'] : '';
-  const rateValue     = typeof r['rate']           === 'number' ? r['rate']           : null;
+  const rateValue = typeof r['rate'] === 'number' ? r['rate'] : null;
 
   if (!treatyArticle || rateValue === null) return null;
 
@@ -89,8 +90,8 @@ function applyVerification(rate: Record<string, unknown>, result: TreatyRateVeri
   }
   // else: leave verified:false — rate is unconfirmed or differs from claimed
 
-  rate['verified_at']       = result.verification_date;
-  rate['verified_sources']  = result.sources;
+  rate['verified_at'] = result.verification_date;
+  rate['verified_sources'] = result.sources;
   rate['verification_note'] = result.note;
 }
 
@@ -101,7 +102,7 @@ function applyVerification(rate: Record<string, unknown>, result: TreatyRateVeri
 // Promise + setTimeout is the standard Node.js way to pause async code.
 
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -119,10 +120,10 @@ async function main(): Promise<void> {
   const agent = new TreatyVerifierAgent({ simulate: false });
 
   // Counters for the final summary line.
-  let total     = 0;
+  let total = 0;
   let confirmed = 0;
-  let differs   = 0;
-  let notFound  = 0;
+  let differs = 0;
+  let notFound = 0;
 
   // Loop over every key in the database — skip the _meta key.
   for (const [country, rawEntry] of Object.entries(raw)) {
@@ -144,9 +145,17 @@ async function main(): Promise<void> {
       const claim = buildDividendClaim(divRate);
       if (claim !== null) {
         console.log(`  dividend  → ${claim.claimedRate}`);
-        const result = await agent.verifyRate(country, 'dividend', claim.claimedRate, claim.treatyArticle);
-        console.log(`             ${result.status}${result.confirmed_rate ? ` (found: ${result.confirmed_rate})` : ''}`);
-        if (result.sources.length > 0) console.log(`             sources: ${result.sources.slice(0, 2).join('; ')}`);
+        const result = await agent.verifyRate(
+          country,
+          'dividend',
+          claim.claimedRate,
+          claim.treatyArticle
+        );
+        console.log(
+          `             ${result.status}${result.confirmed_rate ? ` (found: ${result.confirmed_rate})` : ''}`
+        );
+        if (result.sources.length > 0)
+          console.log(`             sources: ${result.sources.slice(0, 2).join('; ')}`);
         applyVerification(divRate as Record<string, unknown>, result);
         total++;
         if (result.status === 'CONFIRMED') confirmed++;
@@ -163,9 +172,17 @@ async function main(): Promise<void> {
       const claim = buildFlatRateClaim(intRate);
       if (claim !== null) {
         console.log(`  interest  → ${claim.claimedRate}`);
-        const result = await agent.verifyRate(country, 'interest', claim.claimedRate, claim.treatyArticle);
-        console.log(`             ${result.status}${result.confirmed_rate ? ` (found: ${result.confirmed_rate})` : ''}`);
-        if (result.sources.length > 0) console.log(`             sources: ${result.sources.slice(0, 2).join('; ')}`);
+        const result = await agent.verifyRate(
+          country,
+          'interest',
+          claim.claimedRate,
+          claim.treatyArticle
+        );
+        console.log(
+          `             ${result.status}${result.confirmed_rate ? ` (found: ${result.confirmed_rate})` : ''}`
+        );
+        if (result.sources.length > 0)
+          console.log(`             sources: ${result.sources.slice(0, 2).join('; ')}`);
         applyVerification(intRate as Record<string, unknown>, result);
         total++;
         if (result.status === 'CONFIRMED') confirmed++;
@@ -182,9 +199,17 @@ async function main(): Promise<void> {
       const claim = buildFlatRateClaim(royRate);
       if (claim !== null) {
         console.log(`  royalty   → ${claim.claimedRate}`);
-        const result = await agent.verifyRate(country, 'royalty', claim.claimedRate, claim.treatyArticle);
-        console.log(`             ${result.status}${result.confirmed_rate ? ` (found: ${result.confirmed_rate})` : ''}`);
-        if (result.sources.length > 0) console.log(`             sources: ${result.sources.slice(0, 2).join('; ')}`);
+        const result = await agent.verifyRate(
+          country,
+          'royalty',
+          claim.claimedRate,
+          claim.treatyArticle
+        );
+        console.log(
+          `             ${result.status}${result.confirmed_rate ? ` (found: ${result.confirmed_rate})` : ''}`
+        );
+        if (result.sources.length > 0)
+          console.log(`             sources: ${result.sources.slice(0, 2).join('; ')}`);
         applyVerification(royRate as Record<string, unknown>, result);
         total++;
         if (result.status === 'CONFIRMED') confirmed++;
@@ -211,7 +236,7 @@ async function main(): Promise<void> {
   console.log('══════════════════════════════════════════');
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('[VERIFY TREATIES] Fatal error:', err);
   process.exit(1);
 });

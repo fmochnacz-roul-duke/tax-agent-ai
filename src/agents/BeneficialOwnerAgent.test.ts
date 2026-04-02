@@ -20,10 +20,10 @@ import type { Citation } from './BeneficialOwnerAgent';
 // top score.  Used to exercise the RAG legal grounding gate.
 function ragCitation(chunkCount: number, topScore: number): Citation {
   return {
-    tool:        'consult_legal_sources',
-    source:      'legal_knowledge_base',
+    tool: 'consult_legal_sources',
+    source: 'legal_knowledge_base',
     chunk_count: chunkCount,
-    top_score:   topScore,
+    top_score: topScore,
   };
 }
 
@@ -60,7 +60,7 @@ test('computeReportConfidence: LOW when fact_check UNDERMINES — overrides ever
   // Even with strong RAG and verified rates, UNDERMINES locks the result to LOW.
   const findings = {
     fact_check_result: factCheckFinding('UNDERMINES'),
-    wht_rate:          rateFinding(true),
+    wht_rate: rateFinding(true),
   };
   const citations = [ragCitation(3, 0.8)];
   assert.equal(computeReportConfidence(findings, citations), 'LOW');
@@ -84,7 +84,7 @@ test('computeReportConfidence: MEDIUM when no RAG call was made (legal grounding
   // Rates verified, substance real → normally HIGH, but no RAG → MEDIUM.
   const findings = {
     entity_substance: substanceFinding('HIGH'),
-    wht_rate:         rateFinding(true),
+    wht_rate: rateFinding(true),
   };
   assert.equal(computeReportConfidence(findings, []), 'MEDIUM');
 });
@@ -92,7 +92,7 @@ test('computeReportConfidence: MEDIUM when no RAG call was made (legal grounding
 test('computeReportConfidence: MEDIUM when RAG returned only 1 chunk (chunk_count < 2)', () => {
   const findings = {
     entity_substance: substanceFinding('HIGH'),
-    wht_rate:         rateFinding(true),
+    wht_rate: rateFinding(true),
   };
   const citations = [ragCitation(1, 0.9)];
   assert.equal(computeReportConfidence(findings, citations), 'MEDIUM');
@@ -101,7 +101,7 @@ test('computeReportConfidence: MEDIUM when RAG returned only 1 chunk (chunk_coun
 test('computeReportConfidence: MEDIUM when RAG top_score is below threshold (< 0.55)', () => {
   const findings = {
     entity_substance: substanceFinding('HIGH'),
-    wht_rate:         rateFinding(true),
+    wht_rate: rateFinding(true),
   };
   const citations = [ragCitation(3, 0.45)];
   assert.equal(computeReportConfidence(findings, citations), 'MEDIUM');
@@ -110,7 +110,7 @@ test('computeReportConfidence: MEDIUM when RAG top_score is below threshold (< 0
 test('computeReportConfidence: MEDIUM when fact_check CONFIRMS but RAG grounding absent', () => {
   const findings = {
     fact_check_result: factCheckFinding('CONFIRMS'),
-    wht_rate:          rateFinding(true),
+    wht_rate: rateFinding(true),
   };
   assert.equal(computeReportConfidence(findings, []), 'MEDIUM');
 });
@@ -119,7 +119,7 @@ test('computeReportConfidence: MEDIUM when fact_check INCONCLUSIVE and RAG groun
   // INCONCLUSIVE falls through to standard logic; no RAG → caps at MEDIUM.
   const findings = {
     fact_check_result: factCheckFinding('INCONCLUSIVE'),
-    wht_rate:          rateFinding(true),
+    wht_rate: rateFinding(true),
   };
   assert.equal(computeReportConfidence(findings, []), 'MEDIUM');
 });
@@ -136,7 +136,7 @@ test('computeReportConfidence: HIGH with verified rates and strong RAG (no subst
 test('computeReportConfidence: HIGH with real substance, verified rates, and strong RAG', () => {
   const findings = {
     entity_substance: substanceFinding('HIGH'),
-    wht_rate:         rateFinding(true),
+    wht_rate: rateFinding(true),
   };
   const citations = [ragCitation(3, 0.8)];
   assert.equal(computeReportConfidence(findings, citations), 'HIGH');
@@ -151,7 +151,7 @@ test('computeReportConfidence: HIGH at exact threshold (chunk_count=2, top_score
 test('computeReportConfidence: HIGH when fact_check CONFIRMS + rates ok + strong RAG', () => {
   const findings = {
     fact_check_result: factCheckFinding('CONFIRMS'),
-    wht_rate:          rateFinding(true),
+    wht_rate: rateFinding(true),
   };
   const citations = [ragCitation(3, 0.75)];
   assert.equal(computeReportConfidence(findings, citations), 'HIGH');
@@ -161,8 +161,8 @@ test('computeReportConfidence: HIGH when multiple citations — picks the RAG on
   // Mix of non-RAG and one RAG citation → should still identify the RAG citation.
   const findings = { wht_rate: rateFinding(true) };
   const citations: Citation[] = [
-    { tool: 'get_treaty_rate',  source: 'treaties.json', finding_key: 'wht_rate' },
-    { tool: 'check_mli_ppt',    source: 'treaties.json', finding_key: 'mli_ppt_status' },
+    { tool: 'get_treaty_rate', source: 'treaties.json', finding_key: 'wht_rate' },
+    { tool: 'check_mli_ppt', source: 'treaties.json', finding_key: 'mli_ppt_status' },
     ragCitation(2, 0.65),
   ];
   assert.equal(computeReportConfidence(findings, citations), 'HIGH');
@@ -173,11 +173,11 @@ test('computeReportConfidence: HIGH when multiple citations — picks the RAG on
 test('parseFindings: parses all values that are valid JSON strings', () => {
   const input = {
     treaty_status: JSON.stringify({ treaty_in_force: true }),
-    wht_rate:      JSON.stringify({ rate: 5, verified: false }),
+    wht_rate: JSON.stringify({ rate: 5, verified: false }),
   };
   const result = parseFindings(input);
   assert.deepEqual(result['treaty_status'], { treaty_in_force: true });
-  assert.deepEqual(result['wht_rate'],      { rate: 5, verified: false });
+  assert.deepEqual(result['wht_rate'], { rate: 5, verified: false });
 });
 
 test('parseFindings: keeps non-JSON values as strings', () => {

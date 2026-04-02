@@ -17,9 +17,9 @@ export class Retriever {
 
   constructor(
     private readonly chunks: Chunk[],
-    vectors: ChunkVector[],
+    vectors: ChunkVector[]
   ) {
-    this.vectorIndex = new Map(vectors.map(v => [v.chunk_id, v.embedding]));
+    this.vectorIndex = new Map(vectors.map((v) => [v.chunk_id, v.embedding]));
   }
 
   // Searches for the top-k most relevant chunks for the given query embedding.
@@ -32,12 +32,12 @@ export class Retriever {
     const { concept_ids, module: moduleName, source_ids, top_k = 5 } = options;
 
     // Step 1: apply filters
-    const candidates = this.chunks.filter(chunk => {
+    const candidates = this.chunks.filter((chunk) => {
       // Only consider chunks that have a precomputed embedding
       if (!this.vectorIndex.has(chunk.chunk_id)) return false;
 
       if (concept_ids && concept_ids.length > 0) {
-        const hasOverlap = concept_ids.some(id => chunk.concept_ids.includes(id));
+        const hasOverlap = concept_ids.some((id) => chunk.concept_ids.includes(id));
         if (!hasOverlap) return false;
       }
 
@@ -53,26 +53,23 @@ export class Retriever {
     });
 
     // Step 2: score each candidate against the query
-    const scored = candidates.map(chunk => ({
+    const scored = candidates.map((chunk) => ({
       chunk,
-      score: cosineSimilarity(
-        queryEmbedding,
-        this.vectorIndex.get(chunk.chunk_id)!,
-      ),
+      score: cosineSimilarity(queryEmbedding, this.vectorIndex.get(chunk.chunk_id)!),
     }));
 
     // Step 3: sort descending by score and take the top_k
     scored.sort((a, b) => b.score - a.score);
 
     return scored.slice(0, top_k).map(({ chunk, score }) => ({
-      chunk_id:         chunk.chunk_id,
-      source_id:        chunk.source_id,
-      section_ref:      chunk.section_ref,
-      section_title:    chunk.section_title,
-      concept_ids:      chunk.concept_ids,
+      chunk_id: chunk.chunk_id,
+      source_id: chunk.source_id,
+      section_ref: chunk.section_ref,
+      section_title: chunk.section_title,
+      concept_ids: chunk.concept_ids,
       module_relevance: chunk.module_relevance,
-      language:         chunk.language,
-      text:             chunk.text,
+      language: chunk.language,
+      text: chunk.text,
       score,
     }));
   }
@@ -92,16 +89,16 @@ function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length) {
     throw new Error(
       `Vector dimension mismatch: ${a.length} vs ${b.length}. ` +
-      'Both vectors must come from the same embedding model.'
+        'Both vectors must come from the same embedding model.'
     );
   }
 
-  let dot  = 0;
+  let dot = 0;
   let magA = 0;
   let magB = 0;
 
   for (let i = 0; i < a.length; i++) {
-    dot  += a[i] * b[i];
+    dot += a[i] * b[i];
     magA += a[i] * a[i];
     magB += b[i] * b[i];
   }

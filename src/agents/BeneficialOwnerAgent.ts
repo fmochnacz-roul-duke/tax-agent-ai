@@ -34,7 +34,7 @@ const WHT_GOALS: Goal[] = [
     name: 'Verify treaty',
     description:
       'Confirm whether a tax treaty (DTC) is in force between Poland and the ' +
-      'beneficial owner\'s country of residence, and whether the MLI applies.',
+      "beneficial owner's country of residence, and whether the MLI applies.",
     priority: 10,
   },
   {
@@ -90,7 +90,7 @@ const WHT_GOALS: Goal[] = [
     name: 'Assess MLI / PPT risk',
     description:
       'Determine whether the MLI Principal Purpose Test applies and whether the ' +
-      'entity\'s substance profile creates a risk of treaty benefit denial.',
+      "entity's substance profile creates a risk of treaty benefit denial.",
     priority: 6,
   },
   {
@@ -177,7 +177,8 @@ function buildWhtTools(): Tool[] {
           },
           shareholding_percentage: {
             type: 'number',
-            description: 'Percentage of capital held by recipient (dividends only; pass 0 otherwise)',
+            description:
+              'Percentage of capital held by recipient (dividends only; pass 0 otherwise)',
           },
         },
         required: ['residence_country', 'income_type', 'shareholding_percentage'],
@@ -236,7 +237,7 @@ function buildWhtTools(): Tool[] {
           },
           shareholding_percentage: {
             type: 'number',
-            description: 'Percentage of the payer\'s share capital held by the recipient',
+            description: "Percentage of the payer's share capital held by the recipient",
           },
           holding_years: {
             type: 'number',
@@ -397,7 +398,7 @@ const COMPLEX_FINDINGS = new Set([
   'entity_substance',
   'dempe_analysis',
   'mli_ppt_status',
-  'fact_check_result',  // Phase 7: FactChecker output requires synthesis reasoning
+  'fact_check_result', // Phase 7: FactChecker output requires synthesis reasoning
 ]);
 
 // selectLlm() returns the appropriate LLM instance for the current iteration.
@@ -406,12 +407,8 @@ const COMPLEX_FINDINGS = new Set([
 //
 // 'findings' is Record<string, string> because Memory.getFindings() returns that type.
 // Object.keys() gives us the array of current finding keys to check against the Set.
-function selectLlm(
-  findings: Record<string, string>,
-  fastLlm: LLM,
-  powerfulLlm: LLM
-): LLM {
-  const hasComplexData = Object.keys(findings).some(k => COMPLEX_FINDINGS.has(k));
+function selectLlm(findings: Record<string, string>, fastLlm: LLM, powerfulLlm: LLM): LLM {
+  const hasComplexData = Object.keys(findings).some((k) => COMPLEX_FINDINGS.has(k));
   return hasComplexData ? powerfulLlm : fastLlm;
 }
 
@@ -519,10 +516,10 @@ export function validateInput(raw: unknown): AgentInput {
     country,
     income_type: income_type as AgentInput['income_type'],
     shareholding_percentage,
-    substance_notes:    substance_notes    as string  | undefined,
-    annual_payment_pln: annual_payment_pln as number  | undefined,
-    related_party:      related_party      as boolean | undefined,
-    ddq_path:           ddq_path           as string  | undefined,
+    substance_notes: substance_notes as string | undefined,
+    annual_payment_pln: annual_payment_pln as number | undefined,
+    related_party: related_party as boolean | undefined,
+    ddq_path: ddq_path as string | undefined,
   };
 }
 
@@ -578,9 +575,7 @@ function parseInput(): { input: AgentInput; ddqText: string | undefined } {
     const ddqPath = path.resolve(input.ddq_path);
     try {
       ddqText = fs.readFileSync(ddqPath, 'utf-8');
-      console.log(
-        `[DDQ] Loaded ${ddqText.length.toLocaleString()} characters from ${ddqPath}`
-      );
+      console.log(`[DDQ] Loaded ${ddqText.length.toLocaleString()} characters from ${ddqPath}`);
     } catch (err) {
       console.error(`Error reading DDQ file: ${ddqPath}`);
       console.error(String(err));
@@ -662,8 +657,8 @@ function resolveOutputPath(input: AgentInput): string {
   // filename, then append today's date.
   const slug = input.entity_name
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')   // replace runs of non-word chars with _
-    .replace(/^_|_$/g, '');        // trim leading/trailing underscores
+    .replace(/[^a-z0-9]+/g, '_') // replace runs of non-word chars with _
+    .replace(/^_|_$/g, ''); // trim leading/trailing underscores
 
   const date = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
   return path.resolve('reports', `${slug}_${date}.json`);
@@ -709,13 +704,13 @@ export function parseFindings(findings: Record<string, string>): Record<string, 
 //   top_score    — for RAG results: highest cosine similarity score (0–1)
 
 export interface Citation {
-  tool:         string;
-  source:       string;
+  tool: string;
+  source: string;
   finding_key?: string;
   section_ref?: string;
-  source_id?:   string;
+  source_id?: string;
   chunk_count?: number;
-  top_score?:   number;
+  top_score?: number;
 }
 
 // Maps each tool name to the memory key used when recording its result.
@@ -723,15 +718,15 @@ export interface Citation {
 // as a named finding (consult_legal_sources is intentionally not stored so
 // the agent can call it multiple times with different queries).
 const FINDING_KEY_FOR_TOOL: Readonly<Record<string, string | undefined>> = {
-  check_treaty:              'treaty_status',
-  get_treaty_rate:           'wht_rate',
-  check_entity_substance:    'entity_substance',
-  check_mli_ppt:             'mli_ppt_status',
-  analyse_dempe:             'dempe_analysis',
+  check_treaty: 'treaty_status',
+  get_treaty_rate: 'wht_rate',
+  check_entity_substance: 'entity_substance',
+  check_mli_ppt: 'mli_ppt_status',
+  analyse_dempe: 'dempe_analysis',
   check_directive_exemption: 'directive_exemption',
-  check_pay_and_refund:      'pay_and_refund',
-  fact_check_substance:      'fact_check_result',
-  consult_legal_sources:     undefined,
+  check_pay_and_refund: 'pay_and_refund',
+  fact_check_substance: 'fact_check_result',
+  consult_legal_sources: undefined,
 };
 
 // extractCitation — builds a Citation from a tool result string.
@@ -747,7 +742,7 @@ function extractCitation(toolName: string, result: string): Citation {
 
   // Start with the tool name as a fallback source in case JSON parsing fails
   const citation: Citation = {
-    tool:   toolName,
+    tool: toolName,
     source: toolName,
     ...(findingKey !== undefined ? { finding_key: findingKey } : {}),
   };
@@ -768,9 +763,10 @@ function extractCitation(toolName: string, result: string): Citation {
         citation.chunk_count = chunks.length;
         const top = chunks[0] as Record<string, unknown> | undefined;
         if (top !== undefined) {
-          if (typeof top['score']       === 'number') citation.top_score   = top['score'] as number;
-          if (typeof top['section_ref'] === 'string') citation.section_ref = top['section_ref'] as string;
-          if (typeof top['source_id']   === 'string') citation.source_id   = top['source_id'] as string;
+          if (typeof top['score'] === 'number') citation.top_score = top['score'] as number;
+          if (typeof top['section_ref'] === 'string')
+            citation.section_ref = top['section_ref'] as string;
+          if (typeof top['source_id'] === 'string') citation.source_id = top['source_id'] as string;
         }
       }
     }
@@ -797,7 +793,7 @@ function extractCitation(toolName: string, result: string): Citation {
 // without change).  Returns a union type so TypeScript enforces only the three
 // valid values.
 export function computeReportConfidence(
-  findings:  Record<string, string>,
+  findings: Record<string, string>,
   citations: Citation[] = []
 ): 'HIGH' | 'MEDIUM' | 'LOW' {
   // Phase 7: fact-check result takes priority when present.
@@ -875,12 +871,9 @@ export function computeReportConfidence(
 //     Scores below 0.55 mean the query and the retrieved text are only weakly
 //     related — not strong enough to claim statutory grounding.
 function hasRagLegalGrounding(citations: Citation[]): boolean {
-  const ragCitation = citations.find(c => c.tool === 'consult_legal_sources');
+  const ragCitation = citations.find((c) => c.tool === 'consult_legal_sources');
   if (ragCitation === undefined) return false;
-  return (
-    (ragCitation.chunk_count ?? 0) >= 2 &&
-    (ragCitation.top_score   ?? 0) >= 0.55
-  );
+  return (ragCitation.chunk_count ?? 0) >= 2 && (ragCitation.top_score ?? 0) >= 0.55;
 }
 
 // ── WhtReport — the structured output of every analysis run ──────────────────
@@ -889,20 +882,20 @@ function hasRagLegalGrounding(citations: Citation[]): boolean {
 // The web server uses this type to send the report to the browser as JSON.
 
 export interface WhtReport {
-  generated_at:            string;
-  entity_name:             string;
-  country:                 string;
-  income_type:             string;
+  generated_at: string;
+  entity_name: string;
+  country: string;
+  income_type: string;
   shareholding_percentage: number;
-  related_party?:          boolean;
-  substance_notes?:        string;
-  data_confidence:         'HIGH' | 'MEDIUM' | 'LOW';
-  data_confidence_note:    string;
-  conclusion:              string;
-  findings:                Record<string, unknown>;
+  related_party?: boolean;
+  substance_notes?: string;
+  data_confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  data_confidence_note: string;
+  conclusion: string;
+  findings: Record<string, unknown>;
   // Phase 13: one Citation per tool call, in the order calls were made.
   // Links every finding and RAG result back to its data source.
-  citations:               Citation[];
+  citations: Citation[];
 }
 
 // ── AgentEvent — streaming progress events emitted during the agent loop ──────
@@ -920,9 +913,9 @@ export type AgentEventType =
   | 'max_iterations';
 
 export interface AgentEvent {
-  type:     AgentEventType;
-  message:  string;     // human-readable, shown in the UI progress feed
-  data?:    unknown;    // optional structured payload (e.g. tool name, iteration #)
+  type: AgentEventType;
+  message: string; // human-readable, shown in the UI progress feed
+  data?: unknown; // optional structured payload (e.g. tool name, iteration #)
 }
 
 // Confidence note lookup — used both in saveReport() and returned in WhtReport.
@@ -941,34 +934,34 @@ const CONFIDENCE_NOTES: Record<'HIGH' | 'MEDIUM' | 'LOW', string> = {
 };
 
 function buildReport(
-  input:      AgentInput,
+  input: AgentInput,
   conclusion: string,
-  findings:   Record<string, string>,
-  citations:  Citation[]
+  findings: Record<string, string>,
+  citations: Citation[]
 ): WhtReport {
   const dataConfidence = computeReportConfidence(findings, citations);
   return {
-    generated_at:            new Date().toISOString(),
-    entity_name:             input.entity_name,
-    country:                 input.country,
-    income_type:             input.income_type,
+    generated_at: new Date().toISOString(),
+    entity_name: input.entity_name,
+    country: input.country,
+    income_type: input.income_type,
     shareholding_percentage: input.shareholding_percentage,
     ...(input.related_party !== undefined ? { related_party: input.related_party } : {}),
-    ...(input.substance_notes             ? { substance_notes: input.substance_notes } : {}),
-    data_confidence:         dataConfidence,
-    data_confidence_note:    CONFIDENCE_NOTES[dataConfidence],
+    ...(input.substance_notes ? { substance_notes: input.substance_notes } : {}),
+    data_confidence: dataConfidence,
+    data_confidence_note: CONFIDENCE_NOTES[dataConfidence],
     conclusion,
-    findings:                parseFindings(findings),
+    findings: parseFindings(findings),
     citations,
   };
 }
 
 function saveReport(
-  input:      AgentInput,
+  input: AgentInput,
   conclusion: string,
-  findings:   Record<string, string>,
+  findings: Record<string, string>,
   outputPath: string,
-  citations:  Citation[]
+  citations: Citation[]
 ): WhtReport {
   const report = buildReport(input, conclusion, findings, citations);
 
@@ -1044,9 +1037,9 @@ async function runAgent(
           ...memory.getMessages(),
           Message.user(
             'ESTABLISHED FINDINGS — do not repeat tool calls for these topics:\n' +
-            findingsSummary +
-            '\nContinue working through any remaining goals. ' +
-            'Call terminate when all applicable goals are addressed.'
+              findingsSummary +
+              '\nContinue working through any remaining goals. ' +
+              'Call terminate when all applicable goals are addressed.'
           ),
         ]
       : memory.getMessages();
@@ -1061,8 +1054,16 @@ async function runAgent(
     // This happens when the model writes its conclusion as prose instead of
     // using the terminate tool. We treat it as a final answer and save the report.
     if (response.type === 'text') {
-      emit('final_answer', `\nAgent responded directly:\n${response.content}`, { conclusion: response.content });
-      const report = saveReport(input, response.content, memory.getFindings(), outputPath, citations);
+      emit('final_answer', `\nAgent responded directly:\n${response.content}`, {
+        conclusion: response.content,
+      });
+      const report = saveReport(
+        input,
+        response.content,
+        memory.getFindings(),
+        outputPath,
+        citations
+      );
       emit('report_saved', `Report saved → ${outputPath}`, { path: outputPath });
       return report;
     }
@@ -1071,7 +1072,10 @@ async function runAgent(
     memory.addMessage(response.assistantMessage);
 
     for (const call of response.calls) {
-      emit('tool_call', `\n  [TOOL CALL] ${call.name}(${JSON.stringify(call.arguments)})`, { name: call.name, arguments: call.arguments });
+      emit('tool_call', `\n  [TOOL CALL] ${call.name}(${JSON.stringify(call.arguments)})`, {
+        name: call.name,
+        arguments: call.arguments,
+      });
 
       // ── duplicate guard ───────────────────────────────────────────────────
       // If the model calls the same tool with identical arguments a second time,
@@ -1081,14 +1085,17 @@ async function runAgent(
         const callKey = `${call.name}:${JSON.stringify(call.arguments)}`;
         if (calledTools.has(callKey)) {
           console.log(`  [SKIPPED] Duplicate — result already in findings.`);
-          memory.addMessage(Message.tool(
-            JSON.stringify({
-              note: 'This tool was already called with these exact arguments. ' +
-                    'The result is already in the ESTABLISHED FINDINGS. ' +
-                    'Do not call it again — proceed to the next goal or call terminate.',
-            }),
-            call.id
-          ));
+          memory.addMessage(
+            Message.tool(
+              JSON.stringify({
+                note:
+                  'This tool was already called with these exact arguments. ' +
+                  'The result is already in the ESTABLISHED FINDINGS. ' +
+                  'Do not call it again — proceed to the next goal or call terminate.',
+              }),
+              call.id
+            )
+          );
           continue;
         }
         calledTools.add(callKey);
@@ -1200,9 +1207,9 @@ async function runAgent(
             // call memory.recordFinding() here — calling the tool twice with different
             // queries is valid and should not be blocked by the duplicate guard.
             result = await env.consultLegalSources(
-              args['query']       as string,
+              args['query'] as string,
               args['concept_ids'] as string[] | undefined,
-              args['top_k']       as number   | undefined
+              args['top_k'] as number | undefined
             );
             break;
 
@@ -1258,22 +1265,30 @@ export async function runWhtAnalysis(
   onEvent: (event: AgentEvent) => void
 ): Promise<WhtReport> {
   const env = new WhtEnvironment({
-    simulate:      false,
+    simulate: false,
     ddqServiceUrl: process.env['DDQ_SERVICE_URL'],
     ddqText,
   });
 
-  const memory       = new Memory();
+  const memory = new Memory();
   const systemPrompt = buildSystemPrompt(WHT_PERSONA, WHT_GOALS);
-  const tools        = buildWhtTools();
-  const fastLlm      = LLM.fast();
-  const powerfulLlm  = LLM.powerful();
-  const task         = buildTaskString(input);
+  const tools = buildWhtTools();
+  const fastLlm = LLM.fast();
+  const powerfulLlm = LLM.powerful();
+  const task = buildTaskString(input);
 
   return runAgent(
-    systemPrompt, task, tools, env, memory,
-    input, outputPath, fastLlm, powerfulLlm,
-    20, onEvent
+    systemPrompt,
+    task,
+    tools,
+    env,
+    memory,
+    input,
+    outputPath,
+    fastLlm,
+    powerfulLlm,
+    20,
+    onEvent
   );
 }
 
@@ -1293,7 +1308,9 @@ async function main(): Promise<void> {
 
   // Phase 8: runWhtAnalysis() owns GAME setup and the agent loop.
   // The CLI passes a no-op onEvent — console.log already happens inside runAgent.
-  const report = await runWhtAnalysis(input, ddqText, outputPath, (_event) => { /* logged by emit() */ });
+  const report = await runWhtAnalysis(input, ddqText, outputPath, (_event) => {
+    /* logged by emit() */
+  });
 
   // Phase 11: save to the entity registry after every completed analysis.
   // The CLI creates its own EntityRegistry instance (not the server singleton).

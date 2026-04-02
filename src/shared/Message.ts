@@ -17,7 +17,7 @@ export interface StoredToolCall {
   type: 'function';
   function: {
     name: string;
-    arguments: string;   // raw JSON string, as the API sends it
+    arguments: string; // raw JSON string, as the API sends it
   };
 }
 

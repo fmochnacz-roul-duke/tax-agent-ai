@@ -42,13 +42,13 @@ export class Embedder {
 
     for (let i = 0; i < chunks.length; i += this.batchSize) {
       const batch = chunks.slice(i, i + this.batchSize);
-      const texts = batch.map(c => c.text);
+      const texts = batch.map((c) => c.text);
 
       const embeddings = await this.embedFn(texts);
 
       for (let j = 0; j < batch.length; j++) {
         vectors.push({
-          chunk_id:  batch[j].chunk_id,
+          chunk_id: batch[j].chunk_id,
           embedding: embeddings[j],
         });
       }
@@ -77,8 +77,6 @@ export function makeOpenAIEmbedFn(client: OpenAI, model: string): EmbedFunction 
 
     // The API guarantees responses are in the same order as inputs,
     // but we sort by index to be safe.
-    return response.data
-      .sort((a, b) => a.index - b.index)
-      .map(e => e.embedding);
+    return response.data.sort((a, b) => a.index - b.index).map((e) => e.embedding);
   };
 }

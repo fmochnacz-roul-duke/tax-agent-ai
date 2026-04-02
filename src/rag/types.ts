@@ -10,31 +10,31 @@
 // Produced by the Chunker from a source .md file.
 export interface Chunk {
   // Unique across the entire knowledge base: "MF-OBJ-2025::2-3"
-  chunk_id:         string;
+  chunk_id: string;
 
   // ID that matches an entry in data/legal_sources_registry.json
-  source_id:        string;
+  source_id: string;
 
   // The section number or provision reference: "§2.3", "Art. 4a pkt 29"
-  section_ref:      string;
+  section_ref: string;
 
   // Human-readable section title: "Kryteria uznania działalności za rzeczywistą"
-  section_title:    string;
+  section_title: string;
 
   // IDs from data/tax_taxonomy.json — used for filtered retrieval
-  concept_ids:      string[];
+  concept_ids: string[];
 
   // Which Tax OS modules use this chunk: ["WHT"], ["WHT", "TP_screening"]
   module_relevance: string[];
 
   // Source language: "pl" (Polish) or "en" (English)
-  language:         string;
+  language: string;
 
   // The full section text, including the heading line.
   // Sent to the embedding model and injected into the agent prompt as a citation.
-  text:             string;
+  text: string;
 
-  char_count:       number;
+  char_count: number;
 }
 
 // A Chunk that has been scored against a query.
@@ -47,8 +47,8 @@ export interface CitedChunk extends Omit<Chunk, 'char_count'> {
 
 // One row in data/knowledge_base/embeddings/vectors.json
 export interface ChunkVector {
-  chunk_id:  string;
-  embedding: number[];  // dimensionality depends on the model
+  chunk_id: string;
+  embedding: number[]; // dimensionality depends on the model
 }
 
 // Stored at data/knowledge_base/embeddings/manifest.json
@@ -58,7 +58,7 @@ export interface Manifest {
   indexed_at: string;
 
   // Name of the OpenAI embedding model used (e.g. "text-embedding-3-small")
-  model:      string;
+  model: string;
 
   // source_id → SHA-256 hex hash of the source .md file at build time.
   // If the hash changes, the source is re-chunked and re-embedded on the next build.
@@ -67,8 +67,8 @@ export interface Manifest {
 
 // Parsed fields from the YAML frontmatter block of a source .md file.
 export interface SourceFrontmatter {
-  source_id:        string;
-  language:         string;
+  source_id: string;
+  language: string;
   module_relevance: string[];
 
   // Default concept_ids applied to every chunk in this document.
@@ -95,6 +95,6 @@ export interface RetrieveOptions {
 // A minimal view of a taxonomy concept — only what the RAG layer needs.
 // The full concept is in data/tax_taxonomy.json.
 export interface TaxonomyConcept {
-  id:           string;
+  id: string;
   rag_keywords: string[];
 }

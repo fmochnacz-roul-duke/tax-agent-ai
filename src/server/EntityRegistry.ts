@@ -34,9 +34,9 @@
 //   without loading the full report from disk.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import * as fs   from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
-import * as os   from 'os';
+import * as os from 'os';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -54,33 +54,33 @@ export type ReviewStatus = 'draft' | 'reviewed' | 'signed_off';
 // The fields with ? are optional because not every analysis produces them
 // (e.g. substance_tier is only present when check_entity_substance was called).
 export interface RegistryEntry {
-  entity_name:        string;
-  country:            string;
-  income_type:        string;
-  review_status:      ReviewStatus;
-  data_confidence:    'HIGH' | 'MEDIUM' | 'LOW';
-  substance_tier?:    string;    // STRONG / ADEQUATE / WEAK / CONDUIT
-  bo_overall?:        string;    // PASS / FAIL / UNCERTAIN from bo_preliminary.overall
-  conclusion_summary: string;    // first 200 chars of the agent's conclusion
-  created_at:         string;    // ISO 8601 — set once on first analysis, never changed
-  updated_at:         string;    // ISO 8601 — updated on every re-analysis
-  report_path?:       string;    // path to the full JSON report on disk
+  entity_name: string;
+  country: string;
+  income_type: string;
+  review_status: ReviewStatus;
+  data_confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  substance_tier?: string; // STRONG / ADEQUATE / WEAK / CONDUIT
+  bo_overall?: string; // PASS / FAIL / UNCERTAIN from bo_preliminary.overall
+  conclusion_summary: string; // first 200 chars of the agent's conclusion
+  created_at: string; // ISO 8601 — set once on first analysis, never changed
+  updated_at: string; // ISO 8601 — updated on every re-analysis
+  report_path?: string; // path to the full JSON report on disk
   // Phase 12b: human review fields — set by updateReviewStatus(), never by save()
-  reviewer_note?:     string;    // free-text note from the reviewer
-  reviewed_at?:       string;    // ISO 8601 — date of the last review action
-  reviewed_by?:       string;    // name of the reviewer (free text)
+  reviewer_note?: string; // free-text note from the reviewer
+  reviewed_at?: string; // ISO 8601 — date of the last review action
+  reviewed_by?: string; // name of the reviewer (free text)
 }
 
 // AnalysisReport describes the fields EntityRegistry.save() needs from the
 // completed analysis.  WhtReport (from BeneficialOwnerAgent.ts) satisfies this
 // interface automatically via structural typing — no import needed.
 export interface AnalysisReport {
-  entity_name:     string;
-  country:         string;
-  income_type:     string;
+  entity_name: string;
+  country: string;
+  income_type: string;
   data_confidence: 'HIGH' | 'MEDIUM' | 'LOW';
-  conclusion:      string;
-  findings:        Record<string, unknown>;
+  conclusion: string;
+  findings: Record<string, unknown>;
 }
 
 // RegistryFile is the shape of the JSON file on disk.
@@ -104,7 +104,7 @@ export class EntityRegistry {
     // path.resolve() with no base uses the current working directory
     // (which is the project root when running npm scripts).
     this.filePath = filePath ?? path.resolve('data', 'registry.json');
-    this.entries  = this.loadFromDisk();
+    this.entries = this.loadFromDisk();
   }
 
   // ── Public API ──────────────────────────────────────────────────────────────
@@ -116,9 +116,9 @@ export class EntityRegistry {
   //   - all other fields are replaced with the latest values
   // Returns the saved entry so callers can log it.
   save(report: AnalysisReport, reportPath?: string): RegistryEntry {
-    const key      = this.makeKey(report.entity_name, report.country);
+    const key = this.makeKey(report.entity_name, report.country);
     const existing = this.entries.get(key);
-    const now      = new Date().toISOString();
+    const now = new Date().toISOString();
 
     // Extract substance_tier and bo_preliminary.overall from the findings map.
     // findings['entity_substance'] is the parsed SubstanceResult object (or absent
@@ -126,20 +126,20 @@ export class EntityRegistry {
     const { substanceTier, boOverall } = extractSubstanceFields(report.findings);
 
     const entry: RegistryEntry = {
-      entity_name:        report.entity_name,
-      country:            report.country,
-      income_type:        report.income_type,
+      entity_name: report.entity_name,
+      country: report.country,
+      income_type: report.income_type,
       // Preserve the review status a professional set — never auto-downgrade.
-      review_status:      existing?.review_status ?? 'draft',
-      data_confidence:    report.data_confidence,
+      review_status: existing?.review_status ?? 'draft',
+      data_confidence: report.data_confidence,
       // Spread optional fields only when they have values
       ...(substanceTier !== undefined ? { substance_tier: substanceTier } : {}),
-      ...(boOverall     !== undefined ? { bo_overall:     boOverall }     : {}),
+      ...(boOverall !== undefined ? { bo_overall: boOverall } : {}),
       // Truncate long conclusions so the registry stays compact.
       // A tax professional can open the full report for the complete text.
       conclusion_summary: report.conclusion.slice(0, 200),
-      created_at:         existing?.created_at ?? now,
-      updated_at:         now,
+      created_at: existing?.created_at ?? now,
+      updated_at: now,
       ...(reportPath !== undefined ? { report_path: reportPath } : {}),
     };
 
@@ -156,9 +156,7 @@ export class EntityRegistry {
 
   // listAll() returns all entries sorted newest-first (by updated_at).
   listAll(): RegistryEntry[] {
-    return [...this.entries.values()].sort(
-      (a, b) => b.updated_at.localeCompare(a.updated_at)
-    );
+    return [...this.entries.values()].sort((a, b) => b.updated_at.localeCompare(a.updated_at));
   }
 
   // size() — how many unique entity/country pairs are in the registry.
@@ -179,13 +177,13 @@ export class EntityRegistry {
   // Returns the updated entry, or undefined if the entity/country pair is not
   // found in the registry.
   updateReviewStatus(
-    entityName:   string,
-    country:      string,
-    status:       ReviewStatus,
+    entityName: string,
+    country: string,
+    status: ReviewStatus,
     reviewerNote?: string,
-    reviewedBy?:   string
+    reviewedBy?: string
   ): RegistryEntry | undefined {
-    const key     = this.makeKey(entityName, country);
+    const key = this.makeKey(entityName, country);
     const existing = this.entries.get(key);
     if (existing === undefined) return undefined;
 
@@ -197,9 +195,9 @@ export class EntityRegistry {
     const updated: RegistryEntry = {
       ...existing,
       review_status: status,
-      reviewed_at:   new Date().toISOString(),
+      reviewed_at: new Date().toISOString(),
       ...(reviewerNote !== undefined ? { reviewer_note: reviewerNote } : {}),
-      ...(reviewedBy   !== undefined ? { reviewed_by:   reviewedBy }   : {}),
+      ...(reviewedBy !== undefined ? { reviewed_by: reviewedBy } : {}),
     };
 
     this.entries.set(key, updated);
@@ -223,7 +221,7 @@ export class EntityRegistry {
     if (!fs.existsSync(this.filePath)) return map;
 
     try {
-      const raw    = fs.readFileSync(this.filePath, 'utf-8');
+      const raw = fs.readFileSync(this.filePath, 'utf-8');
       const parsed = JSON.parse(raw) as RegistryFile;
 
       for (const entry of parsed.entries) {
@@ -261,7 +259,7 @@ export class EntityRegistry {
 
 export function extractSubstanceFields(findings: Record<string, unknown>): {
   substanceTier: string | undefined;
-  boOverall:     string | undefined;
+  boOverall: string | undefined;
 } {
   const sub = findings['entity_substance'];
 
@@ -272,9 +270,7 @@ export function extractSubstanceFields(findings: Record<string, unknown>): {
   const subObj = sub as Record<string, unknown>;
 
   const substanceTier =
-    typeof subObj['substance_tier'] === 'string'
-      ? subObj['substance_tier']
-      : undefined;
+    typeof subObj['substance_tier'] === 'string' ? subObj['substance_tier'] : undefined;
 
   const boPrelim = subObj['bo_preliminary'];
   const boOverall =

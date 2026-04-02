@@ -22,12 +22,12 @@ async function basicPrompt(): Promise<void> {
   const messages = [
     Message.system(
       'You are a Polish tax advisor specialising in withholding tax (WHT) ' +
-      'under Polish corporate income tax law and applicable tax treaties. ' +
-      'Give concise, precise answers.'
+        'under Polish corporate income tax law and applicable tax treaties. ' +
+        'Give concise, precise answers.'
     ),
     Message.user(
       'In one paragraph: what is a "beneficial owner" in the context of ' +
-      'withholding tax, and why does it matter for applying treaty rates?'
+        'withholding tax, and why does it matter for applying treaty rates?'
     ),
   ];
 
@@ -48,7 +48,7 @@ async function basicPrompt(): Promise<void> {
 // and then parsing its response.
 interface TreatyRate {
   country: string;
-  dividendRate: number;   // percentage, e.g. 5 means 5%
+  dividendRate: number; // percentage, e.g. 5 means 5%
   interestRate: number;
   royaltyRate: number;
   requiresBeneficialOwner: boolean;
@@ -64,19 +64,19 @@ async function structuredOutput(): Promise<void> {
   const messages = [
     Message.system(
       'You are a Polish tax advisor. Always respond with valid JSON only. ' +
-      'No explanations, no markdown — raw JSON that can be parsed directly.'
+        'No explanations, no markdown — raw JSON that can be parsed directly.'
     ),
     Message.user(
       'Provide the withholding tax rates under the Poland–Germany tax treaty ' +
-      'for dividends, interest, and royalties paid to a corporate beneficial owner. ' +
-      'Use this exact JSON format:\n' +
-      '{\n' +
-      '  "country": "Germany",\n' +
-      '  "dividendRate": <number>,\n' +
-      '  "interestRate": <number>,\n' +
-      '  "royaltyRate": <number>,\n' +
-      '  "requiresBeneficialOwner": <true|false>\n' +
-      '}'
+        'for dividends, interest, and royalties paid to a corporate beneficial owner. ' +
+        'Use this exact JSON format:\n' +
+        '{\n' +
+        '  "country": "Germany",\n' +
+        '  "dividendRate": <number>,\n' +
+        '  "interestRate": <number>,\n' +
+        '  "royaltyRate": <number>,\n' +
+        '  "requiresBeneficialOwner": <true|false>\n' +
+        '}'
     ),
   ];
 
@@ -116,11 +116,11 @@ async function memoryExample(): Promise<void> {
   const turn1Messages = [
     Message.system(
       'You are a Polish tax advisor specialising in withholding tax. ' +
-      'Give structured, practical answers.'
+        'Give structured, practical answers.'
     ),
     Message.user(
       'List the three main criteria a foreign entity must meet to qualify ' +
-      'as a beneficial owner under Polish WHT rules. Be concise.'
+        'as a beneficial owner under Polish WHT rules. Be concise.'
     ),
   ];
 
@@ -132,11 +132,11 @@ async function memoryExample(): Promise<void> {
   // We rebuild the full message array, adding the previous response
   // as Message.assistant(...) so the LLM "remembers" what it said.
   const turn2Messages = [
-    ...turn1Messages,                        // system + user from turn 1
-    Message.assistant(turn1Response),        // LLM's own previous answer
+    ...turn1Messages, // system + user from turn 1
+    Message.assistant(turn1Response), // LLM's own previous answer
     Message.user(
       'For each criterion you listed, give one concrete example of how a ' +
-      'Polish revenue authority might challenge it during a WHT audit.'
+        'Polish revenue authority might challenge it during a WHT audit.'
     ),
   ];
 

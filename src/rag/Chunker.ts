@@ -36,7 +36,6 @@ import { Chunk, SourceFrontmatter } from './types';
 // ─────────────────────────────────────────────────────────────
 
 export class Chunker {
-
   chunk(sourceContent: string): Chunk[] {
     const { frontmatter, body } = this.parseFrontmatter(sourceContent);
     return this.splitIntoChunks(frontmatter, body);
@@ -51,7 +50,7 @@ export class Chunker {
     if (!match) {
       throw new Error(
         'Source file is missing YAML frontmatter. ' +
-        'The file must start with a ---\\n...\\n---\\n block.'
+          'The file must start with a ---\\n...\\n---\\n block.'
       );
     }
     const [, fmText, body] = match;
@@ -70,22 +69,22 @@ export class Chunker {
       const colonIdx = line.indexOf(':');
       if (colonIdx === -1) continue;
 
-      const key      = line.slice(0, colonIdx).trim();
+      const key = line.slice(0, colonIdx).trim();
       const rawValue = line.slice(colonIdx + 1).trim();
 
       if (rawValue.startsWith('[') && rawValue.endsWith(']')) {
         const inner = rawValue.slice(1, -1);
         fields[key] = inner
           .split(',')
-          .map(s => s.trim())
-          .filter(s => s.length > 0);
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0);
       } else {
         fields[key] = rawValue;
       }
     }
 
-    const str   = (k: string): string   => (typeof fields[k] === 'string' ? fields[k] as string : '');
-    const arr   = (k: string): string[] => (Array.isArray(fields[k]) ? fields[k] as string[] : []);
+    const str = (k: string): string => (typeof fields[k] === 'string' ? (fields[k] as string) : '');
+    const arr = (k: string): string[] => (Array.isArray(fields[k]) ? (fields[k] as string[]) : []);
 
     const sourceId = str('source_id');
     if (!sourceId) {
@@ -93,25 +92,25 @@ export class Chunker {
     }
 
     return {
-      source_id:        sourceId,
-      language:         str('language') || 'en',
+      source_id: sourceId,
+      language: str('language') || 'en',
       module_relevance: arr('module_relevance'),
-      concept_ids:      arr('concept_ids'),
+      concept_ids: arr('concept_ids'),
     };
   }
 
   // ── Body splitting ─────────────────────────────────────────
 
   private splitIntoChunks(fm: SourceFrontmatter, body: string): Chunk[] {
-    const lines   = body.split('\n');
+    const lines = body.split('\n');
     const chunks: Chunk[] = [];
 
     // Track used chunk_ids and add a numeric suffix on collision
     // (e.g. if two sections happen to resolve to the same slug).
     const usedIds = new Set<string>();
 
-    let currentRef    = 'preamble';
-    let currentTitle  = 'Document Preamble';
+    let currentRef = 'preamble';
+    let currentTitle = 'Document Preamble';
     let currentLines: string[] = [];
 
     // Flushes the accumulated lines as a Chunk (if there is real content).
@@ -125,7 +124,7 @@ export class Chunker {
       // Deduplicate IDs if the same section slug appears more than once.
       const baseId = `${fm.source_id}::${this.slugify(currentRef)}`;
       let chunk_id = baseId;
-      let suffix   = 1;
+      let suffix = 1;
       while (usedIds.has(chunk_id)) {
         chunk_id = `${baseId}-${suffix++}`;
       }
@@ -133,14 +132,14 @@ export class Chunker {
 
       chunks.push({
         chunk_id,
-        source_id:        fm.source_id,
-        section_ref:      currentRef,
-        section_title:    currentTitle,
-        concept_ids:      [...fm.concept_ids],
+        source_id: fm.source_id,
+        section_ref: currentRef,
+        section_title: currentTitle,
+        concept_ids: [...fm.concept_ids],
         module_relevance: [...fm.module_relevance],
-        language:         fm.language,
+        language: fm.language,
         text,
-        char_count:       text.length,
+        char_count: text.length,
       });
     };
 
@@ -153,16 +152,16 @@ export class Chunker {
       if (headingMatch) {
         flushChunk();
         const headingText = headingMatch[2].trim();
-        currentRef    = this.extractSectionRef(headingText);
-        currentTitle  = headingText;
-        currentLines  = [line];  // heading is the first line of the new chunk
+        currentRef = this.extractSectionRef(headingText);
+        currentTitle = headingText;
+        currentLines = [line]; // heading is the first line of the new chunk
         continue;
       }
 
       currentLines.push(line);
     }
 
-    flushChunk();  // flush the final section
+    flushChunk(); // flush the final section
 
     return chunks;
   }

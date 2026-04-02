@@ -24,16 +24,16 @@ dotenv.config();
 // A TypeScript interface defines the shape of an object — like a contract.
 // Every parsed agent response will be one of these two shapes.
 interface AgentAction {
-  thought: string;      // the THOUGHT line — always present
-  type: 'action';       // discriminator: tells TypeScript which shape this is
-  name: string;         // e.g. "check_treaty"
-  args: string[];       // e.g. ["Poland", "Luxembourg"]
+  thought: string; // the THOUGHT line — always present
+  type: 'action'; // discriminator: tells TypeScript which shape this is
+  name: string; // e.g. "check_treaty"
+  args: string[]; // e.g. ["Poland", "Luxembourg"]
 }
 
 interface AgentFinalAnswer {
   thought: string;
   type: 'final_answer'; // discriminator
-  answer: string;       // the conclusion text
+  answer: string; // the conclusion text
 }
 
 // A "union type" — the result is EITHER an AgentAction OR an AgentFinalAnswer.
@@ -51,18 +51,18 @@ function parseAgentResponse(response: string): ParsedResponse {
   // Split the response into individual lines, remove blank lines
   const lines = response
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0);
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 
   // Find the THOUGHT line — the LLM's reasoning
   // `.find()` returns the first element that matches the condition, or undefined
-  const thoughtLine = lines.find(line => line.startsWith('THOUGHT:'));
+  const thoughtLine = lines.find((line) => line.startsWith('THOUGHT:'));
   const thought = thoughtLine
     ? thoughtLine.replace('THOUGHT:', '').trim()
     : '(no thought provided)';
 
   // Check if the agent is done — look for FINAL ANSWER
-  const finalLine = lines.find(line => line.startsWith('FINAL ANSWER:'));
+  const finalLine = lines.find((line) => line.startsWith('FINAL ANSWER:'));
   if (finalLine) {
     return {
       thought,
@@ -72,15 +72,15 @@ function parseAgentResponse(response: string): ParsedResponse {
   }
 
   // Otherwise, look for an ACTION line
-  const actionLine = lines.find(line => line.startsWith('ACTION:'));
+  const actionLine = lines.find((line) => line.startsWith('ACTION:'));
   if (actionLine) {
     const actionContent = actionLine.replace('ACTION:', '').trim();
 
     // Split by ` | ` to separate the action name from its arguments
     // e.g. "check_treaty | Poland | Luxembourg" → ["check_treaty", "Poland", "Luxembourg"]
-    const parts = actionContent.split('|').map(p => p.trim());
-    const name = parts[0];           // first element is the action name
-    const args = parts.slice(1);     // everything after is arguments
+    const parts = actionContent.split('|').map((p) => p.trim());
+    const name = parts[0]; // first element is the action name
+    const args = parts.slice(1); // everything after is arguments
 
     return {
       thought,
@@ -114,7 +114,6 @@ function executeAction(action: AgentAction): string {
   console.log(`\n  [TOOL CALL] ${action.name}(${action.args.join(', ')})`);
 
   switch (action.name) {
-
     case 'check_treaty': {
       // args[0] = source country, args[1] = residence country
       const [source, residence] = action.args;
@@ -127,7 +126,10 @@ function executeAction(action: AgentAction): string {
     case 'get_treaty_rate': {
       // args[0] = income type (dividend/interest/royalty), args[1] = residence country
       const [incomeType, residence] = action.args;
-      if (residence?.toLowerCase().includes('luxembourg') && incomeType?.toLowerCase() === 'dividend') {
+      if (
+        residence?.toLowerCase().includes('luxembourg') &&
+        incomeType?.toLowerCase() === 'dividend'
+      ) {
         return 'Dividend rate under Poland–Luxembourg DTC: 5% (if beneficial owner holds ≥10% of capital) or 15% (otherwise). Standard Polish domestic rate: 19%.';
       }
       return `Rate for ${incomeType} to ${residence}: data not available in simulation.`;
@@ -304,8 +306,8 @@ async function runAgentLoop(task: string, maxIterations: number = 10): Promise<v
 async function main(): Promise<void> {
   await runAgentLoop(
     'Analyse whether Alpine Holdings S.A., a Luxembourg-registered holding company, ' +
-    'qualifies as the beneficial owner of a dividend to be paid by a Polish operating ' +
-    'company (Pol-Ops Sp. z o.o.). Determine the correct Polish WHT rate to apply.'
+      'qualifies as the beneficial owner of a dividend to be paid by a Polish operating ' +
+      'company (Pol-Ops Sp. z o.o.). Determine the correct Polish WHT rate to apply.'
   );
 }
 

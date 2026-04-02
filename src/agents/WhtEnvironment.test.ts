@@ -80,9 +80,9 @@ test('getTreatyRate: unknown combination returns an error field', () => {
 test('checkEntitySubstance: Orange S.A. — substance_tier is STRONG', async () => {
   const result = parse(await env.checkEntitySubstance('Orange S.A.', 'France'));
 
-  assert.equal(result['entity'],         'Orange S.A.');
-  assert.equal(result['country'],        'France');
-  assert.equal(result['entity_type'],    'large_operating_company');
+  assert.equal(result['entity'], 'Orange S.A.');
+  assert.equal(result['country'], 'France');
+  assert.equal(result['entity_type'], 'large_operating_company');
   assert.equal(result['substance_tier'], 'STRONG');
   assert.ok(result['source'], 'should include a source field');
 });
@@ -91,8 +91,8 @@ test('checkEntitySubstance: Orange S.A. — all three BO conditions PASS', async
   const result = parse(await env.checkEntitySubstance('Orange S.A.', 'France'));
   const bo = result['bo_preliminary'] as Record<string, unknown>;
 
-  assert.equal((bo['condition_1_own_benefit']      as Record<string, unknown>)['result'], 'PASS');
-  assert.equal((bo['condition_2_not_conduit']      as Record<string, unknown>)['result'], 'PASS');
+  assert.equal((bo['condition_1_own_benefit'] as Record<string, unknown>)['result'], 'PASS');
+  assert.equal((bo['condition_2_not_conduit'] as Record<string, unknown>)['result'], 'PASS');
   assert.equal((bo['condition_3_genuine_activity'] as Record<string, unknown>)['result'], 'PASS');
   assert.equal(bo['overall'], 'PASS');
 });
@@ -102,16 +102,16 @@ test('checkEntitySubstance: Orange S.A. — no conduit red flags present', async
   const indicators = result['conduit_indicators'] as Record<string, Record<string, unknown>>;
 
   assert.equal(indicators['pass_through_obligation']['present'], false);
-  assert.equal(indicators['rapid_forwarding']['present'],        false);
-  assert.equal(indicators['nominal_margin']['present'],          false);
+  assert.equal(indicators['rapid_forwarding']['present'], false);
+  assert.equal(indicators['nominal_margin']['present'], false);
 });
 
 test('checkEntitySubstance: Alpine Holdings S.A. — substance_tier is WEAK', async () => {
   const result = parse(await env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
 
-  assert.equal(result['entity'],         'Alpine Holdings S.A.');
-  assert.equal(result['country'],        'Luxembourg');
-  assert.equal(result['entity_type'],    'holding_company');
+  assert.equal(result['entity'], 'Alpine Holdings S.A.');
+  assert.equal(result['country'], 'Luxembourg');
+  assert.equal(result['entity_type'], 'holding_company');
   assert.equal(result['substance_tier'], 'WEAK');
 });
 
@@ -128,13 +128,13 @@ test('checkEntitySubstance: Alpine Holdings S.A. — pass-through red flag is pr
   const indicators = result['conduit_indicators'] as Record<string, Record<string, unknown>>;
 
   assert.equal(indicators['pass_through_obligation']['present'], true);
-  assert.equal(indicators['rapid_forwarding']['present'],        true);
+  assert.equal(indicators['rapid_forwarding']['present'], true);
 });
 
 test('checkEntitySubstance: unknown entity — conservative CONDUIT tier returned', async () => {
   const result = parse(await env.checkEntitySubstance('Unknown Corp Ltd', 'Cayman Islands'));
 
-  assert.equal(result['entity_type'],    'unknown');
+  assert.equal(result['entity_type'], 'unknown');
   assert.equal(result['substance_tier'], 'CONDUIT');
 
   const bo = result['bo_preliminary'] as Record<string, unknown>;
@@ -142,13 +142,13 @@ test('checkEntitySubstance: unknown entity — conservative CONDUIT tier returne
 });
 
 test('checkEntitySubstance: all profiles include confidence field', async () => {
-  const orange  = parse(await env.checkEntitySubstance('Orange S.A.',          'France'));
-  const alpine  = parse(await env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
-  const unknown = parse(await env.checkEntitySubstance('Unknown Corp Ltd',      'Cayman Islands'));
+  const orange = parse(await env.checkEntitySubstance('Orange S.A.', 'France'));
+  const alpine = parse(await env.checkEntitySubstance('Alpine Holdings S.A.', 'Luxembourg'));
+  const unknown = parse(await env.checkEntitySubstance('Unknown Corp Ltd', 'Cayman Islands'));
 
   // All simulated profiles are LOW confidence — real data requires DDQ (Phase 5)
-  assert.equal(orange['confidence'],  'LOW');
-  assert.equal(alpine['confidence'],  'LOW');
+  assert.equal(orange['confidence'], 'LOW');
+  assert.equal(alpine['confidence'], 'LOW');
   assert.equal(unknown['confidence'], 'LOW');
 });
 
@@ -159,10 +159,7 @@ test('checkMliPpt: Luxembourg returns mli_applies true with substance requiremen
 
   assert.equal(result['mli_applies'], true);
   assert.ok(Array.isArray(result['substance_requirements']), 'should list substance requirements');
-  assert.ok(
-    (result['article'] as string).includes('Article 7'),
-    'should reference Article 7 MLI'
-  );
+  assert.ok((result['article'] as string).includes('Article 7'), 'should reference Article 7 MLI');
   assert.ok(result['source'], 'should include a source field');
 });
 
@@ -243,10 +240,10 @@ test('live: getTreatyRate Germany interest returns 0%', () => {
 
 test('live: getTreatyRate Italy dividend is flat 10% regardless of shareholding', () => {
   // Italy: flat rate, reduced_threshold === 0
-  const resultLow  = parse(live.getTreatyRate('Italy', 'dividend', 5));
+  const resultLow = parse(live.getTreatyRate('Italy', 'dividend', 5));
   const resultHigh = parse(live.getTreatyRate('Italy', 'dividend', 50));
 
-  assert.equal(resultLow['treaty_rate_percent'],  10, 'flat rate at low holding');
+  assert.equal(resultLow['treaty_rate_percent'], 10, 'flat rate at low holding');
   assert.equal(resultHigh['treaty_rate_percent'], 10, 'flat rate at high holding');
 });
 
@@ -301,15 +298,15 @@ test('analyseDempe: returns all five DEMPE function keys', async () => {
   assert.ok(functions['development'], 'should include development function');
   assert.ok(functions['enhancement'], 'should include enhancement function');
   assert.ok(functions['maintenance'], 'should include maintenance function');
-  assert.ok(functions['protection'],  'should include protection function');
-  assert.ok(functions['exploitation'],'should include exploitation function');
+  assert.ok(functions['protection'], 'should include protection function');
+  assert.ok(functions['exploitation'], 'should include exploitation function');
 });
 
 test('analyseDempe: returns control_test and risk_bearing fields', async () => {
   const result = parse(await env.analyseDempe('Orange S.A.', 'France', 'brand'));
 
-  assert.ok(result['control_test'],  'should include control_test');
-  assert.ok(result['risk_bearing'],  'should include risk_bearing');
+  assert.ok(result['control_test'], 'should include control_test');
+  assert.ok(result['risk_bearing'], 'should include risk_bearing');
 });
 
 test('analyseDempe: beneficial_owner_dempe field is present', async () => {
@@ -323,16 +320,13 @@ test('analyseDempe: art12_scope_warning is present and mentions Art. 7', async (
   const warning = result['art12_scope_warning'] as string;
 
   assert.ok(warning, 'should include art12_scope_warning');
-  assert.ok(
-    warning.includes('Art. 7'),
-    'warning should mention Art. 7 Business Profits fallback'
-  );
+  assert.ok(warning.includes('Art. 7'), 'warning should mention Art. 7 Business Profits fallback');
 });
 
 test('analyseDempe: echoes entity_name, country, and ip_type in output', async () => {
   const result = parse(await env.analyseDempe('Test Corp', 'Germany', 'technology'));
 
-  assert.equal(result['entity'],  'Test Corp');
+  assert.equal(result['entity'], 'Test Corp');
   assert.equal(result['country'], 'Germany');
   assert.equal(result['ip_type'], 'technology');
 });
@@ -434,9 +428,15 @@ test('checkPayAndRefund: relief_options include both Opinion and WH-OS paths', (
   const result = parse(env.checkPayAndRefund('royalty', true, 5_000_000));
   const options = result['relief_options'] as Array<Record<string, unknown>>;
 
-  const names = options.map(o => o['option'] as string);
-  assert.ok(names.some(n => n.includes('Opinion')), 'should include Opinion on WHT Exemption');
-  assert.ok(names.some(n => n.includes('WH-OS')), 'should include WH-OS Management Statement');
+  const names = options.map((o) => o['option'] as string);
+  assert.ok(
+    names.some((n) => n.includes('Opinion')),
+    'should include Opinion on WHT Exemption'
+  );
+  assert.ok(
+    names.some((n) => n.includes('WH-OS')),
+    'should include WH-OS Management Statement'
+  );
 });
 
 // ── Parameter validation — safety layer (MATE principle E) ───────────────────
@@ -474,7 +474,10 @@ test('getTreatyRate: negative shareholding returns error', () => {
 test('checkDirectiveExemption: dividend income_type returns directive-scope error', () => {
   const result = parse(env.checkDirectiveExemption('France', 'dividend', 50, 5));
 
-  assert.ok(result['error'], 'dividend should return an error (Directive covers interest/royalty only)');
+  assert.ok(
+    result['error'],
+    'dividend should return an error (Directive covers interest/royalty only)'
+  );
   assert.ok(
     (result['error'] as string).includes('Parent-Subsidiary'),
     'error should redirect to the Parent-Subsidiary Directive'
@@ -567,16 +570,16 @@ const FACT_CHECK_CLAIMS = [
 test('factCheckSubstance: returns entity and country in result', async () => {
   const result = parse(await env.factCheckSubstance('Orange S.A.', 'France', FACT_CHECK_CLAIMS));
 
-  assert.equal(result['entity'],  'Orange S.A.');
+  assert.equal(result['entity'], 'Orange S.A.');
   assert.equal(result['country'], 'France');
 });
 
 test('factCheckSubstance: result includes claims array and wht_risk_flags', async () => {
   const result = parse(await env.factCheckSubstance('Orange S.A.', 'France', FACT_CHECK_CLAIMS));
 
-  assert.ok(Array.isArray(result['claims']),         'claims should be an array');
+  assert.ok(Array.isArray(result['claims']), 'claims should be an array');
   assert.ok(Array.isArray(result['wht_risk_flags']), 'wht_risk_flags should be an array');
-  assert.ok(result['overall_assessment'],            'overall_assessment should be present');
+  assert.ok(result['overall_assessment'], 'overall_assessment should be present');
 });
 
 test('factCheckSubstance: empty entity_name returns error', async () => {
@@ -602,8 +605,11 @@ test('consultLegalSources: returns not-available fallback in simulate mode', asy
   // No ragService is injected, so consultLegalSources should degrade gracefully.
   const result = parse(await env.consultLegalSources('What is beneficial owner?'));
 
-  assert.equal(result['available'], false,
-    'simulate mode should return available:false when no ragService is injected');
+  assert.equal(
+    result['available'],
+    false,
+    'simulate mode should return available:false when no ragService is injected'
+  );
   assert.ok(
     (result['note'] as string).includes('rag:build'),
     'note should instruct the user to run rag:build'
@@ -623,15 +629,15 @@ test('consultLegalSources: returns formatted chunks from injected RAG service', 
 
   // A single test chunk representing one section of MF-OBJ-2025.
   const chunk: Chunk = {
-    chunk_id:         'MF-OBJ-2025::test-section',
-    source_id:        'MF-OBJ-2025',
-    section_ref:      '§2.3',
-    section_title:    'Kryteria uznania działalności za rzeczywistą',
-    concept_ids:      ['condition_iii_genuine_business'],
+    chunk_id: 'MF-OBJ-2025::test-section',
+    source_id: 'MF-OBJ-2025',
+    section_ref: '§2.3',
+    section_title: 'Kryteria uznania działalności za rzeczywistą',
+    concept_ids: ['condition_iii_genuine_business'],
     module_relevance: ['WHT'],
-    language:         'pl',
-    text:             '## §2.3 Kryteria uznania działalności za rzeczywistą\n\nTest content.',
-    char_count:       70,
+    language: 'pl',
+    text: '## §2.3 Kryteria uznania działalności za rzeczywistą\n\nTest content.',
+    char_count: 70,
   };
 
   // The embedding vector — we use a 3-dimensional vector to keep the test data small.
@@ -643,16 +649,15 @@ test('consultLegalSources: returns formatted chunks from injected RAG service', 
 
   // mockEmbedFn satisfies the EmbedFunction type: (texts: string[]) => Promise<number[][]>
   // It returns one vector per input text, ignoring the actual text content.
-  const mockEmbedFn = async (texts: string[]): Promise<number[][]> =>
-    texts.map(() => embedding);
+  const mockEmbedFn = async (texts: string[]): Promise<number[][]> => texts.map(() => embedding);
 
-  const taxonomy: TaxonomyConcept[] = [];  // no expansion needed for this test
+  const taxonomy: TaxonomyConcept[] = []; // no expansion needed for this test
 
   const ragService = LegalRagService.fromData({
-    chunks:   [chunk],
-    vectors:  [chunkVector],
+    chunks: [chunk],
+    vectors: [chunkVector],
     taxonomy,
-    embedFn:  mockEmbedFn,
+    embedFn: mockEmbedFn,
   });
 
   // Inject the mock service.  simulate:true avoids loading treaties.json or
@@ -660,19 +665,21 @@ test('consultLegalSources: returns formatted chunks from injected RAG service', 
   const ragEnv = new WhtEnvironment({ simulate: true, ragService });
 
   const result = parse(
-    await ragEnv.consultLegalSources('genuine business activity', ['condition_iii_genuine_business'])
+    await ragEnv.consultLegalSources('genuine business activity', [
+      'condition_iii_genuine_business',
+    ])
   );
 
   assert.equal(result['source'], 'legal_knowledge_base');
   assert.equal(result['query'], 'genuine business activity');
 
   const chunks = result['chunks'] as Record<string, unknown>[];
-  assert.ok(Array.isArray(chunks),  'chunks should be an array');
-  assert.ok(chunks.length > 0,      'should return at least one chunk');
+  assert.ok(Array.isArray(chunks), 'chunks should be an array');
+  assert.ok(chunks.length > 0, 'should return at least one chunk');
 
   const first = chunks[0];
-  assert.equal(first['source_id'],   'MF-OBJ-2025');
+  assert.equal(first['source_id'], 'MF-OBJ-2025');
   assert.equal(first['section_ref'], '§2.3');
   assert.ok(typeof first['score'] === 'number', 'score should be a number');
-  assert.ok(first['text'],           'text should be present');
+  assert.ok(first['text'], 'text should be present');
 });
