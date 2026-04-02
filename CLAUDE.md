@@ -65,8 +65,9 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 20 | Data quality — verify top-10 treaty rates against official sources; `verified: true` in treaties.json | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report | Planned |
 | 22 | Production hardening — session persistence, SSE reconnect, rate limiting, memory pruning | Planned |
-| 23a | Intangibles — Legal & Data Layer: Art. 21 ust. 1 pkt 2a CIT framework; management fee treaty classification (Art. 7 vs Art. 12); MDR hallmarks; RAG source enrichment | Planned |
-| 23b | Intangibles — Code Layer: new `payment_type` options; treaty lookup logic for business profits/PE hook; MDR flag in `WhtReport` | Planned |
+| 23a | Intangibles — Legal & Data Layer: Art. 21.1.2a CIT framework; treaty classification (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG enrichment; IC vs. 3rd-party paths | Planned |
+| 23b | Intangibles — Code Layer: new `payment_type` options; `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook | Planned |
+| 23c | GAAR Tool: Art. 119a Ordynacja podatkowa risk flag; separate tool in `WhtEnvironment.ts`; TBD scope | Planned |
 | 24 | Legal Source Management Workflow — source update protocol; new source onboarding; hierarchy documentation | Planned |
 | 25 | Jurisdiction expansion — treaties.json 36 → 50+ countries | Planned |
 | 26 | WHT v1.0 Major Review — end-to-end demo, all acceptance criteria, `CHANGELOG.md` v1.0, MBA prototype declaration | Planned |

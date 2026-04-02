@@ -3,7 +3,7 @@
 ## Current Status
 **Phase:** Phase 14 complete (2026-04-02). Phase 15 (QA-3: Evals + Negative Tests) is next.
 **Last code session:** Phase 14 — Ghost Activation (v0.17.0, 2026-04-02)
-**Last planning session:** 2026-04-02 — roadmap refinement and Phase 23 split (23a/23b)
+**Last planning session:** 2026-04-02 — Phase 23 design decisions confirmed (23a/23b/23c); total phases 29 → 31
 **Branch:** master
 **Tests:** 251/251 passing
 
@@ -25,11 +25,15 @@ Key decisions from reviewer feedback analysis:
 
 6. **Architectural scaling:** Redis + pgvector tracked in Phase 22. No new phase needed at current RAG corpus size (23 chunks).
 
-### Open questions for Frank (Phase 23a prerequisite):
-- Should MDR reporting obligation be a tool output flag or a report note only?
-- Scope: intercompany management fees only, or also third-party consultants?
-- Ambiguous services (catchall "similar nature"): classify conservatively (treat as Art. 21.1.2a) or ask user?
-- GAAR (Art. 119a Ordynacja podatkowa): flag risk on management fee structures, or WHT statute only?
+### Phase 23 design decisions (confirmed 2026-04-02):
+
+1. **MDR → a tool.** `check_mdr_obligation` will be a new tool in `WhtEnvironment.ts`, to be developed further. Output: `mdr_flag: 'YES' | 'NO' | 'UNCLEAR'` + applicable hallmark + reporting deadline. Adds to `WhtReport`.
+
+2. **Scope: both intercompany and third-party.** For IC: full BO test applies (MF Objaśnienia standard). For third-party: lighter standard (residence cert + declaration). The service classification questionnaire must include a "related party?" routing question.
+
+3. **Ambiguous services → interactive AI questionnaire.** A new `ServiceClassifier.ts` state machine, architecturally modelled on `SubstanceInterviewer.ts` (Phase 10). Questions are generated dynamically by the AI based on the service description — not a fixed list. The AI determines whether the service falls under Art. 21.1.2a or Art. 7 Business Profits.
+
+4. **GAAR → separate tool, TBD, not in Phase 23 scope.** Slotted as Phase 23c (planned). Art. 119a Ordynacja podatkowa has a different legal structure from WHT and warrants its own implementation.
 
 ---
 
@@ -89,8 +93,9 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 23a | Intangibles — Legal & Data Layer | Art. 21.1.2a framework; management fee treaty classification (Art. 7 vs Art. 12); MDR hallmarks; RAG source enrichment |
-| 23b | Intangibles — Code Layer | New `payment_type` options; business profits/PE hook; MDR flag in `WhtReport` |
+| 23a | Intangibles — Legal & Data Layer | Art. 21.1.2a framework; treaty classification rules (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG source enrichment; IC vs. 3rd-party paths |
+| 23b | Intangibles — Code Layer | New `payment_type` options; `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook in `WhtReport` |
+| 23c | GAAR Tool | Art. 119a Ordynacja podatkowa analysis; GAAR risk flag in `WhtReport`; separate tool (TBD scope) |
 | 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow |
 | 25 | Jurisdiction Expansion | treaties.json 36 → 50+ countries |
 | 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria; CHANGELOG v1.0; MBA prototype declaration |

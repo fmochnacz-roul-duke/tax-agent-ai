@@ -256,8 +256,9 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 23a | Intangibles — Legal & Data Layer | Art. 21 ust. 1 pkt 2a CIT framework; management fee treaty classification rules (Art. 7 Business Profits vs Art. 12 Royalties); MDR hallmark identification; RAG source enrichment for management fees |
-| 23b | Intangibles — Code Layer | New `payment_type` options (`management_fee`, `advisory`, `technical_service`); treaty lookup for business profits / PE hook; MDR flag in `WhtReport` |
+| 23a | Intangibles — Legal & Data Layer | Art. 21 ust. 1 pkt 2a CIT framework; treaty classification rules (Art. 7 Business Profits vs Art. 12 Royalties); MDR hallmarks (Art. 86a-86o Ordynacja podatkowa); IC vs. third-party analysis paths; RAG source enrichment for management fees |
+| 23b | Intangibles — Code Layer | New `payment_type` options (`management_fee`, `advisory`, `technical_service`); `ServiceClassifier.ts` — AI-generated dynamic service classification questionnaire; `check_mdr_obligation` tool in `WhtEnvironment.ts`; PE hook in `WhtReport` |
+| 23c | GAAR Tool | `check_gaar_risk` tool — Art. 119a Ordynacja podatkowa analysis; GAAR risk flag in `WhtReport`; scope TBD |
 | 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow |
 | 25 | Jurisdiction Expansion | `treaties.json` 36 → 50+ countries |
 | 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria verified; `CHANGELOG.md` v1.0; MBA prototype declaration |
