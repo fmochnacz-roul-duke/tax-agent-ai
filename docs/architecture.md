@@ -281,29 +281,35 @@ report is suitable for filing or client advice.
 
 ## 9. Test Coverage Map
 
-All 86 tests run without network calls. The test boundary is `WhtEnvironment` — the
+All 169 tests run without network calls. The test boundary is `WhtEnvironment` — the
 Environment class is tested exhaustively; the agent loop and LLM are not unit tested.
 
 ```
-Test file                    Count  What it covers
-───────────────────────────  ─────  ──────────────────────────────────────────
-WhtEnvironment.test.ts          74  All 8 tool implementations (simulate + live modes)
-                                    Parameter validation (invalid enum, out-of-range)
-                                    Country alias resolution (UK, USA, Czechia, etc.)
-                                    Regression guards (valid inputs do not return errors)
-                                    factCheckSubstance delegation + error handling
-FactCheckerAgent.test.ts         8  Simulation mode: entity/country, claim count,
-                                    all UNVERIFIED, INCONCLUSIVE overall, risk flags,
-                                    required field shapes, source text, ISO date format
-Goal.test.ts                     3  Priority sorting, persona inclusion, goal names
-Memory.test.ts                   4  Findings store, getFindings() copy isolation,
-                                    buildFindingsSummary() format
+Test file                      Count  What it covers
+─────────────────────────────  ─────  ──────────────────────────────────────────
+WhtEnvironment.test.ts            74  All 8 tool implementations (simulate + live modes)
+                                       Parameter validation (invalid enum, out-of-range)
+                                       Country alias resolution (UK, USA, Czechia, etc.)
+                                       Regression guards (valid inputs do not return errors)
+                                       factCheckSubstance delegation + error handling
+FactCheckerAgent.test.ts           8  Simulation mode: entity/country, claim count,
+                                       all UNVERIFIED, INCONCLUSIVE overall, risk flags,
+                                       required field shapes, source text, ISO date format
+EntityRegistry.test.ts            26  Upsert semantics, lookup key normalisation,
+                                       audit trail (created_at preserved on re-analysis),
+                                       substance_tier + bo_overall extraction, run_count
+SubstanceInterviewer.test.ts      13  State machine flow, question sequencing,
+                                       DDQ text compilation from interview answers
+Goal.test.ts                       3  Priority sorting, persona inclusion, goal names
+Memory.test.ts                     4  Findings store, getFindings() copy isolation,
+                                       buildFindingsSummary() format
 ```
 
 **What is intentionally not unit tested:**
 - The agent loop (`runAgent`) — it requires live LLM calls; validate via end-to-end runs
 - `InputExtractor` — requires live LLM; validates itself by delegating to `validateInput()`
 - The Express server endpoints — HTTP integration; validate manually or with `supertest`
+- `SubstanceExtractor` — wraps an LLM call; covered indirectly by SubstanceInterviewer tests
 
 ---
 
@@ -358,7 +364,59 @@ interface FactCheckResult {
 
 ---
 
-## 11. Adding a New Tool — Checklist
+## 11. Legal Knowledge RAG Pipeline (Phase 9)
+
+The `consult_legal_sources` tool gives the agent access to exact statutory text via
+retrieval-augmented generation. The pipeline has three offline stages and one runtime stage:
+
+```
+OFFLINE — run once with: npm run rag:build
+─────────────────────────────────────────────────────────────────────────────
+src/rag/sources/*.md          ← authoritative legal text (CIT Act, MF Objaśnienia)
+        │
+        ▼
+Chunker.chunk()               ← splits each source into overlapping text chunks
+        │                        (chunk size ~400 tokens, 50-token overlap)
+        ▼
+Embedder.embed()              ← calls OpenAI text-embedding-3-small for each chunk
+        │                        (1536-dimensional vector per chunk)
+        ▼
+data/knowledge_base/
+  embeddings/vectors.json     ← stored: { chunkId, text, embedding[], source, article }
+
+RUNTIME — called by consult_legal_sources tool
+─────────────────────────────────────────────────────────────────────────────
+Agent calls consult_legal_sources(query)
+        │
+        ▼
+LegalRagService.retrieve(query)
+        │
+        ├── Embedder.embed(query)     ← embeds the query (same model, same space)
+        │
+        ├── Retriever.retrieve()      ← cosine similarity: query vector vs. all chunk vectors
+        │                                top-k chunks returned (default k=5)
+        │
+        └── Returns: chunk text + source reference + similarity score
+                │
+                ▼
+        Agent synthesises the retrieved text into its reasoning
+```
+
+**Key design decisions:**
+- No external vector database — embeddings stored as a plain JSON file. Sufficient for
+  the current corpus size (~23 chunks, 2 source files); swap to Pinecone or pgvector for
+  production scale.
+- OpenAI `text-embedding-3-small` — 1536 dimensions, low cost, high quality for legal text.
+- Rebuild trigger: run `npm run rag:build` after editing any file in `src/rag/sources/`.
+- `last_verified` frontmatter (planned, DOCS-2): each source file will carry the date it was
+  last checked against the official consolidated text, so stale sources are detectable.
+
+**Planned enhancement (Phase 13):** retrieval metadata (chunk count, similarity scores) will
+feed into `computeReportConfidence()` — more hits = higher confidence in the legal basis.
+
+---
+
+## 12. Adding a New Tool — Checklist
 
 1. **Define the tool** in `buildWhtTools()` (BeneficialOwnerAgent.ts):
    - `name`, `description` (model reads this — write it clearly)

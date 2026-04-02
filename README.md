@@ -134,6 +134,29 @@ Treaty data: 36 countries (EU-27 + UK, Switzerland, Norway, USA, Canada, Japan, 
 
 ---
 
+## Legal Knowledge RAG (Phase 9)
+
+The `consult_legal_sources` tool gives the agent direct access to exact statutory text.
+
+**How it works:**
+
+```
+Offline (npm run rag:build):
+  src/rag/sources/*.md  →  Chunker  →  Embedder (text-embedding-3-small)  →  vectors.json
+
+Runtime (per tool call):
+  query  →  embed query  →  cosine similarity vs. all chunks  →  top-5 chunks returned
+```
+
+Sources currently embedded: Art. 4a pkt 29 CIT Act (beneficial owner definition),
+MF Objaśnienia podatkowe 2019 (substance criteria, conduit indicators, LTA provisions).
+
+No external vector database is used — embeddings are stored in
+`data/knowledge_base/embeddings/vectors.json`. Run `npm run rag:build` (requires
+`OPENAI_API_KEY`) to rebuild the index after editing source files.
+
+---
+
 ## Multi-agent architecture (Phase 7)
 
 Phase 7 introduced a second agent that cross-verifies substance claims against public records:
@@ -269,7 +292,11 @@ npm test
 | 9 | Legal knowledge RAG — tax taxonomy, MF Objaśnienia 2025, CIT Act provisions | ✓ Complete |
 | 11 | Entity registry — JSON persistence, audit trail, "Past Analyses" panel in web UI | ✓ Complete |
 | 12 | Treaty rate verification + human review workflow | Next |
-| 13+ | Third-party vendor workflow; Pillar Two module; TP screening; batch processing | Future |
+| 13 | Provenance/citations field on `WhtReport`; RAG retrieval metadata feeds confidence scoring | Planned |
+| QA-1 | ESLint + Prettier + c8 coverage + build-as-precondition in `npm test` + treaty snapshot test | Planned |
+| QA-2 | Zod runtime validation; Python/TS contract tests for schema drift | Planned |
+| DOCS-2 | `docs/api.md` (REST + SSE + schemas); RAG pipeline docs; `last_verified` on RAG sources | Planned |
+| Future | Pillar Two (GloBE) module; TP screening; PE risk; CbCR analysis; batch processing | Future |
 
 ---
 
@@ -306,9 +333,22 @@ The `module1/`, `module2/`, and `module3/` directories contain code written duri
 
 | File | Contents |
 |---|---|
+| `docs/architecture.md` | Full architecture — component map, data flows, RAG pipeline, multi-agent topology, test coverage map |
+| `docs/api.md` | REST API reference — all endpoints, SSE event types, `AgentInput` / `WhtReport` / `RegistryEntry` schemas |
 | `docs/agent-design-guide.md` | Reusable patterns — GAME, MATE, async tools, multi-agent, SSE streaming, conversational extraction |
-| `docs/architecture.md` | Full project architecture — component map, data flows, multi-agent topology, test coverage map |
+| `CHANGELOG.md` | Phase-by-phase change history (Keep a Changelog format) |
+| `SECURITY.md` | API key policy, PII guidance, legal disclaimer |
 | `data/mli_flags_legend.md` | Explanation of 10 MLI flag codes used in treaties.json |
+
+---
+
+## Feedback and issues
+
+Found a bug or have a suggestion? Open an issue on GitHub:
+[github.com/fmochnacz-roul-duke/tax-agent-ai/issues](https://github.com/fmochnacz-roul-duke/tax-agent-ai/issues)
+
+Use the bug report template for reproducible problems. For questions about the legal
+logic or treaty data, include the entity name, country, and income type.
 
 ---
 
