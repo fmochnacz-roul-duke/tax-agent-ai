@@ -1,9 +1,27 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 12 COMPLETE — Treaty rate verification (12a) + Human review workflow (12b).
+**Phase:** Phase 13 COMPLETE — Provenance/citations on WhtReport.
 **Date of last session:** 2026-04-02
-**Branch:** master (feature/phase12a + feature/phase12b merged, tagged v0.12a.0 + v0.12b.0)
+**Branch:** master (feature/phase13-provenance merged, tagged v0.13.0)
+
+### Phase 13 summary — Provenance/Citations on WhtReport
+- `src/agents/BeneficialOwnerAgent.ts`:
+  - `Citation` interface (exported) — `tool`, `source`, `finding_key?`, `section_ref?`, `source_id?`, `chunk_count?`, `top_score?`
+  - `FINDING_KEY_FOR_TOOL` map — maps each tool to its memory key (or undefined for RAG)
+  - `extractCitation(toolName, result)` — parses tool result JSON; extracts `source` for all tools + chunk metadata for `consult_legal_sources`
+  - `computeReportConfidence(findings, citations)` — extended with RAG legal grounding gate: ≥2 chunks with top score ≥0.55 required for HIGH confidence
+  - `hasRagLegalGrounding(citations)` — helper that evaluates the RAG threshold
+  - `WhtReport.citations: Citation[]` — one entry per executed tool call, in order
+  - `buildReport` / `saveReport` — now accept and include `citations`
+  - Agent loop: initialises `citations: Citation[]`, collects after every (non-skipped) tool result, passes to all three `saveReport` call sites
+  - `require.main === module` guard on `main()` — fixes import side-effect (tests can now import the module without triggering CLI exit)
+- `src/agents/BeneficialOwnerAgent.test.ts` — **19 new tests** covering:
+  - LOW/MEDIUM/HIGH confidence paths with and without RAG citations
+  - Fact-check UNDERMINES/CONFIRMS/INCONCLUSIVE interaction with RAG
+  - Exact threshold tests (chunk_count=2, top_score=0.55)
+  - `parseFindings` edge cases
+- **215/215 tests passing**
 
 ### Phase 12a summary — Automated Treaty Rate Verification
 - `src/agents/TreatyVerifierAgent.ts` — `verifyRate(country, incomeType, claimedRate, treatyArticle)` → `TreatyRateVerification`
@@ -29,13 +47,12 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Phase 12 is merged (12a + 12b). Let's start Phase 13 — Provenance/citations on WhtReport."
+> "Phase 13 is merged. Let's start QA-1 — ESLint, Prettier, coverage, snapshot test."
 
 ### Upcoming phases (planned, in order)
 
 | Phase | Description |
 |---|---|
-| 13 | Provenance/citations field on `WhtReport`; RAG retrieval metadata feeds `computeReportConfidence()` |
 | QA-1 | ESLint + Prettier + `npm run lint`; c8 coverage; build-as-precondition in `npm test`; treaty data snapshot test |
 | QA-2 | Zod runtime validation replacing `validateInput()`; Python/TS contract tests for `SubstanceResult` / `DempeResult` schema drift |
 | DOCS-2 | `docs/api.md` already done; add `last_verified` frontmatter to RAG source `.md` files |
