@@ -1,22 +1,27 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 11 COMPLETE — Entity Registry (JSON persistence + audit trail + web UI panel).
+**Phase:** Phase 12 COMPLETE — Treaty rate verification (12a) + Human review workflow (12b).
 **Date of last session:** 2026-04-02
-**Branch:** master (feature/phase11-entity-registry merged, tagged v0.11.0)
+**Branch:** master (feature/phase12a + feature/phase12b merged, tagged v0.12a.0 + v0.12b.0)
 
-### Phase 11 summary (this session)
-- `src/server/EntityRegistry.ts` — EntityRegistry class + extractSubstanceFields() helper + getRegistry() singleton
-  - Persists to `data/registry.json` (gitignored)
-  - Upsert semantics: re-analysis updates entry but preserves `created_at` and `review_status`
-  - Lookup key: entity_name + country (lowercased, case-insensitive)
-  - Extracts `substance_tier` + `bo_overall` from parsed findings
-- `src/server/EntityRegistry.test.ts` — 26 tests (all pure logic, no API calls)
-- `src/server/index.ts` — `getRegistry().save(report, outputPath)` after each analysis + `GET /registry` endpoint
-- `src/agents/BeneficialOwnerAgent.ts` — `registry.save(report, outputPath)` in CLI `main()`
-- `src/public/index.html` — "Past Analyses" collapsible panel in right column; loads on init + refreshes after each run
-- `.gitignore` — `data/registry.json` added
-- **169/169 tests passing**
+### Phase 12a summary — Automated Treaty Rate Verification
+- `src/agents/TreatyVerifierAgent.ts` — `verifyRate(country, incomeType, claimedRate, treatyArticle)` → `TreatyRateVerification`
+  - Uses Gemini REST API + Google Search grounding; falls back to simulation if no GEMINI_API_KEY
+  - Status: `CONFIRMED` | `DIFFERS` | `NOT_FOUND`
+- `src/agents/TreatyVerifierAgent.test.ts` — 15 simulate-mode tests
+- `src/agents/WhtEnvironment.ts` — added `verified_at?`, `verified_sources?`, `verification_note?` to `DividendRate` and `FlatRate`
+- `scripts/verifyTreaties.ts` — batch script: loops 36 countries × 3 income types, writes results back to treaties.json
+- `package.json` — added `npm run verify:treaties`
+
+### Phase 12b summary — Human Review Workflow
+- `src/server/EntityRegistry.ts` — extended `RegistryEntry` with `reviewer_note?`, `reviewed_at?`, `reviewed_by?`; added `updateReviewStatus()` method
+- `src/server/EntityRegistry.test.ts` — 12 new tests for `updateReviewStatus()`
+- `src/server/index.ts` — added `GET /registry/entry` and `POST /registry/review` endpoints
+- `scripts/listUnreviewed.ts` — CLI: lists all draft entries pending review
+- `package.json` — added `npm run review:list`
+- `src/public/index.html` — clickable registry entries open a review drawer; drawer has reviewer name input, note textarea, "Mark Reviewed" / "Sign Off" / "Reset to Draft" buttons; POST /registry/review; panel refreshes after action
+- **196/196 tests passing**
 
 ---
 
@@ -24,7 +29,54 @@
 
 Open Claude Code in `C:\Users\fmoch\projects\tax-agent-ai\` and say:
 
-> "Phase 11 is merged and tagged v0.11.0. Let's start Phase 12 — Treaty rate verification + human review workflow."
+> "Phase 12 is merged (12a + 12b). Let's start Phase 13 — Provenance/citations on WhtReport."
+
+### Upcoming phases (planned, in order)
+
+| Phase | Description |
+|---|---|
+| 13 | Provenance/citations field on `WhtReport`; RAG retrieval metadata feeds `computeReportConfidence()` |
+| QA-1 | ESLint + Prettier + `npm run lint`; c8 coverage; build-as-precondition in `npm test`; treaty data snapshot test |
+| QA-2 | Zod runtime validation replacing `validateInput()`; Python/TS contract tests for `SubstanceResult` / `DempeResult` schema drift |
+| DOCS-2 | `docs/api.md` already done; add `last_verified` frontmatter to RAG source `.md` files |
+
+### Planning session decisions (2026-04-02)
+
+**Code quality:**
+- Tests stay colocated — not moving to a `tests/` directory. Current 169-test suite is well-structured.
+- `strict: true` already on in `tsconfig.json` — no change needed.
+- Property-based testing (fast-check): skip for now; revisit after Zod is adopted.
+- Build-as-precondition: add `tsc --noEmit &&` prefix to `npm test` in `package.json` (QA-1).
+- c8 coverage: add as dev dependency with `npm run test:coverage` (QA-1).
+- Treaty data snapshot test: hash `treaties.json` and compare to detect unintended edits (QA-1).
+- Python/TS contract tests: `SubstanceResult` and `DempeResult` Pydantic↔TypeScript drift — add as part of QA-2.
+
+**Documentation decisions:**
+- "How RAG works" section added to README. Full pipeline diagram added to `docs/architecture.md` Section 11.
+- `last_verified` frontmatter on RAG source `.md` files: planned for DOCS-2 — each source carries the date last checked against the official consolidated text.
+- `docs/api.md` created: full REST endpoint reference, SSE event types, `AgentInput` / `WhtReport` / `RegistryEntry` schemas.
+- `docs/architecture.md` Section 9 updated: test count 86 → 169; all test files documented.
+
+**Grounding / provenance (Phase 13):**
+- Every `WhtReport` should eventually carry a `citations[]` field linking each conclusion to its data source (tool name + source field). Requires schema change to `WhtReport`, `AgentEvent`, and `saveReport()`.
+- RAG retrieval metadata (chunk count, similarity scores) should feed `computeReportConfidence()` — more hits = stronger legal basis signal.
+- `overall_assessment: CONFIRMS` from FactChecker already affects confidence — pattern to extend.
+
+**GitHub files:**
+- `.github/ISSUE_TEMPLATE/bug_report.md` created.
+- `.github/pull_request_template.md` created — checklist matches project conventions.
+- Feedback/Issues section added to README pointing to GitHub Issues.
+- README documentation table updated to include `docs/api.md`, `CHANGELOG.md`, `SECURITY.md`.
+
+### DOCS-1 complete (2026-04-02)
+- `CHANGELOG.md` — full phase history in Keep-a-Changelog format
+- `LICENSE` — ISC, copyright Franciszek Mochnacz 2026
+- `SECURITY.md` — API key policy, PII guidance, legal disclaimer
+
+### GITHUB-1 complete (2026-04-02)
+- `.github/ISSUE_TEMPLATE/bug_report.md`
+- `.github/pull_request_template.md`
+- README: RAG section, updated roadmap, updated docs table, feedback/issues section
 
 Verify environment:
 ```

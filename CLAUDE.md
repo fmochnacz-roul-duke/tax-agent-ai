@@ -48,6 +48,13 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 9 | Legal Knowledge RAG — tax taxonomy, Chunker/Embedder/Retriever/LegalRagService, consult_legal_sources tool | ✓ Complete |
 | 10 | Substance interview — 5-question chat flow, TypeScript LLM extractor, any entity assessed | ✓ Complete |
 | 11 | Entity Registry — JSON persistence, audit trail, collapsible web UI panel | ✓ Complete |
+| 12 | Treaty rate verification + human review workflow | Planned |
+| 13 | Provenance/citations field on `WhtReport`; RAG retrieval metadata feeds `computeReportConfidence()` | Planned |
+| QA-1 | ESLint + Prettier + `npm run lint`; c8 coverage; build-as-precondition in `npm test`; treaty data snapshot test | Planned |
+| QA-2 | Zod runtime validation replacing `validateInput()`; Python/TS contract tests for `SubstanceResult` / `DempeResult` schema drift | Planned |
+| DOCS-1 | CHANGELOG.md + LICENSE + SECURITY.md | ✓ Complete |
+| DOCS-2 | `docs/api.md` (REST endpoints + SSE + WhtReport schema); RAG pipeline section in `docs/architecture.md`; `last_verified` frontmatter on RAG source files | Planned |
+| GITHUB-1 | `.github/` issue template + PR template; README feedback section + docs table update | ✓ Complete |
 
 ---
 
@@ -190,6 +197,7 @@ See `.env.example` for the complete configuration file with comments.
 - Stage files by name — never `git add .`
 - Commit messages: present tense, under 60 characters, specific
 - Always run build + tests before merging
+- **Push to GitHub at the end of every session** (`git push`) — `git commit` is local only; GitHub does not update until you push
 
 ### Agent design
 - Follow the GAME framework: Goals / Actions / Memory / Environment
