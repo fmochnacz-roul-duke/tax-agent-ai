@@ -5,6 +5,37 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.20.0] — 2026-04-03 — Phase 17: Confidence UX + HITL
+
+### Phase 17 — Confidence UX + HITL
+
+#### Web UI — report card enhancements (`src/public/index.html`)
+- **`bo_overall` badge** added to the report card alongside the data confidence badge — machine-readable BO verdict now visible immediately after analysis
+- **`DRAFT ONLY` banner** shown at the top of the report card whenever `data_confidence === 'LOW'`; includes the reason (simulated substance, unverified rates)
+- **`report-low` CSS class** applied to the card for LOW confidence — reduced opacity + red border to signal that the report is for analysis only
+- **UNCERTAIN banner** shown when `bo_overall === 'UNCERTAIN'` — prompts reviewer that the BO test is inconclusive and human review is required before relying on the report
+- **Conduit risk banner** shown when `conduit_risk === true` — alerts that an intermediate structure may exist and the ultimate beneficial owner is in another jurisdiction
+- **New badge colours** `bo-CONFIRMED`, `bo-REJECTED`, `bo-NO_TREATY` added (green / red / purple) to match the existing `bo-UNCERTAIN` and registry row badges
+- CSS: `.draft-watermark`, `.conduit-banner`, `.uncertain-banner` styles added
+
+#### Registry auto-draft rules extended (`src/server/EntityRegistry.ts`)
+- `save()` now forces `review_status: 'draft'` on **three** conditions (previously one):
+  - `bo_overall === 'REJECTED'` — conduit structure; ultimate BO needs investigation (Phase 15)
+  - `bo_overall === 'UNCERTAIN'` — BO test inconclusive; signing off would be premature (Phase 17, new)
+  - `data_confidence === 'LOW'` — simulated substance / unverified rates; not safe to act on (Phase 17, new)
+- Comment block updated to document all three conditions and their rationale
+
+#### Tests (302 total, +4 new, 3 updated)
+- 3 Phase 15 force-draft tests updated: CONFIRMED and NO_TREATY scenarios now use `HIGH` confidence so they correctly test the "preserve sign-off" path (previously LOW confidence would have triggered the new force-draft rule)
+- UNCERTAIN test updated: was "preserves signed_off" → now correctly expects 'draft' after the behavior change
+- **4 new tests** in `EntityRegistry.test.ts` (Phase 17 force-draft suite):
+  - UNCERTAIN resets signed_off to draft
+  - LOW data_confidence resets signed_off to draft
+  - LOW data_confidence forces draft regardless of CONFIRMED bo_overall
+  - CONFIRMED + MEDIUM preserves signed_off (positive-case verification)
+
+---
+
 ## [v0.19.0] — 2026-04-03 — DOCS-3 + Phase 16: Legal Source Hierarchy
 
 ### DOCS-3 — Documentation polish

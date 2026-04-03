@@ -1,11 +1,11 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 16 complete (2026-04-03). Phase 17 (Confidence UX + HITL) is next.
-**Last code session:** DOCS-3 + Phase 16 — Legal Source Hierarchy (v0.19.0, 2026-04-03)
+**Phase:** Phase 17 complete (2026-04-03). Phase 18 (UC2 Third-party Vendor Workflow) is next.
+**Last code session:** Phase 17 — Confidence UX + HITL (v0.20.0, 2026-04-03)
 **Last planning session:** 2026-04-02 — Phase 23 design decisions confirmed (23a/23b/23c); total phases 29 → 31
-**Branch:** master (DOCS-3 + phase-16 merged)
-**Tests:** 298/298 passing
+**Branch:** master (phase-17 merged)
+**Tests:** 302/302 passing
 
 ---
 
@@ -55,29 +55,29 @@ Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. 
 
 ## How to Resume Next Session
 
-Phase 16 is complete and merged to master. Start Phase 17 on a new branch.
+Phase 17 is complete and merged to master. Start Phase 18 on a new branch.
 
 ```
 git checkout master
 git pull
-git checkout -b feature/phase-17-confidence-ux
+git checkout -b feature/phase-18-uc2-vendor
 npm run build    ← zero errors
-npm test         ← 298/298 passing
+npm test         ← 302/302 passing
 npm start        ← web UI at http://localhost:3000
 ```
 
-Phase 17 — Confidence UX + HITL:
-- UI grey-out for LOW confidence reports
-- "Draft Only" watermark in web UI when `data_confidence === 'LOW'`
-- Auto-set `review_status: 'draft'` in registry when `bo_overall === 'UNCERTAIN'` or `data_confidence === 'LOW'`
-- Potential: expose `bo_overall` and `legal_hierarchy` fields in the report card UI
+Phase 18 — UC2 Third-party Vendor Workflow:
+- `classify_vendor_risk` tool in `WhtEnvironment.ts`
+- Document checklist per payment type (dividend / interest / royalty)
+- No-DDQ path for unrelated third parties (lighter standard: residence cert + declaration)
 
-Phase 16 summary (v0.19.0):
-- `source_type` parameter on `consult_legal_sources` tool (Zod `SourceTypeSchema`)
-- `source_type` + `legal_hierarchy` added to `Citation` interface
-- `source_type` filter in `Retriever.search()` — AND-combined with existing filters
-- `LEGAL_HIERARCHY` map in `WhtEnvironment`: statute→1, directive/treaty→2, guidance→3
-- 14 new tests (Chunker +4, Retriever +5, WhtEnvironment +5) → 298 total
+Phase 17 summary (v0.20.0):
+- `DRAFT ONLY` banner + grey-out (`report-low` CSS class) for LOW confidence report cards
+- `bo_overall` badge displayed in the report card alongside confidence badge
+- UNCERTAIN banner when `bo_overall === 'UNCERTAIN'`; conduit risk banner when `conduit_risk === true`
+- New badge colours: `bo-CONFIRMED`, `bo-REJECTED`, `bo-NO_TREATY`
+- `EntityRegistry.save()`: force-draft extended to UNCERTAIN `bo_overall` + LOW `data_confidence`
+- 4 new tests → 302 total (3 Phase 15 tests also updated for correctness)
 
 ---
 
@@ -133,6 +133,17 @@ official Polish treaty PDFs (DzU references).
 ---
 
 ## Completed Phases (full history)
+
+### Phase 17 — Confidence UX + HITL (v0.20.0 — 2026-04-03)
+- `DRAFT ONLY` banner added to report card when `data_confidence === 'LOW'` (red, with explanation text)
+- `report-low` CSS class applied to report card for LOW confidence — opacity + red border
+- `bo_overall` badge added to report card alongside the confidence badge
+- UNCERTAIN banner shown when `bo_overall === 'UNCERTAIN'`
+- Conduit risk banner shown when `conduit_risk === true`
+- New badge colours: `bo-CONFIRMED` (green), `bo-REJECTED` (red), `bo-NO_TREATY` (purple)
+- `EntityRegistry.save()`: force-draft rule extended: REJECTED (Phase 15) + UNCERTAIN + LOW confidence all force `review_status: 'draft'`
+- 4 new tests; 3 Phase 15 tests updated (CONFIRMED/NO_TREATY now use HIGH confidence, UNCERTAIN test behavior corrected)
+- 302/302 tests
 
 ### Phase 16 — Legal Source Hierarchy + DOCS-3 (v0.19.0 — 2026-04-03)
 - `SourceType` type exported from `src/rag/types.ts`: `statute | directive | treaty | convention | guidance | oecd | commentary`
