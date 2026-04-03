@@ -4,6 +4,7 @@ language: pl
 module_relevance: [WHT]
 concept_ids: [beneficial_owner, condition_i_economic_title, condition_ii_no_passthrough, condition_iii_genuine_business, conduit_entity, holding_company]
 last_verified: 2026-04-02
+source_type: guidance
 ---
 
 # Objaśnienia podatkowe z 3 lipca 2025 r. dotyczące stosowania klauzuli rzeczywistego właściciela dla celów podatku u źródła

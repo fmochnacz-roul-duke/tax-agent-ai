@@ -55,7 +55,7 @@ Goals are injected into the system prompt via `buildSystemPrompt()`.
 
 Nine tools defined in `BeneficialOwnerAgent.ts` with JSON Schema. All tool implementations are in `WhtEnvironment.ts`. The agent never directly accesses external data — it calls tools, tools call the environment.
 
-**Zod validation layer (QA-2):** `AgentInput` is validated at entry via `AgentInputSchema` (Zod v4). `SubstanceResult` and `DempeResult` are validated at environment boundaries via `contracts.ts`. `z.infer<>` derives the TypeScript types — no separate interfaces to drift.
+**Zod validation layer (QA-2 + Phase 16):** `AgentInput` is validated at entry via `AgentInputSchema` (Zod v4). `SubstanceResult` and `DempeResult` are validated at environment boundaries via `contracts.ts`. `SourceTypeSchema` (Phase 16) validates the `source_type` parameter on `consult_legal_sources`. `z.infer<>` derives the TypeScript types throughout — no separate interfaces to drift.
 
 ### Memory — `Memory.ts`
 
@@ -73,7 +73,7 @@ All tool implementations. The environment is the isolation boundary between the 
 1. **Live**: `check_treaty`, `get_treaty_rate`, `check_mli_ppt` — reads `data/treaties.json`
 2. **Live + fallback**: `check_entity_substance`, `analyse_dempe` — calls Python DDQ service if configured, falls back to TypeScript extractor, then simulation
 3. **Optional live**: `fact_check_substance` — calls FactCheckerAgent (Gemini) if `GEMINI_API_KEY` is set
-4. **Semantic retrieval**: `consult_legal_sources` — cosine search over pre-embedded legal chunks (CIT Act + MF Objaśnienia)
+4. **Semantic retrieval**: `consult_legal_sources` — cosine search over pre-embedded legal chunks (CIT Act + MF Objaśnienia). Phase 16 adds a `source_type` filter parameter and returns `source_type` + `legal_hierarchy` (1=statute, 3=guidance) in each chunk.
 
 ---
 

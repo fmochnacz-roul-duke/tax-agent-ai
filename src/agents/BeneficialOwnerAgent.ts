@@ -366,6 +366,17 @@ function buildWhtTools(): Tool[] {
               'holding_company, conduit_entity, passthrough_obligation_contractual, ' +
               'passthrough_obligation_factual, genuine_business_activity',
           },
+          source_type: {
+            type: 'string',
+            enum: ['statute', 'directive', 'treaty', 'convention', 'guidance', 'oecd', 'commentary', 'any'],
+            description:
+              'Optional: restrict results to a specific legal authority tier. ' +
+              'Use "statute" to retrieve only primary legislation (CIT Act), ' +
+              '"guidance" for ministerial guidance (MF Objaśnienia) only, ' +
+              'or omit / pass "any" to search all source types. ' +
+              'When grounding a BO determination in statute, prefer "statute". ' +
+              'When verifying an MF interpretation, use "guidance".',
+          },
           top_k: {
             type: 'number',
             description: 'Number of results to return (1–5, default 3)',
@@ -494,6 +505,23 @@ export const AgentInputSchema = z.object({
 // interface automatically — so the runtime shape and the compile-time type are
 // always identical.
 export type AgentInput = z.infer<typeof AgentInputSchema>;
+
+// ── Phase 16: SourceTypeSchema ────────────────────────────────────────────────
+//
+// Zod domain-narrowing for the source_type parameter on consult_legal_sources.
+//
+// Why a Zod schema here (not just a TypeScript type)?
+//   The tool parameter arrives as a raw JSON string parsed by the LLM — it is
+//   'unknown' at runtime.  z.enum validates it AND narrows the TypeScript type
+//   in one step, so the WhtEnvironment receives a fully-typed value.
+//
+// 'any' is a special sentinel: the agent passes it when it wants all source types.
+// WhtEnvironment converts 'any' to undefined before passing to the Retriever.
+export const SourceTypeSchema = z.enum(
+  ['statute', 'directive', 'treaty', 'convention', 'guidance', 'oecd', 'commentary', 'any'] as const,
+  { error: "source_type must be one of: statute, directive, treaty, convention, guidance, oecd, commentary, any." }
+);
+export type SourceTypeParam = z.infer<typeof SourceTypeSchema>;
 
 // validateInput() is now a thin wrapper around Zod's .parse() method.
 //
@@ -708,6 +736,15 @@ export interface Citation {
   source_id?: string;
   chunk_count?: number;
   top_score?: number;
+  // Phase 16: legal authority tier of the top-matched source.
+  // Populated for RAG citations (consult_legal_sources) only.
+  // Mirrors SourceType from src/rag/types.ts — duplicated here to keep
+  // the Citation interface independent of the RAG layer import.
+  source_type?: string;
+  // Phase 16: numeric authority rank (1 = statute, 2 = directive/treaty,
+  // 3 = guidance, 4 = commentary). Lower = higher authority.
+  // Populated for RAG citations only; absent for non-RAG tools.
+  legal_hierarchy?: number;
 }
 
 // Maps each tool name to the memory key used when recording its result.
@@ -764,6 +801,9 @@ function extractCitation(toolName: string, result: string): Citation {
           if (typeof top['section_ref'] === 'string')
             citation.section_ref = top['section_ref'] as string;
           if (typeof top['source_id'] === 'string') citation.source_id = top['source_id'] as string;
+          // Phase 16: capture the legal authority tier of the top-matched source.
+          if (typeof top['source_type'] === 'string') citation.source_type = top['source_type'] as string;
+          if (typeof top['legal_hierarchy'] === 'number') citation.legal_hierarchy = top['legal_hierarchy'] as number;
         }
       }
     }
@@ -1395,18 +1435,26 @@ async function runAgent(
             memory.recordFinding('fact_check_result', result);
             break;
 
-          case 'consult_legal_sources':
+          case 'consult_legal_sources': {
             // RAG results are context for reasoning, not a structured finding about
             // the entity.  We return the retrieved chunks directly into the conversation
             // so the agent can cite them in its final answer.  We intentionally do NOT
             // call memory.recordFinding() here — calling the tool twice with different
             // queries is valid and should not be blocked by the duplicate guard.
+            //
+            // Phase 16: source_type is an optional filter the LLM may pass.
+            // 'any' is the sentinel for "no filter" — convert it to undefined
+            // so WhtEnvironment receives the canonical undefined-means-all-types form.
+            const rawSourceType = args['source_type'] as string | undefined;
+            const sourceTypeArg = rawSourceType === 'any' ? undefined : rawSourceType;
             result = await env.consultLegalSources(
               args['query'] as string,
               args['concept_ids'] as string[] | undefined,
-              args['top_k'] as number | undefined
+              args['top_k'] as number | undefined,
+              sourceTypeArg
             );
             break;
+          }
 
           default:
             result = JSON.stringify({ error: `Unknown tool: ${call.name}` });

@@ -5,6 +5,60 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.19.0] — 2026-04-03 — DOCS-3 + Phase 16: Legal Source Hierarchy
+
+### DOCS-3 — Documentation polish
+
+- **`CONTRIBUTING.md`** — new file: prerequisites, quickstart, build/test gates, branch naming, PR flow, roadmap change process, SECURITY.md link
+- **`docs/README.md`** — new file: one-line-per-file index of all docs (architecture, api, agent-design-guide, vision, FAQ)
+- **`docs/FAQ.md`** — new file: 7 seed entries covering verified:false rates, two LLM tiers, simulated substance, confidence scoring, Express auth, single-file frontend, `bo_overall` vs. `data_confidence`
+- **`README.md`** restructured: disclaimer + quickstart + badges at top; docs map table; ASCII agent flow diagram; all three roadmap arcs in roadmap table; learning scaffolding moved to bottom
+- **`SECURITY.md`** restructured: Legal Disclaimer moved to first section; responsible disclosure contact added; Dependency Hygiene section (npm audit + monthly review) added; Access Control section (unauthenticated Express) added
+- **`CLAUDE.md`** updated: DOCS-3 phase added to table; in-code doc-block convention added; Merge Checklist (7 steps) added; test count note updated
+
+### Phase 16 — Legal Source Hierarchy
+
+#### `SourceType` in RAG layer (`src/rag/types.ts`)
+- **`SourceType`** type exported: `'statute' | 'directive' | 'treaty' | 'convention' | 'guidance' | 'oecd' | 'commentary'`
+- **`source_type?: SourceType`** added to `SourceFrontmatter`, `Chunk`, `CitedChunk`
+- **`source_type?: SourceType`** added to `RetrieveOptions` — new authority-tier filter
+
+#### Chunker (`src/rag/Chunker.ts`)
+- `parseFmFields()` reads `source_type` from frontmatter; unrecognised values are silently dropped (not an error)
+- `source_type` propagated to every `Chunk` via conditional spread (absent when not declared)
+
+#### Retriever (`src/rag/Retriever.ts`)
+- `search()` now accepts `source_type` option (AND-combined with existing filters)
+- Chunks without `source_type` always pass the filter (absence = unclassified, not excluded)
+- `source_type` forwarded to `CitedChunk` via conditional spread
+
+#### Source files updated
+- `data/knowledge_base/sources/PL-CIT-2026-WHT.md` — `source_type: statute` added to frontmatter
+- `data/knowledge_base/sources/MF-OBJ-2025.md` — `source_type: guidance` added to frontmatter
+
+#### `consult_legal_sources` tool (`BeneficialOwnerAgent.ts`)
+- New `source_type` parameter (enum: statute | directive | treaty | convention | guidance | oecd | commentary | any) added to tool definition
+- Agent dispatch passes `source_type` (converts `'any'` sentinel to `undefined` before forwarding)
+- **`SourceTypeSchema`** Zod enum exported: validates and narrows the `source_type` parameter at runtime
+- **`SourceTypeParam`** type derived via `z.infer<typeof SourceTypeSchema>`
+
+#### `Citation` interface extended (`BeneficialOwnerAgent.ts`)
+- **`source_type?: string`** — legal authority tier of the top-matched RAG source
+- **`legal_hierarchy?: number`** — numeric rank (1=statute, 2=directive/treaty, 3=guidance, 4=commentary)
+- `extractCitation()` populates both fields from the RAG chunk output
+
+#### `WhtEnvironment.consultLegalSources()` (`WhtEnvironment.ts`)
+- Signature extended: `consultLegalSources(query, conceptIds?, topK?, sourceType?)`
+- **`LEGAL_HIERARCHY`** static map: statute→1, directive/treaty/convention→2, guidance/oecd→3, commentary→4
+- Each chunk in the output now includes `source_type` and `legal_hierarchy` when the chunk carries a `source_type`
+
+#### Tests (298 total, +14 new)
+- `Chunker.test.ts` +4: reads `source_type: statute`, reads `source_type: guidance`, undefined when absent, ignores unrecognised values
+- `Retriever.test.ts` +5: filters to statute, filters to guidance, no filter returns all, forwards `source_type` in `CitedChunk`, omits when absent
+- `WhtEnvironment.test.ts` +5: statute chunk hierarchy 1, guidance chunk hierarchy 3, chunk without type omits fields, `source_type` filter returns only matching, `undefined` filter returns all
+
+---
+
 ## [v0.18.0] — 2026-04-02 — Phase 15: QA-3 Evals + Negative Tests
 
 ### Machine-readable BO verdict

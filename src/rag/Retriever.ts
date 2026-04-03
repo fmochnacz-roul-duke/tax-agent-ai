@@ -28,8 +28,9 @@ export class Retriever {
   //   concept_ids — chunk must share at least one concept_id with the filter list
   //   module      — chunk must include this string in its module_relevance list
   //   source_ids  — chunk's source_id must be in this list
+  //   source_type — chunk's source_type must match (Phase 16)
   search(queryEmbedding: number[], options: RetrieveOptions = {}): CitedChunk[] {
-    const { concept_ids, module: moduleName, source_ids, top_k = 5 } = options;
+    const { concept_ids, module: moduleName, source_ids, source_type, top_k = 5 } = options;
 
     // Step 1: apply filters
     const candidates = this.chunks.filter((chunk) => {
@@ -47,6 +48,12 @@ export class Retriever {
 
       if (source_ids && source_ids.length > 0) {
         if (!source_ids.includes(chunk.source_id)) return false;
+      }
+
+      // Phase 16: filter by legal authority tier when the caller specifies one.
+      // Chunks without a source_type are kept — absence means "unclassified", not excluded.
+      if (source_type !== undefined) {
+        if (chunk.source_type !== undefined && chunk.source_type !== source_type) return false;
       }
 
       return true;
@@ -73,6 +80,8 @@ export class Retriever {
       // The spread only adds the key when the source file carries the date —
       // absence is intentional (source not yet reviewed by a human).
       ...(chunk.last_verified !== undefined ? { last_verified: chunk.last_verified } : {}),
+      // Phase 16: forward source_type so the agent knows the authority tier.
+      ...(chunk.source_type !== undefined ? { source_type: chunk.source_type } : {}),
       text: chunk.text,
       score,
     }));

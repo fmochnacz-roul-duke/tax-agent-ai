@@ -58,8 +58,8 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | GITHUB-1 | `.github/` issue template + PR template; README feedback section + docs table | ✓ Complete |
 | 14 | Ghost Activation — wire TreatyVerifierAgent into live flow; surface `last_verified`; confidence drops on rate mismatch | ✓ Complete |
 | 15 | QA-3: Evals + Negative Tests — `BoOverall` type; `bo_overall`+`conduit_risk` on `WhtReport`; `data/golden_cases/` (9 cases); `scripts/runEvals.ts`; Triangulation Rule; 8 negative tests; Brazil in treaties.json | ✓ Complete |
-| **16** | **Legal Source Hierarchy** — `source_type` on `consult_legal_sources`; Art./Sec. refs in `Citation`; Zod domain-narrowing | **Next** |
-| 16 | Legal Source Hierarchy — `source_type` on `consult_legal_sources`; Art./Sec. refs in `Citation`; Zod domain-narrowing | Planned |
+| DOCS-3 | Documentation polish — `CONTRIBUTING.md`; quickstart + disclaimer up top; `docs/README.md` index; `docs/FAQ.md`; `SECURITY.md` gaps; README badges + roadmap sync | ✓ Complete |
+| **16** | **Legal Source Hierarchy** — `source_type` on `consult_legal_sources`; `source_type`+`legal_hierarchy` in RAG results + `Citation`; Zod `SourceTypeSchema`; `source_type` filter in `Retriever` | **Next** |
 | 17 | Confidence UX + HITL — UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft registry on UNCERTAIN | Planned |
 | 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; document checklist; no-DDQ path | Planned |
 | 19 | Due Diligence Module — DD checklist tool per payment type; DD gap analysis in report | Planned |
@@ -194,7 +194,7 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run tax:agent` | CLI agent — requires `--input <file>` |
 | `npm run ddq:service` | Python DDQ extraction service on port 8000 (optional) |
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
-| `npm test` | Unit tests — 284 tests, no API calls, ~5s |
+| `npm test` | Unit tests — 298 tests, no API calls, ~5s |
 | `npm run lint` | ESLint + Prettier check across all TS files |
 | `npm run eval` | Run golden dataset evaluation harness (9 cases, Triangulation Rule) — requires `OPENAI_API_KEY` |
 | `npm run test:coverage` | c8 coverage report (text + lcov) |
@@ -215,9 +215,22 @@ See `.env.example` for the complete configuration file with comments.
 ### TypeScript
 - `strict: true` is on — never use `any`; use `unknown` and narrow explicitly
 - Always run `npm run build` before committing — zero errors required
-- Always run `npm test` — all 169 tests must pass
+- Always run `npm test` — all tests must pass (update count in this file after each phase)
 - Use `async/await` for all LLM calls and all Environment methods that call external services
 - All functions must have explicit return types
+
+### In-code doc-blocks
+Every primary agent/RAG/server file should carry a file-level JSDoc comment at the top
+linking it to its GAME component and the phase that introduced it. Format:
+```typescript
+/**
+ * Phase N — Short phase title
+ * GAME: [Goals | Actions | Memory | Environment] — one-line role description.
+ * See docs/architecture.md for the full component map.
+ */
+```
+Add this comment opportunistically when touching a file during a phase — not as a
+dedicated sweep. New files created in a phase must always include it.
 
 ### Imports
 - Always import shared utilities from `'../shared'` (not from individual files)
@@ -229,6 +242,15 @@ See `.env.example` for the complete configuration file with comments.
 - Never commit `.env` or any file containing API keys
 - Stage files by name — never `git add .`
 - Commit messages: present tense, under 60 characters, specific
+
+### Merge checklist (required before every master merge)
+1. `npm run build` — zero TypeScript errors
+2. `npm test` — all tests pass
+3. `npm run lint` — no ESLint or Prettier violations
+4. README.md roadmap table updated to reflect completed phase
+5. SESSION.md updated (current status, how to resume, completed phases list)
+6. CHANGELOG.md entry added for the phase
+7. Test count in CLAUDE.md TypeScript section updated if tests were added
 - Always run build + tests before merging
 - **Push to GitHub at the end of every session** (`git push`) — `git commit` is local only; GitHub does not update until you push
 

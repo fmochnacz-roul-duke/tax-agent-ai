@@ -7,6 +7,51 @@
 
 ---
 
+> ⚠️ **Not legal advice.** Outputs are AI-generated and require review by a qualified Polish tax
+> professional. Treaty rates are unverified against official PDFs. See [SECURITY.md](./SECURITY.md).
+>
+> **Status:** Active prototype — not production-ready.
+
+---
+
+## Quickstart
+
+```bash
+git clone https://github.com/fmochnacz-roul-duke/tax-agent-ai.git
+cd tax-agent-ai
+npm install
+cp .env.example .env          # add your OPENAI_API_KEY
+npm start                     # web UI at http://localhost:3000
+```
+
+For full setup (optional Python service, Gemini FactChecker) see [Setup](#setup) below.
+
+---
+
+## Status
+
+![Tests](https://img.shields.io/badge/tests-284%20passing-brightgreen)
+![Phase](https://img.shields.io/badge/phase-16%20complete-blue)
+![Status](https://img.shields.io/badge/status-active%20prototype-yellow)
+![License](https://img.shields.io/badge/license-ISC-lightgrey)
+
+---
+
+## Documentation
+
+| File | Contents |
+|---|---|
+| [docs/README.md](docs/README.md) | **Docs index** — start here for navigation |
+| [docs/architecture.md](docs/architecture.md) | Full architecture — component map, data flows, RAG pipeline, multi-agent topology |
+| [docs/api.md](docs/api.md) | REST API reference — endpoints, SSE events, `AgentInput` / `WhtReport` schemas |
+| [docs/agent-design-guide.md](docs/agent-design-guide.md) | Reusable patterns — GAME, MATE, async tools, multi-agent, SSE streaming |
+| [docs/vision.md](docs/vision.md) | Tax OS long-term vision — module roadmap, acceptance criteria |
+| [CHANGELOG.md](CHANGELOG.md) | Phase-by-phase change history (Keep a Changelog format) |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How to clone, run tests, open a PR, propose a roadmap change |
+| [SECURITY.md](SECURITY.md) | API key policy, PII guidance, legal disclaimer |
+
+---
+
 ## The problem this solves
 
 When a Polish entity pays dividends, interest, or royalties to a foreign recipient, it must determine:
@@ -102,7 +147,23 @@ Built on the GAME framework (Goals / Actions / Memory / Environment):
 | **M**emory | `shared/Memory.ts` | Conversation history + structured findings store; findings injected as a summary each iteration |
 | **E**nvironment | `WhtEnvironment.ts` | All tool implementations in one class; `simulate: true/false` switches data sources |
 
-The agent loop is domain-agnostic — it contains no WHT logic. All domain knowledge lives in the Goals, tool definitions, and the Environment.
+```
+User / CLI
+     │
+     ▼
+runWhtAnalysis()                        ← single entry point (web + CLI)
+     │
+     ├── Goals → system prompt
+     ├── Tools → tool definitions (JSON Schema)
+     ├── Memory → conversation history + findings store
+     └── WhtEnvironment → tool implementations
+          │
+          ├── treaties.json            ← treaty + MLI data (36 countries)
+          ├── Python DDQ service       ← substance + DEMPE (optional)
+          ├── FactCheckerAgent         ← Gemini + Google Search (optional)
+          ├── TreatyVerifierAgent      ← Gemini rate verification (optional)
+          └── LegalRagService          ← vector knowledge base (CIT Act, MF Objaśnienia)
+```
 
 **MATE design principles:**
 
@@ -130,7 +191,7 @@ The agent loop is domain-agnostic — it contains no WHT logic. All domain knowl
 | `consult_legal_sources` | Live (RAG) | Retrieves exact statutory text from embedded CIT Act / MF Objaśnienia knowledge base |
 | `terminate` | Built-in | Structured stop signal — no text parsing |
 
-Treaty data: 36 countries (EU-27 + UK, Switzerland, Norway, USA, Canada, Japan, Singapore, UAE, Australia, India). All rates marked `verified: false` — populated from professional commentary, pending confirmation against treaty PDFs.
+Treaty data: 36 countries (EU-27 + UK, Switzerland, Norway, USA, Canada, Japan, Singapore, UAE, Australia, India). All rates marked `verified: false` — populated from professional commentary, pending confirmation against treaty PDFs (Phase 20).
 
 ---
 
@@ -149,7 +210,7 @@ Runtime (per tool call):
 ```
 
 Sources currently embedded: Art. 4a pkt 29 CIT Act (beneficial owner definition),
-MF Objaśnienia podatkowe 2019 (substance criteria, conduit indicators, LTA provisions).
+MF Objaśnienia podatkowe 2025 (substance criteria, conduit indicators, LTA provisions).
 
 No external vector database is used — embeddings are stored in
 `data/knowledge_base/embeddings/vectors.json`. Run `npm run rag:build` (requires
@@ -259,7 +320,7 @@ npm run ddq:service     # starts FastAPI service on port 8000 (requires Python 3
 # Type-check (zero errors required before any commit)
 npm run build
 
-# Unit tests — 246 tests, no API calls, ~2s
+# Unit tests — 284 tests, no API calls, ~5s
 npm test
 ```
 
@@ -267,7 +328,7 @@ npm test
 
 ## Known limitations
 
-- **All treaty rates `verified: false`** — built from professional commentary; verify against official treaty PDFs before production use
+- **All treaty rates `verified: false`** — built from professional commentary; verify against official treaty PDFs before production use (planned: Phase 20)
 - **VERIFY cases** (Netherlands, Sweden, Switzerland) — MLI PPT conservatively treated as not applying, with a caution message
 - **Substance quality depends on interview answers** — the 5-question interview gives `MEDIUM` confidence at best; full DDQ upload (Phase 6) gives higher confidence; substance is CONDUIT-default until the interview completes
 - **Art. 12 scope** for older treaties (e.g. 1975 Poland–France DTC) requires manual verification — agent flags this explicitly
@@ -278,17 +339,15 @@ npm test
 
 ## Roadmap
 
-### Completed (v0.1 – v0.16)
+### Completed (v0.1 – v0.19)
 
 | Phase | Description | Tag |
 |---|---|---|
-| 1 | Live treaty data (`treaties.json` wired into `WhtEnvironment`) | v0.1.0 |
-| 2 | Real CLI input (`--input` JSON file, `AgentInput` validation) | v0.2.0 |
-| 3 | Structured JSON report output (`reports/`) | v0.3.0 |
-| 4 | Refined substance test — entity-aware profiles, three-condition BO test, DEMPE, Pay and Refund | v0.4.0 |
+| 1–3 | Live treaty data, real CLI input, structured JSON report output | v0.1–v0.3 |
+| 4 | Substance test — entity-aware profiles, three-condition BO test, DEMPE, Pay and Refund | v0.4.0 |
 | 5 | MATE improvements — model tiering, environment-level parameter validation | v0.5.0 |
-| 6 | Document ingestion — Python/FastAPI microservice for DDQ substance and DEMPE extraction | v0.6.0 |
-| 7 | FactChecker Persona Agent — Gemini + Google Search grounding, multi-agent call_agent pattern | v0.7.0 |
+| 6 | Document ingestion — Python/FastAPI microservice for DDQ substance and DEMPE | v0.6.0 |
+| 7 | FactChecker Persona Agent — Gemini + Google Search grounding, multi-agent pattern | v0.7.0 |
 | 8 | Conversational web UI — Express, InputExtractor, SSE streaming, chat interface | v0.8.0 |
 | 9 | Legal knowledge RAG — tax taxonomy, MF Objaśnienia 2025, CIT Act provisions | v0.9.0 |
 | 10 | Substance interview — 5-question chat, TypeScript LLM extractor, any entity assessed | v0.10.0 |
@@ -298,42 +357,40 @@ npm test
 | 13 | Provenance/citations on `WhtReport`; RAG legal grounding gate in confidence scoring | v0.13.0 |
 | QA-1 | ESLint + Prettier + c8 coverage + build-as-precondition + treaty snapshot test | v0.14.0 |
 | QA-2 | Zod runtime validation; Python/TS contract tests for schema drift | v0.15.0 |
-| DOCS-2 | `last_verified` frontmatter on RAG source files; docs/api.md; architecture docs | v0.16.0 |
+| DOCS-2 | `last_verified` frontmatter on RAG source files; `docs/api.md`; architecture docs | v0.16.0 |
+| 14 | Ghost Activation — TreatyVerifierAgent in live flow; `last_verified` in RAG output; confidence drops on rate mismatch | v0.17.0 |
+| 15 | QA-3: Evals + Negative Tests — `BoOverall`; golden dataset (9 cases); eval harness; Brazil treaty | v0.18.0 |
+| **16** | **Legal Source Hierarchy** — `source_type` param on `consult_legal_sources`; `legal_hierarchy` in RAG results; Zod domain-narrowing | **v0.19.0** |
 
-### Upcoming (7 sessions planned)
+### Upcoming — Arc 1: WHT Core Completion
 
-| Session | Phase | Description |
+| Phase | Title | Key deliverable |
 |---|---|---|
-| 1 | 14 — Ghost Activation | Wire `TreatyVerifierAgent` into live agent flow; surface `last_verified` in `consult_legal_sources` results |
-| 2 | 15 — Third-party vendor UC2 | Lighter-touch workflow for unrelated vendors: risk classification, document checklist |
-| 3 | 16 — Batch processing | CSV input, multi-entity summary report, entity registry cache hit |
-| 4 | 17 — Data quality pass | Manually verify top-10 treaty rates against DzU PDFs; remove `verified: false` |
-| 5 | 18 — Jurisdiction expansion | Expand `treaties.json` from 36 → 50+ countries |
-| 6 | 19 — Production hardening | Session persistence, SSE reconnect, rate limiting, error recovery |
-| 7 | 20 — Major review | End-to-end demo, full docs pass, Tax OS Module 2 planning |
+| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft registry on UNCERTAIN/LOW |
+| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
+| 19 | Due Diligence Module | DD checklist tool per payment type; DD gap analysis in `WhtReport` |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` in treaties.json |
+| 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache |
+| 22 | Production Hardening | Session persistence; SSE reconnect; rate limiting; memory pruning |
 
-*After session 7 a major review is planned before the next phase roadmap is set.*
+### Arc 2: WHT Professional Features
 
-### Future (Tax OS expansion)
-
-| Module | Description |
-|---|---|
-| Pillar Two / GloBE | In-scope analysis, effective tax rate per jurisdiction |
-| Transfer Pricing screening | Arm's-length first-pass, interquartile range flags |
-| PE risk | Permanent establishment risk from foreign entity activity in Poland |
-| CbCR analysis | Country-by-Country Report parser; low-substance / high-profit mismatch flags |
-
----
-
-## Technical appendix — learning scaffolding
-
-The `module1/`, `module2/`, and `module3/` directories contain code written during a structured AI agents course (TypeScript AI Agents Course, Jules White, Vanderbilt University). Kept as a transparent record of the reasoning and skill development that led to the product agent:
-
-| Module | Topic | What it demonstrates |
+| Phase | Title | Key deliverable |
 |---|---|---|
-| 1 | Programmatic prompting, multi-turn memory | How LLMs handle conversation state |
-| 2 | Function calling, `registerTool()` pattern | How tools are defined and dispatched |
-| 3 | GAME framework, unit testing, README agent | The architectural pattern used in the product |
+| 23a | Intangibles — Legal & Data Layer | Art. 21.1.2a CIT framework; treaty classification; MDR hallmarks; RAG enrichment |
+| 23b | Intangibles — Code Layer | `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook |
+| 23c | GAAR Tool | Art. 119a Ordynacja podatkowa risk flag; separate tool |
+| 24 | Legal Source Management | Source update protocol; `last_verified` workflow |
+| 25 | Jurisdiction Expansion | treaties.json 36 → 50+ countries |
+| 26 | WHT v1.0 Major Review | End-to-end demo; all acceptance criteria; CHANGELOG v1.0 |
+
+### Arc 3: Tax OS Foundation
+
+| Phase | Title | Key deliverable |
+|---|---|---|
+| 27 | GLOBAL VISION Documentation | `docs/GLOBAL_VISION.md` (gitignored); Tax OS architecture |
+| 28 | EU Jurisdiction Engine Concept | Multi-jurisdiction architecture; pilot jurisdiction |
+| 29 | Tax OS Module 2 Planning | Next tax regime scoping; cross-module framework |
 
 ---
 
@@ -354,19 +411,6 @@ The `module1/`, `module2/`, and `module3/` directories contain code written duri
 
 ---
 
-## Documentation
-
-| File | Contents |
-|---|---|
-| `docs/architecture.md` | Full architecture — component map, data flows, RAG pipeline, multi-agent topology, test coverage map |
-| `docs/api.md` | REST API reference — all endpoints, SSE event types, `AgentInput` / `WhtReport` / `RegistryEntry` schemas |
-| `docs/agent-design-guide.md` | Reusable patterns — GAME, MATE, async tools, multi-agent, SSE streaming, conversational extraction |
-| `CHANGELOG.md` | Phase-by-phase change history (Keep a Changelog format) |
-| `SECURITY.md` | API key policy, PII guidance, legal disclaimer |
-| `data/mli_flags_legend.md` | Explanation of 10 MLI flag codes used in treaties.json |
-
----
-
 ## Feedback and issues
 
 Found a bug or have a suggestion? Open an issue on GitHub:
@@ -375,18 +419,27 @@ Found a bug or have a suggestion? Open an issue on GitHub:
 Use the bug report template for reproducible problems. For questions about the legal
 logic or treaty data, include the entity name, country, and income type.
 
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to contribute.
+
 ---
 
 ## License
 
 This project is licensed under the [ISC License](./LICENSE).
 
-> **Disclaimer:**  
-> See [NOTICE](./NOTICE) for important disclaimers regarding the use of this software.  
-> This software is provided for informational purposes only and does not constitute legal, tax, or financial advice.
+> **Disclaimer:**
+> This software is provided for informational purposes only and does not constitute legal, tax,
+> or financial advice. Outputs must be reviewed by a qualified tax professional before use in
+> any compliance or advisory context. See [SECURITY.md](./SECURITY.md) for full details.
 
 ---
 
-## Status
+## Learning scaffolding
 
-Active development. Not production-ready. All outputs must be reviewed by a qualified tax professional before use in any compliance or advisory context.
+The `module1/`, `module2/`, and `module3/` directories contain code written during a structured AI agents course (TypeScript AI Agents Course, Jules White, Vanderbilt University). Kept as a transparent record of the reasoning and skill development that led to the product agent:
+
+| Module | Topic | What it demonstrates |
+|---|---|---|
+| 1 | Programmatic prompting, multi-turn memory | How LLMs handle conversation state |
+| 2 | Function calling, `registerTool()` pattern | How tools are defined and dispatched |
+| 3 | GAME framework, unit testing, README agent | The architectural pattern used in the product |

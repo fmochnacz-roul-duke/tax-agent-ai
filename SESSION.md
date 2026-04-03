@@ -1,11 +1,11 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 15 complete (2026-04-02). Phase 16 (Legal Source Hierarchy) is next.
-**Last code session:** Phase 15 — QA-3: Evals + Negative Tests (v0.18.0, 2026-04-02)
+**Phase:** Phase 16 complete (2026-04-03). Phase 17 (Confidence UX + HITL) is next.
+**Last code session:** DOCS-3 + Phase 16 — Legal Source Hierarchy (v0.19.0, 2026-04-03)
 **Last planning session:** 2026-04-02 — Phase 23 design decisions confirmed (23a/23b/23c); total phases 29 → 31
-**Branch:** phase-15-evals (merge to master before Phase 16)
-**Tests:** 284/284 passing
+**Branch:** master (DOCS-3 + phase-16 merged)
+**Tests:** 298/298 passing
 
 ---
 
@@ -55,22 +55,29 @@ Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. 
 
 ## How to Resume Next Session
 
-Merge `phase-15-evals` to master, then start Phase 16.
+Phase 16 is complete and merged to master. Start Phase 17 on a new branch.
 
 ```
 git checkout master
-git merge phase-15-evals
-git push
+git pull
+git checkout -b feature/phase-17-confidence-ux
 npm run build    ← zero errors
-npm test         ← 284/284 passing
+npm test         ← 298/298 passing
 npm start        ← web UI at http://localhost:3000
 ```
 
-Phase 16 — Legal Source Hierarchy:
-- `source_type` parameter on `consult_legal_sources` tool
-- Art./Sec. refs in `Citation` interface
-- `legal_hierarchy` field in RAG results
-- Zod domain-narrowing for `source_type`
+Phase 17 — Confidence UX + HITL:
+- UI grey-out for LOW confidence reports
+- "Draft Only" watermark in web UI when `data_confidence === 'LOW'`
+- Auto-set `review_status: 'draft'` in registry when `bo_overall === 'UNCERTAIN'` or `data_confidence === 'LOW'`
+- Potential: expose `bo_overall` and `legal_hierarchy` fields in the report card UI
+
+Phase 16 summary (v0.19.0):
+- `source_type` parameter on `consult_legal_sources` tool (Zod `SourceTypeSchema`)
+- `source_type` + `legal_hierarchy` added to `Citation` interface
+- `source_type` filter in `Retriever.search()` — AND-combined with existing filters
+- `LEGAL_HIERARCHY` map in `WhtEnvironment`: statute→1, directive/treaty→2, guidance→3
+- 14 new tests (Chunker +4, Retriever +5, WhtEnvironment +5) → 298 total
 
 ---
 
@@ -83,8 +90,9 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 | Phase | Title | Key deliverable |
 |---|---|---|
 | 14 | Ghost Activation | `TreatyVerifierAgent` in live agent flow; `last_verified` in RAG output; confidence → LOW on rate mismatch | ✓ v0.17.0 |
-| **15** | **QA-3: Evals + Negative Tests** | `data/golden_cases/` (7 cases); `scripts/runEvals.ts`; Triangulation Rule calibration; negative tests | **Next** |
-| 16 | Legal Source Hierarchy | `source_type` param on `consult_legal_sources`; Art./Sec. refs in `Citation`; `legal_hierarchy` field; Zod domain-narrowing |
+| 15 | QA-3: Evals + Negative Tests | `data/golden_cases/` (9 cases); `scripts/runEvals.ts`; Triangulation Rule; negative tests | ✓ v0.18.0 |
+| 16 | Legal Source Hierarchy | `source_type` param; `legal_hierarchy` in RAG results + `Citation`; Zod `SourceTypeSchema`; filter in Retriever | ✓ v0.19.0 |
+| **17** | **Confidence UX + HITL** | UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft on UNCERTAIN/LOW | **Next** |
 | 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW |
 | 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
 | 19 | Due Diligence Module | DD checklist tool per payment type; DD gap analysis in `WhtReport` |
@@ -125,6 +133,23 @@ official Polish treaty PDFs (DzU references).
 ---
 
 ## Completed Phases (full history)
+
+### Phase 16 — Legal Source Hierarchy + DOCS-3 (v0.19.0 — 2026-04-03)
+- `SourceType` type exported from `src/rag/types.ts`: `statute | directive | treaty | convention | guidance | oecd | commentary`
+- `source_type?: SourceType` added to `SourceFrontmatter`, `Chunk`, `CitedChunk`, `RetrieveOptions`
+- `Chunker.parseFmFields()` reads and validates `source_type` from frontmatter (unrecognised → undefined)
+- `Retriever.search()` now filters by `source_type` (AND-combined); chunks without type always pass
+- `source_type` forwarded in `CitedChunk` via conditional spread
+- `data/knowledge_base/sources/PL-CIT-2026-WHT.md`: `source_type: statute` in frontmatter
+- `data/knowledge_base/sources/MF-OBJ-2025.md`: `source_type: guidance` in frontmatter
+- `consult_legal_sources` tool: `source_type` enum parameter added; `'any'` sentinel → `undefined`
+- `SourceTypeSchema` (Zod enum) + `SourceTypeParam` type exported from `BeneficialOwnerAgent.ts`
+- `Citation` extended: `source_type?: string`, `legal_hierarchy?: number`
+- `extractCitation()` populates `source_type` + `legal_hierarchy` from RAG chunk output
+- `WhtEnvironment.LEGAL_HIERARCHY` static map: statute→1, directive/treaty/convention→2, guidance/oecd→3, commentary→4
+- `consultLegalSources()` includes `source_type` + `legal_hierarchy` in chunk output; accepts `sourceType` param
+- DOCS-3: `CONTRIBUTING.md`, `docs/README.md`, `docs/FAQ.md` created; `README.md` restructured; `SECURITY.md` updated; `CLAUDE.md` merge checklist + docblock convention added
+- 298/298 tests (14 new: Chunker +4, Retriever +5, WhtEnvironment +5)
 
 ### Phase 15 — QA-3: Evals + Negative Tests (v0.18.0 — 2026-04-02)
 - `BoOverall` type: `'CONFIRMED' | 'UNCERTAIN' | 'REJECTED' | 'NO_TREATY'`

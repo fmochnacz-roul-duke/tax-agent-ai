@@ -869,3 +869,159 @@ test('Negative: getTreatyRate rejects shareholding_percentage > 100', () => {
     'Agent must reject out-of-range shareholding values'
   );
 });
+
+// ── Phase 16: consultLegalSources — source_type filter + legal_hierarchy ──────
+//
+// These tests verify the three Phase 16 additions:
+//   1. source_type is surfaced in each returned chunk when the chunk carries it
+//   2. legal_hierarchy is derived correctly from source_type
+//   3. source_type filter restricts results to only matching chunks
+//   4. chunks without source_type still pass through when no filter is applied
+
+function makeRagEnvWithChunks(chunks: Chunk[]): WhtEnvironment {
+  const embedding: number[] = [0.5, 0.5];
+  const vectors: ChunkVector[] = chunks.map((c) => ({ chunk_id: c.chunk_id, embedding }));
+  const mockEmbedFn = async (texts: string[]): Promise<number[][]> => texts.map(() => embedding);
+  const ragService = LegalRagService.fromData({ chunks, vectors, taxonomy: [], embedFn: mockEmbedFn });
+  return new WhtEnvironment({ simulate: true, ragService });
+}
+
+test('Phase 16 — consultLegalSources: statute chunk includes source_type and legal_hierarchy 1', async () => {
+  const chunk: Chunk = {
+    chunk_id: 'PL-CIT-2026::art4a',
+    source_id: 'PL-CIT-2026',
+    section_ref: 'Art. 4a pkt 29',
+    section_title: 'Definicja rzeczywistego właściciela',
+    concept_ids: ['beneficial_owner'],
+    module_relevance: ['WHT'],
+    language: 'pl',
+    source_type: 'statute',
+    text: '## Art. 4a pkt 29\n\nBeneficial owner definition.',
+    char_count: 50,
+  };
+  const ragEnv = makeRagEnvWithChunks([chunk]);
+  const result = parse(await ragEnv.consultLegalSources('beneficial owner definition'));
+
+  const chunks = result['chunks'] as Record<string, unknown>[];
+  assert.ok(chunks.length > 0, 'should return at least one chunk');
+  assert.equal(chunks[0]['source_type'], 'statute', 'source_type should be surfaced in chunk output');
+  assert.equal(chunks[0]['legal_hierarchy'], 1, 'statute should have legal_hierarchy 1');
+});
+
+test('Phase 16 — consultLegalSources: guidance chunk includes source_type and legal_hierarchy 3', async () => {
+  const chunk: Chunk = {
+    chunk_id: 'MF-OBJ-2025::s2-3',
+    source_id: 'MF-OBJ-2025',
+    section_ref: '§2.3',
+    section_title: 'Kryteria uznania działalności',
+    concept_ids: ['condition_iii_genuine_business'],
+    module_relevance: ['WHT'],
+    language: 'pl',
+    source_type: 'guidance',
+    text: '## §2.3\n\nGuidance content.',
+    char_count: 40,
+  };
+  const ragEnv = makeRagEnvWithChunks([chunk]);
+  const result = parse(await ragEnv.consultLegalSources('genuine business activity'));
+
+  const chunks = result['chunks'] as Record<string, unknown>[];
+  assert.ok(chunks.length > 0, 'should return at least one chunk');
+  assert.equal(chunks[0]['source_type'], 'guidance', 'source_type should be "guidance"');
+  assert.equal(chunks[0]['legal_hierarchy'], 3, 'guidance should have legal_hierarchy 3');
+});
+
+test('Phase 16 — consultLegalSources: chunk without source_type omits both fields', async () => {
+  const chunk: Chunk = {
+    chunk_id: 'UNTYPED-SRC::section-1',
+    source_id: 'UNTYPED-SRC',
+    section_ref: '§1',
+    section_title: 'Some section',
+    concept_ids: ['beneficial_owner'],
+    module_relevance: ['WHT'],
+    language: 'en',
+    text: '## §1\n\nUntyped content.',
+    char_count: 25,
+  };
+  const ragEnv = makeRagEnvWithChunks([chunk]);
+  const result = parse(await ragEnv.consultLegalSources('query'));
+
+  const chunks = result['chunks'] as Record<string, unknown>[];
+  assert.ok(chunks.length > 0, 'should return at least one chunk');
+  assert.ok(
+    !Object.prototype.hasOwnProperty.call(chunks[0], 'source_type'),
+    'source_type should be absent when chunk has no source_type'
+  );
+  assert.ok(
+    !Object.prototype.hasOwnProperty.call(chunks[0], 'legal_hierarchy'),
+    'legal_hierarchy should be absent when chunk has no source_type'
+  );
+});
+
+test('Phase 16 — consultLegalSources: source_type filter returns only matching chunks', async () => {
+  // Two chunks: one statute, one guidance. Filter for statute → guidance is excluded.
+  const statuteChunk: Chunk = {
+    chunk_id: 'PL-CIT-2026::art21',
+    source_id: 'PL-CIT-2026',
+    section_ref: 'Art. 21',
+    section_title: 'WHT rates',
+    concept_ids: ['royalty'],
+    module_relevance: ['WHT'],
+    language: 'pl',
+    source_type: 'statute',
+    text: '## Art. 21\n\nStatute content.',
+    char_count: 35,
+  };
+  const guidanceChunk: Chunk = {
+    chunk_id: 'MF-OBJ-2025::s2-2',
+    source_id: 'MF-OBJ-2025',
+    section_ref: '§2.2',
+    section_title: 'Conduit indicators',
+    concept_ids: ['conduit_entity'],
+    module_relevance: ['WHT'],
+    language: 'pl',
+    source_type: 'guidance',
+    text: '## §2.2\n\nGuidance content.',
+    char_count: 35,
+  };
+  const ragEnv = makeRagEnvWithChunks([statuteChunk, guidanceChunk]);
+
+  // sourceType 'statute' — only the statute chunk should come back
+  const result = parse(await ragEnv.consultLegalSources('WHT rates', undefined, undefined, 'statute'));
+  const chunks = result['chunks'] as Record<string, unknown>[];
+  assert.equal(chunks.length, 1, 'filter should return exactly 1 chunk');
+  assert.equal(chunks[0]['source_id'], 'PL-CIT-2026', 'returned chunk should be the statute');
+});
+
+test('Phase 16 — consultLegalSources: passing undefined sourceType returns all chunks', async () => {
+  // Both statute and guidance chunks should come back when no filter is applied.
+  const statuteChunk: Chunk = {
+    chunk_id: 'PL-CIT-2026::art26',
+    source_id: 'PL-CIT-2026',
+    section_ref: 'Art. 26',
+    section_title: 'Remitter obligations',
+    concept_ids: ['due_diligence'],
+    module_relevance: ['WHT'],
+    language: 'pl',
+    source_type: 'statute',
+    text: '## Art. 26\n\nStatute content.',
+    char_count: 30,
+  };
+  const guidanceChunk: Chunk = {
+    chunk_id: 'MF-OBJ-2025::s3-1',
+    source_id: 'MF-OBJ-2025',
+    section_ref: '§3.1',
+    section_title: 'Due diligence',
+    concept_ids: ['due_diligence'],
+    module_relevance: ['WHT'],
+    language: 'pl',
+    source_type: 'guidance',
+    text: '## §3.1\n\nGuidance content.',
+    char_count: 30,
+  };
+  const ragEnv = makeRagEnvWithChunks([statuteChunk, guidanceChunk]);
+
+  // No sourceType argument → both chunks returned
+  const result = parse(await ragEnv.consultLegalSources('due diligence obligations'));
+  const chunks = result['chunks'] as Record<string, unknown>[];
+  assert.equal(chunks.length, 2, 'no filter should return all chunks');
+});

@@ -4,6 +4,7 @@ language: pl
 module_relevance: [WHT]
 concept_ids: [beneficial_owner, condition_i_economic_title, condition_ii_no_passthrough, condition_iii_genuine_business, interest, royalty, dividend, due_diligence]
 last_verified: 2026-04-02
+source_type: statute
 ---
 
 # Ustawa z dnia 15 lutego 1992 r. o podatku dochodowym od osób prawnych (CIT) — przepisy WHT

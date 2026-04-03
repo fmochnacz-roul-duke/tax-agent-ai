@@ -4,6 +4,8 @@ All authoritative sources used in the WHT Beneficial Owner Agent. The canonical 
 
 > **Verification policy:** All sources with `status: current` have been identified and located by the author. Individual provisions have not been verified line-by-line against the original texts unless noted. Treaty rates in `data/treaties.json` are all marked `verified: false` — pending confirmation against treaty PDFs.
 
+> **Phase 16 — Source hierarchy:** RAG source files (`.md` in `data/knowledge_base/sources/`) now carry a `source_type` frontmatter field. This flows into every chunk and is exposed via the `consult_legal_sources` tool. Current classifications: `PL-CIT-2026` → `statute` (hierarchy 1), `MF-OBJ-2025` → `guidance` (hierarchy 3). The `legal_hierarchy` number enables the agent to prefer statutory text over guidance when both are relevant.
+
 ---
 
 ## Sources by type

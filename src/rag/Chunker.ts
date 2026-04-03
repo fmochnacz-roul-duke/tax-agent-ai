@@ -1,4 +1,4 @@
-import { Chunk, SourceFrontmatter } from './types';
+import { Chunk, SourceFrontmatter, SourceType } from './types';
 
 // ─────────────────────────────────────────────────────────────
 // Chunker
@@ -91,12 +91,24 @@ export class Chunker {
       throw new Error('Frontmatter is missing required field: source_id');
     }
 
+    // Phase 16: parse source_type from frontmatter.
+    // We validate it against the known SourceType values — an unrecognised string
+    // is silently dropped (undefined) rather than crashing the build.
+    const knownSourceTypes: SourceType[] = [
+      'statute', 'directive', 'treaty', 'convention', 'guidance', 'oecd', 'commentary',
+    ];
+    const rawSourceType = str('source_type');
+    const sourceType: SourceType | undefined = knownSourceTypes.includes(rawSourceType as SourceType)
+      ? (rawSourceType as SourceType)
+      : undefined;
+
     return {
       source_id: sourceId,
       language: str('language') || 'en',
       module_relevance: arr('module_relevance'),
       concept_ids: arr('concept_ids'),
       last_verified: str('last_verified') || undefined,
+      source_type: sourceType,
     };
   }
 
@@ -140,6 +152,9 @@ export class Chunker {
         module_relevance: [...fm.module_relevance],
         language: fm.language,
         last_verified: fm.last_verified,
+        // Phase 16: propagate source_type from frontmatter to each chunk.
+        // The spread only adds the key when the source file declares it.
+        ...(fm.source_type !== undefined ? { source_type: fm.source_type } : {}),
         text,
         char_count: text.length,
       });

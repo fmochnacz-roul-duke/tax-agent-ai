@@ -262,14 +262,55 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ---
 
+---
+
+### v0.19.0 — DOCS-3: Documentation Polish
+
+**What:**
+- `CONTRIBUTING.md` — new: prerequisites, quickstart, build/test gates, branch naming, PR flow, roadmap change process
+- `docs/README.md` — new: one-line-per-file index of all docs
+- `docs/FAQ.md` — new: 7 seed entries (verified:false rates, LLM tiers, simulated substance, confidence scoring, Express auth, single-file UI, `bo_overall` vs `data_confidence`)
+- `README.md` restructured: legal disclaimer + quickstart + static badges at top; ASCII agent flow diagram; docs map table; all three roadmap arcs; learning scaffolding moved to bottom
+- `SECURITY.md` restructured: Legal Disclaimer first; responsible disclosure contact; Dependency Hygiene section; Access Control section
+- `CLAUDE.md`: DOCS-3 phase entry; in-code doc-block convention; 7-step merge checklist
+
+---
+
+### v0.19.0 — Phase 16: Legal Source Hierarchy
+
+**What:**
+- `SourceType` type exported from `src/rag/types.ts`: `statute | directive | treaty | convention | guidance | oecd | commentary`
+- `source_type?: SourceType` added to `SourceFrontmatter`, `Chunk`, `CitedChunk`, `RetrieveOptions`
+- `Chunker.parseFmFields()` reads `source_type` from frontmatter; unrecognised values silently dropped
+- `Retriever.search()` filters by `source_type` (AND-combined with existing filters); chunks without type always pass
+- `source_type` forwarded in `CitedChunk` via conditional spread
+- `PL-CIT-2026-WHT.md`: `source_type: statute` in frontmatter
+- `MF-OBJ-2025.md`: `source_type: guidance` in frontmatter
+- `consult_legal_sources` tool: `source_type` enum parameter (statute | directive | treaty | convention | guidance | oecd | commentary | any); `'any'` → undefined in dispatch
+- `SourceTypeSchema` Zod enum + `SourceTypeParam` type exported from `BeneficialOwnerAgent.ts`
+- `Citation` extended: `source_type?: string`, `legal_hierarchy?: number`
+- `extractCitation()` populates both fields from the RAG chunk output
+- `WhtEnvironment.LEGAL_HIERARCHY` static map: statute→1, directive/treaty/convention→2, guidance/oecd→3, commentary→4
+- Each chunk in `consultLegalSources()` output now includes `source_type` and `legal_hierarchy` when the chunk carries a `source_type`
+
+**Key decisions:**
+- `source_type` filter leaves chunks without a type in the result set (absence = unclassified, not excluded). This is deliberate — future sources that haven't been tagged yet will still surface.
+- `legal_hierarchy` is a plain number, not an enum, so it can be compared arithmetically by the agent (statute=1 < guidance=3 → statute takes precedence).
+- `'any'` as a tool parameter sentinel converts to `undefined` at the dispatch boundary — the Retriever never sees the string `'any'`.
+- RAG knowledge base rebuild (`npm run rag:build`) needed to propagate `source_type` to the pre-built chunks index.
+- `SourceTypeSchema` is exported so future tools (e.g. `check_mdr_obligation`) can reuse the same validated enum without re-declaring it.
+
+**14 new tests — 298/298 passing.**
+
+---
+
 ## Planned phases
 
-### Arc 1 — WHT Core Completion (Phases 16–22)
+### Arc 1 — WHT Core Completion (Phases 17–22)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **16** | **Legal Source Hierarchy** | `source_type` parameter on `consult_legal_sources`; Art./Sec. refs in `Citation`; `legal_hierarchy` field; Zod domain-narrowing |
-| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW |
+| **17** | **Confidence UX + HITL** | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW |
 | 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path; CSV batch schema defined |
 | 19 | Due Diligence Module | DD checklist tool per payment type (dividend, royalty, management fee); DD gap analysis in report |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |

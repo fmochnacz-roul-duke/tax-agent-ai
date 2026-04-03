@@ -203,3 +203,63 @@ describe('Retriever — top_k and ordering', () => {
     assert.equal(results[0].chunk_id, 'A');
   });
 });
+
+// ─────────────────────────────────────────────────────────────
+// Phase 16 — source_type filter
+// ─────────────────────────────────────────────────────────────
+
+describe('Retriever — Phase 16 source_type filter', () => {
+  const embedding = [1, 0, 0];
+
+  // Two chunks: one statute, one guidance.
+  const chunks = [
+    makeChunk({ chunk_id: 'S1', source_id: 'PL-CIT-2026', source_type: 'statute' as const }),
+    makeChunk({ chunk_id: 'G1', source_id: 'MF-OBJ-2025', source_type: 'guidance' as const }),
+    // A chunk with no source_type — should always pass through when filter is absent.
+    makeChunk({ chunk_id: 'U1', source_id: 'UNTYPED' }),
+  ];
+  const vectors = [
+    makeVector('S1', embedding),
+    makeVector('G1', embedding),
+    makeVector('U1', embedding),
+  ];
+  const retriever = new Retriever(chunks, vectors);
+
+  it('filters to only statute chunks when source_type is "statute"', () => {
+    const results = retriever.search(embedding, { source_type: 'statute' });
+    // S1 (statute) + U1 (no type → passes through) = 2 results
+    assert.equal(results.length, 2);
+    const ids = results.map((r) => r.chunk_id).sort();
+    assert.deepEqual(ids, ['S1', 'U1']);
+  });
+
+  it('filters to only guidance chunks when source_type is "guidance"', () => {
+    const results = retriever.search(embedding, { source_type: 'guidance' });
+    // G1 (guidance) + U1 (no type → passes through) = 2 results
+    assert.equal(results.length, 2);
+    const ids = results.map((r) => r.chunk_id).sort();
+    assert.deepEqual(ids, ['G1', 'U1']);
+  });
+
+  it('returns all chunks when source_type is undefined (no filter)', () => {
+    const results = retriever.search(embedding);
+    assert.equal(results.length, 3);
+  });
+
+  it('forwards source_type in CitedChunk when chunk carries it', () => {
+    const results = retriever.search(embedding, { source_type: 'statute' });
+    const statute = results.find((r) => r.chunk_id === 'S1');
+    assert.ok(statute !== undefined, 'statute chunk should be in results');
+    assert.equal(statute.source_type, 'statute', 'source_type should be forwarded to CitedChunk');
+  });
+
+  it('omits source_type from CitedChunk when chunk has none', () => {
+    const results = retriever.search(embedding);
+    const untyped = results.find((r) => r.chunk_id === 'U1');
+    assert.ok(untyped !== undefined, 'untyped chunk should be in results');
+    assert.ok(
+      !Object.prototype.hasOwnProperty.call(untyped, 'source_type'),
+      'source_type should be absent from CitedChunk when chunk has none'
+    );
+  });
+});

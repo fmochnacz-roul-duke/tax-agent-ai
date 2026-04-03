@@ -1299,7 +1299,7 @@ export class WhtEnvironment {
     return this.treatyVerifier.verifyRate(country, incomeType, claimedRate, treatyArticle);
   }
 
-  // ── Phase 9: consultLegalSources ─────────────────────────────────────────────
+  // ── Phase 9 + 16: consultLegalSources ────────────────────────────────────────
   //
   // Retrieves the most relevant chunks from the built-in legal knowledge base
   // for a given natural-language query, with optional taxonomy-based filtering.
@@ -1309,13 +1309,38 @@ export class WhtEnvironment {
   // correctly (e.g. "pass-through obligation" → finds §2.2.1 of MF-OBJ-2025).
   //
   // Returns a JSON string containing:
-  //   source        — "legal_knowledge_base"
-  //   query         — the original query (for traceability in the agent's reasoning)
-  //   chunks[]      — array of { source_id, section_ref, section_title, text, score }
+  //   source          — "legal_knowledge_base"
+  //   query           — the original query (for traceability in the agent's reasoning)
+  //   chunks[]        — array of { source_id, section_ref, section_title, text, score,
+  //                       source_type?, legal_hierarchy?, last_verified? }
+  //
+  // Phase 16 additions:
+  //   sourceType      — optional authority-tier filter; undefined = search all types
+  //   source_type     — echoed in every returned chunk
+  //   legal_hierarchy — numeric rank (1=statute, 2=directive/treaty, 3=guidance)
   //
   // When the knowledge base has not been built (rag:build not run), or in simulate
   // mode, returns { available: false } rather than throwing.
-  async consultLegalSources(query: string, conceptIds?: string[], topK?: number): Promise<string> {
+
+  // Maps SourceType strings to a numeric authority rank.
+  // 1 = highest authority (primary legislation).
+  // Used to let the agent and downstream tools compare source authority.
+  private static readonly LEGAL_HIERARCHY: Readonly<Record<string, number>> = {
+    statute:    1,
+    directive:  2,
+    treaty:     2,
+    convention: 2,
+    guidance:   3,
+    oecd:       3,
+    commentary: 4,
+  };
+
+  async consultLegalSources(
+    query: string,
+    conceptIds?: string[],
+    topK?: number,
+    sourceType?: string
+  ): Promise<string> {
     if (!query || query.trim() === '') {
       return JSON.stringify({ error: 'query must be a non-empty string.', source: 'validation' });
     }
@@ -1334,6 +1359,10 @@ export class WhtEnvironment {
         concept_ids: conceptIds,
         module: 'WHT',
         top_k: Math.min(topK ?? 3, 5),
+        // Phase 16: forward the optional authority-tier filter.
+        // sourceType is already undefined when the caller passed 'any',
+        // so passing it directly is safe — undefined means no filter in Retriever.
+        source_type: sourceType as import('../rag/types').SourceType | undefined,
       });
 
       return JSON.stringify({
@@ -1348,6 +1377,12 @@ export class WhtEnvironment {
           // Phase 14: surface last_verified so the agent (and user) can see
           // when each source was last confirmed against current law.
           ...(c.last_verified !== undefined ? { last_verified: c.last_verified } : {}),
+          // Phase 16: surface the authority tier so the agent and downstream
+          // consumers know what kind of source backed this chunk.
+          ...(c.source_type !== undefined ? {
+            source_type: c.source_type,
+            legal_hierarchy: WhtEnvironment.LEGAL_HIERARCHY[c.source_type] ?? 99,
+          } : {}),
         })),
       });
     } catch (err) {

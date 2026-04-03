@@ -4,7 +4,27 @@
 // Everything else in src/rag/ imports from here — keeping the
 // shared vocabulary in one place makes it easy to extend when
 // new Tax OS modules are added (Phase 15+).
+//
+// Phase 16 additions:
+//   SourceType  — the legal authority tier of a source document
+//   source_type — propagated through SourceFrontmatter → Chunk → CitedChunk
+//   RetrieveOptions.source_type — filter retrieval by authority tier
 // ─────────────────────────────────────────────────────────────
+
+// SourceType classifies a legal source by its position in the authority hierarchy.
+// Values mirror the "source_types" map in data/legal_sources_registry.json.
+//
+// Used both as a frontmatter field on .md source files and as a filter parameter
+// on consult_legal_sources, so the agent can ask: "retrieve only statutory text"
+// or "retrieve only ministerial guidance" rather than searching the entire corpus.
+export type SourceType =
+  | 'statute'    // Primary legislation (CIT Act, PIT Act)
+  | 'directive'  // EU secondary legislation (I&R Directive, P-S Directive)
+  | 'treaty'     // Bilateral double taxation convention
+  | 'convention' // Multilateral convention (MLI)
+  | 'guidance'   // Official ministerial or regulatory guidance (MF Objaśnienia)
+  | 'oecd'       // OECD publication or standard (TP Guidelines, BEPS Actions)
+  | 'commentary' // Academic or professional commentary;
 
 // One section of a legal source document, ready to be embedded.
 // Produced by the Chunker from a source .md file.
@@ -33,6 +53,10 @@ export interface Chunk {
   // ISO 8601 date when a human last confirmed this source reflects current law.
   // Propagated from the source file's frontmatter into every chunk it produces.
   last_verified?: string;
+
+  // Phase 16: legal authority tier of the source document.
+  // Propagated from frontmatter so retrieval can be filtered by authority level.
+  source_type?: SourceType;
 
   // The full section text, including the heading line.
   // Sent to the embedding model and injected into the agent prompt as a citation.
@@ -83,6 +107,10 @@ export interface SourceFrontmatter {
   // Optional — not every source has been reviewed since initial import.
   // Surfaces in CitedChunk so the agent prompt can warn when a source is unverified.
   last_verified?: string;
+
+  // Phase 16: legal authority tier — parsed from the 'source_type' frontmatter field.
+  // Propagated to every Chunk the document produces.
+  source_type?: SourceType;
 }
 
 // Options for LegalRagService.retrieve()
@@ -96,6 +124,12 @@ export interface RetrieveOptions {
 
   // If provided, only chunks from these source documents are considered.
   source_ids?: string[];
+
+  // Phase 16: if provided, only chunks whose source_type matches are considered.
+  // Use 'statute' to retrieve only primary legislation (CIT Act),
+  // 'guidance' for ministerial guidance (MF Objaśnienia) only, etc.
+  // Omit (or pass undefined) to search all source types.
+  source_type?: SourceType;
 
   // Maximum number of chunks to return, sorted by score. Default: 5.
   top_k?: number;

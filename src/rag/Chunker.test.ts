@@ -68,6 +68,43 @@ describe('Chunker — frontmatter parsing', () => {
     const source = `---\nlanguage: pl\nmodule_relevance: [WHT]\nconcept_ids: []\n---\n\n## §2.3\n\nContent.`;
     assert.throws(() => chunker.chunk(source), /missing required field: source_id/);
   });
+
+  // Phase 16: source_type frontmatter field
+  it('reads source_type "statute" from frontmatter and propagates to chunks', () => {
+    const source = makeSource('## Art. 4a pkt 29\n\nDefinition text.', { source_type: 'statute' });
+    const chunks = chunker.chunk(source);
+    assert.ok(chunks.length > 0);
+    assert.equal(chunks[0].source_type, 'statute', 'source_type should be "statute"');
+  });
+
+  it('reads source_type "guidance" from frontmatter and propagates to chunks', () => {
+    const source = makeSource('## §2.3\n\nGuidance text.', { source_type: 'guidance' });
+    const chunks = chunker.chunk(source);
+    assert.ok(chunks.length > 0);
+    assert.equal(chunks[0].source_type, 'guidance', 'source_type should be "guidance"');
+  });
+
+  it('leaves source_type undefined when not present in frontmatter', () => {
+    const source = makeSource('## §2.3\n\nContent without source_type.');
+    const chunks = chunker.chunk(source);
+    assert.ok(chunks.length > 0);
+    assert.equal(
+      chunks[0].source_type,
+      undefined,
+      'source_type should be undefined when absent from frontmatter'
+    );
+  });
+
+  it('ignores unrecognised source_type values (leaves undefined)', () => {
+    const source = makeSource('## §2.3\n\nContent.', { source_type: 'unknown_type' });
+    const chunks = chunker.chunk(source);
+    assert.ok(chunks.length > 0);
+    assert.equal(
+      chunks[0].source_type,
+      undefined,
+      'unrecognised source_type should be dropped'
+    );
+  });
 });
 
 // ─────────────────────────────────────────────────────────────
