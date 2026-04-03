@@ -100,30 +100,30 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 | 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path | ✓ v0.21.0 |
 | 19 | Due Diligence Module + Negative Evidence Gate | `check_due_diligence` tool; `data/due_diligence_checklists.json`; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate in confidence scoring | ✓ v0.22.0 |
 | **QA-4** | **Eval Harness v2.0** | Update `runEvals.ts` for v2.0 case structure; `active`/`scaffold` status filter; EU27 rate verification for cases 13–31 | **Next** |
-| 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json |
-| 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; `scripts/runBatch.ts`; sequential; timestamped output dir + summary CSV |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json — **80/20: Luxembourg, Germany, France, Netherlands, Ireland first; one country at a time** |
+| 21 | Batch Processing | `scripts/runBatch.ts`; `--batch payments.csv` CLI; sequential processing; timestamped output dir + summary CSV |
 | 22a | Temporal Context | `payment_year` on `AgentInput`; STTR/KSeF temporal gating |
-| 22b | Production Hardening | Session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) |
+| 22b | Production Hardening | Session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) — existing packages only |
 
 ### Arc 2 — WHT Professional Features (Phases 23–26)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 23a | Intangibles — Legal & Data Layer | Art. 21.1.2a framework; treaty classification rules (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG source enrichment; IC vs. 3rd-party paths |
-| 23b | Intangibles — Code Layer | New `payment_type` options; `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook in `WhtReport` |
-| 23c | GAAR Tool | Art. 119a Ordynacja podatkowa analysis; GAAR risk flag in `WhtReport`; separate tool (TBD scope) |
-| 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow; NSA/CJEU case law RAG ingestion (Danish Cases, NSA II FSK 27/23) |
-| 24b | PIT & Hybrid Entities Expansion | `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'`; Art. 29/30a PIT WHT; IFT-1/1R form guidance; UK LLP transparency; B2B ghost detection |
-| 25 | Jurisdiction Expansion | treaties.json 36 → 50+ countries |
-| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria; CHANGELOG v1.0; MBA prototype declaration; Legal Memo output format |
+| 23a | Intangibles — Legal & Data Layer | Art. 21.1.2a framework; treaty classification (Art. 7 vs Art. 12); MDR hallmarks; RAG source enrichment; IC vs. 3rd-party paths — **time-box: ~10h research budget** |
+| 23b | Intangibles — Code Layer | `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool — **specialized agent pattern; do NOT expand `WhtEnvironment.ts`** |
+| 23c | GAAR Tool | Art. 119a Ordynacja podatkowa analysis; GAAR risk flag; separate isolated tool |
+| 24 | Legal Source Management Workflow | Source update protocol; `last_verified` staleness warnings in reports; NSA/CJEU case law RAG ingestion (Danish Cases, NSA II FSK 27/23) |
+| 24b | PIT & Hybrid Entities Expansion | **Start with PIT individuals only** (Art. 29/30a); hybrid entities (UK LLP) → formal escalation flag, not shallow implementation; HIGH COMPLEXITY — scope one sub-type at a time |
+| 25 | Jurisdiction Expansion | treaties.json 36 → 50+ countries — **Phase 20 pipeline first; add jurisdictions from existing golden cases** |
+| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria; CHANGELOG v1.0; MBA prototype declaration; **Legal Memo in FLAC format (Facts / Law / Application / Conclusion)** |
 
 ### Arc 3 — Tax OS Foundation (Phases 27–29)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
 | 27 | GLOBAL VISION Documentation | `docs/GLOBAL_VISION.md` (gitignored); Tax OS architecture, legal hierarchy, system prompt guidelines |
-| 28 | EU Jurisdiction Engine Concept | Architecture for multi-jurisdiction; pilot jurisdiction (Germany or Netherlands); Module 2 scope |
-| 29 | Tax OS Module 2 Planning | Next tax regime scoping; cross-module framework; Tax OS v1.0 roadmap |
+| 28 | EU Jurisdiction Engine Concept | Pilot jurisdiction (Germany or Netherlands) — **"extract, don't invent": build one fully working second agent BEFORE designing any generic framework** |
+| 29 | Tax OS Module 2 Planning | Next tax regime scoping; generic framework design only after Phase 28 pilot validates the approach |
 
 ---
 

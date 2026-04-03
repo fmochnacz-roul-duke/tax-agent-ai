@@ -64,20 +64,20 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path for LOW tier | ✓ Complete |
 | 19 | Due Diligence Module + Negative Evidence Gate — `check_due_diligence` tool; `data/due_diligence_checklists.json`; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate in confidence scoring | ✓ Complete |
 | QA-4 | Eval Harness v2.0 — update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); case status filtering (`active`/`scaffold`); EU27 rate verification for cases 13–31 | Planned |
-| 20 | Data quality — verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json | Planned |
+| 20 | Data quality — verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json — **80/20 rule: Luxembourg, Germany, France, Netherlands, Ireland first; one country at a time with granular commits** | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report; `scripts/runBatch.ts`; sequential processing; timestamped output dir + summary CSV | Planned |
 | 22a | Temporal Context — `payment_year` parameter on `AgentInput`; STTR/KSeF temporal gating | Planned |
-| 22b | Production Hardening — session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) | Planned |
-| 23a | Intangibles — Legal & Data Layer: Art. 21.1.2a CIT framework; treaty classification (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG enrichment; IC vs. 3rd-party paths | Planned |
-| 23b | Intangibles — Code Layer: new `payment_type` options; `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook | Planned |
-| 23c | GAAR Tool: Art. 119a Ordynacja podatkowa risk flag; separate tool in `WhtEnvironment.ts`; TBD scope | Planned |
-| 24 | Legal Source Management Workflow — source update protocol; new source onboarding; hierarchy documentation; NSA/CJEU case law RAG ingestion | Planned |
-| 24b | PIT & Hybrid Entities Expansion — `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'`; Art. 29/30a PIT WHT; IFT-1/1R form guidance; UK LLP transparency; B2B ghost detection — **HIGH COMPLEXITY: touches every system component; scope carefully before starting** | Planned |
-| 25 | Jurisdiction expansion — treaties.json 36 → 50+ countries | Planned |
-| 26 | WHT v1.0 Major Review — end-to-end demo, all acceptance criteria, `CHANGELOG.md` v1.0, MBA prototype declaration | Planned |
+| 22b | Production Hardening — session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) — use existing packages, no custom implementations | Planned |
+| 23a | Intangibles — Legal & Data Layer: Art. 21.1.2a CIT framework; treaty classification (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG enrichment; IC vs. 3rd-party paths — **time-box: ~10h research budget; stop and record open questions when time is up** | Planned |
+| 23b | Intangibles — Code Layer: `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool — **build as a specialized agent that core delegates to; do NOT expand `WhtEnvironment.ts` scope** | Planned |
+| 23c | GAAR Tool: Art. 119a Ordynacja podatkowa risk flag; separate tool (TBD scope) — keep isolated from WHT core | Planned |
+| 24 | Legal Source Management Workflow — source update protocol; new source onboarding; `last_verified` staleness warning in reports (>6 months old); NSA/CJEU case law RAG ingestion | Planned |
+| 24b | PIT & Hybrid Entities Expansion — `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'`; Art. 29/30a PIT WHT; IFT-1/1R form guidance — **HIGH COMPLEXITY: touches every system component. Start with PIT individuals only (Art. 29/30a). Hybrid entities (UK LLP) → formal escalation flag, not shallow implementation** | Planned |
+| 25 | Jurisdiction expansion — treaties.json 36 → 50+ countries — **80/20: add jurisdictions that appear in existing golden cases first; Phase 20 verification pipeline must be established before expanding** | Planned |
+| 26 | WHT v1.0 Major Review — end-to-end demo (UC1 + UC2); all acceptance criteria; `CHANGELOG.md` v1.0; MBA prototype declaration; **Legal Memo output in FLAC format (Facts / Law / Application / Conclusion)** | Planned |
 | 27 | GLOBAL VISION Documentation — private `docs/GLOBAL_VISION.md` (gitignored); Tax OS architecture + system prompt guidelines | Planned |
-| 28 | EU Jurisdiction Engine Concept — architecture for multi-jurisdiction; pilot jurisdiction design; Tax OS Module 2 scope | Planned |
-| 29 | Tax OS Module 2 Planning — next tax regime scoping; cross-module shared framework design | Planned |
+| 28 | EU Jurisdiction Engine Concept — pilot jurisdiction (Germany or Netherlands); **"extract, don't invent": no generic Tax OS framework until two fully independent agents are working** | Planned |
+| 29 | Tax OS Module 2 Planning — next tax regime scoping; cross-module framework only after Phase 28 pilot validates the approach | Planned |
 
 ---
 
@@ -295,6 +295,26 @@ This checklist ensures every knowledge file stays consistent. Apply it every tim
 - Test pure components (Environment, Memory, Goal builders) without LLM
 - Export `runWhtAnalysis()` and types from the agent file; keep `main()` as a thin CLI wrapper
 - Web server and CLI share the same agent core — no duplication
+
+### Phase planning principles (apply when scoping and executing any planned phase)
+
+These principles were established during the 2026-04-03 strategic review. Apply them when planning a session and when the scope of a planned phase is ambiguous.
+
+**Data-heavy phases (Phase 20, 23a, 25):**
+- **80/20 rule**: verify only the most-common cases first. For Phase 20: top-10 treaties by payment volume (Luxembourg, Germany, France, Netherlands, Ireland). For Phase 25: add jurisdictions that appear in existing golden cases first.
+- **One entity / one country at a time**: complete one item fully (fetch PDF, verify rate, update `treaties.json`, commit) before moving to the next. Never batch-update without verification.
+- **Time-box research**: set a fixed session budget (e.g. 10 hours for Phase 23a legal research). When time is up, record what remains as open questions in SESSION.md — do not scope-creep into the coding phase.
+- **AI as research assistant**: use Gemini/Claude to draft initial summaries of official documents, but always verify against the primary source before committing to any data file.
+
+**Complexity-heavy phases (Phase 23b, 24b, 28):**
+- **Specialized agents over core bloat**: build new tax logic as a separate agent (e.g. `IntangiblesAgent.ts`) that `runWhtAnalysis()` delegates to — never expand `WhtEnvironment.ts` beyond its original scope. This keeps the core auditable and the new feature independently testable.
+- **Incremental scope**: implement one entity type / one payment sub-type before generalising. Phase 23b: single ambiguous-service case first. Phase 24b: individual recipient (PIT) as a standalone agent before hybrid entities.
+- **Formal escalation over partial implementation**: if a phase risks dangerous oversimplification (e.g. Phase 24b UK LLP transparency), implement an explicit "escalate to specialist" flag in the report rather than attempting a shallow implementation that produces a wrong answer.
+
+**Sustaining solo development:**
+- **Roadmap as flexible wishlist**: the phase order and scope are a plan, not a contract. If a phase turns out to require twice the estimated effort, defer the second half to a new phase rather than rushing. Quality over throughput.
+- **Celebrate v1.0 as a finished product**: Phase 26 is Arc 1 complete — a finished, citable research prototype. Treat it as a launch event, not a waypoint.
+- **"Good enough" for research prototype**: for MBA research purposes, a well-documented partial implementation with honest limitations is more valuable than an over-engineered one that breaks. Perfect is the enemy of published.
 
 ### Explanations
 - Frank is new to TypeScript — always explain what new syntax means

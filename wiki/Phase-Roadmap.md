@@ -405,22 +405,22 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 | Phase | Title | Key deliverable |
 |---|---|---|
 | **QA-4** | **Eval Harness v2.0** | Update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); `active`/`scaffold` status filter; EU27 rate verification for cases 13–31; commit `generate_eu27_cases.js` | **Next** |
-| 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` + `verified_at` in treaties.json — **80/20: Luxembourg, Germany, France, Netherlands, Ireland first; one country at a time with granular commits** |
 | 21 | Batch Processing | `scripts/runBatch.ts`; `--batch payments.csv` CLI; sequential processing; timestamped output dir + summary CSV |
 | 22a | Temporal Context | `payment_year` parameter on `AgentInput`; STTR/KSeF temporal gating |
-| 22b | Production Hardening | Session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) |
+| 22b | Production Hardening | Session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) — existing packages only, no custom implementations |
 
 ### Arc 2 — WHT Professional Features (Phases 23a–26)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 23a | Intangibles — Legal & Data Layer | Art. 21 ust. 1 pkt 2a CIT framework; treaty classification rules (Art. 7 Business Profits vs Art. 12 Royalties); MDR hallmarks (Art. 86a-86o Ordynacja podatkowa); IC vs. third-party analysis paths; RAG source enrichment for management fees |
-| 23b | Intangibles — Code Layer | New `payment_type` options (`management_fee`, `advisory`, `technical_service`); `ServiceClassifier.ts` — AI-generated dynamic service classification questionnaire; `check_mdr_obligation` tool in `WhtEnvironment.ts`; PE hook in `WhtReport` |
-| 23c | GAAR Tool | `check_gaar_risk` tool — Art. 119a Ordynacja podatkowa analysis; GAAR risk flag in `WhtReport`; scope TBD |
-| 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow; NSA/CJEU case law RAG ingestion (CJEU Danish Cases C-116/16; NSA II FSK 27/23) |
-| 24b | PIT & Hybrid Entities Expansion | `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'` on `AgentInput`; Art. 29/30a PIT WHT rates; IFT-1/IFT-1R (PIT) vs IFT-2/IFT-2R (CIT) form guidance in report; UK LLP fiscal transparency check (case_11 is primary eval case); B2B freelancer / "disguised employment" detection |
-| 25 | Jurisdiction Expansion | `treaties.json` 36 → 50+ countries |
-| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria verified; `CHANGELOG.md` v1.0; MBA prototype declaration; Legal Memo output format (Facts / Law / Application / Conclusion) |
+| 23a | Intangibles — Legal & Data Layer | Art. 21 ust. 1 pkt 2a CIT framework; treaty classification rules (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ordynacja podatkowa); IC vs. third-party paths; RAG source enrichment — **time-box: ~10h research budget; record open questions in SESSION.md when time is up** |
+| 23b | Intangibles — Code Layer | `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook in `WhtReport` — **specialized agent pattern: build as a separate agent that core delegates to, do NOT expand `WhtEnvironment.ts`** |
+| 23c | GAAR Tool | `check_gaar_risk` tool — Art. 119a Ordynacja podatkowa; GAAR risk flag; scope TBD — keep isolated |
+| 24 | Legal Source Management Workflow | Source update protocol; `last_verified` staleness warnings in reports (>6 months → warning); NSA/CJEU case law RAG ingestion (CJEU Danish Cases C-116/16; NSA II FSK 27/23) |
+| 24b | PIT & Hybrid Entities Expansion | **HIGH COMPLEXITY** — start with PIT individuals only (Art. 29/30a); IFT-1/IFT-1R form guidance; UK LLP → formal escalation flag (not shallow implementation); B2B ghost detection — scope one sub-type per session |
+| 25 | Jurisdiction Expansion | `treaties.json` 36 → 50+ countries — **Phase 20 verification pipeline must be established first; add jurisdictions from existing golden cases first** |
+| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria; `CHANGELOG.md` v1.0; MBA prototype declaration; **Legal Memo in FLAC format (Facts / Law / Application / Conclusion)** — treat v1.0 as a finished product, not a waypoint |
 
 ### Arc 3 — Tax OS Foundation (Phases 27–29)
 
