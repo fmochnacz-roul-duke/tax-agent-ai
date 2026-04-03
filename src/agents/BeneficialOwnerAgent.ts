@@ -106,6 +106,24 @@ const WHT_GOALS: Goal[] = [
     priority: 4,
   },
   {
+    name: 'Classify vendor risk for unrelated parties',
+    description:
+      'For UNRELATED PARTY (related_party: false) transactions only: call ' +
+      'classify_vendor_risk BEFORE conducting the full substance assessment. ' +
+      'The tool returns the required due diligence tier and document checklist based on ' +
+      'country, income_type, and payment amount. ' +
+      'Use the result to route the analysis: ' +
+      '• risk_tier: LOW — simplified path: residence cert + BO declaration sufficient; ' +
+      '  do NOT call check_entity_substance; proceed directly to treaty/rate/directive checks. ' +
+      '• risk_tier: MEDIUM — standard path: note the document checklist; proceed with ' +
+      '  treaty/rate checks; substance interview optional unless exceedsThreshold. ' +
+      '• risk_tier: HIGH (routing jurisdiction or large unrelated royalty) — enhanced path: ' +
+      '  full substance assessment required; call check_entity_substance as normal. ' +
+      'For RELATED PARTY (related_party: true) transactions: SKIP this tool entirely — ' +
+      'full substance assessment is always required under Art. 26 CIT + MF Objaśnienia §4.',
+    priority: 5,
+  },
+  {
     name: 'Fact-check substance claims',
     description:
       'After obtaining the substance profile via check_entity_substance: if the source ' +
@@ -368,7 +386,16 @@ function buildWhtTools(): Tool[] {
           },
           source_type: {
             type: 'string',
-            enum: ['statute', 'directive', 'treaty', 'convention', 'guidance', 'oecd', 'commentary', 'any'],
+            enum: [
+              'statute',
+              'directive',
+              'treaty',
+              'convention',
+              'guidance',
+              'oecd',
+              'commentary',
+              'any',
+            ],
             description:
               'Optional: restrict results to a specific legal authority tier. ' +
               'Use "statute" to retrieve only primary legislation (CIT Act), ' +
@@ -383,6 +410,45 @@ function buildWhtTools(): Tool[] {
           },
         },
         required: ['query'],
+      },
+    },
+    // Phase 18 — UC2 vendor risk classification
+    {
+      name: 'classify_vendor_risk',
+      description:
+        'Determines the required due diligence tier and document checklist for a payment ' +
+        'recipient BEFORE the full beneficial owner analysis. ' +
+        'Returns risk_tier (HIGH/MEDIUM/LOW), due_diligence_standard, requires_substance_interview, ' +
+        'pay_and_refund_applies, and the document_checklist for this specific transaction. ' +
+        'Call this tool ONLY for unrelated (third-party) recipients. ' +
+        'For related parties, skip directly to check_entity_substance.',
+      parameters: {
+        type: 'object',
+        properties: {
+          entity_name: { type: 'string', description: 'Name of the recipient entity' },
+          country: {
+            type: 'string',
+            description: "Country of the recipient's tax residence",
+          },
+          income_type: {
+            type: 'string',
+            enum: ['dividend', 'interest', 'royalty'],
+            description: 'Type of payment',
+          },
+          annual_payment_pln: {
+            type: 'number',
+            description:
+              'Estimated annual payment amount in PLN. Pass 0 if unknown — a conservative (HIGH) assumption is applied.',
+          },
+          related_party: {
+            type: 'boolean',
+            description:
+              'True if the recipient is a related party under Art. 11a CIT. ' +
+              'If true, the tool immediately returns HIGH / FULL — call it to document the checklist, ' +
+              'then proceed to check_entity_substance.',
+          },
+        },
+        required: ['entity_name', 'country', 'income_type', 'annual_payment_pln', 'related_party'],
       },
     },
     // ToolFactory.terminate() — no need to type this out per agent
@@ -518,8 +584,20 @@ export type AgentInput = z.infer<typeof AgentInputSchema>;
 // 'any' is a special sentinel: the agent passes it when it wants all source types.
 // WhtEnvironment converts 'any' to undefined before passing to the Retriever.
 export const SourceTypeSchema = z.enum(
-  ['statute', 'directive', 'treaty', 'convention', 'guidance', 'oecd', 'commentary', 'any'] as const,
-  { error: "source_type must be one of: statute, directive, treaty, convention, guidance, oecd, commentary, any." }
+  [
+    'statute',
+    'directive',
+    'treaty',
+    'convention',
+    'guidance',
+    'oecd',
+    'commentary',
+    'any',
+  ] as const,
+  {
+    error:
+      'source_type must be one of: statute, directive, treaty, convention, guidance, oecd, commentary, any.',
+  }
 );
 export type SourceTypeParam = z.infer<typeof SourceTypeSchema>;
 
@@ -761,6 +839,9 @@ const FINDING_KEY_FOR_TOOL: Readonly<Record<string, string | undefined>> = {
   check_pay_and_refund: 'pay_and_refund',
   fact_check_substance: 'fact_check_result',
   consult_legal_sources: undefined,
+  // Phase 18: vendor risk finding stored so the agent can consult it when
+  // deciding whether to call check_entity_substance.
+  classify_vendor_risk: 'vendor_risk',
 };
 
 // extractCitation — builds a Citation from a tool result string.
@@ -802,8 +883,10 @@ function extractCitation(toolName: string, result: string): Citation {
             citation.section_ref = top['section_ref'] as string;
           if (typeof top['source_id'] === 'string') citation.source_id = top['source_id'] as string;
           // Phase 16: capture the legal authority tier of the top-matched source.
-          if (typeof top['source_type'] === 'string') citation.source_type = top['source_type'] as string;
-          if (typeof top['legal_hierarchy'] === 'number') citation.legal_hierarchy = top['legal_hierarchy'] as number;
+          if (typeof top['source_type'] === 'string')
+            citation.source_type = top['source_type'] as string;
+          if (typeof top['legal_hierarchy'] === 'number')
+            citation.legal_hierarchy = top['legal_hierarchy'] as number;
         }
       }
     }
@@ -1433,6 +1516,18 @@ async function runAgent(
               args['claims'] as string[]
             );
             memory.recordFinding('fact_check_result', result);
+            break;
+
+          // Phase 18 — UC2 vendor risk classification
+          case 'classify_vendor_risk':
+            result = env.classifyVendorRisk(
+              args['entity_name'] as string,
+              args['country'] as string,
+              args['income_type'] as string,
+              args['annual_payment_pln'] as number,
+              args['related_party'] as boolean
+            );
+            memory.recordFinding('vendor_risk', result);
             break;
 
           case 'consult_legal_sources': {

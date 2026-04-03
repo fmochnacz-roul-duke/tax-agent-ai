@@ -29,6 +29,8 @@ module.exports = [
       'dist/**',
       'reports/**',
       'data/knowledge_base/**',
+      // Plain-JS data generator scripts — not TypeScript source files
+      'scripts/*.js',
     ],
   },
 
