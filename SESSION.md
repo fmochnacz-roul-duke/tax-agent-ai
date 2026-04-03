@@ -3,7 +3,7 @@
 ## Current Status
 **Phase:** QA-4 complete (v0.23.0, 2026-04-03). Phase 20 (Data Quality) is next.
 **Last code session:** QA-4 — Eval Harness v2.0 (v0.23.0, 2026-04-03)
-**Last knowledge/planning session:** 2026-04-03 — vision.md restructured around co-pilot identity + Three Blind Spots; FAQ supplemented (8 new entries); all knowledge files synced to v0.23.0; Phase 26 updated to include self-certification and Blind Spot closure checklist.
+**Last knowledge/planning session:** 2026-04-03 — doc hygiene session: wiki stale references fixed (How-to-Run.md test count 246→326, removed module1/2/3 scripts; Architecture.md RAG path corrected, Phase 16 sentence updated); Legal-Sources.md "Typical update frequency" column added to all source tables; CLAUDE.md Phase 24 scope extended with `scripts/validateDataIntegrity.ts` sub-task.
 **Branch:** master
 **Tests:** 326/326 passing
 
@@ -143,6 +143,14 @@ official Polish treaty PDFs (DzU references).
 ---
 
 ## Completed Phases (full history)
+
+### Doc hygiene session — wiki stale references + Legal-Sources update frequency (docs — 2026-04-03)
+No code changes. Three targeted improvements after a full documentation review:
+- `wiki/How-to-Run.md`: test count corrected 246→326; test file list expanded to 12 files (added Chunker, Retriever, RAG); per-file counts corrected; removed deleted module1/2/3 scripts; `npm run eval` added to scripts table
+- `wiki/Architecture.md`: RAG source path corrected `data/legal_sources/` → `data/knowledge_base/sources/`; "Phase 16 will surface last_verified" updated to past tense + accurate description; "Phase 16 will enhance citations" updated to describe actual delivered state (source_type, legal_hierarchy, SourceTypeSchema)
+- `wiki/Legal-Sources.md`: "Typical update frequency" column added to all 5 source tables (statutes, guidance, EU Directives, MLI/OECD, commentary) and the RAG live sources table (renamed to "Rebuild trigger")
+- `CLAUDE.md`: Phase 24 scope extended with `scripts/validateDataIntegrity.ts` sub-task — cross-file referential integrity checks (concept_ids, source_ids) deferred to the correct phase
+- `SESSION.md`: this entry
 
 ### Knowledge session — vision restructure + FAQ (docs — 2026-04-03)
 No code changes. Knowledge files updated:

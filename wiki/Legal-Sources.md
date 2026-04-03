@@ -12,10 +12,10 @@ All authoritative sources used in the WHT Beneficial Owner Agent. The canonical 
 
 ### Primary legislation (statutes)
 
-| ID | Name | Reference | Status | Local copy |
-|---|---|---|---|---|
-| `PL-CIT-2026` | Polish CIT Act | Dz.U. 2026 poz. 331 | Current | `D19920086Lj.pdf` |
-| `PL-ORD-2026` | Polish Tax Ordinance | Dz.U. 2026 poz. 252 + poz. 347 | Current | Reference only |
+| ID | Name | Reference | Status | Local copy | Typical update frequency |
+|---|---|---|---|---|---|
+| `PL-CIT-2026` | Polish CIT Act | Dz.U. 2026 poz. 331 | Current | `D19920086Lj.pdf` | Consolidated annually; WHT provisions (Arts. 21, 22, 26) change every 1–3 years |
+| `PL-ORD-2026` | Polish Tax Ordinance | Dz.U. 2026 poz. 252 + poz. 347 | Current | Reference only | Consolidated annually; Art. 14n (legal protection) rarely changes |
 
 **Key CIT Act provisions used in agent:**
 
@@ -36,10 +36,10 @@ All authoritative sources used in the WHT Beneficial Owner Agent. The canonical 
 
 ### Official guidance
 
-| ID | Name | Author | Reference | Status |
-|---|---|---|---|---|
-| `MF-OBJ-2025` | Objaśnienia podatkowe — rzeczywisty właściciel | Ministry of Finance | Published 2025 | Current — legal protection status |
-| `MF-TREATY-LIST` | Wykaz umów o unikaniu podwójnego opodatkowania | MoF / podatki.gov.pl | Updated 27 Jan 2026 | Current |
+| ID | Name | Author | Reference | Status | Typical update frequency |
+|---|---|---|---|---|---|
+| `MF-OBJ-2025` | Objaśnienia podatkowe — rzeczywisty właściciel | Ministry of Finance | Published 2025 | Current — legal protection status | Published ad-hoc; the 2019 Objaśnienia were superseded in 2025 — expect ~3–5 year cycle, but can change with major case law |
+| `MF-TREATY-LIST` | Wykaz umów o unikaniu podwójnego opodatkowania | MoF / podatki.gov.pl | Updated 27 Jan 2026 | Current | Updated as treaties enter into force; check quarterly |
 
 **MF Objaśnienia 2025 — key sections used in agent:**
 
@@ -57,20 +57,20 @@ All authoritative sources used in the WHT Beneficial Owner Agent. The canonical 
 
 ### EU Directives
 
-| ID | Name | Reference | Status |
-|---|---|---|---|
-| `EU-IR-DIR-2003` | Interest and Royalties Directive | Council Directive 2003/49/EC | Current |
-| `EU-PS-DIR-2011` | Parent-Subsidiary Directive (recast) | Council Directive 2011/96/EU | Current |
+| ID | Name | Reference | Status | Typical update frequency |
+|---|---|---|---|---|
+| `EU-IR-DIR-2003` | Interest and Royalties Directive | Council Directive 2003/49/EC | Current | Rarely changes; monitor for proposed EU WHT framework directive (FASTER) |
+| `EU-PS-DIR-2011` | Parent-Subsidiary Directive (recast) | Council Directive 2011/96/EU | Current | Stable; last substantive amendment 2015 (anti-abuse clause) |
 
 ---
 
 ### MLI and OECD
 
-| ID | Name | Reference | Status |
-|---|---|---|---|
-| `PL-MLI-RATIF` | Poland MLI ratification positions | OECD MLI Matching Database | Current |
-| `OECD-MC-2017` | OECD Model Tax Convention 2017 | OECD | Reference |
-| `OECD-TP-GL` | OECD Transfer Pricing Guidelines | OECD — Chapter VI (DEMPE) | Reference |
+| ID | Name | Reference | Status | Typical update frequency |
+|---|---|---|---|---|
+| `PL-MLI-RATIF` | Poland MLI ratification positions | OECD MLI Matching Database | Current | Updated when countries ratify or file new notifications; check after major G20/OECD meetings |
+| `OECD-MC-2017` | OECD Model Tax Convention 2017 | OECD | Reference | New edition every ~4 years (next expected ~2028) |
+| `OECD-TP-GL` | OECD Transfer Pricing Guidelines | OECD — Chapter VI (DEMPE) | Reference | Updated ~every 3–5 years; Ch. VI last revised 2017 |
 
 **Critical MLI edge cases for Poland:**
 
@@ -86,9 +86,9 @@ All authoritative sources used in the WHT Beneficial Owner Agent. The canonical 
 
 ### Commentary
 
-| ID | Name | Authors | Status |
-|---|---|---|---|
-| `JANKOWSKI-SMOLEN-2025` | WHT Commentary — Jankowski & Smoleń | Jankowski, Smoleń | Current — cited in agent design |
+| ID | Name | Authors | Status | Typical update frequency |
+|---|---|---|---|---|
+| `JANKOWSKI-SMOLEN-2025` | WHT Commentary — Jankowski & Smoleń | Jankowski, Smoleń | Current — cited in agent design | New editions tied to major legal changes; not a primary source — use for interpretation guidance only |
 
 Key findings from Jankowski & Smoleń used in agent:
 - Substance test criteria alignment with MF Objaśnienia
@@ -122,10 +122,10 @@ Sources for verification: DzU references in `data/treaties.json` → official tr
 
 The following documents are indexed and active in the `consult_legal_sources` tool:
 
-| Source ID | Document | Chunks | Last verified |
-|---|---|---|---|
-| `PL-CIT-2026-WHT` | CIT Act Arts. 4a, 21, 22, 22c, 26 | 9 | 2026-04-02 |
-| `MF-OBJ-2025` | MF Objaśnienia podatkowe 2025 — BO | 14 | 2026-04-02 |
+| Source ID | Document | Chunks | Last verified | Rebuild trigger |
+|---|---|---|---|---|
+| `PL-CIT-2026-WHT` | CIT Act Arts. 4a, 21, 22, 22c, 26 | 9 | 2026-04-02 | New consolidated CIT Act text published in Dz.U. |
+| `MF-OBJ-2025` | MF Objaśnienia podatkowe 2025 — BO | 14 | 2026-04-02 | New MF Objaśnienia published; or significant NSA/CJEU ruling changes the BO standard |
 
 Chunking: split at section boundaries matching taxonomy concept IDs (`data/tax_taxonomy.json`). Each chunk carries `source_id`, `section_ref`, and `last_verified` frontmatter (DOCS-2, Phase 16 will surface this in tool output).
 

@@ -141,13 +141,13 @@ LegalRagService
     ├── Embedder     ← text-embedding-3-small via OpenAI API; incremental via SHA-256 manifest
     └── Retriever    ← cosine similarity search; returns top-K CitedChunk[]
 
-Source files (data/legal_sources/):
+Source files (data/knowledge_base/sources/):
     ├── PL-CIT-2026-WHT.md    ← CIT Act Arts. 4a, 21, 22, 22c, 26 (9 chunks)
     └── MF-OBJ-2025.md        ← MF Objaśnienia 2025 §2–§4 (14 chunks)
 
 Each chunk carries:
     ├── source_id, section_ref, content
-    ├── last_verified: "2026-04-02"   ← parsed from frontmatter (Phase 16 will surface this)
+    ├── last_verified: "2026-04-02"   ← parsed from frontmatter; surfaced in tool output (Phase 14)
     └── embedding vector (in vectors.json — gitignored)
 ```
 
@@ -210,7 +210,7 @@ interface Citation {
 }
 ```
 
-Phase 16 will enhance citations with specific Art./Sec. references (e.g. `Art. 26 ust. 1 CIT`) and add a `legal_hierarchy` field (statute / administrative_guidance / case_law).
+Phase 16 (v0.19.0) extended `Citation` with `source_type?: string` and `legal_hierarchy?: number` (1=statute, 2=directive/treaty, 3=guidance, 4=commentary). The `consult_legal_sources` tool accepts a `source_type` filter parameter; `SourceTypeSchema` (Zod enum) validates it at runtime.
 
 ---
 
