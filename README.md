@@ -339,7 +339,7 @@ npm test
 
 ## Roadmap
 
-### Completed (v0.1 – v0.19)
+### Completed (v0.1 – v0.20)
 
 | Phase | Description | Tag |
 |---|---|---|
