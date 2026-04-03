@@ -106,6 +106,24 @@ const WHT_GOALS: Goal[] = [
     priority: 4,
   },
   {
+    name: 'Check due diligence documentation',
+    description:
+      'Call check_due_diligence once, passing the income_type and the list of ' +
+      'document IDs the payer has already collected. ' +
+      'Valid document IDs: certificate_of_residence, bo_declaration, ' +
+      'corporate_structure_chart, board_meeting_minutes, annual_financial_statements, ' +
+      'loan_agreement, ksef_id, ip_ownership_documentation, license_agreement, ' +
+      'payroll_proofs, rd_expenditure_records. ' +
+      'If no documents are available, pass an empty array — the tool will flag all ' +
+      'mandatory items as gaps. ' +
+      'CRITICAL: missing board_meeting_minutes, ksef_id, payroll_proofs (royalties), ' +
+      'or ip_ownership_documentation will set report confidence to LOW regardless of ' +
+      'other findings. ' +
+      'Do NOT skip this step — absence of evidence is itself a negative finding that ' +
+      'must be reported.',
+    priority: 4.5,
+  },
+  {
     name: 'Classify vendor risk for unrelated parties',
     description:
       'For UNRELATED PARTY (related_party: false) transactions only: call ' +
@@ -412,6 +430,40 @@ function buildWhtTools(): Tool[] {
         required: ['query'],
       },
     },
+    // Phase 19 — DD Module: check what documents have been provided
+    {
+      name: 'check_due_diligence',
+      description:
+        'Phase 19 — Checks which mandatory due diligence documents the payer has ' +
+        'collected and returns a gap analysis. ' +
+        'Returns status (COMPLETE / PARTIAL / INSUFFICIENT), the list of missing ' +
+        'mandatory documents (gaps), and the subset that are critical (critical_missing). ' +
+        'INSUFFICIENT status (any critical document missing) will set report confidence to LOW. ' +
+        'PARTIAL status (non-critical documents missing) caps confidence at MEDIUM. ' +
+        'Always call this tool for every analysis — pass an empty array if no documents ' +
+        'are available.',
+      parameters: {
+        type: 'object',
+        properties: {
+          income_type: {
+            type: 'string',
+            enum: ['dividend', 'interest', 'royalty'],
+            description: 'Type of income payment',
+          },
+          provided_documents: {
+            type: 'array',
+            items: { type: 'string' },
+            description:
+              'List of document IDs already collected by the payer. Pass [] if none. ' +
+              'Valid IDs: certificate_of_residence, bo_declaration, ' +
+              'corporate_structure_chart, board_meeting_minutes, annual_financial_statements, ' +
+              'loan_agreement, ksef_id, ip_ownership_documentation, license_agreement, ' +
+              'payroll_proofs, rd_expenditure_records.',
+          },
+        },
+        required: ['income_type', 'provided_documents'],
+      },
+    },
     // Phase 18 — UC2 vendor risk classification
     {
       name: 'classify_vendor_risk',
@@ -564,6 +616,13 @@ export const AgentInputSchema = z.object({
   related_party: z.boolean({ error: 'related_party must be true or false.' }).optional(),
 
   ddq_path: z.string().optional(),
+
+  // Phase 19: list of document IDs the payer has already collected.
+  // Each ID should match a checklist entry in data/due_diligence_checklists.json,
+  // e.g. "certificate_of_residence", "board_meeting_minutes", "ksef_id".
+  // Pass an empty array (or omit) if no documents are available — the agent will
+  // flag all mandatory items as gaps and confidence will be set to INSUFFICIENT.
+  provided_documents: z.array(z.string()).optional(),
 });
 
 // AgentInput is now derived from the schema rather than declared separately.
@@ -724,13 +783,22 @@ export function buildTaskString(input: AgentInput): string {
     ? ` Additional context: ${input.substance_notes}`
     : '';
 
+  // Phase 19: surface any pre-collected documents so the agent can pass them
+  // directly to check_due_diligence without having to infer them from free text.
+  const ddClause =
+    input.provided_documents !== undefined && input.provided_documents.length > 0
+      ? ` Documents already collected by the payer: ${input.provided_documents.join(', ')}.` +
+        ' Pass these IDs to check_due_diligence.'
+      : ' No due diligence documents have been specified — pass an empty array to check_due_diligence.';
+
   return (
     `Analyse whether ${input.entity_name}, registered in ${input.country}${shareClause}, ` +
     `qualifies as the beneficial owner of a ${input.income_type} payment from a Polish ` +
     `company. Determine the correct Polish withholding tax rate and assess MLI/PPT risk.` +
     paymentClause +
     relatedPartyClause +
-    substanceClause
+    substanceClause +
+    ddClause
   );
 }
 
@@ -932,6 +1000,27 @@ export function computeReportConfidence(
     }
   }
 
+  // Phase 19: Negative Evidence Gate — missing critical DD documentation.
+  //
+  // Checked second (after treaty rate mismatch) because absent documents are
+  // a fundamental evidentiary gap — even a clean substance profile cannot
+  // compensate for a missing KSeF ID or board minutes.
+  //
+  // INSUFFICIENT — at least one critical document is absent → unconditionally LOW.
+  // PARTIAL      — non-critical mandatory docs missing → cap final result at MEDIUM.
+  //                We track this with a flag and use it when we would otherwise HIGH.
+  const ddGapsRaw = findings['dd_gaps'];
+  let ddPartialFlag = false;
+  if (ddGapsRaw !== undefined) {
+    try {
+      const ddGaps = JSON.parse(ddGapsRaw) as Record<string, unknown>;
+      if (ddGaps['status'] === 'INSUFFICIENT') return 'LOW';
+      if (ddGaps['status'] === 'PARTIAL') ddPartialFlag = true;
+    } catch {
+      // Unparseable dd_gaps — ignore and fall through.
+    }
+  }
+
   // Phase 7: fact-check result takes priority when present.
   //
   // UNDERMINES — a public source contradicted a DDQ claim → unconditionally LOW.
@@ -958,7 +1047,8 @@ export function computeReportConfidence(
         }
         // Phase 13: require RAG legal grounding even when fact-check CONFIRMS
         if (!hasRagLegalGrounding(citations)) return 'MEDIUM';
-        return 'HIGH';
+        // Phase 19: PARTIAL DD docs → cap at MEDIUM even when all other checks pass
+        return ddPartialFlag ? 'MEDIUM' : 'HIGH';
       }
       // INCONCLUSIVE: fall through to standard logic below
     } catch {
@@ -994,7 +1084,9 @@ export function computeReportConfidence(
   // cap at MEDIUM — the conclusion is not grounded in the statutory text.
   if (!hasRagLegalGrounding(citations)) return 'MEDIUM';
 
-  return 'HIGH';
+  // Phase 19: PARTIAL DD documentation → cap at MEDIUM even when all other checks pass.
+  // COMPLETE or absent (tool not called) → allow HIGH.
+  return ddPartialFlag ? 'MEDIUM' : 'HIGH';
 }
 
 // hasRagLegalGrounding — returns true when the agent called consult_legal_sources
@@ -1141,6 +1233,25 @@ export function computeConduitRisk(
   return false;
 }
 
+// ── DdGapAnalysis — Phase 19 due diligence gap summary ──────────────────────
+//
+// Populated when the agent calls check_due_diligence.
+// Embedded in WhtReport so downstream systems (registry, UI) can inspect it.
+//
+//   COMPLETE     — all mandatory documents provided
+//   PARTIAL      — some mandatory documents missing, but none are critical
+//   INSUFFICIENT — at least one critical document is absent (triggers LOW confidence)
+//
+// gaps            — names of all missing mandatory documents
+// critical_missing — subset of gaps that are critical (board minutes, KSeF ID, etc.)
+export interface DdGapAnalysis {
+  status: 'COMPLETE' | 'PARTIAL' | 'INSUFFICIENT';
+  provided_count: number;
+  required_count: number;
+  gaps: string[];
+  critical_missing: string[];
+}
+
 // ── WhtReport — the structured output of every analysis run ──────────────────
 //
 // Returned by runWhtAnalysis() and saved to disk by saveReport().
@@ -1168,6 +1279,9 @@ export interface WhtReport {
   // Phase 13: one Citation per tool call, in the order calls were made.
   // Links every finding and RAG result back to its data source.
   citations: Citation[];
+  // Phase 19: due diligence gap analysis — present only when check_due_diligence was called.
+  // INSUFFICIENT status causes data_confidence to be LOW regardless of other factors.
+  dd_gap_analysis?: DdGapAnalysis;
 }
 
 // ── AgentEvent — streaming progress events emitted during the agent loop ──────
@@ -1205,6 +1319,38 @@ const CONFIDENCE_NOTES: Record<'HIGH' | 'MEDIUM' | 'LOW', string> = {
     'or client advice without professional verification and real DDQ data.',
 };
 
+// extractDdGapAnalysis — parses the dd_gaps finding into a typed DdGapAnalysis.
+//
+// Returns undefined when check_due_diligence was never called (the field is
+// optional on WhtReport so callers can distinguish "not checked" from "COMPLETE").
+function extractDdGapAnalysis(findings: Record<string, string>): DdGapAnalysis | undefined {
+  const raw = findings['dd_gaps'];
+  if (raw === undefined) return undefined;
+  try {
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    if (
+      (parsed['status'] === 'COMPLETE' ||
+        parsed['status'] === 'PARTIAL' ||
+        parsed['status'] === 'INSUFFICIENT') &&
+      Array.isArray(parsed['gaps']) &&
+      Array.isArray(parsed['critical_missing'])
+    ) {
+      return {
+        status: parsed['status'] as DdGapAnalysis['status'],
+        provided_count: typeof parsed['provided_count'] === 'number' ? parsed['provided_count'] : 0,
+        required_count: typeof parsed['required_count'] === 'number' ? parsed['required_count'] : 0,
+        gaps: (parsed['gaps'] as unknown[]).filter((g): g is string => typeof g === 'string'),
+        critical_missing: (parsed['critical_missing'] as unknown[]).filter(
+          (g): g is string => typeof g === 'string'
+        ),
+      };
+    }
+  } catch {
+    // Unparseable — return undefined (treated as not checked)
+  }
+  return undefined;
+}
+
 function buildReport(
   input: AgentInput,
   conclusion: string,
@@ -1214,6 +1360,7 @@ function buildReport(
   const dataConfidence = computeReportConfidence(findings, citations);
   const boOverall = computeBoOverall(findings, dataConfidence);
   const conduitRisk = computeConduitRisk(boOverall, findings, input.country);
+  const ddGapAnalysis = extractDdGapAnalysis(findings);
   return {
     generated_at: new Date().toISOString(),
     entity_name: input.entity_name,
@@ -1229,6 +1376,7 @@ function buildReport(
     conclusion,
     findings: parseFindings(findings),
     citations,
+    ...(ddGapAnalysis !== undefined ? { dd_gap_analysis: ddGapAnalysis } : {}),
   };
 }
 
@@ -1516,6 +1664,15 @@ async function runAgent(
               args['claims'] as string[]
             );
             memory.recordFinding('fact_check_result', result);
+            break;
+
+          // Phase 19 — DD gap analysis
+          case 'check_due_diligence':
+            result = env.checkDueDiligence(
+              args['income_type'] as string,
+              args['provided_documents'] as string[]
+            );
+            memory.recordFinding('dd_gaps', result);
             break;
 
           // Phase 18 — UC2 vendor risk classification

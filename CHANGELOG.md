@@ -5,6 +5,51 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.22.0] — 2026-04-03 — Phase 19: Due Diligence Module + Negative Evidence Gate
+
+### Scaffolding cleanup (chore)
+- `src/module1`, `src/module2`, `src/module3` removed — learning scaffolding no longer appropriate in a product-grade project
+- Corresponding `package.json` scripts (`module1:prompting`, `module1:agent`, `module2:tools`, `module2:agent`, `module3:readme`) removed
+- `CLAUDE.md`: Phase 22 split into 22a (Temporal Context) + 22b (Production Hardening); Phase 24b complexity warning added; tool count corrected to 10 definitions / 10 implementations
+
+### Phase 19 — Due Diligence Module + Negative Evidence Gate
+
+#### New data file: `data/due_diligence_checklists.json`
+- Defines mandatory due diligence documents per payment type (dividend / interest / royalty)
+- Each entry: `id` (machine-readable), `name`, `description`, `mandatory: boolean`, `critical: boolean`
+- Critical documents: `board_meeting_minutes` (all types), `ksef_id` (interest + royalty), `ip_ownership_documentation` + `payroll_proofs` + `rd_expenditure_records` (royalty only)
+
+#### New tool: `check_due_diligence` (`src/agents/WhtEnvironment.ts`)
+- **`checkDueDiligence(incomeType, providedDocuments)`** — loads checklist, normalises IDs, cross-matches
+- Status derivation (deterministic, no LLM):
+  - `INSUFFICIENT` — at least one critical document absent
+  - `PARTIAL` — non-critical mandatory documents missing
+  - `COMPLETE` — all mandatory documents provided
+- Returns: `status`, `provided_count`, `required_count`, `gaps[]`, `critical_missing[]`, full `checklist[]` with `provided` flags, `legal_basis`, `source`
+- Normalisation: document IDs are lowercased + spaces → underscores, allowing free-text input ("board meeting minutes" matches "board_meeting_minutes")
+- Legal basis: Art. 26 Polish CIT Act; MF Objaśnienia podatkowe z 3 lipca 2025 r. §4
+
+#### Agent integration (`src/agents/BeneficialOwnerAgent.ts`)
+- **`DdGapAnalysis`** interface exported: `status / provided_count / required_count / gaps[] / critical_missing[]`
+- **`WhtReport.dd_gap_analysis?: DdGapAnalysis`** — populated when `check_due_diligence` was called
+- **`provided_documents?: string[]`** added to `AgentInputSchema` (Zod optional array of strings)
+- **`buildTaskString()`** extended to surface provided document IDs or note their absence
+- New Goal "Check due diligence documentation" (priority 4.5, between vendor-risk and pay-and-refund)
+- New tool definition `check_due_diligence` (11th tool); dispatch case stores `dd_gaps` finding
+- **`extractDdGapAnalysis()`** helper parses `dd_gaps` finding → typed `DdGapAnalysis | undefined`
+
+#### Negative Evidence Gate in `computeReportConfidence()`
+- Checked second (after treaty rate mismatch check):
+  - `dd_gaps.status === 'INSUFFICIENT'` → returns `'LOW'` unconditionally (even if fact-check CONFIRMS)
+  - `dd_gaps.status === 'PARTIAL'` → sets `ddPartialFlag = true`
+- Both HIGH-return sites updated: `return ddPartialFlag ? 'MEDIUM' : 'HIGH'`
+
+#### Tests (326 total, +12 new)
+- `WhtEnvironment.test.ts` (+8): COMPLETE, INSUFFICIENT (board_meeting_minutes), INSUFFICIENT (empty array), PARTIAL, INSUFFICIENT (ksef_id), invalid income_type, source field, checklist provided flags
+- `BeneficialOwnerAgent.test.ts` (+4): INSUFFICIENT → LOW, PARTIAL → MEDIUM, COMPLETE → HIGH, INSUFFICIENT overrides CONFIRMS
+
+---
+
 ## [v0.21.0] — 2026-04-03 — Phase 18: UC2 Third-party Vendor Workflow
 
 ### Phase 18 — UC2 Third-party Vendor Workflow

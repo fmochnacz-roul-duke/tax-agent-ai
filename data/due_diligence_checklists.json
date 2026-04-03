@@ -1,0 +1,155 @@
+{
+  "_comment": "Phase 19 — Due Diligence Module. Required documents per payment type for Polish WHT remitters. Legal basis: Art. 26 Polish CIT Act; MF Objaśnienia podatkowe z 3 lipca 2025 r. §4.",
+  "dividend": {
+    "required_docs": [
+      {
+        "id": "certificate_of_residence",
+        "name": "Certificate of tax residence",
+        "description": "Official tax residence certificate issued by the recipient country's tax authority, confirming the entity is a tax resident in that jurisdiction (Art. 26 §1 CIT).",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "bo_declaration",
+        "name": "Beneficial owner declaration",
+        "description": "Signed declaration by the recipient entity's authorised representative confirming it is the beneficial owner of the dividend income (Art. 26 §1 CIT).",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "corporate_structure_chart",
+        "name": "Corporate ownership structure chart",
+        "description": "Chart showing the full ownership chain from ultimate beneficial owner through to the Polish paying company, confirming the shareholding position.",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "board_meeting_minutes",
+        "name": "Board meeting minutes (dividend decision)",
+        "description": "Minutes of the board meeting at which the dividend distribution was approved by the recipient entity's own management, demonstrating independent decision-making capacity (MF Objaśnienia §2.3.1).",
+        "mandatory": true,
+        "critical": true
+      },
+      {
+        "id": "annual_financial_statements",
+        "name": "Audited annual financial statements (last 2 years)",
+        "description": "Audited financial statements for the two most recent fiscal years evidencing real economic activity and own assets.",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "shareholders_register",
+        "name": "Current shareholders register",
+        "description": "Official register of shareholders confirming the ownership structure stated in the corporate structure chart.",
+        "mandatory": false,
+        "critical": false
+      }
+    ]
+  },
+  "interest": {
+    "required_docs": [
+      {
+        "id": "certificate_of_residence",
+        "name": "Certificate of tax residence",
+        "description": "Official tax residence certificate issued by the recipient country's tax authority.",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "bo_declaration",
+        "name": "Beneficial owner declaration",
+        "description": "Signed BO declaration by the recipient confirming it receives interest for its own economic benefit (Art. 26 §1 CIT).",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "loan_agreement",
+        "name": "Signed loan agreement",
+        "description": "The underlying loan or credit facility agreement under which the interest is paid, including interest rate terms and maturity.",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "board_meeting_minutes",
+        "name": "Board meeting minutes (loan approval)",
+        "description": "Minutes of the board meeting approving the granting of the loan, demonstrating the recipient entity makes independent financing decisions (MF Objaśnienia §2.3.1).",
+        "mandatory": true,
+        "critical": true
+      },
+      {
+        "id": "annual_financial_statements",
+        "name": "Audited annual financial statements (last 2 years)",
+        "description": "Financial statements for the two most recent fiscal years evidencing real economic activity and own capital.",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "ksef_id",
+        "name": "KSeF invoice identifier",
+        "description": "National e-Invoicing System (KSeF) reference number for the invoice documenting the interest payment, required for domestic transactions (Art. 106na Ustawa o VAT).",
+        "mandatory": true,
+        "critical": true
+      }
+    ]
+  },
+  "royalty": {
+    "required_docs": [
+      {
+        "id": "certificate_of_residence",
+        "name": "Certificate of tax residence",
+        "description": "Official tax residence certificate issued by the recipient country's tax authority.",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "bo_declaration",
+        "name": "Beneficial owner declaration",
+        "description": "Signed BO declaration confirming the recipient owns the IP economically and receives royalties for its own benefit.",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "license_agreement",
+        "name": "Signed IP license agreement",
+        "description": "The license agreement granting the Polish payer the right to use the intellectual property, including scope, territory, and royalty rate.",
+        "mandatory": true,
+        "critical": false
+      },
+      {
+        "id": "ip_ownership_documentation",
+        "name": "IP ownership documentation",
+        "description": "Patent registration certificates, copyright assignments, trademark registrations, or equivalent records confirming the recipient holds legal title to the intangible.",
+        "mandatory": true,
+        "critical": true
+      },
+      {
+        "id": "payroll_proofs",
+        "name": "Payroll records for IP development staff",
+        "description": "Payroll reports or employment contracts evidencing that the recipient employs staff who perform DEMPE functions (Development, Enhancement, Maintenance, Protection, Exploitation) for the IP (OECD BEPS Actions 8–10).",
+        "mandatory": true,
+        "critical": true
+      },
+      {
+        "id": "rd_expenditure_records",
+        "name": "R&D expenditure records",
+        "description": "Records of research and development expenditure supporting the DEMPE analysis — e.g. cost centre reports, project invoices, capitalisation schedules.",
+        "mandatory": true,
+        "critical": true
+      },
+      {
+        "id": "board_meeting_minutes",
+        "name": "Board meeting minutes (IP strategy and licensing decisions)",
+        "description": "Minutes demonstrating the recipient entity's board makes independent decisions on IP development strategy and licensing terms (MF Objaśnienia §2.3.1).",
+        "mandatory": true,
+        "critical": true
+      },
+      {
+        "id": "ksef_id",
+        "name": "KSeF invoice identifier",
+        "description": "National e-Invoicing System (KSeF) reference number for the royalty invoice.",
+        "mandatory": true,
+        "critical": true
+      }
+    ]
+  }
+}

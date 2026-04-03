@@ -1,11 +1,11 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 18 complete (v0.21.0, 2026-04-03). Phase 19 (Due Diligence Module + Negative Evidence Gate) is next.
-**Last code session:** Phase 18 — UC2 Third-party Vendor Workflow (v0.21.0, 2026-04-03)
-**Last data/planning session:** 2026-04-03 — Golden Dataset v2.0 (cases 09–31); QA-4 + Phase 24b identified; Negative Evidence Gate and Temporal Context added to Phase 19/22 scope; external reviewer recommendations analysed.
+**Phase:** Phase 19 complete (v0.22.0, 2026-04-03). QA-4 is next.
+**Last code session:** Phase 19 — Due Diligence Module + Negative Evidence Gate (v0.22.0, 2026-04-03)
+**Last data/planning session:** 2026-04-03 — strategic review (external document); module1/2/3 scaffolding removed; Phase 22 split into 22a/22b; Phase 24b scoped as HIGH COMPLEXITY.
 **Branch:** master
-**Tests:** 314/314 passing
+**Tests:** 326/326 passing
 
 ---
 
@@ -55,12 +55,12 @@ Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. 
 
 ## How to Resume Next Session
 
-Phase 18 is complete and merged to master (v0.21.0). Start Phase 19 directly.
+Phase 19 is complete and merged to master (v0.22.0). Start QA-4 directly.
 
 ```
-git checkout -b feature/phase-19-dd-module
+git checkout -b feature/qa-4-eval-harness-v2
 npm run build    ← zero errors required
-npm test         ← 314/314 passing
+npm test         ← 326/326 passing
 npm start        ← web UI at http://localhost:3000
 ```
 
@@ -68,11 +68,11 @@ npm start        ← web UI at http://localhost:3000
 - `npm run eval` will only work correctly for cases 01–08b (original 9 cases). Cases 09–12 have new fields (`sttr_topup_applies`) that the harness doesn't handle yet. Cases 13–31 have placeholder rates. Do NOT run eval until QA-4.
 - `scripts/generate_eu27_cases.js` generates cases 13–31 deterministically — untracked, to be committed in QA-4.
 
-Phase 19 — Due Diligence Module + Negative Evidence Gate:
-- DD checklist tool per payment type (dividend / interest / royalty)
-- DD gap analysis added to `WhtReport`
-- Agent must explicitly flag missing KSeF ID, board meeting logs, payroll proofs
-- Negative Evidence Gate: missing evidence must lower confidence, not be ignored
+QA-4 — Eval Harness v2.0:
+- Update `runEvals.ts` to handle v2.0 case structure (`sttr_topup_applies`, `rate_basis`)
+- Add `active`/`scaffold` status filter — only run `active` cases
+- EU27 rate verification for cases 13–31 (Gemini batch verify)
+- Commit `scripts/generate_eu27_cases.js` to repo
 
 Phase 17 summary (v0.20.0):
 - `DRAFT ONLY` banner + grey-out (`report-low` CSS class) for LOW confidence report cards
@@ -98,12 +98,12 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 | 17 | Confidence UX + HITL | UI grey-out for LOW confidence; `DRAFT ONLY` banner; auto-`review_status: 'draft'` on UNCERTAIN/LOW | ✓ v0.20.0 |
 | — | Data & Planning (v0.20.1) | Golden Dataset v2.0 (cases 09–31); taxonomy + registry updated; QA-4 + Phase 24b defined | ✓ v0.20.1 |
 | 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path | ✓ v0.21.0 |
-| **19** | **Due Diligence Module + Negative Evidence Gate** | DD checklist per payment type; DD gap analysis; explicit flagging of missing KSeF ID / board logs / payroll proofs | **Next** |
-| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist per payment type; DD gap analysis in `WhtReport`; explicit flagging of missing KSeF ID, board logs, payroll proofs |
-| QA-4 | Eval Harness v2.0 | Update `runEvals.ts` for v2.0 case structure; `active`/`scaffold` status filter; EU27 rate verification for cases 13–31 |
+| 19 | Due Diligence Module + Negative Evidence Gate | `check_due_diligence` tool; `data/due_diligence_checklists.json`; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate in confidence scoring | ✓ v0.22.0 |
+| **QA-4** | **Eval Harness v2.0** | Update `runEvals.ts` for v2.0 case structure; `active`/`scaffold` status filter; EU27 rate verification for cases 13–31 | **Next** |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json |
-| 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache |
-| 22 | Production Hardening + Temporal Context | Session persistence; SSE reconnect; rate limiting; `payment_year` parameter; STTR/KSeF temporal gating |
+| 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; `scripts/runBatch.ts`; sequential; timestamped output dir + summary CSV |
+| 22a | Temporal Context | `payment_year` on `AgentInput`; STTR/KSeF temporal gating |
+| 22b | Production Hardening | Session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) |
 
 ### Arc 2 — WHT Professional Features (Phases 23–26)
 
@@ -139,6 +139,24 @@ official Polish treaty PDFs (DzU references).
 ---
 
 ## Completed Phases (full history)
+
+### Scaffolding cleanup (chore — 2026-04-03)
+- `src/module1`, `src/module2`, `src/module3` removed — learning scaffolding no longer needed in a product-grade project
+- `npm run module1:*`, `module2:*`, `module3:*` scripts removed from `package.json`
+- CLAUDE.md: Phase 22 split into 22a (Temporal Context) + 22b (Production Hardening); Phase 24b marked HIGH COMPLEXITY; tool/test counts corrected
+
+### Phase 19 — Due Diligence Module + Negative Evidence Gate (v0.22.0 — 2026-04-03)
+- `data/due_diligence_checklists.json` — required documents per payment type (dividend/interest/royalty); each item has `id`, `name`, `description`, `mandatory`, `critical`
+- `checkDueDiligence()` in `WhtEnvironment.ts` — loads checklist, matches provided doc IDs, returns `DdGapAnalysis` with `status / gaps / critical_missing / provided_count / required_count`
+- Status logic: INSUFFICIENT = any critical doc absent; PARTIAL = non-critical mandatory docs missing; COMPLETE = all mandatory docs provided
+- `DdGapAnalysis` interface exported from `BeneficialOwnerAgent.ts`
+- `dd_gap_analysis?: DdGapAnalysis` added to `WhtReport`
+- `provided_documents?: string[]` added to `AgentInputSchema` and `buildTaskString()`
+- New Goal `Check due diligence documentation` (priority 4.5) — agent must always call `check_due_diligence`
+- New tool `check_due_diligence` in `buildWhtTools()`; dispatch case records `dd_gaps` finding
+- `computeReportConfidence()` Negative Evidence Gate: INSUFFICIENT → LOW (unconditional); PARTIAL → cap at MEDIUM
+- `extractDdGapAnalysis()` helper in `buildReport()` populates `dd_gap_analysis` on the report
+- 12 new tests: 8 in `WhtEnvironment.test.ts` + 4 in `BeneficialOwnerAgent.test.ts` → 326/326
 
 ### Phase 18 — UC2 Third-party Vendor Workflow (v0.21.0 — 2026-04-03)
 - `VENDOR_ROUTING_JURISDICTIONS` set (15 countries) + `classifyVendorRisk()` method in `WhtEnvironment.ts`

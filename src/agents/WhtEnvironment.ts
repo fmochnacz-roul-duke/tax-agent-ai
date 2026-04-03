@@ -1529,6 +1529,154 @@ export class WhtEnvironment {
     });
   }
 
+  // ── Phase 19: checkDueDiligence — Negative Evidence Gate ────────────────────
+  //
+  // Checks which mandatory due diligence documents have been provided by the
+  // payer and returns a gap analysis.  Missing CRITICAL documents (board minutes,
+  // KSeF ID, payroll proofs for royalties, IP ownership docs) set status to
+  // INSUFFICIENT — which triggers LOW confidence in computeReportConfidence().
+  //
+  // Design note: the checklist is loaded from data/due_diligence_checklists.json
+  // so the legal requirements can be updated without touching TypeScript code.
+  checkDueDiligence(incomeType: string, providedDocuments: string[]): string {
+    const VALID_INCOME = new Set(['dividend', 'interest', 'royalty']);
+    const normIncome = incomeType.toLowerCase();
+    if (!VALID_INCOME.has(normIncome)) {
+      return JSON.stringify({
+        error: `Unsupported income_type "${incomeType}". Must be one of: dividend, interest, royalty.`,
+        source: 'validation',
+      });
+    }
+
+    if (!Array.isArray(providedDocuments)) {
+      return JSON.stringify({
+        error: 'provided_documents must be an array of document ID strings.',
+        source: 'validation',
+      });
+    }
+
+    // ── Load checklist data ──────────────────────────────────────────────────
+    //
+    // The JSON file lives in data/ relative to the project root.
+    // __dirname in WhtEnvironment.ts is src/agents/, so we go up two levels.
+    const checklistPath = path.resolve(__dirname, '../../data/due_diligence_checklists.json');
+
+    // ChecklistItem describes the shape of each entry inside the JSON file.
+    // It is declared locally (inside this method) because it is only needed here.
+    interface ChecklistItem {
+      id: string;
+      name: string;
+      description: string;
+      mandatory: boolean;
+      critical: boolean;
+    }
+    interface ChecklistFile {
+      [key: string]: { required_docs: ChecklistItem[] };
+    }
+
+    let checklists: ChecklistFile;
+    try {
+      checklists = JSON.parse(fs.readFileSync(checklistPath, 'utf-8')) as ChecklistFile;
+    } catch {
+      return JSON.stringify({
+        error: 'Could not load due_diligence_checklists.json. Run from project root.',
+        source: 'checklist_data',
+      });
+    }
+
+    const checklist = checklists[normIncome];
+    if (!checklist) {
+      return JSON.stringify({
+        error: `No checklist found for income type "${normIncome}".`,
+        source: 'checklist_data',
+      });
+    }
+
+    // ── Match provided documents against checklist ───────────────────────────
+    //
+    // We normalise both sides: lowercase and replace spaces with underscores.
+    // This lets the agent pass "board meeting minutes" or "board_meeting_minutes"
+    // and both will match the item id "board_meeting_minutes".
+    const normalised = new Set(
+      providedDocuments.map((d) => d.toLowerCase().trim().replace(/\s+/g, '_'))
+    );
+
+    const mandatoryItems = checklist.required_docs.filter((d) => d.mandatory);
+    const allItems = checklist.required_docs;
+
+    const gaps: string[] = [];
+    const criticalMissing: string[] = [];
+
+    for (const item of mandatoryItems) {
+      if (!normalised.has(item.id)) {
+        gaps.push(item.name);
+        if (item.critical) {
+          criticalMissing.push(item.name);
+        }
+      }
+    }
+
+    const providedCount = mandatoryItems.length - gaps.length;
+    const requiredCount = mandatoryItems.length;
+
+    // ── Derive status ────────────────────────────────────────────────────────
+    //
+    // INSUFFICIENT — any critical document is absent; confidence will be LOW.
+    // PARTIAL      — non-critical mandatory documents missing; confidence capped at MEDIUM.
+    // COMPLETE     — all mandatory documents provided.
+    let status: 'COMPLETE' | 'PARTIAL' | 'INSUFFICIENT';
+    if (criticalMissing.length > 0) {
+      status = 'INSUFFICIENT';
+    } else if (gaps.length > 0) {
+      status = 'PARTIAL';
+    } else {
+      status = 'COMPLETE';
+    }
+
+    const notes: string[] = [];
+    if (status === 'COMPLETE') {
+      notes.push(
+        'All mandatory due diligence documents have been provided. Documentation is complete.'
+      );
+    } else if (status === 'PARTIAL') {
+      notes.push(
+        `${gaps.length} mandatory document(s) missing but no critical gaps. ` +
+          'Confidence will be capped at MEDIUM. Obtain missing documents before filing.'
+      );
+    } else {
+      notes.push(
+        `CRITICAL GAPS: ${criticalMissing.length} critical document(s) absent. ` +
+          'Report confidence will be set to LOW regardless of other findings.'
+      );
+      notes.push(
+        'Missing critical evidence prevents a fully substantiated beneficial owner determination. ' +
+          'Obtain these documents before applying the reduced WHT rate.'
+      );
+    }
+
+    return JSON.stringify({
+      income_type: normIncome,
+      status,
+      provided_count: providedCount,
+      required_count: requiredCount,
+      gaps,
+      critical_missing: criticalMissing,
+      notes,
+      // Full checklist with provided/missing flags — useful for UI display
+      checklist: allItems.map((d) => ({
+        id: d.id,
+        name: d.name,
+        mandatory: d.mandatory,
+        critical: d.critical,
+        provided: normalised.has(d.id),
+      })),
+      legal_basis:
+        'Art. 26 Polish CIT Act; MF Objaśnienia podatkowe z 3 lipca 2025 r. §4 ' +
+        '(due diligence obligations of WHT remitters)',
+      source: 'WHT due diligence checklist — MF Objaśnienia §4 requirements',
+    });
+  }
+
   // Maps SourceType strings to a numeric authority rank.
   // 1 = highest authority (primary legislation).
   // Used to let the agent and downstream tools compare source authority.
