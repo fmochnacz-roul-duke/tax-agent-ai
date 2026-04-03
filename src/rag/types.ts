@@ -18,13 +18,13 @@
 // on consult_legal_sources, so the agent can ask: "retrieve only statutory text"
 // or "retrieve only ministerial guidance" rather than searching the entire corpus.
 export type SourceType =
-  | 'statute'    // Primary legislation (CIT Act, PIT Act)
-  | 'directive'  // EU secondary legislation (I&R Directive, P-S Directive)
-  | 'treaty'     // Bilateral double taxation convention
+  | 'statute' // Primary legislation (CIT Act, PIT Act)
+  | 'directive' // EU secondary legislation (I&R Directive, P-S Directive)
+  | 'treaty' // Bilateral double taxation convention
   | 'convention' // Multilateral convention (MLI)
-  | 'guidance'   // Official ministerial or regulatory guidance (MF Objaśnienia)
-  | 'oecd'       // OECD publication or standard (TP Guidelines, BEPS Actions)
-  | 'commentary' // Academic or professional commentary;
+  | 'guidance' // Official ministerial or regulatory guidance (MF Objaśnienia)
+  | 'oecd' // OECD publication or standard (TP Guidelines, BEPS Actions)
+  | 'commentary'; // Academic or professional commentary;
 
 // One section of a legal source document, ready to be embedded.
 // Produced by the Chunker from a source .md file.

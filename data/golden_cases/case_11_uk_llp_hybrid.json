@@ -1,0 +1,30 @@
+{
+  "case_id": "case_11",
+  "description": "Post-Brexit Finance LLP — UK — Interest — REVERSE HYBRID (Fiscally Transparent)",
+  "metadata": {
+    "risk_tier": "MEDIUM",
+    "complexity": "ADVANCED",
+    "primary_provision": "UK-PL DTT Art. 24 + Hybrid Entity Rules",
+    "scenario_type": "Intercompany / Post-Brexit / Hybrid Entity"
+  },
+  "input": {
+    "entity_name": "Post-Brexit Finance LLP",
+    "country": "United Kingdom",
+    "income_type": "interest",
+    "shareholding_percentage": 100,
+    "annual_payment_pln": 3000000,
+    "related_party": true,
+    "evidence": {
+      "cfr_status": "BASELINE_ONLY",
+      "entity_type": "UK_LLP",
+      "hybrid_status_confirmed": "FISCALLY_TRANSPARENT"
+    },
+    "substance_notes": "UK Limited Liability Partnership. UK treats as transparent; Poland treats as opaque (Reverse Hybrid risk). No clear documentation on the tax status of individual partners in relation to Polish source income."
+  },
+  "expected": {
+    "bo_overall": "REJECTED",
+    "treaty_rate_percent": 20,
+    "rate_basis": "domestic",
+    "eval_note": "UK LLP transparency requires look-through to partners. Without partner-level CFRs, default 20% domestic rate applies."
+  }
+}

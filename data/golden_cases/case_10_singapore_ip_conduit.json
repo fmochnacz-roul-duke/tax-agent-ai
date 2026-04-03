@@ -1,0 +1,33 @@
+{
+  "case_id": "case_10",
+  "description": "Grab Holdings — Singapore — Royalty — CONDUIT RISK (US UBO)",
+  "metadata": {
+    "risk_tier": "HIGH",
+    "complexity": "EXPERT",
+    "primary_provision": "Art. 4a pkt 29 (BO) + Conduit Indicators",
+    "scenario_type": "Intercompany / 2026 Stress Test / Far East Hub"
+  },
+  "input": {
+    "entity_name": "Grab Holdings",
+    "country": "Singapore",
+    "income_type": "royalty",
+    "shareholding_percentage": 100,
+    "annual_payment_pln": 8000000,
+    "related_party": true,
+    "ksef_invoice_id": "PL-20260312-GRAB-88",
+    "evidence": {
+      "cfr_status": "BASELINE_ONLY",
+      "payroll_filing_proof": "Singapore CPF verified for 2 senior staff",
+      "board_saturation": "HIGH (>15 boards per director)",
+      "flash_lending_timing": "YES (<24h pass-through to US parent)"
+    },
+    "substance_notes": "Singaporean IP Hub for SEA operations. However, for Polish royalties, board minutes show all decisions made via MS Teams with US IP addresses. Royalties are forwarded to US parent within 24 hours. Local directors have extreme board saturation."
+  },
+  "expected": {
+    "bo_overall": "REJECTED",
+    "conduit_risk": true,
+    "treaty_rate_percent": 20,
+    "rate_basis": "domestic",
+    "eval_note": "Fails Condition II (Pass-through <24h) and III (Board Saturation + Remote Decision Making). Look-through to US UBO recommended."
+  }
+}

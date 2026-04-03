@@ -11,6 +11,8 @@ All documentation for the **tax-agent-ai** WHT Beneficial Owner Agent.
 | [agent-design-guide.md](agent-design-guide.md) | Agent builders | Reusable patterns — GAME, MATE, async tools, multi-agent, SSE streaming, conversational extraction |
 | [vision.md](vision.md) | Stakeholders | Tax OS long-term vision — module roadmap, acceptance criteria, business context |
 | [FAQ.md](FAQ.md) | Everyone | Answers to common questions about design decisions and limitations |
+| [GOLDEN_DATASET_ARCHITECTURE.md](GOLDEN_DATASET_ARCHITECTURE.md) | QA / Legal | v2.0 golden case structure, 5-layer scenario matrix, knowledge gaps tracked in `data/golden_cases/` |
+| [SUPPLEMENTAL_LEGAL_SOURCES_AND_PIT_ANALYSIS.md](SUPPLEMENTAL_LEGAL_SOURCES_AND_PIT_ANALYSIS.md) | Legal / Tax | Missing sources (KAS digital evidence, NSA/CJEU case law, payroll benchmarks); PIT CIT-bias blind spot analysis; Phase 24b scope |
 
 ---
 

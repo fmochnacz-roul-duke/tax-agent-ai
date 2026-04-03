@@ -95,10 +95,18 @@ export class Chunker {
     // We validate it against the known SourceType values — an unrecognised string
     // is silently dropped (undefined) rather than crashing the build.
     const knownSourceTypes: SourceType[] = [
-      'statute', 'directive', 'treaty', 'convention', 'guidance', 'oecd', 'commentary',
+      'statute',
+      'directive',
+      'treaty',
+      'convention',
+      'guidance',
+      'oecd',
+      'commentary',
     ];
     const rawSourceType = str('source_type');
-    const sourceType: SourceType | undefined = knownSourceTypes.includes(rawSourceType as SourceType)
+    const sourceType: SourceType | undefined = knownSourceTypes.includes(
+      rawSourceType as SourceType
+    )
       ? (rawSourceType as SourceType)
       : undefined;
 

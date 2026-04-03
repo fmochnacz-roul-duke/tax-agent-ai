@@ -68,11 +68,15 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 | DOCS-3 | Documentation polish — CONTRIBUTING.md, docs index, FAQ, README badges | ✅ v0.19.0 |
 | 16 | Legal Source Hierarchy — `source_type` filter on RAG tool; `legal_hierarchy` in Citation | ✅ v0.19.0 |
 | 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out; `bo_overall` badge; conduit risk banner; force-draft on UNCERTAIN/LOW | ✅ v0.20.0 |
-| **18–22** | **UC2, DD Module, Data Quality, Batch, Production Hardening** | **Next: 18** |
-| 23–26 | Intangibles layer, GAAR tool, Jurisdiction expansion, WHT v1.0 | Planned |
+| — | Data & Planning (v0.20.1) | Golden Dataset v2.0: 22 new cases (09–31); taxonomy, legal sources registry updated | ✅ v0.20.1 |
+| **18** | **UC2 Third-party Vendor Workflow** | `classify_vendor_risk` tool; document checklist; no-DDQ path | **Next** |
+| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist; DD gap analysis; explicit missing-evidence warnings |
+| QA-4 | Eval Harness v2.0 | `runEvals.ts` updated for v2.0 cases; EU27 rate verification |
+| 20–22 | Data Quality, Batch Processing, Production Hardening + Temporal Context | Verify treaty rates; batch CLI; session persistence; `payment_year` temporal gating |
+| 23–26 | Intangibles, GAAR, PIT Expansion (24b), Jurisdiction expansion, WHT v1.0 | Planned |
 | 27–29 | Tax OS Foundation — GLOBAL VISION, EU engine, Module 2 | Vision |
 
-**Tests: 302/302 passing. Build: zero errors.**
+**Tests: 302/302 passing. Build: zero errors. Golden Dataset: 31 cases (9 active + 4 stress tests + 18 EU27 scaffolds).**
 
 ---
 
@@ -95,6 +99,7 @@ npm run lint                    # ESLint + Prettier
 npm run test:coverage           # c8 coverage report
 
 # Golden dataset evaluation (requires OPENAI_API_KEY)
+# NOTE: Only cases 01–08b are currently active in the harness (v2.0 harness pending QA-4)
 npm run eval                    # run 9-case eval harness with Triangulation Rule
 
 # Optional — requires GEMINI_API_KEY

@@ -1,0 +1,29 @@
+{
+  "case_id": "case_23",
+  "description": "Auto-generated EU27 baseline — Italy — Interest",
+  "metadata": {
+    "risk_tier": "HIGH",
+    "complexity": "STANDARD",
+    "primary_provision": "Art. 4a pkt 29 (BO) baseline",
+    "scenario_type": "EU27 Coverage / interest"
+  },
+  "input": {
+    "entity_name": "EU27 Italy Corp",
+    "country": "Italy",
+    "income_type": "interest",
+    "shareholding_percentage": 0,
+    "annual_payment_pln": 1500000,
+    "related_party": false,
+    "ksef_invoice_id": "PL-2026-EU27-IT-001",
+    "evidence": {
+      "cfr_status": "VALID_2026"
+    },
+    "substance_notes": "Standard operating entity in Italy. Case generated to ensure full EU27 dataset coverage."
+  },
+  "expected": {
+    "bo_overall": "UNCERTAIN",
+    "treaty_rate_percent": 5,
+    "rate_basis": "treaty",
+    "eval_note": "Expected outcome: UNCERTAIN based on risk tier HIGH."
+  }
+}

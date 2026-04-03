@@ -1,0 +1,29 @@
+{
+  "case_id": "case_20",
+  "description": "Auto-generated EU27 baseline — Finland — Interest",
+  "metadata": {
+    "risk_tier": "LOW",
+    "complexity": "STANDARD",
+    "primary_provision": "Art. 4a pkt 29 (BO) baseline",
+    "scenario_type": "EU27 Coverage / interest"
+  },
+  "input": {
+    "entity_name": "EU27 Finland Corp",
+    "country": "Finland",
+    "income_type": "interest",
+    "shareholding_percentage": 0,
+    "annual_payment_pln": 1500000,
+    "related_party": false,
+    "ksef_invoice_id": "PL-2026-EU27-FI-001",
+    "evidence": {
+      "cfr_status": "VALID_2026"
+    },
+    "substance_notes": "Standard operating entity in Finland. Case generated to ensure full EU27 dataset coverage."
+  },
+  "expected": {
+    "bo_overall": "CONFIRMED",
+    "treaty_rate_percent": 5,
+    "rate_basis": "treaty",
+    "eval_note": "Expected outcome: CONFIRMED based on risk tier LOW."
+  }
+}

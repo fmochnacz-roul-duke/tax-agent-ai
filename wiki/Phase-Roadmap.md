@@ -326,15 +326,38 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ## Planned phases
 
+### v0.20.1 — Data & Planning Session (2026-04-03)
+
+**What:**
+- **22 new golden cases** (cases 09–31) added to `data/golden_cases/`:
+  - Cases 09–12: 2026 Stress Tests — Swiss STTR (case_09), Singapore conduit/board saturation (case_10), UK LLP hybrid/reverse hybrid (case_11), US management fee recharacterisation (case_12)
+  - Cases 13–31: EU27 baseline coverage scaffolds — all 27 member states represented with standard dividend/interest/royalty scenarios
+- **Golden Dataset v2.0 structure**: `ksef_invoice_id`, `evidence` (KSeF/payroll/lease/Pillar Two status), `substance_details` (board saturation, board IP origin), `expected.sttr_topup_applies`, `expected.rate_basis`
+- **Tax taxonomy**: 3 new categories (`pillar_two_sttr`, `digital_tax_compliance`, `board_governance`); concepts: `ksef_mandate`, `sttr`, `board_saturation`
+- **Legal sources registry**: `PL-KSEF-2026` and `PL-CIT-PILLAR-TWO-2026` added
+- **Wiki updated**: `WHT-Legal-Framework.md` — 2026 Intelligence Update section (KSeF, STTR, Board Saturation, Management Fee recharacterisation, Post-Brexit Hybrids)
+- **New docs**: `docs/GOLDEN_DATASET_ARCHITECTURE.md`, `docs/SUPPLEMENTAL_LEGAL_SOURCES_AND_PIT_ANALYSIS.md`
+- **Generator script**: `scripts/generate_eu27_cases.js`
+- **Roadmap**: QA-4 and Phase 24b defined; Phase 19 and Phase 22 scope extended
+
+**Known gaps opened (resolved in future phases):**
+- EU27 cases 13–31 use placeholder `treaty_rate_percent: 5` — enrichment in QA-4
+- Cases 09–12 expected fields not yet supported by `runEvals.ts` — fixed in QA-4
+- STTR logic, board saturation check, hybrid transparency not yet in agent — Phases 22/23b/24b
+- `scripts/generate_eu27_cases.js` needs commit — Phase 18 pre-work
+
+---
+
 ### Arc 1 — WHT Core Completion (Phases 18–22)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
 | **18** | **UC2 Third-party Vendor Workflow** | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path; CSV batch schema defined |
-| 19 | Due Diligence Module | DD checklist tool per payment type (dividend, royalty, management fee); DD gap analysis in report |
-| 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |
+| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist per payment type (dividend, royalty, management fee); DD gap analysis in report; **explicit flagging of missing evidence** (no KSeF ID → WARNING, no board logs → WARNING, no payroll filing → WARNING) |
+| QA-4 | Eval Harness v2.0 | Update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); add `status: 'active' \| 'scaffold' \| 'planned'` to case metadata; only `active` cases run in CI; verify EU27 rates against `treaties.json`; commit `generate_eu27_cases.js` |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |
 | 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache hits |
-| 22 | Production Hardening | Session persistence (Redis); SSE reconnect; rate limiting; memory pruning; pgvector migration if RAG corpus > 100 chunks |
+| 22 | Production Hardening + Temporal Context | Session persistence (Redis); SSE reconnect; rate limiting; memory pruning; `payment_year` parameter on `AgentInput`; warn when 2026 mandates (STTR/KSeF) applied to historical payments |
 
 ### Arc 2 — WHT Professional Features (Phases 23a–26)
 
@@ -343,9 +366,10 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 | 23a | Intangibles — Legal & Data Layer | Art. 21 ust. 1 pkt 2a CIT framework; treaty classification rules (Art. 7 Business Profits vs Art. 12 Royalties); MDR hallmarks (Art. 86a-86o Ordynacja podatkowa); IC vs. third-party analysis paths; RAG source enrichment for management fees |
 | 23b | Intangibles — Code Layer | New `payment_type` options (`management_fee`, `advisory`, `technical_service`); `ServiceClassifier.ts` — AI-generated dynamic service classification questionnaire; `check_mdr_obligation` tool in `WhtEnvironment.ts`; PE hook in `WhtReport` |
 | 23c | GAAR Tool | `check_gaar_risk` tool — Art. 119a Ordynacja podatkowa analysis; GAAR risk flag in `WhtReport`; scope TBD |
-| 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow |
+| 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow; NSA/CJEU case law RAG ingestion (CJEU Danish Cases C-116/16; NSA II FSK 27/23) |
+| 24b | PIT & Hybrid Entities Expansion | `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'` on `AgentInput`; Art. 29/30a PIT WHT rates; IFT-1/IFT-1R (PIT) vs IFT-2/IFT-2R (CIT) form guidance in report; UK LLP fiscal transparency check (case_11 is primary eval case); B2B freelancer / "disguised employment" detection |
 | 25 | Jurisdiction Expansion | `treaties.json` 36 → 50+ countries |
-| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria verified; `CHANGELOG.md` v1.0; MBA prototype declaration |
+| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria verified; `CHANGELOG.md` v1.0; MBA prototype declaration; Legal Memo output format (Facts / Law / Application / Conclusion) |
 
 ### Arc 3 — Tax OS Foundation (Phases 27–29)
 

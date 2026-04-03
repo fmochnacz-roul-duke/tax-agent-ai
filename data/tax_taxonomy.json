@@ -26,10 +26,81 @@
     "compliance_mechanisms":   "Polish WHT compliance pathways: statutory rate, treaty rate, EU Directives, Pay and Refund",
     "due_diligence":           "Documentation and due diligence obligations on the Polish paying entity",
     "risk_classification":     "WHT risk tiers used for third-party vendor and intercompany screening",
-    "confidence_levels":       "Data quality and confidence assessment for agent conclusions"
+    "confidence_levels":       "Data quality and confidence assessment for agent conclusions",
+    "pillar_two_sttr":         "OECD Pillar Two Subject to Tax Rule (STTR) and Global Minimum Tax impacts",
+    "digital_tax_compliance":  "2026 Digital compliance mandates: KSeF (e-Invoicing), Payroll/Lease registries",
+    "board_governance":        "Governance and decision-making independence metrics (Board Saturation)"
   },
 
   "concepts": [
+
+    {
+      "id": "ksef_mandate",
+      "category": "digital_tax_compliance",
+      "term_en": "KSeF Mandate (Feb 2026)",
+      "term_pl": "Mandat KSeF (luty 2026)",
+      "aliases_en": ["e-invoicing mandate", "structured invoice", "KSeF ID"],
+      "aliases_pl": ["Krajowy System e-Faktur", "faktura ustrukturyzowana", "ID KSeF"],
+      "definition": "Mandatory structured e-invoicing in Poland as of Feb 1, 2026. Payments must link to a verified KSeF Invoice ID. Lack of KSeF match is a high-signal non-compliance flag in 2026 audits.",
+      "legal_source_refs": ["PL-VAT-2026"],
+      "rag_keywords": ["KSeF", "e-faktura", "faktura ustrukturyzowana", "mandat KSeF 2026", "structured invoice", "KSeF ID"],
+      "agent_tool_relevance": ["check_pay_and_refund"],
+      "module_relevance": ["WHT", "VAT"]
+    },
+
+    {
+      "id": "sttr_pillar_two",
+      "category": "pillar_two_sttr",
+      "term_en": "Subject to Tax Rule (STTR)",
+      "term_pl": "Zasada Subject to Tax Rule (STTR)",
+      "aliases_en": ["STTR", "9% tax floor", "Top-Up WHT"],
+      "aliases_pl": ["podatek wyrównawczy STTR", "minimalny poziom opodatkowania 9%", "filar drugi"],
+      "definition": "OECD Pillar Two rule allowing Poland to levy a 'Top-Up' WHT if the recipient's effective tax rate (ETR) in its home jurisdiction is below 9%. Overrides standard DTT benefits for certain intragroup payments (interest, royalties).",
+      "legal_source_refs": ["OECD-PILLAR-TWO", "PL-CIT-2026"],
+      "rag_keywords": ["STTR", "Subject to Tax Rule", "9% floor", "minimalne opodatkowanie", "top-up tax", "Pillar Two", "filar drugi", "ETR"],
+      "agent_tool_relevance": ["get_treaty_rate"],
+      "module_relevance": ["WHT", "pillar_two"]
+    },
+
+    {
+      "id": "board_saturation",
+      "category": "board_governance",
+      "term_en": "board saturation risk",
+      "term_pl": "ryzyko nasycenia zarządu (board saturation)",
+      "aliases_en": ["director-for-hire", "nominee director saturation", "board appointment limit"],
+      "aliases_pl": ["nasycenie rad nadzorczych", "wielokrotne mandaty", "dyrektorzy nominowani", "brak autonomii decyzyjnej"],
+      "definition": "Risk indicator where a local director sits on >10 boards. KAS flags such entities as lacking autonomous decision-making (Condition III/BO). High signal for shell/conduit structures in 2026.",
+      "rag_keywords": ["board saturation", "nasycenie zarządu", "director-for-hire", "nominee director", "board appointments", "multiple directorships", "local management autonomy"],
+      "agent_tool_relevance": ["check_entity_substance"],
+      "module_relevance": ["WHT"]
+    },
+
+    {
+      "id": "digital_footprint",
+      "category": "digital_tax_compliance",
+      "term_en": "digital footprint audit",
+      "term_pl": "audyt śladu cyfrowego",
+      "aliases_en": ["IP address verification", "IT infrastructure gap", "server costs audit"],
+      "aliases_pl": ["ślad cyfrowy", "weryfikacja IP", "infrastruktura IT", "koszty serwerów"],
+      "definition": "2026 audit approach focusing on technical evidence: board meeting IP origins (via MS Teams/Zoom logs) vs. residency claims, IT infrastructure costs (P&L server/dev costs), and KSeF links.",
+      "rag_keywords": ["digital footprint", "ślad cyfrowy", "IP address verification", "IT infrastructure gap", "MS Teams logs", "server costs", "digital audit"],
+      "agent_tool_relevance": ["check_entity_substance", "fact_check_substance"],
+      "module_relevance": ["WHT"]
+    },
+
+    {
+      "id": "management_fee_recharacterization",
+      "category": "payment_types",
+      "term_en": "management fee recharacterization",
+      "term_pl": "recharakteryzacja opłat za zarządzanie",
+      "aliases_en": ["hidden dividend", "support fee reclassification", "Art. 15e legacy risk"],
+      "aliases_pl": ["ukryta dywidenda", "recharakteryzacja usług niematerialnych", "koszty usług wsparcia"],
+      "definition": "2026 risk where KAS recharacterizes 'Management Fees' as 'Dividends' or 'Royalties' to trigger 19%/20% WHT. Requires TP benchmarking in a Local File to defend 'Business Profit' (Art. 7) classification.",
+      "legal_source_refs": ["PL-CIT-2026", "MF-OBJ-2025"],
+      "rag_keywords": ["management fee", "ukryta dywidenda", "hidden dividend", "recharakteryzacja", "TP benchmarking", "Local File", "usługi niematerialne", "Art. 21 CIT"],
+      "agent_tool_relevance": ["get_treaty_rate"],
+      "module_relevance": ["WHT", "TP_screening"]
+    },
 
     {
       "id": "beneficial_owner",

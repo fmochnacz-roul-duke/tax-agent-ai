@@ -1,0 +1,29 @@
+{
+  "case_id": "case_24",
+  "description": "Auto-generated EU27 baseline — Latvia — Royalty",
+  "metadata": {
+    "risk_tier": "LOW",
+    "complexity": "STANDARD",
+    "primary_provision": "Art. 4a pkt 29 (BO) baseline",
+    "scenario_type": "EU27 Coverage / royalty"
+  },
+  "input": {
+    "entity_name": "EU27 Latvia Corp",
+    "country": "Latvia",
+    "income_type": "royalty",
+    "shareholding_percentage": 0,
+    "annual_payment_pln": 1500000,
+    "related_party": false,
+    "ksef_invoice_id": "PL-2026-EU27-LV-001",
+    "evidence": {
+      "cfr_status": "VALID_2026"
+    },
+    "substance_notes": "Standard operating entity in Latvia. Case generated to ensure full EU27 dataset coverage."
+  },
+  "expected": {
+    "bo_overall": "CONFIRMED",
+    "treaty_rate_percent": 5,
+    "rate_basis": "treaty",
+    "eval_note": "Expected outcome: CONFIRMED based on risk tier LOW."
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "case_id": "case_12",
+  "description": "Global Support Corp — USA — Management Fee — HIDDEN DIVIDEND RISK",
+  "metadata": {
+    "risk_tier": "HIGH",
+    "complexity": "EXPERT",
+    "primary_provision": "Art. 21.1.2a CIT + TP Benchmarking",
+    "scenario_type": "Intercompany / 2026 Stress Test / Intangibles"
+  },
+  "input": {
+    "entity_name": "Global Support Corp",
+    "country": "United States",
+    "income_type": "management_fee",
+    "annual_payment_pln": 4500000,
+    "related_party": true,
+    "ksef_invoice_id": "PL-20260401-SUPP-01",
+    "evidence": {
+      "tp_local_file_benchmarked": false,
+      "economic_justification": "WEAK (Standard support services claim)"
+    },
+    "substance_notes": "US Parent charging management fees to Polish subsidiary. No local Transfer Pricing (TP) benchmark available for 2026. KAS recharacterizes as hidden dividend due to lack of market-price evidence."
+  },
+  "expected": {
+    "bo_overall": "REJECTED",
+    "treaty_rate_percent": 19,
+    "rate_basis": "domestic_dividend_rechar",
+    "eval_note": "Recharacterized as dividend (19%) due to missing TP documentation and weak economic justification. Art. 21.1.2a CIT baseline 20% would apply if classified as intangible service, but 19% applies as 'hidden dividend'."
+  }
+}

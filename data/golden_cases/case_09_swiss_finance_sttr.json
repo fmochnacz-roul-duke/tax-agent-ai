@@ -1,0 +1,32 @@
+{
+  "case_id": "case_09",
+  "description": "Nestlé Finance International Ltd — Switzerland — Interest — STTR TRAP (ETR < 9%)",
+  "metadata": {
+    "risk_tier": "HIGH",
+    "complexity": "EXPERT",
+    "primary_provision": "OECD Pillar Two STTR",
+    "scenario_type": "Intercompany / 2026 Stress Test / Pillar Two"
+  },
+  "input": {
+    "entity_name": "Nestlé Finance International Ltd",
+    "country": "Switzerland",
+    "income_type": "interest",
+    "shareholding_percentage": 100,
+    "annual_payment_pln": 15000000,
+    "related_party": true,
+    "ksef_invoice_id": "PL-20260310-NESTLE-01",
+    "evidence": {
+      "cfr_status": "BASELINE_ONLY",
+      "pillar_two_gir_status": "ETR_LOW_6_PERCENT",
+      "tp_local_file_benchmarked": true
+    },
+    "substance_notes": "Swiss Treasury Co. Benefits from a cantonal tax holiday in Vaud. Effective tax rate is 6%. Subject to Tax Rule (STTR) under Pillar Two applies in 2026 because ETR < 9%. Poland invokes STTR override of the PL-CH DTT."
+  },
+  "expected": {
+    "bo_overall": "UNCERTAIN",
+    "sttr_topup_applies": true,
+    "treaty_rate_percent": 9,
+    "rate_basis": "sttr_override",
+    "eval_note": "STTR 9% floor overrides DTT 0-5% rates. Agent must flag the 6% ETR and apply the 9% minimum."
+  }
+}

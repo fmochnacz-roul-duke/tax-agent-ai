@@ -99,11 +99,7 @@ describe('Chunker — frontmatter parsing', () => {
     const source = makeSource('## §2.3\n\nContent.', { source_type: 'unknown_type' });
     const chunks = chunker.chunk(source);
     assert.ok(chunks.length > 0);
-    assert.equal(
-      chunks[0].source_type,
-      undefined,
-      'unrecognised source_type should be dropped'
-    );
+    assert.equal(chunks[0].source_type, undefined, 'unrecognised source_type should be dropped');
   });
 });
 

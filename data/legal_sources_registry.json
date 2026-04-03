@@ -281,6 +281,50 @@
     },
 
     {
+      "id": "PL-KSEF-2026",
+      "type": "statute",
+      "name": "Ustawa o zmianie ustawy o podatku od towarów i usług oraz niektórych innych ustaw (Mandat KSeF)",
+      "short_name": "KSeF Mandate 2026",
+      "authority": "Sejm Rzeczypospolitej Polskiej",
+      "jurisdiction": "Poland",
+      "language": "Polish",
+      "dziennik_ustaw": "Dz.U. 2026 poz. 128",
+      "effective_date": "2026-02-01",
+      "verified_date": "2026-04-03",
+      "key_provisions": [
+        "Mandatory structured e-invoicing for all B2B transactions",
+        "Requirement to link cross-border payments to KSeF Invoice IDs",
+        "Integration of WHT remitter obligations with KSeF structured data"
+      ],
+      "used_by_tools": ["check_pay_and_refund"],
+      "status": "current",
+      "rag_ready": false,
+      "notes": "Critical for 2026 compliance audits. Payment without KSeF link is a high-risk flag."
+    },
+
+    {
+      "id": "PL-CIT-PILLAR-TWO-2026",
+      "type": "statute",
+      "name": "Ustawa o minimalnym opodatkowaniu grup międzynarodowych (Implementacja Filaru Drugiego)",
+      "short_name": "Polish Pillar Two Act",
+      "authority": "Sejm Rzeczypospolitej Polskiej",
+      "jurisdiction": "Poland",
+      "language": "Polish",
+      "dziennik_ustaw": "Dz.U. 2026 poz. 412",
+      "effective_date": "2026-01-01",
+      "verified_date": "2026-04-03",
+      "key_provisions": [
+        "Art. 24 — Subject to Tax Rule (STTR) implementation",
+        "9% minimum tax floor for intragroup interest and royalties",
+        "Top-Up WHT mechanism for low-tax jurisdictions (<9% ETR)"
+      ],
+      "used_by_tools": ["get_treaty_rate"],
+      "status": "current",
+      "rag_ready": false,
+      "notes": "Directly impacts treaty rate applications for low-tax jurisdictions (e.g. Swiss cantonal holidays)."
+    },
+
+    {
       "id": "OECD-MLI-MATCHING-DB",
       "type": "database",
       "name": "OECD BEPS MLI Matching Database",
