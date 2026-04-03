@@ -5,6 +5,31 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.23.0] — 2026-04-03 — QA-4: Eval Harness v2.0
+
+### QA-4 — Evaluation Harness v2.0
+
+#### `scripts/runEvals.ts` — v2.0 rewrite
+- **Case status filtering** — `status: 'active' | 'scaffold'` field on every golden case; only `active` cases run by default and cause CI exit code 1 on failure; `--include-scaffold` flag includes EU27 scaffold cases (informational, no CI impact)
+- **`sttr_topup_applies` field** — informational flag in `expected`; displayed in output with `expected:YES/NO`; does not affect PASS/FAIL (covered by rate + `bo_overall` checks; dedicated `WhtReport` field is a future Phase 22a scope)
+- **`rate_basis` in summary table** — shows `treaty` / `domestic` / `sttr_override` / `domestic_dividend_rechar` per case for context
+- **Scaffold counter** — summary line breaks out active vs scaffold results; scaffold cases marked with `†` in the table
+
+#### `data/golden_cases/` — EU27 scaffold case updates (cases 13–31)
+- `status: 'scaffold'` added to all 19 EU27 cases
+- `treaty_rate_percent` corrected from placeholder 5% to actual rates from `treaties.json`: Finland 0%, Czech Republic 0%, Greece 20% (domestic), Hungary 10%, Italy 10%, Latvia 10%, Portugal 10%, Romania 10%, Slovenia 10%, Spain 10%
+- Case 17 (Czechia): `input.country` fixed to `"Czech Republic"` to match `treaties.json` key; entity name updated
+
+#### `data/golden_cases/` — active cases (01–12)
+- `status: 'active'` added to all 13 existing active cases for explicit marking
+
+#### `scripts/generate_eu27_cases.js`
+- "Czechia" → "Czech Republic" to match `treaties.json` key
+- `status: 'scaffold'` added to generated case template
+- Updated console output notes next step (rate verification before promoting to active)
+
+---
+
 ## [v0.22.0] — 2026-04-03 — Phase 19: Due Diligence Module + Negative Evidence Gate
 
 ### Scaffolding cleanup (chore)

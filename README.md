@@ -30,8 +30,8 @@ For full setup (optional Python service, Gemini FactChecker) see [Setup](#setup)
 
 ## Status
 
-![Tests](https://img.shields.io/badge/tests-314%20passing-brightgreen)
-![Phase](https://img.shields.io/badge/phase-18%20complete-blue)
+![Tests](https://img.shields.io/badge/tests-326%20passing-brightgreen)
+![Phase](https://img.shields.io/badge/phase-QA--4%20complete-blue)
 ![Status](https://img.shields.io/badge/status-active%20prototype-yellow)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey)
 
@@ -193,7 +193,7 @@ runWhtAnalysis()                        ← single entry point (web + CLI)
 
 Treaty data: 36 countries (EU-27 + UK, Switzerland, Norway, USA, Canada, Japan, Singapore, UAE, Australia, India). All rates marked `verified: false` — populated from professional commentary, pending confirmation against treaty PDFs (Phase 20).
 
-Golden dataset: 31 cases total — 9 original active cases (01–08b), 4 stress-test cases (09–12, 2026 scenarios), 18 EU27 baseline scaffolds (13–31, placeholder rates). Eval harness (`npm run eval`) runs the original 9 cases until QA-4 updates it for the v2.0 structure.
+Golden dataset: 31 cases total — 13 active cases (01–12 + case_08b), 19 EU27 baseline scaffolds (13–31, rates from treaties.json). Eval harness (`npm run eval`) runs active cases only; `--include-scaffold` includes EU27 scaffolds (informational, no CI impact).
 
 ---
 
@@ -341,7 +341,7 @@ npm test
 
 ## Roadmap
 
-### Completed (v0.1 – v0.22)
+### Completed (v0.1 – v0.23)
 
 | Phase | Description | Tag |
 |---|---|---|
@@ -365,13 +365,13 @@ npm test
 | 16 | Legal Source Hierarchy — `source_type` param on `consult_legal_sources`; `legal_hierarchy` in RAG results; Zod domain-narrowing | v0.19.0 |
 | 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | v0.20.0 |
 | 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path for LOW tier | v0.21.0 |
-| **19** | **Due Diligence Module + Negative Evidence Gate** — `check_due_diligence` tool; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate in confidence scoring; INSUFFICIENT → LOW; PARTIAL → MEDIUM | **v0.22.0** |
+| 19 | Due Diligence Module + Negative Evidence Gate — `check_due_diligence` tool; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate in confidence scoring; INSUFFICIENT → LOW; PARTIAL → MEDIUM | v0.22.0 |
+| **QA-4** | **Eval Harness v2.0** — `active`/`scaffold` status filter; `sttr_topup_applies` + `rate_basis` fields; EU27 cases (13–31) updated with correct rates; `generate_eu27_cases.js` committed | **v0.23.0** |
 
 ### Upcoming — Arc 1: WHT Core Completion
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **QA-4** | **Eval Harness v2.0** | Update `runEvals.ts` for v2.0 case structure; `active`/`scaffold` status filter; EU27 rate verification for cases 13–31 |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json |
 | 21 | Batch Processing | `scripts/runBatch.ts`; sequential processing; timestamped output dir + summary CSV |
 | 22a | Temporal Context | `payment_year` on `AgentInput`; STTR/KSeF temporal gating |

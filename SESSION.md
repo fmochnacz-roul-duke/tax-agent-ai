@@ -1,8 +1,8 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 19 complete (v0.22.0, 2026-04-03). QA-4 is next.
-**Last code session:** Phase 19 — Due Diligence Module + Negative Evidence Gate (v0.22.0, 2026-04-03)
+**Phase:** QA-4 complete (v0.23.0, 2026-04-03). Phase 20 (Data Quality) is next.
+**Last code session:** QA-4 — Eval Harness v2.0 (v0.23.0, 2026-04-03)
 **Last data/planning session:** 2026-04-03 — strategic review (external document); module1/2/3 scaffolding removed; Phase 22 split into 22a/22b; Phase 24b scoped as HIGH COMPLEXITY.
 **Branch:** master
 **Tests:** 326/326 passing
@@ -55,24 +55,28 @@ Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. 
 
 ## How to Resume Next Session
 
-Phase 19 is complete and merged to master (v0.22.0). Start QA-4 directly.
+QA-4 is complete and merged to master (v0.23.0). Start Phase 20 (Data Quality) next.
 
 ```
-git checkout -b feature/qa-4-eval-harness-v2
+git checkout -b feature/phase-20-data-quality
 npm run build    ← zero errors required
 npm test         ← 326/326 passing
+npm run eval     ← runs 13 active cases only; all should be PASS
 npm start        ← web UI at http://localhost:3000
 ```
 
-**Important notes:**
-- `npm run eval` will only work correctly for cases 01–08b (original 9 cases). Cases 09–12 have new fields (`sttr_topup_applies`) that the harness doesn't handle yet. Cases 13–31 have placeholder rates. Do NOT run eval until QA-4.
-- `scripts/generate_eu27_cases.js` generates cases 13–31 deterministically — untracked, to be committed in QA-4.
+**Phase 20 — Data Quality (80/20 rule: verify top 5 treaties first)**
+- 80/20 rule: Luxembourg, Germany, France, Netherlands, Ireland first — these appear in existing golden cases
+- One country at a time: fetch treaty PDF → verify rate → update `verified: true` in `treaties.json` → commit
+- Then move to remaining top-10 by payment volume
+- AI-assisted research only — always verify against primary source before committing
+- Scaffold cases 13–31 can be promoted to `active` after rate verification in this phase
 
-QA-4 — Eval Harness v2.0:
-- Update `runEvals.ts` to handle v2.0 case structure (`sttr_topup_applies`, `rate_basis`)
-- Add `active`/`scaffold` status filter — only run `active` cases
-- EU27 rate verification for cases 13–31 (Gemini batch verify)
-- Commit `scripts/generate_eu27_cases.js` to repo
+**QA-4 summary (what was done):**
+- `runEvals.ts` v2.0: active/scaffold status filter; `sttr_topup_applies` informational field; `rate_basis` in table; scaffold excluded from CI exit code
+- `generate_eu27_cases.js`: committed; Czech Republic key fix; `status: 'scaffold'` on all generated cases
+- Cases 01–12: `status: 'active'` added
+- Cases 13–31: `status: 'scaffold'`; treaty rates corrected from 5% placeholder to actual values from `treaties.json`; Czech Republic country fix in case_17
 
 Phase 17 summary (v0.20.0):
 - `DRAFT ONLY` banner + grey-out (`report-low` CSS class) for LOW confidence report cards

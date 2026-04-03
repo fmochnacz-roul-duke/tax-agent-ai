@@ -376,6 +376,23 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ---
 
+### v0.23.0 — QA-4: Eval Harness v2.0
+
+**What:**
+- `scripts/runEvals.ts` v2.0: `active`/`scaffold` status filter; scaffold cases skipped by default (`--include-scaffold` includes them, informational only, no CI impact); `sttr_topup_applies` informational field; `rate_basis` shown in summary table; scaffold cases marked `†` and excluded from exit code
+- `data/golden_cases/` cases 01–12: `status: 'active'` added explicitly
+- `data/golden_cases/` cases 13–31: `status: 'scaffold'`; `treaty_rate_percent` corrected from placeholder 5% to actual rates from `treaties.json` (Finland 0%, Czech Republic 0%, Greece 20% domestic, Hungary 10%, Italy 10%, Latvia 10%, Portugal 10%, Romania 10%, Slovenia 10%, Spain 10%); case_17 country fixed from "Czechia" → "Czech Republic"
+- `scripts/generate_eu27_cases.js`: committed; Czech Republic key fix; `status: 'scaffold'` in generated template
+
+**Key decisions:**
+- Scaffold cases do not fail CI — their expected values are not yet manually verified. They are informational coverage scaffolds.
+- `sttr_topup_applies` is informational in the harness. The agent doesn't yet expose a dedicated STTR field — case_09 is already covered by the rate=9% + `bo_overall=UNCERTAIN` check.
+- Czech Republic must match `treaties.json` key "czech republic" (lowercase). "Czechia" is the informal short name but not in the data file.
+
+**326/326 tests passing. No new TypeScript code.**
+
+---
+
 ## Planned phases
 
 ### v0.20.1 — Data & Planning Session (2026-04-03)
@@ -404,8 +421,7 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **QA-4** | **Eval Harness v2.0** | Update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); `active`/`scaffold` status filter; EU27 rate verification for cases 13–31; commit `generate_eu27_cases.js` | **Next** |
-| 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` + `verified_at` in treaties.json — **80/20: Luxembourg, Germany, France, Netherlands, Ireland first; one country at a time with granular commits** |
+| **20** | **Data Quality Pass** | Verify top-10 treaty rates against official PDFs; `verified: true` + `verified_at` in treaties.json — **80/20: Luxembourg, Germany, France, Netherlands, Ireland first; one country at a time with granular commits** | **Next** |
 | 21 | Batch Processing | `scripts/runBatch.ts`; `--batch payments.csv` CLI; sequential processing; timestamped output dir + summary CSV |
 | 22a | Temporal Context | `payment_year` parameter on `AgentInput`; STTR/KSeF temporal gating |
 | 22b | Production Hardening | Session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) — existing packages only, no custom implementations |

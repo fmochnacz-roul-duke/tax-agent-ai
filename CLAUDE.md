@@ -63,7 +63,7 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | ✓ Complete |
 | 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path for LOW tier | ✓ Complete |
 | 19 | Due Diligence Module + Negative Evidence Gate — `check_due_diligence` tool; `data/due_diligence_checklists.json`; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate in confidence scoring | ✓ Complete |
-| QA-4 | Eval Harness v2.0 — update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); case status filtering (`active`/`scaffold`); EU27 rate verification for cases 13–31 | Planned |
+| QA-4 | Eval Harness v2.0 — `active`/`scaffold` status filter; `sttr_topup_applies` + `rate_basis` fields; EU27 cases (13–31) updated with correct rates from treaties.json; `generate_eu27_cases.js` committed | ✓ Complete |
 | 20 | Data quality — verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json — **80/20 rule: Luxembourg, Germany, France, Netherlands, Ireland first; one country at a time with granular commits** | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report; `scripts/runBatch.ts`; sequential processing; timestamped output dir + summary CSV | Planned |
 | 22a | Temporal Context — `payment_year` parameter on `AgentInput`; STTR/KSeF temporal gating | Planned |
