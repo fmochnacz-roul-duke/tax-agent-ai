@@ -67,14 +67,14 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 20 | Data quality — verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json — **80/20 rule: Luxembourg, Germany, France, Netherlands, Ireland first; one country at a time with granular commits** | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report; `scripts/runBatch.ts`; sequential processing; timestamped output dir + summary CSV | Planned |
 | 22a | Temporal Context — `payment_year` parameter on `AgentInput`; STTR/KSeF temporal gating | Planned |
-| 22b | Production Hardening — session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) — use existing packages, no custom implementations | Planned |
+| 22b | Production Hardening — session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) — use existing packages, no custom implementations. **Quick win candidate: pull `last_verified` staleness warning (from Phase 24) into this phase — it is a one-line check in `consultLegalSources()` and closes Blind Spot 3 early** | Planned |
 | 23a | Intangibles — Legal & Data Layer: Art. 21.1.2a CIT framework; treaty classification (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG enrichment; IC vs. 3rd-party paths — **time-box: ~10h research budget; stop and record open questions when time is up** | Planned |
 | 23b | Intangibles — Code Layer: `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool — **build as a specialized agent that core delegates to; do NOT expand `WhtEnvironment.ts` scope** | Planned |
 | 23c | GAAR Tool: Art. 119a Ordynacja podatkowa risk flag; separate tool (TBD scope) — keep isolated from WHT core | Planned |
 | 24 | Legal Source Management Workflow — source update protocol; new source onboarding; `last_verified` staleness warning in reports (>6 months old); NSA/CJEU case law RAG ingestion | Planned |
 | 24b | PIT & Hybrid Entities Expansion — `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'`; Art. 29/30a PIT WHT; IFT-1/1R form guidance — **HIGH COMPLEXITY: touches every system component. Start with PIT individuals only (Art. 29/30a). Hybrid entities (UK LLP) → formal escalation flag, not shallow implementation** | Planned |
 | 25 | Jurisdiction expansion — treaties.json 36 → 50+ countries — **80/20: add jurisdictions that appear in existing golden cases first; Phase 20 verification pipeline must be established before expanding** | Planned |
-| 26 | WHT v1.0 Major Review — end-to-end demo (UC1 + UC2); all acceptance criteria; `CHANGELOG.md` v1.0; MBA prototype declaration; **Legal Memo output in FLAC format (Facts / Law / Application / Conclusion)** | Planned |
+| 26 | WHT v1.0 Major Review — end-to-end demo (UC1 + UC2); all acceptance criteria; `CHANGELOG.md` v1.0; MBA prototype declaration; **Legal Memo in FLAC format (Facts / Law / Application / Conclusion)**; **self-certification attestation step in HITL review** (analyst confirms documents were physically reviewed — closes Blind Spot 2); **verify Three Blind Spots are addressed: FLAC (1), self-certification (2), knowledge freshness warnings (3)** | Planned |
 | 27 | GLOBAL VISION Documentation — private `docs/GLOBAL_VISION.md` (gitignored); Tax OS architecture + system prompt guidelines | Planned |
 | 28 | EU Jurisdiction Engine Concept — pilot jurisdiction (Germany or Netherlands); **"extract, don't invent": no generic Tax OS framework until two fully independent agents are working** | Planned |
 | 29 | Tax OS Module 2 Planning — next tax regime scoping; cross-module framework only after Phase 28 pilot validates the approach | Planned |
@@ -189,7 +189,7 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
 | `npm test` | Unit tests — 326 tests, no API calls, ~5s |
 | `npm run lint` | ESLint + Prettier check across all TS files |
-| `npm run eval` | Run golden dataset evaluation harness (31 cases total; 9 active in harness — v2.0 harness pending QA-4) — requires `OPENAI_API_KEY` |
+| `npm run eval` | Run golden dataset evaluation harness v2.0 — 13 active cases; 18 EU27 scaffolds (informational, excluded from CI exit code); requires `OPENAI_API_KEY` |
 | `npm run test:coverage` | c8 coverage report (text + lcov) |
 | `npm run test:snapshot:update` | Recompute SHA-256 hash of treaties.json after intentional changes |
 | `npm run test:contract:update` | Regenerate python/service/contract.json after Pydantic model changes |

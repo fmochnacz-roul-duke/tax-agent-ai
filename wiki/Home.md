@@ -1,8 +1,8 @@
-# WHT Beneficial Owner Scanner — Wiki
+# WHT Beneficial Owner Co-Pilot — Wiki
 
-A structured AI agent for Polish withholding tax beneficial owner analysis.
+A structured AI research co-pilot for Polish withholding tax beneficial owner analysis.
 
-> **Not a substitute for professional judgment.** This tool is a structured research layer — it handles the treaty lookup, legal framework application, substance checklist, and documentation so that a tax professional can focus on the judgment call, not the groundwork.
+> **Not a substitute for professional judgment.** This tool is a structured research layer — it handles the treaty lookup, legal framework application, substance checklist, and documentation so that a tax professional can focus on the judgment call, not the groundwork. Every report requires professional review and sign-off before use in any compliance context.
 
 ---
 
@@ -43,7 +43,7 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 
 ---
 
-## Current status (v0.21.0)
+## Current status (v0.23.0)
 
 | Phase | Description | Status |
 |---|---|---|
@@ -70,13 +70,14 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 | 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out; `bo_overall` badge; conduit risk banner; force-draft on UNCERTAIN/LOW | ✅ v0.20.0 |
 | — | Data & Planning (v0.20.1) | Golden Dataset v2.0: 22 new cases (09–31); taxonomy, legal sources registry updated | ✅ v0.20.1 |
 | 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; risk-routing goal; progressive document checklist (LOW/MEDIUM/HIGH); no-DDQ path | ✅ v0.21.0 |
-| **19** | **Due Diligence Module + Negative Evidence Gate** | DD checklist; DD gap analysis; explicit missing-evidence warnings | **Next** |
-| QA-4 | Eval Harness v2.0 | `runEvals.ts` updated for v2.0 cases; EU27 rate verification |
-| 20–22 | Data Quality, Batch Processing, Production Hardening + Temporal Context | Verify treaty rates; batch CLI; session persistence; `payment_year` temporal gating |
+| 19 | Due Diligence Module + Negative Evidence Gate | `check_due_diligence` tool; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate (INSUFFICIENT → LOW) | ✅ v0.22.0 |
+| QA-4 | Eval Harness v2.0 | active/scaffold status filter; `sttr_topup_applies` + `rate_basis`; EU27 rates corrected | ✅ v0.23.0 |
+| **20** | **Data Quality Pass** | Verify top-10 treaty rates; `verified: true` in treaties.json — 80/20: Luxembourg, Germany, France, Netherlands, Ireland first | **Next** |
+| 21–22 | Batch Processing + Temporal Context + Production Hardening | Batch CSV; `payment_year`; session persistence; rate limiting |
 | 23–26 | Intangibles, GAAR, PIT Expansion (24b), Jurisdiction expansion, WHT v1.0 | Planned |
 | 27–29 | Tax OS Foundation — GLOBAL VISION, EU engine, Module 2 | Vision |
 
-**Tests: 314/314 passing. Build: zero errors. Golden Dataset: 31 cases (9 active + 4 stress tests + 18 EU27 scaffolds).**
+**Tests: 326/326 passing. Build: zero errors. Golden Dataset: 31 cases (13 active + 18 EU27 scaffolds).**
 
 ---
 

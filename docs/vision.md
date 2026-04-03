@@ -4,7 +4,7 @@
 > Agent. It guides phase prioritisation and design decisions. It is a living document — update it
 > when the vision changes, not just when a phase completes.
 >
-> **Last updated: 2026-04-03 (v0.22.0 — Phase 19 complete; DD Module + Negative Evidence Gate)**
+> **Last updated: 2026-04-03 (v0.23.0 — QA-4 complete; Eval Harness v2.0. Phase 20 (Data Quality) is next.)**
 
 ---
 
@@ -20,6 +20,36 @@ tax professional spends their time on the judgment call, not the groundwork.
 
 Target users: in-house tax team (1-3 people handling WHT compliance for a Polish group
 or advisory team reviewing multiple clients).
+
+---
+
+## Product identity: WHT Research Co-Pilot
+
+**This tool is a tax research co-pilot, not an autonomous agent.** This is not a marketing
+framing — it is the correct professional and architectural positioning for a compliance tool
+where every output carries legal and financial consequences.
+
+A co-pilot is a skilled assistant that:
+- Handles the structured, time-consuming groundwork (treaty lookup, legal framework application,
+  substance checklist, document gap analysis)
+- Surfaces what it cannot confirm — "DRAFT ONLY" and LOW confidence are features, not failures
+- Routes every conclusion to a qualified professional for review and sign-off before use
+- Is transparent about data quality, knowledge recency, and analysis limitations
+
+**What this means for every phase decision:**
+- HITL (human-in-the-loop) review workflow is a core user story, not a workaround
+- "DRAFT ONLY" and LOW/UNCERTAIN confidence signals are product features
+- The substance interview positions the analyst as an active participant, not a passive recipient
+- Reports are "suitable for professional review" — never "ready for filing" without human sign-off
+- Phase 26 FLAC output format (Facts / Law / Application / Conclusion) is the co-pilot's
+  final form: it matches the format a Polish tax opinion follows, readable by a tax authority
+
+**Language standard — apply to all future user-facing text:**
+- Web UI: *"Here is the first-layer analysis for your review"*
+- Report conclusion: *"This analysis is a research input — professional review required before filing"*
+- README: frames the tool as a research assistant, not a replacement for professional judgment
+- FAQ: always distinguish what the co-pilot decides (structured checklists) from what the
+  professional decides (judgment calls, sign-off, filing responsibility)
 
 ---
 
@@ -70,7 +100,7 @@ content licences from US or UK entities.
 
 ---
 
-## Honest current state (as of v0.21.0 — Phase 18 complete, Phase 19 next)
+## Honest current state (as of v0.23.0 — QA-4 complete, Phase 20 next)
 
 ### What genuinely works
 
@@ -99,6 +129,8 @@ content licences from US or UK entities.
 | Legal source hierarchy | ✅ Phase 16 | `source_type` filter on RAG tool; `legal_hierarchy` in `Citation`; Zod `SourceTypeSchema` |
 | Confidence UX + auto-HITL | ✅ Phase 17 | `DRAFT ONLY` banner; LOW grey-out; force-draft on UNCERTAIN/LOW in registry |
 | UC2 vendor risk classification | ✅ Phase 18 | `classify_vendor_risk` tool; risk-routing Goal; LOW/MEDIUM/HIGH tiers; progressive document checklist (3/5/8+ items) |
+| Due diligence gap analysis | ✅ Phase 19 | `check_due_diligence` tool; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate (INSUFFICIENT → LOW unconditionally) |
+| Eval harness v2.0 + golden cases | ✅ QA-4 | `active`/`scaffold` status filter; 13 active + 18 EU27 scaffold cases; `rate_basis` in harness summary table |
 
 ### Remaining gaps by arc
 
@@ -112,7 +144,8 @@ content licences from US or UK entities.
 | Legal source hierarchy not reflected in tool | 16 ✅ | Resolved v0.19.0 — `source_type` filter + `legal_hierarchy` in Citation |
 | No UI signal for LOW confidence | 17 ✅ | Resolved v0.20.0 — `DRAFT ONLY` banner + grey-out + force-draft on UNCERTAIN/LOW |
 | No third-party vendor workflow (UC2) | 18 ✅ | Resolved v0.21.0 — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist |
-| No Due Diligence checklist tool | 19 | DD requirements not surfaced per payment type |
+| No Due Diligence checklist tool | 19 ✅ | Resolved v0.22.0 — `check_due_diligence` tool; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate |
+| Eval harness not v2.0-ready | QA-4 ✅ | Resolved v0.23.0 — active/scaffold filter; `sttr_topup_applies`; EU27 rates corrected |
 | Treaty rates unverified | 20 | All 36 countries still `verified: false` in treaties.json |
 | No batch processing | 21 | One entity at a time only; no CSV input |
 | Session persistence | 22 | In-memory sessions lost on server restart |
@@ -139,8 +172,8 @@ A "Beneficial Owner Scanner" that a tax team can actually use must meet all of t
 - [ ] Treaty rates verified against at least the top 10 commercially relevant treaties *(Phase 20)*
 - [ ] Output format suitable for a tax file (not just developer-readable JSON) *(Phase 26)*
 - [x] Intercompany and third-party workflows are explicitly different *(Phase 18)*
-- [ ] Eval harness confirms correct `bo_overall` on curated golden cases *(Phase 15)*
-- [ ] Citations include specific Art./Sec. references (e.g. Art. 26 ust. 1 CIT) *(Phase 16)*
+- [x] Eval harness confirms correct `bo_overall` on curated golden cases *(Phase 15 + QA-4)*
+- [x] Citations include specific Art./Sec. references (e.g. Art. 26 ust. 1 CIT) *(Phase 16)*
 - [ ] Management fees / technical services covered (Art. 21 ust. 1 pkt 2a CIT) *(Phase 23)*
 
 **Quality requirements:**
@@ -336,28 +369,32 @@ The Tax OS modules share:
 
 ## Phase sequencing rationale (updated 2026-04-03)
 
-Phases 1–17 complete. The sequence below explains the current arc priority ordering.
+Arc 1, Phases 1–19 and QA-1 through QA-4 are complete. The sequence below explains the current priority ordering.
 
 ```
-DONE (v0.21.0):
-  Phases 1–18, QA-1, QA-2, QA-3, DOCS-1, DOCS-2, DOCS-3, GITHUB-1
+DONE (v0.23.0):
+  Phases 1–19, QA-1, QA-2, QA-3, QA-4, DOCS-1, DOCS-2, DOCS-3, GITHUB-1
   Treaty mechanics, web UI, RAG, substance interview, entity registry,
   human review, citations, Zod validation, treaty verifier (live),
-  eval harness (9 golden cases), legal source hierarchy, confidence UX + HITL,
-  UC2 vendor risk classification (classify_vendor_risk, progressive checklist).
-  Tool is production-capable for UC1 intercompany and UC2 third-party analysis.
+  eval harness v2.0 (13 active + 18 scaffold cases), legal source hierarchy,
+  confidence UX + HITL, UC2 vendor risk classification, DD module +
+  Negative Evidence Gate, Eval Harness v2.0 with active/scaffold filter.
+  Co-pilot is production-capable for UC1 intercompany and UC2 third-party analysis.
 
-NEXT (Phase 19 — Due Diligence Module + Negative Evidence Gate):
-  DD checklist per payment type; DD gap analysis in WhtReport;
-  explicit flagging of missing KSeF ID, board logs, payroll proofs.
+NEXT (Phase 20 — Data Quality Pass):
+  Verify top-10 treaty rates against official PDFs (80/20: Luxembourg,
+  Germany, France, Netherlands, Ireland first). One country at a time,
+  one commit per country. `verified: true` enables HIGH confidence output.
 
-THEN (Phases QA-4, 20–22 — Core completion):
-  Due Diligence module, data quality pass, batch processing,
-  production hardening. Order is impact-driven.
+THEN (Phases 21–22 — Core completion):
+  Batch processing (CSV input, summary report), temporal context
+  (payment_year), production hardening (session persistence, rate limiting).
+  Order is impact-driven.
 
 FUTURE (Phases 23–26 — Professional features):
-  Intangibles layer, GAAR tool, legal source workflow,
-  jurisdiction expansion, WHT v1.0.
+  Intangibles layer (Art. 21.1.2a CIT), GAAR tool, PIT expansion,
+  legal source workflow, jurisdiction expansion, WHT v1.0.
+  Phase 26 = co-pilot v1.0: FLAC legal memo output, all acceptance criteria.
 
 VISION (Phases 27–29 — Tax OS):
   GLOBAL VISION (private), EU jurisdiction engine, Module 2 planning.
@@ -445,22 +482,20 @@ They are **not** retrospective — they are standing guidance for every future s
 
 ---
 
-### Repositioning decision: Co-Pilot over Auto-Pilot
+### Co-Pilot positioning (confirmed by strategic review)
 
-The tool is deliberately positioned as a **tax research co-pilot**, not an autonomous agent.
-This is not a limitation — it is the correct professional positioning for a compliance tool.
+The "WHT Research Co-Pilot" identity established in the **Product Identity** section above
+(see top of this document) was validated by the April 2026 strategic review.
 
-**What this means in practice:**
-- Reports are always "suitable for professional review" — never "ready for filing" without a human sign-off
-- HITL (review workflow, Phase 12b) is a core user story, not a workaround
-- Substance interview (Phase 10) positions the analyst as an active participant
-- DRAFT ONLY status for LOW/UNCERTAIN confidence is a compliance safety gate
+The key finding: positioning as a co-pilot is not just a marketing decision. It is the
+*correct architectural stance* for a tool that operates in a domain where errors carry
+legal and financial consequences, and where the professional retains full responsibility
+for every filing decision.
 
-**Language standard (apply to all future user-facing text):**
-- Web UI: "Here is the first-layer analysis for your review"
-- Report conclusion: "This analysis is a research input — professional review required before filing"
-- README: frames the tool as an assistant, not a replacement for professional judgment
-- The vision statement already reflects this. Maintain it in all future phases.
+This positioning should be visible at every user-facing touchpoint:
+- The web UI subtitle, report conclusion language, README headline
+- FAQ entries that explain what the co-pilot does vs. what the professional does
+- Phase 26 FLAC output — the format that makes co-pilot outputs readable as professional tax opinions
 
 ---
 
@@ -490,34 +525,60 @@ This is not a limitation — it is the correct professional positioning for a co
 
 ---
 
-### Three blind spots — design implications
+### Three blind spots — design implications and phase mapping
+
+These are standing architectural requirements, not retrospective observations. Every future phase
+should be checked against them before scoping is finalised.
 
 **Blind Spot 1: Auditor's perspective missing.**
 Current reports are structured for the analyst, not the auditor. An auditor needs:
-- Explicit acknowledgement of what evidence was NOT considered (Phase 19 DD gap analysis begins to address this)
+- Explicit acknowledgement of what evidence was NOT considered
 - A documented decision trail for each of the three BO conditions (why PASS or FAIL)
-- A clear flag when the analysis relied on simulated or unverified data (Phase 17 DRAFT ONLY is the start)
+- A clear flag when the analysis relied on simulated or unverified data
 
-*Design implication:* Phase 26 Legal Memo output should follow Polish tax opinion standard:
-Facts → Legal Framework → Application → Conclusion (FLAC). This is the format KAS reviewers
-and courts expect.
+*Current mitigations:* Phase 19 DD gap analysis surfaces missing documents. Phase 17 DRAFT ONLY
+banner flags LOW confidence. Phase 12b review workflow creates a sign-off trail.
+
+*Remaining gap:* No single output format reads like a Polish tax opinion yet.
+
+| Phase | How it addresses Blind Spot 1 |
+|---|---|
+| 19 ✅ | `DdGapAnalysis` with `critical_missing[]` — explicit missing-evidence list |
+| 17 ✅ | `DRAFT ONLY` banner + `bo_overall` badge — visual signal for auditor review |
+| 26 | **FLAC Legal Memo** (Facts / Law / Application / Conclusion) — the format KAS reviewers and courts expect; this is the capstone deliverable that closes Blind Spot 1 |
 
 **Blind Spot 2: Garbage In, Gospel Out problem.**
-The system assumes input quality. Phase 19 (Negative Evidence Gate) addresses missing documents.
-It cannot detect inaccurate inputs or user misrepresentation of what documents they actually hold.
+The system assumes input quality. Phase 19 (Negative Evidence Gate) addresses *missing* documents.
+It cannot detect *inaccurate* inputs or user misrepresentation of what documents they actually hold.
 
-*Design implication:* The DD checklist should eventually include a self-certification step where the
-analyst confirms each document was physically reviewed, not just listed. The HITL review workflow
-(Phase 12b) is the current compensating control — reviewers should be trained to verify the document
-list before signing off.
+*Current mitigation:* Negative Evidence Gate (Phase 19) blocks HIGH confidence when critical docs
+are absent. HITL review workflow (Phase 12b) is the current compensating control.
+
+*Remaining gap:* No self-certification step exists — the analyst can list documents without
+confirming they were physically reviewed.
+
+| Phase | How it addresses Blind Spot 2 |
+|---|---|
+| 19 ✅ | Negative Evidence Gate — INSUFFICIENT → LOW unconditionally; cannot be overridden by FactChecker |
+| 12b ✅ | Review workflow — professional sign-off is the human gate; reviewer is expected to verify the document list |
+| 26 | **Self-certification step** in the FLAC output: analyst attests "I have reviewed the documents listed" — makes the implicit expectation explicit in the audit trail |
 
 **Blind Spot 3: Static Knowledge Trap.**
 The knowledge base (RAG sources, treaties.json) has no automated update mechanism. Tax law in Poland
 changes frequently (KSeF mandate timelines, STTR implementing legislation, NSA judgments).
 
-*Design implication:* Phase 24 (Legal Source Management Workflow) is a maintenance requirement, not
-optional. Additionally: add a "knowledge freshness" warning to reports when a RAG source
-`last_verified` date is more than 6 months old. This is a one-line check in `consultLegalSources()`.
+*Current mitigation:* `last_verified` frontmatter on RAG source files (Phase DOCS-2). The field is
+parsed, stored per chunk, and forwarded in tool output. A visual staleness warning is not yet
+implemented.
+
+*Remaining gap:* No warning in reports when a RAG source is >6 months old. No update protocol
+for adding new NSA/CJEU rulings. KSeF mandate date changes can silently invalidate conclusions.
+
+| Phase | How it addresses Blind Spot 3 |
+|---|---|
+| DOCS-2 ✅ | `last_verified` frontmatter on every RAG source file — the data exists |
+| 14 ✅ | `last_verified` forwarded in `consultLegalSources` output — the agent sees it |
+| 24 | **Knowledge freshness warning** in reports when `last_verified` > 6 months old — a one-line check in `consultLegalSources()`; plus source update protocol and NSA/CJEU case law RAG ingestion |
 
 ---
 
@@ -530,7 +591,9 @@ optional. Additionally: add a "knowledge freshness" warning to reports when a RA
 
 **Results to aim for at v1.0 (Phase 26):**
 - End-to-end demo: UC1 (intercompany royalty — Orange S.A.) + UC2 (third-party vendor — XTB Malta)
-- All acceptance criteria in this document verified
-- Legal Memo (FLAC format) output alongside the JSON report
+- All acceptance criteria in this document verified (treaty rates verified, FLAC output, batch processing)
+- Three Blind Spots explicitly addressed: FLAC output (1), self-certification in HITL (2), knowledge freshness warnings (3)
+- Legal Memo (FLAC format) output alongside the JSON report — readable by a Polish tax authority reviewer
 - MBA prototype declaration: this tool demonstrates that AI-assisted compliance is viable,
   auditable, and professionally defensible when designed with HITL and deterministic gates
+- Treat v1.0 as a finished, citable research prototype — not a waypoint toward a larger system

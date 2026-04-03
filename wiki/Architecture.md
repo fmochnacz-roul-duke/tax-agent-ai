@@ -53,7 +53,7 @@ Goals are injected into the system prompt via `buildSystemPrompt()`.
 
 ### Actions — tool definitions
 
-Nine tools defined in `BeneficialOwnerAgent.ts` with JSON Schema. All tool implementations are in `WhtEnvironment.ts`. The agent never directly accesses external data — it calls tools, tools call the environment.
+Ten tools defined in `BeneficialOwnerAgent.ts` with JSON Schema (plus `terminate`). All tool implementations are in `WhtEnvironment.ts`. The agent never directly accesses external data — it calls tools, tools call the environment.
 
 **Zod validation layer (QA-2 + Phase 16):** `AgentInput` is validated at entry via `AgentInputSchema` (Zod v4). `SubstanceResult` and `DempeResult` are validated at environment boundaries via `contracts.ts`. `SourceTypeSchema` (Phase 16) validates the `source_type` parameter on `consult_legal_sources`. `z.infer<>` derives the TypeScript types throughout — no separate interfaces to drift.
 
@@ -231,7 +231,7 @@ Phase 16 will enhance citations with specific Art./Sec. references (e.g. `Art. 2
 | File | Role |
 |---|---|
 | `src/agents/BeneficialOwnerAgent.ts` | GAME definition: goals, tools, agent loop, `runWhtAnalysis()` |
-| `src/agents/WhtEnvironment.ts` | All 9 tool implementations; environment isolation boundary |
+| `src/agents/WhtEnvironment.ts` | All 10 tool implementations; environment isolation boundary |
 | `src/agents/contracts.ts` | Zod schemas: `AgentInputSchema`, `SubstanceResultSchema`, `DempeResultSchema` |
 | `src/agents/FactCheckerAgent.ts` | Gemini multi-agent — substance fact verification |
 | `src/agents/TreatyVerifierAgent.ts` | Gemini multi-agent — treaty rate verification (Phase 14: wired in) |

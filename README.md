@@ -1,6 +1,6 @@
-# tax-agent-ai — WHT Beneficial Owner Agent
+# tax-agent-ai — WHT Beneficial Owner Co-Pilot
 
-> **Module 1 of Tax OS** — a working prototype demonstrating agentic AI applied to Polish withholding tax compliance.
+> **Module 1 of Tax OS** — a working prototype demonstrating AI-assisted research applied to Polish withholding tax compliance.
 >
 > Part of an MBA research project: *AI and Digital Transformation in International Tax* (2026).
 > Author: **Franciszek Mochnacz**
@@ -32,7 +32,7 @@ For full setup (optional Python service, Gemini FactChecker) see [Setup](#setup)
 
 ![Tests](https://img.shields.io/badge/tests-326%20passing-brightgreen)
 ![Phase](https://img.shields.io/badge/phase-QA--4%20complete-blue)
-![Status](https://img.shields.io/badge/status-active%20prototype-yellow)
+![Status](https://img.shields.io/badge/status-research%20prototype-yellow)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey)
 
 ---
@@ -63,7 +63,7 @@ When a Polish entity pays dividends, interest, or royalties to a foreign recipie
 5. **Directive exemption** *(interest/royalties)* — does the EU Interest and Royalties Directive provide a 0% path?
 6. **Pay and Refund** — does the Polish PLN 2,000,000 threshold trigger upfront withholding?
 
-In practice this analysis is done manually by senior tax professionals consulting multiple sources. It is time-consuming, inconsistent across analysts, and hard to audit. This agent automates the structured reasoning layer — gathering all relevant facts through tools, applying the legal framework, and producing a cited, machine-readable conclusion.
+In practice this analysis is done manually by senior tax professionals consulting multiple sources. It is time-consuming, inconsistent across analysts, and hard to audit. This co-pilot automates the structured research layer — gathering all relevant facts through tools, applying the legal framework, and producing a cited, machine-readable analysis that a professional can review, annotate, and sign off on.
 
 ---
 
@@ -322,7 +322,7 @@ npm run ddq:service     # starts FastAPI service on port 8000 (requires Python 3
 # Type-check (zero errors required before any commit)
 npm run build
 
-# Unit tests — 302 tests, no API calls, ~5s
+# Unit tests — 326 tests, no API calls, ~5s
 npm test
 ```
 

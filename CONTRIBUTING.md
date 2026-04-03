@@ -39,7 +39,7 @@ TypeScript errors and test failures are blocking — not warnings.
 
 ```bash
 npm run build     # tsc --noEmit — zero errors required
-npm test          # all tests must pass (currently 284)
+npm test          # all tests must pass (currently 326)
 ```
 
 Optionally run lint as well:

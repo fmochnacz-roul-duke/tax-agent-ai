@@ -3,7 +3,7 @@
 ## Current Status
 **Phase:** QA-4 complete (v0.23.0, 2026-04-03). Phase 20 (Data Quality) is next.
 **Last code session:** QA-4 — Eval Harness v2.0 (v0.23.0, 2026-04-03)
-**Last data/planning session:** 2026-04-03 — strategic review (external document); module1/2/3 scaffolding removed; Phase 22 split into 22a/22b; Phase 24b scoped as HIGH COMPLEXITY.
+**Last knowledge/planning session:** 2026-04-03 — vision.md restructured around co-pilot identity + Three Blind Spots; FAQ supplemented (8 new entries); all knowledge files synced to v0.23.0; Phase 26 updated to include self-certification and Blind Spot closure checklist.
 **Branch:** master
 **Tests:** 326/326 passing
 
@@ -55,7 +55,7 @@ Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. 
 
 ## How to Resume Next Session
 
-QA-4 is complete and merged to master (v0.23.0). Start Phase 20 (Data Quality) next.
+All knowledge files are synced to v0.23.0 and pushed. Start Phase 20 (Data Quality) next.
 
 ```
 git checkout -b feature/phase-20-data-quality
@@ -143,6 +143,17 @@ official Polish treaty PDFs (DzU references).
 ---
 
 ## Completed Phases (full history)
+
+### Knowledge session — vision restructure + FAQ (docs — 2026-04-03)
+No code changes. Knowledge files updated:
+- `docs/vision.md`: added "Product identity: WHT Research Co-Pilot" as a first-class section (before Use Cases); updated to v0.23.0; fixed acceptance criteria checkboxes (Phase 15 ✓, Phase 16 ✓); added Phase 19 + QA-4 to "What genuinely works" table; updated Phase sequencing rationale; Three Blind Spots strengthened with explicit phase-mapping tables
+- `docs/FAQ.md`: 8 new entries (Garbage In/Gospel Out; Static Knowledge Trap; DRAFT ONLY vs bo_overall; co-pilot for KAS positions; FactChecker vs DDQ contradiction; UNCERTAIN vs LOW confidence; UK LLP hybrid; Polish-language input; Phase 20 ordering rationale)
+- `wiki/Home.md`: version updated to v0.23.0; test count 314→326; naming updated to "WHT Beneficial Owner Co-Pilot"
+- `wiki/Architecture.md`: tool count corrected 9→10
+- `README.md`: headline updated to "Co-Pilot"; CLI test count comment corrected; problem-statement language updated
+- `CONTRIBUTING.md`: test count corrected 284→326
+- `CLAUDE.md`: Phase 26 updated (self-certification + Three Blind Spots closure checklist); Phase 22b updated (knowledge freshness warning as quick-win candidate); `npm run eval` description updated for v2.0 harness
+- `SESSION.md`: this entry
 
 ### Scaffolding cleanup (chore — 2026-04-03)
 - `src/module1`, `src/module2`, `src/module3` removed — learning scaffolding no longer needed in a product-grade project
