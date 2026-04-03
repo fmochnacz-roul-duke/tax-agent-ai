@@ -12,9 +12,13 @@
   "expected": {
     "bo_overall": "CONFIRMED",
     "treaty_rate_percent": 0,
-    "acceptable_rates": [0, 5],
+    "acceptable_rates": [
+      0,
+      5
+    ],
     "mli_ppt_applies": true,
     "rate_basis": "EU_directive_or_treaty",
     "eval_note": "0% is the preferred result (EU I&R Directive). 5% is acceptable if agent uses treaty fallback. Eval harness treats both as PASS for the rate check."
-  }
+  },
+  "status": "active"
 }

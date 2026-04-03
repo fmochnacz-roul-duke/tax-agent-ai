@@ -15,5 +15,6 @@
     "mli_ppt_applies": false,
     "rate_basis": "domestic",
     "eval_note": "No treaty → domestic rate 20%. BO test bypassed. agent must not hallucinate a PL-HK treaty."
-  }
+  },
+  "status": "active"
 }

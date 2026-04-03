@@ -1,6 +1,6 @@
 {
   "case_id": "case_17",
-  "description": "Auto-generated EU27 baseline — Czechia — Interest",
+  "description": "Auto-generated EU27 baseline — Czech Republic — Interest",
   "metadata": {
     "risk_tier": "LOW",
     "complexity": "STANDARD",
@@ -8,8 +8,8 @@
     "scenario_type": "EU27 Coverage / interest"
   },
   "input": {
-    "entity_name": "EU27 Czechia Corp",
-    "country": "Czechia",
+    "entity_name": "EU27 Czech Republic Corp",
+    "country": "Czech Republic",
     "income_type": "interest",
     "shareholding_percentage": 0,
     "annual_payment_pln": 1500000,
@@ -22,8 +22,9 @@
   },
   "expected": {
     "bo_overall": "CONFIRMED",
-    "treaty_rate_percent": 5,
+    "treaty_rate_percent": 0,
     "rate_basis": "treaty",
-    "eval_note": "Expected outcome: CONFIRMED based on risk tier LOW."
-  }
+    "eval_note": "Expected outcome: CONFIRMED based on risk tier LOW. Rate: 0% (from treaties.json; scaffold — verify before promoting to active)."
+  },
+  "status": "scaffold"
 }

@@ -29,5 +29,6 @@
     "treaty_rate_percent": 20,
     "rate_basis": "domestic",
     "eval_note": "Fails Condition II (Pass-through <24h) and III (Board Saturation + Remote Decision Making). Look-through to US UBO recommended."
-  }
+  },
+  "status": "active"
 }

@@ -22,8 +22,9 @@
   },
   "expected": {
     "bo_overall": "UNCERTAIN",
-    "treaty_rate_percent": 5,
+    "treaty_rate_percent": 10,
     "rate_basis": "treaty",
-    "eval_note": "Expected outcome: UNCERTAIN based on risk tier HIGH."
-  }
+    "eval_note": "Expected outcome: UNCERTAIN based on risk tier HIGH. Rate: 10% (from treaties.json; scaffold — verify before promoting to active)."
+  },
+  "status": "scaffold"
 }

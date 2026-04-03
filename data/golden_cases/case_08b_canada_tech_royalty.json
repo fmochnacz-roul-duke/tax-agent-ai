@@ -16,5 +16,6 @@
     "rate_basis": "treaty",
     "conduit_pair": "case_08a",
     "eval_note": "Conduit leg 2. Ultimate BO qualifies at 10% treaty rate. When read together with case_08a, the agent should have flagged conduit_risk on case_08a and prompted look-through to this entity."
-  }
+  },
+  "status": "active"
 }
