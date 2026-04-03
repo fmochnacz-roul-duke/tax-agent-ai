@@ -25,7 +25,7 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 
 **The GAME breakdown:**
 - G — Goals: `src/agents/BeneficialOwnerAgent.ts` (7 goals with priorities)
-- A — Actions: 8 tool definitions with JSON Schema in the same file
+- A — Actions: 10 tool definitions with JSON Schema in the same file
 - M — Memory: `src/shared/Memory.ts` (conversation + structured findings)
 - E — Environment: `src/agents/WhtEnvironment.ts` (all tool implementations)
 
@@ -65,13 +65,14 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | **19** | **Due Diligence Module + Negative Evidence Gate** — DD checklist per payment type; DD gap analysis; agent must explicitly flag missing KSeF ID, board logs, payroll proofs | **Next** |
 | QA-4 | Eval Harness v2.0 — update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); case status filtering (`active`/`scaffold`); EU27 rate verification for cases 13–31 | Planned |
 | 20 | Data quality — verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json | Planned |
-| 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report | Planned |
-| 22 | Production hardening + Temporal Context — session persistence, SSE reconnect, rate limiting, `payment_year` parameter, STTR/KSeF temporal gating | Planned |
+| 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report; `scripts/runBatch.ts`; sequential processing; timestamped output dir + summary CSV | Planned |
+| 22a | Temporal Context — `payment_year` parameter on `AgentInput`; STTR/KSeF temporal gating | Planned |
+| 22b | Production Hardening — session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) | Planned |
 | 23a | Intangibles — Legal & Data Layer: Art. 21.1.2a CIT framework; treaty classification (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG enrichment; IC vs. 3rd-party paths | Planned |
 | 23b | Intangibles — Code Layer: new `payment_type` options; `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook | Planned |
 | 23c | GAAR Tool: Art. 119a Ordynacja podatkowa risk flag; separate tool in `WhtEnvironment.ts`; TBD scope | Planned |
 | 24 | Legal Source Management Workflow — source update protocol; new source onboarding; hierarchy documentation; NSA/CJEU case law RAG ingestion | Planned |
-| 24b | PIT & Hybrid Entities Expansion — `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'`; Art. 29/30a PIT WHT; IFT-1/1R form guidance; UK LLP transparency; B2B ghost detection | Planned |
+| 24b | PIT & Hybrid Entities Expansion — `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'`; Art. 29/30a PIT WHT; IFT-1/1R form guidance; UK LLP transparency; B2B ghost detection — **HIGH COMPLEXITY: touches every system component; scope carefully before starting** | Planned |
 | 25 | Jurisdiction expansion — treaties.json 36 → 50+ countries | Planned |
 | 26 | WHT v1.0 Major Review — end-to-end demo, all acceptance criteria, `CHANGELOG.md` v1.0, MBA prototype declaration | Planned |
 | 27 | GLOBAL VISION Documentation — private `docs/GLOBAL_VISION.md` (gitignored); Tax OS architecture + system prompt guidelines | Planned |
@@ -112,7 +113,7 @@ src/
   agents/
     BeneficialOwnerAgent.ts     ← WHT agent (GAME); exports runWhtAnalysis(), AgentInput, WhtReport, Citation
     BeneficialOwnerAgent.test.ts ← Phase 13 + QA-2: 36 tests (validateInput, computeReportConfidence, parseFindings)
-    WhtEnvironment.ts           ← All 10 tool implementations; simulate: true/false; DDQ service + FactChecker
+    WhtEnvironment.ts           ← All 10 tool implementations + verifyTreatyRate helper; simulate: true/false; DDQ service + FactChecker
     WhtEnvironment.test.ts      ← Unit tests for all tool implementations (~96 tests)
     FactCheckerAgent.ts         ← Phase 7: Gemini REST API + Google Search grounding; simulate fallback
     FactCheckerAgent.test.ts    ← 8 tests, simulate mode
@@ -132,17 +133,6 @@ src/
 
   public/
     index.html    ← Phase 8: single-file conversational chat UI (HTML + CSS + vanilla JS)
-
-  module1/
-    ProgrammaticPrompting.ts   ← Basic prompt, JSON output, multi-turn memory
-    AgentLoop.ts               ← Text-based loop (THOUGHT/ACTION/FINAL ANSWER format)
-
-  module2/
-    FunctionCallingExample.ts      ← Single round-trip function calling demo
-    AgentLoopFunctionCalling.ts    ← Agent class with registerTool() / Map dispatch
-
-  module3/
-    ReadmeAgent.ts    ← GAME framework applied to meta task: reads source, generates README
 
   shared/
     Goal.test.ts    ← Unit tests: priority sorting, prompt generation
@@ -204,11 +194,6 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run test:contract:update` | Regenerate python/service/contract.json after Pydantic model changes |
 | `npm run verify:treaties` | Batch-verify treaty rates via Gemini (requires GEMINI_API_KEY) |
 | `npm run review:list` | CLI: list all registry entries with `review_status: draft` |
-| `npm run module1:prompting` | Scaffolding: basic prompting examples |
-| `npm run module1:agent` | Scaffolding: text-based agent loop |
-| `npm run module2:tools` | Scaffolding: function calling demo |
-| `npm run module2:agent` | Scaffolding: registerTool() agent loop |
-| `npm run module3:readme` | Scaffolding: README agent (GAME applied to a meta task) |
 
 ---
 
