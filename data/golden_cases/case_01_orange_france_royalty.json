@@ -14,5 +14,6 @@
     "treaty_rate_percent": 10,
     "mli_ppt_applies": true,
     "rate_basis": "treaty"
-  }
+  },
+  "status": "active"
 }

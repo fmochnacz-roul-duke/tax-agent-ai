@@ -28,5 +28,6 @@
     "treaty_rate_percent": 9,
     "rate_basis": "sttr_override",
     "eval_note": "STTR 9% floor overrides DTT 0-5% rates. Agent must flag the 6% ETR and apply the 9% minimum."
-  }
+  },
+  "status": "active"
 }

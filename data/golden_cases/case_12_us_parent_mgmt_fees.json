@@ -25,5 +25,6 @@
     "treaty_rate_percent": 19,
     "rate_basis": "domestic_dividend_rechar",
     "eval_note": "Recharacterized as dividend (19%) due to missing TP documentation and weak economic justification. Art. 21.1.2a CIT baseline 20% would apply if classified as intangible service, but 19% applies as 'hidden dividend'."
-  }
+  },
+  "status": "active"
 }

@@ -12,9 +12,13 @@
   "expected": {
     "bo_overall": "UNCERTAIN",
     "treaty_rate_percent": 0,
-    "acceptable_rates": [0, 10],
+    "acceptable_rates": [
+      0,
+      10
+    ],
     "mli_ppt_applies": true,
     "rate_basis": "treaty_or_domestic",
     "eval_note": "0% (Directive or treaty) and 10% (domestic fallback if treaty denied) are both acceptable for the rate check. UNCERTAIN on BO is the key assertion."
-  }
+  },
+  "status": "active"
 }

@@ -26,5 +26,6 @@
     "treaty_rate_percent": 20,
     "rate_basis": "domestic",
     "eval_note": "UK LLP transparency requires look-through to partners. Without partner-level CFRs, default 20% domestic rate applies."
-  }
+  },
+  "status": "active"
 }

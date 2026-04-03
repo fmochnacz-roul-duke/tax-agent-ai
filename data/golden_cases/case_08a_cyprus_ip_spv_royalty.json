@@ -17,5 +17,6 @@
     "conduit_risk": true,
     "conduit_pair": "case_08b",
     "eval_note": "Conduit leg 1. Domestic rate 20% applies. conduit_risk must be true. Eval harness links to case_08b for ultimate BO assessment."
-  }
+  },
+  "status": "active"
 }

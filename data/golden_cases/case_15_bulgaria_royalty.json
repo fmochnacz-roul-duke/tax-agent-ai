@@ -22,8 +22,9 @@
   },
   "expected": {
     "bo_overall": "REJECTED",
-    "treaty_rate_percent": 5,
+    "treaty_rate_percent": 20,
     "rate_basis": "domestic",
-    "eval_note": "Expected outcome: REJECTED based on risk tier HIGH."
-  }
+    "eval_note": "Expected outcome: REJECTED based on risk tier HIGH. Rate: 20% (from treaties.json; scaffold — verify before promoting to active)."
+  },
+  "status": "scaffold"
 }

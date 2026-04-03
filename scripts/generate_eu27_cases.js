@@ -7,7 +7,7 @@ const missingEU27 = [
   { country: "Belgium", code: "BE", type: "interest", risk: "MEDIUM", expected: "UNCERTAIN" },
   { country: "Bulgaria", code: "BG", type: "royalty", risk: "HIGH", expected: "REJECTED" },
   { country: "Croatia", code: "HR", type: "dividend", risk: "LOW", expected: "CONFIRMED" },
-  { country: "Czechia", code: "CZ", type: "interest", risk: "LOW", expected: "CONFIRMED" }, // Using Czechia as standard short name
+  { country: "Czech Republic", code: "CZ", type: "interest", risk: "LOW", expected: "CONFIRMED" }, // Must match treaties.json key "czech republic"
   { country: "Denmark", code: "DK", type: "royalty", risk: "MEDIUM", expected: "UNCERTAIN" },
   { country: "Estonia", code: "EE", type: "dividend", risk: "LOW", expected: "CONFIRMED" },
   { country: "Finland", code: "FI", type: "interest", risk: "LOW", expected: "CONFIRMED" },
@@ -55,14 +55,16 @@ missingEU27.forEach(c => {
     },
     expected: {
       bo_overall: c.expected,
-      treaty_rate_percent: 5, // placeholder
+      treaty_rate_percent: 5, // placeholder — update from treaties.json before running harness
       rate_basis: c.expected === "REJECTED" ? "domestic" : "treaty",
-      eval_note: `Expected outcome: ${c.expected} based on risk tier ${c.risk}.`
-    }
+      eval_note: `Expected outcome: ${c.expected} based on risk tier ${c.risk}. Scaffold — verify rate and bo_overall before promoting to active.`
+    },
+    status: "scaffold" // must be promoted to 'active' after manual rate verification
   };
 
   fs.writeFileSync(filePath, JSON.stringify(content, null, 2));
   caseIdCounter++;
 });
 
-console.log(`Successfully generated ${missingEU27.length} missing EU27 golden cases.`);
+console.log(`Successfully generated ${missingEU27.length} missing EU27 golden cases (status: scaffold).`);
+console.log('Next step: update treaty_rate_percent from treaties.json, then set status: "active" after verification.');

@@ -15,5 +15,6 @@
     "mli_ppt_applies": true,
     "rate_basis": "domestic",
     "eval_note": "Rejected entity does not qualify for treaty rate. Domestic WHT rate 20% applies to royalties. Conduit risk flag expected: true (Malta is a known routing jurisdiction)."
-  }
+  },
+  "status": "active"
 }
