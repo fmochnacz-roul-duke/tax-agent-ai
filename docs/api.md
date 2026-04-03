@@ -140,19 +140,24 @@ Returns all past analyses stored in `data/registry.json`.
 
 **Response:**
 ```json
-[
-  {
-    "entity_name": "Orange S.A.",
-    "country": "France",
-    "income_type": "royalty",
-    "substance_tier": "STRONG",
-    "bo_overall": "PASS",
-    "review_status": "pending",
-    "created_at": "2026-04-02T10:00:00.000Z",
-    "updated_at": "2026-04-02T10:00:00.000Z",
-    "run_count": 1
-  }
-]
+{
+  "entries": [
+    {
+      "entity_name": "Orange S.A.",
+      "country": "France",
+      "income_type": "royalty",
+      "review_status": "signed_off",
+      "data_confidence": "MEDIUM",
+      "substance_tier": "STRONG",
+      "bo_overall": "CONFIRMED",
+      "conclusion_summary": "Orange S.A. qualifies as beneficial owner under Art. 12 of the FR-PL treaty...",
+      "created_at": "2026-04-02T10:00:00.000Z",
+      "updated_at": "2026-04-03T14:22:00.000Z",
+      "reviewed_by": "Anna Nowak",
+      "reviewed_at": "2026-04-03T14:22:00.000Z"
+    }
+  ]
+}
 ```
 
 ---
@@ -195,8 +200,27 @@ interface WhtReport {
   substance_notes?:        string;
   data_confidence:         'HIGH' | 'MEDIUM' | 'LOW';
   data_confidence_note:    string;           // explains why confidence is at this level
+  // Phase 15: machine-readable BO verdict derived deterministically from findings.
+  bo_overall:              'CONFIRMED' | 'UNCERTAIN' | 'REJECTED' | 'NO_TREATY';
+  // Phase 15: true when bo_overall === 'REJECTED' AND the entity/country suggests a conduit.
+  conduit_risk:            boolean;
   conclusion:              string;           // agent's full narrative conclusion
   findings:                Record<string, unknown>; // parsed tool results keyed by tool name
+  // Phase 13: one Citation per tool call, in call order.
+  citations:               Citation[];
+}
+
+// Phase 13 + 16: links a conclusion to its data source.
+interface Citation {
+  tool:           string;   // e.g. "get_treaty_rate", "consult_legal_sources"
+  source:         string;   // data origin text from the tool result
+  finding_key?:   string;   // key in memory.findings (undefined for RAG)
+  section_ref?:   string;   // statutory section reference (from RAG chunks)
+  source_id?:     string;   // legal source ID (e.g. "MF-OBJ-2025")
+  chunk_count?:   number;   // how many RAG chunks were returned
+  top_score?:     number;   // cosine similarity of the best chunk
+  source_type?:   string;   // Phase 16: 'statute' | 'directive' | 'treaty' | 'guidance' | ...
+  legal_hierarchy?: number; // Phase 16: 1=statute, 2=directive/treaty, 3=guidance, 4=commentary
 }
 ```
 
@@ -204,9 +228,18 @@ interface WhtReport {
 
 | Level | Meaning |
 |---|---|
-| `HIGH` | Real DDQ + Gemini confirms + treaty rate verified |
+| `HIGH` | Real DDQ + Gemini confirms + treaty rate verified + RAG grounding |
 | `MEDIUM` | Real DDQ but treaty rate unverified, or Gemini inconclusive |
-| `LOW` | Substance data is simulated (no DDQ file and no interview) |
+| `LOW` | Substance data is simulated (no DDQ file and no interview); report is DRAFT ONLY |
+
+**`bo_overall` values (Phase 15):**
+
+| Value | Meaning |
+|---|---|
+| `CONFIRMED` | BO test passed — treaty rate applies |
+| `UNCERTAIN` | Insufficient data to confirm — human review required |
+| `REJECTED` | BO test failed — conduit risk; domestic rate may apply |
+| `NO_TREATY` | No applicable treaty — domestic rate (20%) applies |
 
 ### RegistryEntry
 
@@ -214,17 +247,28 @@ Persisted to `data/registry.json` after every analysis.
 
 ```typescript
 interface RegistryEntry {
-  entity_name:    string;
-  country:        string;
-  income_type:    string;
-  substance_tier: 'STRONG' | 'ADEQUATE' | 'WEAK' | 'CONDUIT' | null;
-  bo_overall:     'PASS' | 'FAIL' | 'UNCERTAIN' | null;
-  review_status:  'pending' | 'approved' | 'flagged';
-  created_at:     string;   // ISO 8601; set on first save, never updated
-  updated_at:     string;   // ISO 8601; updated on every re-analysis
-  run_count:      number;   // incremented on every re-analysis
+  entity_name:      string;
+  country:          string;
+  income_type:      string;
+  review_status:    'draft' | 'reviewed' | 'signed_off';
+  data_confidence:  'HIGH' | 'MEDIUM' | 'LOW';
+  substance_tier?:  string;            // STRONG / ADEQUATE / WEAK / CONDUIT (if assessed)
+  bo_overall?:      string;            // CONFIRMED / UNCERTAIN / REJECTED / NO_TREATY (if present)
+  conclusion_summary: string;          // first 200 chars of the agent's conclusion
+  created_at:       string;            // ISO 8601; set on first save, never updated
+  updated_at:       string;            // ISO 8601; updated on every re-analysis
+  report_path?:     string;            // path to the full JSON report on disk
+  // Phase 12b: set by updateReviewStatus(), never by save()
+  reviewer_note?:   string;
+  reviewed_at?:     string;
+  reviewed_by?:     string;
 }
 ```
+
+**`review_status` rules (Phase 15 + 17):**
+- New entries default to `'draft'`.
+- Re-analysis forces `'draft'` when `bo_overall === 'REJECTED'`, `bo_overall === 'UNCERTAIN'`, or `data_confidence === 'LOW'`.
+- All other states are preserved — a professional's sign-off is never cleared for safe/high-quality results.
 
 ---
 

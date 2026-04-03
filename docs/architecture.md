@@ -294,44 +294,51 @@ The note attached to each confidence level explicitly states the limitation.
 
 ## 9. Test Coverage Map
 
-All 246 tests run without network calls. The test boundary is `WhtEnvironment` — the
+All 302 tests run without network calls. The test boundary is `WhtEnvironment` — the
 Environment class is tested exhaustively; the agent loop and LLM are not unit tested.
+
+The table below shows key coverage areas. Per-file counts grow as phases add tests —
+see `CHANGELOG.md` for the precise delta per phase.
 
 ```
 Test file                            Count  What it covers
 ───────────────────────────────────  ─────  ──────────────────────────────────────────
-WhtEnvironment.test.ts                  74  All 8 tool implementations (simulate + live modes)
+WhtEnvironment.test.ts               ~84   All tool implementations (simulate + live modes)
                                             Parameter validation (invalid enum, out-of-range)
                                             Country alias resolution (UK, USA, Czechia, etc.)
                                             Regression guards (valid inputs do not return errors)
                                             factCheckSubstance delegation + error handling
-FactCheckerAgent.test.ts                 8  Simulation mode: entity/country, claim count,
+                                            source_type filter + legal_hierarchy in RAG output (Phase 16)
+FactCheckerAgent.test.ts                8  Simulation mode: entity/country, claim count,
                                             all UNVERIFIED, INCONCLUSIVE overall, risk flags,
                                             required field shapes, source text, ISO date format
-TreatyVerifierAgent.test.ts             15  Simulate mode: shape, status NOT_FOUND,
+TreatyVerifierAgent.test.ts            15  Simulate mode: shape, status NOT_FOUND,
                                             null confirmed_rate, echoed fields, ISO date format
                                             All three income types, zero rate, unusual countries
-EntityRegistry.test.ts                  38  Upsert semantics, lookup key normalisation,
+EntityRegistry.test.ts                 48  Upsert semantics, lookup key normalisation,
                                             audit trail (created_at preserved on re-analysis),
-                                            substance_tier + bo_overall extraction, run_count
+                                            substance_tier + bo_overall extraction
                                             updateReviewStatus: review/sign-off/reset,
                                             reviewer_note, reviewed_by, disk persistence
-BeneficialOwnerAgent.test.ts            36  validateInput (Zod v4): valid path, all rejections,
+                                            force-draft: REJECTED, UNCERTAIN, LOW (Phases 15+17)
+BeneficialOwnerAgent.test.ts           36  validateInput (Zod v4): valid path, all rejections,
                                             boundary values (0/100), multi-field error messages
                                             computeReportConfidence: LOW/MEDIUM/HIGH paths,
                                             RAG grounding gate (≥2 chunks, top_score ≥0.55),
                                             FactChecker interaction (CONFIRMS/UNDERMINES)
                                             parseFindings: JSON/non-JSON, empty map, copy isolation
-contract.test.ts                        13  Category A: simulation output validates against Zod schemas
+contract.test.ts                       13  Category A: simulation output validates against Zod schemas
                                             Category B: Python field names + enum values match TypeScript
-treaties.snapshot.test.ts               1  SHA-256 hash of treaties.json (change detector)
-SubstanceInterviewer.test.ts            13  State machine flow, question sequencing,
+treaties.snapshot.test.ts              1   SHA-256 hash of treaties.json (change detector)
+SubstanceInterviewer.test.ts           13  State machine flow, question sequencing,
                                             DDQ text compilation from interview answers
-Chunker.test.ts + LegalRagService.test  30  Frontmatter parsing, body splitting, chunk_id generation,
-                                            extractSectionRef, cosine similarity, filtering, top_k
-Retriever.test.ts                       17  Similarity score, filter combinations, top_k ordering
-Goal.test.ts                             3  Priority sorting, persona inclusion, goal names
-Memory.test.ts                           4  Findings store, getFindings() copy isolation,
+Chunker.test.ts + LegalRagService.test ~34  Frontmatter parsing, body splitting, chunk_id generation,
+                                            source_type parsing (Phase 16), extractSectionRef,
+                                            cosine similarity, filtering, top_k
+Retriever.test.ts                      ~22  Similarity score, filter combinations, top_k ordering,
+                                            source_type filter (Phase 16), CitedChunk forwarding
+Goal.test.ts                            3  Priority sorting, persona inclusion, goal names
+Memory.test.ts                          4  Findings store, getFindings() copy isolation,
                                             buildFindingsSummary() format
 ```
 
@@ -358,7 +365,7 @@ interface AgentInput {
   ddq_path?:               string;         // path to DDQ file
 }
 
-// Output from the agent (Phase 13 extended)
+// Output from the agent (Phase 13 + 15 + 16)
 interface WhtReport {
   generated_at:            string;         // ISO timestamp
   entity_name:             string;
@@ -369,20 +376,27 @@ interface WhtReport {
   substance_notes?:        string;
   data_confidence:         'HIGH' | 'MEDIUM' | 'LOW';
   data_confidence_note:    string;         // human-readable explanation
+  // Phase 15: deterministic BO verdict derived from structured findings — never from LLM text
+  bo_overall:              'CONFIRMED' | 'UNCERTAIN' | 'REJECTED' | 'NO_TREATY';
+  // Phase 15: true when REJECTED AND entity/country suggests a conduit structure
+  conduit_risk:            boolean;
   conclusion:              string;         // agent's full narrative conclusion
   findings:                Record<string, unknown>;  // parsed tool results
   citations:               Citation[];    // one entry per tool call, in order
 }
 
-// One citation entry — links a conclusion to its data source
+// One citation entry — links a conclusion to its data source (Phase 13 + 16)
 interface Citation {
-  tool:          string;         // e.g. "get_treaty_rate", "consult_legal_sources"
-  source:        string;         // data origin text from the tool result
-  finding_key?:  string;         // key in memory.findings (undefined for RAG)
-  section_ref?:  string;         // statutory section (from RAG chunks)
-  source_id?:    string;         // legal source ID (e.g. "MF-OBJ-2025")
-  chunk_count?:  number;         // how many RAG chunks were returned
-  top_score?:    number;         // cosine similarity score of the best chunk
+  tool:             string;   // e.g. "get_treaty_rate", "consult_legal_sources"
+  source:           string;   // data origin text from the tool result
+  finding_key?:     string;   // key in memory.findings (undefined for RAG)
+  section_ref?:     string;   // statutory section (from RAG chunks)
+  source_id?:       string;   // legal source ID (e.g. "MF-OBJ-2025")
+  chunk_count?:     number;   // how many RAG chunks were returned
+  top_score?:       number;   // cosine similarity score of the best chunk
+  // Phase 16: authority tier of the top-matched RAG source
+  source_type?:     string;   // 'statute' | 'directive' | 'treaty' | 'guidance' | ...
+  legal_hierarchy?: number;   // 1=statute, 2=directive/treaty, 3=guidance, 4=commentary
 }
 
 // Progress event emitted during the agent loop
@@ -452,9 +466,8 @@ LegalRagService.retrieve(query)
 - Rebuild trigger: run `npm run rag:build` after editing any file in `src/rag/sources/`.
 - `last_verified` frontmatter (DOCS-2, v0.16.0): each source file carries the date it was
   last checked against the official consolidated text. The field is parsed by `Chunker`,
-  stored on every `Chunk` and `CitedChunk`, and ready to be surfaced in tool results.
-  **Ghost note (Phase 14):** the field is not yet shown in `consultLegalSources` output —
-  wiring this is planned for Phase 14 (Ghost Activation).
+  stored on every `Chunk` and `CitedChunk`, and surfaced in `consultLegalSources` output
+  when present. Wired in Phase 14 (Ghost Activation, v0.17.0).
 
 **Phase 13 (v0.13.0):** retrieval metadata (chunk count, similarity scores) now feeds
 `computeReportConfidence()` via the RAG legal grounding gate (≥2 chunks, top_score ≥0.55).

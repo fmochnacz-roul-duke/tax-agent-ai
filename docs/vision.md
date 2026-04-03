@@ -4,7 +4,7 @@
 > Agent. It guides phase prioritisation and design decisions. It is a living document — update it
 > when the vision changes, not just when a phase completes.
 >
-> **Last updated: 2026-04-02 (v0.16.0 — strategy review; roadmap extended to 29 phases across 3 arcs)**
+> **Last updated: 2026-04-03 (v0.20.0 — Phase 17 complete; acceptance criteria updated)**
 
 ---
 
@@ -70,7 +70,7 @@ content licences from US or UK entities.
 
 ---
 
-## Honest current state (as of v0.16.0 — Phase 14 starting next)
+## Honest current state (as of v0.20.0 — Phase 17 complete, Phase 18 next)
 
 ### What genuinely works
 
@@ -87,13 +87,17 @@ content licences from US or UK entities.
 | Legal citations (RAG) | ✅ Phase 9 | `consult_legal_sources` retrieves exact MF Objaśnienia / CIT Act text; confidence gate |
 | Entity registry | ✅ Phase 11 | JSON persistence; audit trail; "Past Analyses" web panel |
 | Human review workflow | ✅ Phase 12b | Review drawer; `review_status`: draft/reviewed/signed_off; reviewer metadata |
-| Treaty rate verifier | ⚠ Batch script only | `TreatyVerifierAgent` exists + tests; NOT yet wired into live flow (Phase 14) |
-| Provenance/citations | ✅ Phase 13 | Every WhtReport carries `citations[]`; RAG legal grounding gate for HIGH confidence |
-| Zod runtime validation | ✅ QA-2 | `AgentInputSchema`, `SubstanceResultSchema`, `DempeResultSchema`; Python/TS contract tests |
+| Treaty rate verifier | ✅ Phase 14 | `TreatyVerifierAgent` wired into live flow; DIFFERS → confidence LOW |
+| Provenance/citations | ✅ Phase 13 + 16 | `citations[]` on every WhtReport; `source_type` + `legal_hierarchy` per citation |
+| Zod runtime validation | ✅ QA-2 + 16 | `AgentInputSchema`, `SourceTypeSchema`, contract schemas; Python/TS contract tests |
 | Conversational input (web UI) | ✅ Live | Extracts parameters from free text, asks follow-ups |
 | Progress streaming (SSE) | ✅ Live | Live agent log in browser |
 | Report output (JSON) | ✅ Live | Structured, timestamped, machine-readable, cited |
-| `last_verified` on RAG chunks | ⚠ Parsed only | Stored on chunks (DOCS-2); NOT yet shown in tool output (Phase 14) |
+| `last_verified` on RAG chunks | ✅ Phase 14 | Parsed + forwarded in `consultLegalSources` output |
+| BO verdict + conduit risk | ✅ Phase 15 | `bo_overall: BoOverall` + `conduit_risk: boolean` on `WhtReport`; deterministic derivation |
+| Eval harness + golden cases | ✅ Phase 15 | 9 golden cases; `scripts/runEvals.ts`; Triangulation Rule |
+| Legal source hierarchy | ✅ Phase 16 | `source_type` filter on RAG tool; `legal_hierarchy` in `Citation`; Zod `SourceTypeSchema` |
+| Confidence UX + auto-HITL | ✅ Phase 17 | `DRAFT ONLY` banner; LOW grey-out; force-draft on UNCERTAIN/LOW in registry |
 
 ### Remaining gaps by arc
 
@@ -101,11 +105,11 @@ content licences from US or UK entities.
 
 | Gap | Phase | Description |
 |---|---|---|
-| TreatyVerifierAgent not in live flow | 14 | Verifier + batch script work; agent never calls it; rates still `verified: false` |
-| `last_verified` not surfaced to user | 14 | Parsed by Chunker; not shown in `consult_legal_sources` output |
-| No eval harness / golden cases | 15 | Agent correctness untested at the output level — only code paths tested |
-| Legal source hierarchy not reflected in tool | 16 | `consult_legal_sources` does not distinguish statute from guidance; no Art./Sec. refs |
-| No UI signal for LOW confidence | 17 | User sees confidence label but no visual emphasis on uncertain conclusions |
+| TreatyVerifierAgent not in live flow | 14 ✅ | Resolved v0.17.0 — wired into agent loop; DIFFERS → LOW confidence |
+| `last_verified` not surfaced to user | 14 ✅ | Resolved v0.17.0 — forwarded in `consultLegalSources` output |
+| No eval harness / golden cases | 15 ✅ | Resolved v0.18.0 — 9 golden cases + `runEvals.ts` + Triangulation Rule |
+| Legal source hierarchy not reflected in tool | 16 ✅ | Resolved v0.19.0 — `source_type` filter + `legal_hierarchy` in Citation |
+| No UI signal for LOW confidence | 17 ✅ | Resolved v0.20.0 — `DRAFT ONLY` banner + grey-out + force-draft on UNCERTAIN/LOW |
 | No third-party vendor workflow (UC2) | 18 | No lighter-touch path for unrelated vendors; no risk classification |
 | No Due Diligence checklist tool | 19 | DD requirements not surfaced per payment type |
 | Treaty rates unverified | 20 | All 36 countries still `verified: false` in treaties.json |
@@ -143,8 +147,8 @@ A "Beneficial Owner Scanner" that a tax team can actually use must meet all of t
 - [x] Confidence levels reflect real data quality, not just simulation mode *(Phase 13 RAG gate)*
 - [x] The agent never states HIGH confidence based on simulated substance *(RAG gate + substance confidence check)*
 - [x] Conservative fallback is explicit — "cannot confirm" is better than a wrong answer *(CONDUIT fallback, LOW confidence)*
-- [ ] UI signals LOW confidence visually — grey-out or "Draft Only" watermark *(Phase 17)*
-- [ ] UNCERTAIN analysis automatically triggers human review workflow *(Phase 17)*
+- [x] UI signals LOW confidence visually — `DRAFT ONLY` banner + grey-out *(Phase 17)*
+- [x] UNCERTAIN analysis automatically forces `review_status: 'draft'` in registry *(Phase 17)*
 
 **Process requirements:**
 - [x] A new entity can be onboarded in under 15 minutes *(Phase 10 interview ~5min — feasible today)*
@@ -155,7 +159,7 @@ A "Beneficial Owner Scanner" that a tax team can actually use must meet all of t
 
 ## Phase roadmap — completed
 
-Phases 1–16 (including QA-1, QA-2, DOCS-1, DOCS-2, GITHUB-1) are complete as of v0.16.0.
+Phases 1–17 (including QA-1–3, DOCS-1–3, GITHUB-1) are complete as of v0.20.0.
 The reasoning below is preserved for reference — it explains *why* each phase was prioritised
 the way it was. For the current forward-looking roadmap see [[Phase Roadmap]] in the wiki.
 
@@ -329,35 +333,29 @@ The Tax OS modules share:
 
 ---
 
-## Phase sequencing rationale (updated 2026-04-02)
+## Phase sequencing rationale (updated 2026-04-03)
 
-Phases 1–16 complete. The sequence below explains the current arc priority ordering.
+Phases 1–17 complete. The sequence below explains the current arc priority ordering.
 
 ```
-DONE (v0.16.0):
-  Phases 1–13, QA-1, QA-2, DOCS-1, DOCS-2, GITHUB-1
+DONE (v0.20.0):
+  Phases 1–17, QA-1, QA-2, QA-3, DOCS-1, DOCS-2, DOCS-3, GITHUB-1
   Treaty mechanics, web UI, RAG, substance interview, entity registry,
-  human review, citations, Zod validation, treaty verifier (batch only).
+  human review, citations, Zod validation, treaty verifier (live),
+  eval harness (9 golden cases), legal source hierarchy, confidence UX + HITL.
   Tool is production-capable for UC1 intercompany analysis.
 
-NEXT (Phase 14 — Ghost Activation):
-  Wire TreatyVerifierAgent into live flow; surface last_verified.
-  Closes the gap between what exists and what works end-to-end.
+NEXT (Phase 18 — UC2 Third-party Vendor Workflow):
+  Distinct lighter-touch path for unrelated vendors.
+  Risk classification, document checklist, no-DDQ path.
 
-THEN (Phase 15 — QA-3 Evals):
-  HIGHEST PRIORITY after Phase 14. Agent correctness at the output level
-  is untested. Golden cases + eval runner before adding new features.
-
-THEN (Phase 16 — Legal Source Hierarchy):
-  Citations with Art./Sec. refs are the most impactful professional-quality
-  upgrade. Legal hierarchy in tool design matters for LLM reasoning quality.
-
-THEN (Phases 17–22 — Core completion):
-  Confidence UX, UC2 vendor flow, Due Diligence module, data quality,
-  batch processing, production hardening. Order is impact-driven.
+THEN (Phases 19–22 — Core completion):
+  Due Diligence module, data quality pass, batch processing,
+  production hardening. Order is impact-driven.
 
 FUTURE (Phases 23–26 — Professional features):
-  Intangibles layer, legal source workflow, jurisdiction expansion, WHT v1.0.
+  Intangibles layer, GAAR tool, legal source workflow,
+  jurisdiction expansion, WHT v1.0.
 
 VISION (Phases 27–29 — Tax OS):
   GLOBAL VISION (private), EU jurisdiction engine, Module 2 planning.
