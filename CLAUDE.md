@@ -62,14 +62,16 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 16 | Legal Source Hierarchy — `source_type` on `consult_legal_sources`; `source_type`+`legal_hierarchy` in RAG results + `Citation`; Zod `SourceTypeSchema`; `source_type` filter in `Retriever` | ✓ Complete |
 | 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | ✓ Complete |
 | **18** | **UC2 Third-party Vendor Workflow** — `classify_vendor_risk` tool; document checklist; no-DDQ path | **Next** |
-| 19 | Due Diligence Module — DD checklist tool per payment type; DD gap analysis in report | Planned |
-| 20 | Data quality — verify top-10 treaty rates against official sources; `verified: true` in treaties.json | Planned |
+| 19 | Due Diligence Module + Negative Evidence Gate — DD checklist per payment type; DD gap analysis; agent must explicitly flag missing KSeF ID, board logs, payroll proofs | Planned |
+| QA-4 | Eval Harness v2.0 — update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); case status filtering (`active`/`scaffold`); EU27 rate verification for cases 13–31 | Planned |
+| 20 | Data quality — verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report | Planned |
-| 22 | Production hardening — session persistence, SSE reconnect, rate limiting, memory pruning | Planned |
+| 22 | Production hardening + Temporal Context — session persistence, SSE reconnect, rate limiting, `payment_year` parameter, STTR/KSeF temporal gating | Planned |
 | 23a | Intangibles — Legal & Data Layer: Art. 21.1.2a CIT framework; treaty classification (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG enrichment; IC vs. 3rd-party paths | Planned |
 | 23b | Intangibles — Code Layer: new `payment_type` options; `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook | Planned |
 | 23c | GAAR Tool: Art. 119a Ordynacja podatkowa risk flag; separate tool in `WhtEnvironment.ts`; TBD scope | Planned |
-| 24 | Legal Source Management Workflow — source update protocol; new source onboarding; hierarchy documentation | Planned |
+| 24 | Legal Source Management Workflow — source update protocol; new source onboarding; hierarchy documentation; NSA/CJEU case law RAG ingestion | Planned |
+| 24b | PIT & Hybrid Entities Expansion — `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'`; Art. 29/30a PIT WHT; IFT-1/1R form guidance; UK LLP transparency; B2B ghost detection | Planned |
 | 25 | Jurisdiction expansion — treaties.json 36 → 50+ countries | Planned |
 | 26 | WHT v1.0 Major Review — end-to-end demo, all acceptance criteria, `CHANGELOG.md` v1.0, MBA prototype declaration | Planned |
 | 27 | GLOBAL VISION Documentation — private `docs/GLOBAL_VISION.md` (gitignored); Tax OS architecture + system prompt guidelines | Planned |
@@ -194,9 +196,9 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run tax:agent` | CLI agent — requires `--input <file>` |
 | `npm run ddq:service` | Python DDQ extraction service on port 8000 (optional) |
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
-| `npm test` | Unit tests — 302 tests, no API calls, ~5s |
+| `npm test` | Unit tests — 314 tests, no API calls, ~5s |
 | `npm run lint` | ESLint + Prettier check across all TS files |
-| `npm run eval` | Run golden dataset evaluation harness (9 cases, Triangulation Rule) — requires `OPENAI_API_KEY` |
+| `npm run eval` | Run golden dataset evaluation harness (31 cases total; 9 active in harness — v2.0 harness pending QA-4) — requires `OPENAI_API_KEY` |
 | `npm run test:coverage` | c8 coverage report (text + lcov) |
 | `npm run test:snapshot:update` | Recompute SHA-256 hash of treaties.json after intentional changes |
 | `npm run test:contract:update` | Regenerate python/service/contract.json after Pydantic model changes |
@@ -251,6 +253,7 @@ dedicated sweep. New files created in a phase must always include it.
 5. SESSION.md updated (current status, how to resume, completed phases list)
 6. CHANGELOG.md entry added for the phase
 7. Test count in CLAUDE.md TypeScript section updated if tests were added
+8. `docs/agent-design-guide.md` updated with any new architectural patterns introduced
 - Always run build + tests before merging
 - **Push to GitHub at the end of every session** (`git push`) — `git commit` is local only; GitHub does not update until you push
 

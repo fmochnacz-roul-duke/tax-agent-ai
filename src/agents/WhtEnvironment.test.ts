@@ -882,7 +882,12 @@ function makeRagEnvWithChunks(chunks: Chunk[]): WhtEnvironment {
   const embedding: number[] = [0.5, 0.5];
   const vectors: ChunkVector[] = chunks.map((c) => ({ chunk_id: c.chunk_id, embedding }));
   const mockEmbedFn = async (texts: string[]): Promise<number[][]> => texts.map(() => embedding);
-  const ragService = LegalRagService.fromData({ chunks, vectors, taxonomy: [], embedFn: mockEmbedFn });
+  const ragService = LegalRagService.fromData({
+    chunks,
+    vectors,
+    taxonomy: [],
+    embedFn: mockEmbedFn,
+  });
   return new WhtEnvironment({ simulate: true, ragService });
 }
 
@@ -904,7 +909,11 @@ test('Phase 16 — consultLegalSources: statute chunk includes source_type and l
 
   const chunks = result['chunks'] as Record<string, unknown>[];
   assert.ok(chunks.length > 0, 'should return at least one chunk');
-  assert.equal(chunks[0]['source_type'], 'statute', 'source_type should be surfaced in chunk output');
+  assert.equal(
+    chunks[0]['source_type'],
+    'statute',
+    'source_type should be surfaced in chunk output'
+  );
   assert.equal(chunks[0]['legal_hierarchy'], 1, 'statute should have legal_hierarchy 1');
 });
 
@@ -986,7 +995,9 @@ test('Phase 16 — consultLegalSources: source_type filter returns only matching
   const ragEnv = makeRagEnvWithChunks([statuteChunk, guidanceChunk]);
 
   // sourceType 'statute' — only the statute chunk should come back
-  const result = parse(await ragEnv.consultLegalSources('WHT rates', undefined, undefined, 'statute'));
+  const result = parse(
+    await ragEnv.consultLegalSources('WHT rates', undefined, undefined, 'statute')
+  );
   const chunks = result['chunks'] as Record<string, unknown>[];
   assert.equal(chunks.length, 1, 'filter should return exactly 1 chunk');
   assert.equal(chunks[0]['source_id'], 'PL-CIT-2026', 'returned chunk should be the statute');
@@ -1024,4 +1035,131 @@ test('Phase 16 — consultLegalSources: passing undefined sourceType returns all
   const result = parse(await ragEnv.consultLegalSources('due diligence obligations'));
   const chunks = result['chunks'] as Record<string, unknown>[];
   assert.equal(chunks.length, 2, 'no filter should return all chunks');
+});
+
+// ── classifyVendorRisk (Phase 18) ─────────────────────────────────────────────
+//
+// Verifies the three-tier risk classification and document checklist logic for
+// the UC2 vendor workflow.  All calls are synchronous — no LLM involved.
+
+test('classifyVendorRisk: related party always returns HIGH risk tier', () => {
+  // Even with a low payment amount and non-routing country, related party = HIGH
+  const result = parse(env.classifyVendorRisk('SomeCo Ltd', 'Germany', 'interest', 500_000, true));
+
+  assert.equal(result['risk_tier'], 'HIGH');
+  assert.equal(result['due_diligence_standard'], 'FULL');
+  assert.equal(result['requires_substance_interview'], true);
+});
+
+test('classifyVendorRisk: unrelated party in routing jurisdiction returns HIGH', () => {
+  // Luxembourg is a VENDOR_ROUTING_JURISDICTION — enhanced DD even for third parties
+  const result = parse(
+    env.classifyVendorRisk('HoldCo SA', 'Luxembourg', 'dividend', 500_000, false)
+  );
+
+  assert.equal(result['risk_tier'], 'HIGH');
+  assert.equal(result['due_diligence_standard'], 'ENHANCED');
+  assert.equal(result['requires_substance_interview'], true);
+});
+
+test('classifyVendorRisk: unrelated royalty payment returns MEDIUM', () => {
+  // Royalty to non-routing country (France) below threshold → MEDIUM
+  const result = parse(env.classifyVendorRisk('TechSAS', 'France', 'royalty', 800_000, false));
+
+  assert.equal(result['risk_tier'], 'MEDIUM');
+  assert.equal(result['due_diligence_standard'], 'STANDARD');
+  assert.equal(result['requires_substance_interview'], false);
+});
+
+test('classifyVendorRisk: unrelated interest payment above PLN 2M returns MEDIUM', () => {
+  const result = parse(env.classifyVendorRisk('BankAG', 'Germany', 'interest', 3_000_000, false));
+
+  assert.equal(result['risk_tier'], 'MEDIUM');
+  assert.equal(result['requires_substance_interview'], false);
+});
+
+test('classifyVendorRisk: unrelated interest below PLN 2M non-routing returns LOW', () => {
+  const result = parse(env.classifyVendorRisk('Acme GmbH', 'Germany', 'interest', 500_000, false));
+
+  assert.equal(result['risk_tier'], 'LOW');
+  assert.equal(result['due_diligence_standard'], 'SIMPLIFIED');
+  assert.equal(result['requires_substance_interview'], false);
+});
+
+test('classifyVendorRisk: LOW risk document checklist has exactly 3 items', () => {
+  const result = parse(env.classifyVendorRisk('Acme GmbH', 'Germany', 'interest', 500_000, false));
+  const checklist = result['document_checklist'] as string[];
+
+  assert.equal(checklist.length, 3, 'LOW tier should require only CFR + BO declaration + contract');
+});
+
+test('classifyVendorRisk: HIGH related-party checklist includes DDQ item', () => {
+  const result = parse(
+    env.classifyVendorRisk('ParentCo', 'Luxembourg', 'dividend', 5_000_000, true)
+  );
+  const checklist = result['document_checklist'] as string[];
+
+  assert.ok(
+    checklist.some(
+      (item) =>
+        item.toLowerCase().includes('ddq') ||
+        item.toLowerCase().includes('due diligence questionnaire')
+    ),
+    'related-party HIGH tier checklist must include DDQ requirement'
+  );
+});
+
+test('classifyVendorRisk: pay_and_refund_applies only for related party above PLN 2M', () => {
+  const relatedAbove = parse(
+    env.classifyVendorRisk('ParentCo', 'Germany', 'interest', 3_000_000, true)
+  );
+  const unrelatedAbove = parse(
+    env.classifyVendorRisk('ThirdCo', 'Germany', 'interest', 3_000_000, false)
+  );
+  const relatedBelow = parse(
+    env.classifyVendorRisk('ParentCo', 'Germany', 'interest', 500_000, true)
+  );
+
+  assert.equal(relatedAbove['pay_and_refund_applies'], true, 'related + above threshold → applies');
+  assert.equal(unrelatedAbove['pay_and_refund_applies'], false, 'unrelated → never applies');
+  assert.equal(
+    relatedBelow['pay_and_refund_applies'],
+    false,
+    'related but below threshold → does not apply'
+  );
+});
+
+test('classifyVendorRisk: unknown amount (0) applies conservative HIGH assumption', () => {
+  // Unknown amount should be treated as exceeding the PLN 2M threshold
+  const result = parse(env.classifyVendorRisk('UnknownCo', 'Germany', 'interest', 0, false));
+
+  assert.equal(
+    result['risk_tier'],
+    'MEDIUM',
+    'unknown amount → conservative MEDIUM (threshold assumed exceeded)'
+  );
+});
+
+test('classifyVendorRisk: invalid income_type returns error', () => {
+  const result = parse(
+    env.classifyVendorRisk('SomeCo', 'Germany', 'management_fee', 500_000, false)
+  );
+
+  assert.ok(result['error'], 'invalid income_type should return an error field');
+  assert.ok(
+    (result['error'] as string).includes('dividend, interest, royalty'),
+    'error should list valid income types'
+  );
+});
+
+test('classifyVendorRisk: negative annual_payment_pln returns error', () => {
+  const result = parse(env.classifyVendorRisk('SomeCo', 'Germany', 'interest', -100, false));
+
+  assert.ok(result['error'], 'negative annual_payment_pln should return an error field');
+});
+
+test('classifyVendorRisk: result always includes source field', () => {
+  const result = parse(env.classifyVendorRisk('Acme GmbH', 'Germany', 'interest', 500_000, false));
+
+  assert.ok(result['source'], 'result must include a source field for provenance');
 });

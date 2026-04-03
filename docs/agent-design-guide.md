@@ -651,3 +651,129 @@ function hasRagLegalGrounding(citations: Citation[]): boolean {
 The RAG gate prevents HIGH confidence from being awarded when the agent consulted a
 knowledge base that returned low-relevance results — which would be worse than not
 consulting it at all (false certainty).
+
+---
+
+## 17. Deterministic Verdict Computation
+
+For compliance conclusions, never parse the final verdict from LLM output text. Derive
+it deterministically from structured findings in memory.
+
+**The pattern (Phase 15+17):**
+
+```typescript
+// BAD: parse LLM output — fragile, model-version-dependent
+const bo = report.conclusion.includes('beneficial owner') ? 'CONFIRMED' : 'REJECTED';
+
+// GOOD: derive from structured findings — deterministic, testable
+export function computeBoOverall(
+  findings: Record<string, string>,
+  dataConfidence: 'HIGH' | 'MEDIUM' | 'LOW'
+): BoOverall {
+  // 1. No treaty → NO_TREATY (bypasses BO test entirely)
+  const treatyRaw = findings['treaty_status'];
+  if (treatyRaw) {
+    const treaty = JSON.parse(treatyRaw) as Record<string, unknown>;
+    if (!treaty['treaty_in_force']) return 'NO_TREATY';
+  }
+
+  // 2. Low data quality → UNCERTAIN (cannot confirm BO on bad data)
+  if (dataConfidence === 'LOW') return 'UNCERTAIN';
+
+  // 3. Substance FAIL → REJECTED
+  const substanceRaw = findings['entity_substance'];
+  if (substanceRaw) {
+    const substance = JSON.parse(substanceRaw) as Record<string, unknown>;
+    const boPrelim = substance['bo_preliminary'] as Record<string, unknown> | undefined;
+    if (boPrelim?.['overall'] === 'FAIL') return 'REJECTED';
+    if (boPrelim?.['overall'] === 'PASS') return 'CONFIRMED';
+  }
+
+  return 'UNCERTAIN'; // substance not yet assessed or inconclusive
+}
+```
+
+**Rules:**
+- `BoOverall` and `conduit_risk` are derived last, after all other findings are stored
+- LOW confidence unconditionally blocks CONFIRMED — no partial credit in tax compliance
+- The function must be pure and unit-testable with no LLM calls
+
+---
+
+## 18. Force-Draft HITL Pattern
+
+When a conclusion cannot be safely signed off by a professional (due to uncertain data,
+inconclusive BO test, or REJECTED verdict), force the entity registry entry to `draft`
+status — even if a professional previously signed it off.
+
+**The pattern (Phase 12b + 17):**
+
+```typescript
+// In EntityRegistry.save():
+if (
+  report.bo_overall === 'REJECTED'  ||   // conduit — needs human look-through
+  report.bo_overall === 'UNCERTAIN' ||   // BO test inconclusive — premature to sign off
+  report.data_confidence === 'LOW'       // simulated data — not safe to act on
+) {
+  entry.review_status = 'draft';
+}
+```
+
+**UI counterpart:** Flag the report card visually when force-draft conditions apply.
+Use a banner + greyed-out card, not just a status field — the reviewer's eye must
+catch the state before they can sign off.
+
+**Rules:**
+- Force-draft overrides any existing sign-off — re-analysis may have changed the verdict
+- MEDIUM confidence does NOT force draft — only LOW
+- NO_TREATY with HIGH/MEDIUM confidence is actionable — no force-draft
+
+---
+
+## 19. Risk-Routing Tool Pattern (UC2 Vendor Workflow)
+
+For workflows with multiple analysis paths, introduce a routing tool that the agent
+calls FIRST (for the relevant transaction type) to determine which analysis path applies.
+
+**The pattern (Phase 18):**
+
+```typescript
+// classify_vendor_risk returns the tier BEFORE the agent decides which tools to call
+classifyVendorRisk(entityName, country, incomeType, annualPaymentPln, relatedParty): string {
+  // Derives risk tier from static rules — no LLM, no external calls
+  const riskTier = deriveRiskTier(...);
+  const documentChecklist = buildChecklist(riskTier, ...);
+
+  return JSON.stringify({
+    risk_tier: riskTier,         // 'HIGH' | 'MEDIUM' | 'LOW'
+    requires_substance_interview: riskTier === 'HIGH',
+    document_checklist: documentChecklist,
+    // ... other fields
+  });
+}
+```
+
+**The goal routing instruction (in the agent goals array):**
+
+```
+"For UNRELATED PARTY transactions only: call classify_vendor_risk BEFORE the full substance
+assessment. Use the result to route:
+• LOW → skip check_entity_substance; proceed to treaty/rate checks only
+• MEDIUM → standard path; note the document checklist
+• HIGH → full substance assessment required; call check_entity_substance"
+```
+
+**Why a dedicated routing tool instead of branching logic in the agent prompt:**
+- The routing decision is deterministic — it should not be left to LLM judgment
+- A tool result is stored in memory and cited in the report — prompt conditions are not
+- The agent can explain WHY the simplified path was taken (the tool result is in findings)
+
+**Document checklist is progressive:** each higher tier adds items to the tier below.
+This means LOW → 3 items, MEDIUM → 5 items, HIGH → 8+ items. The agent can surface
+the checklist to the user without any further reasoning.
+
+**Rules:**
+- Routing tool must be synchronous — no external calls, no LLM
+- Related-party transactions always bypass routing (full path is non-negotiable)
+- The `requires_substance_interview` field is the single flag the agent reads to decide
+  whether to call `check_entity_substance`

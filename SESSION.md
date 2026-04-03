@@ -1,11 +1,11 @@
 # Session State
 
 ## Current Status
-**Phase:** Phase 17 complete (2026-04-03). Phase 18 (UC2 Third-party Vendor Workflow) is next.
-**Last code session:** Phase 17 — Confidence UX + HITL (v0.20.0, 2026-04-03)
-**Last planning session:** 2026-04-02 — Phase 23 design decisions confirmed (23a/23b/23c); total phases 29 → 31
-**Branch:** master (phase-17 merged)
-**Tests:** 302/302 passing
+**Phase:** Phase 18 complete (v0.21.0, 2026-04-03). Phase 19 (Due Diligence Module + Negative Evidence Gate) is next.
+**Last code session:** Phase 18 — UC2 Third-party Vendor Workflow (v0.21.0, 2026-04-03)
+**Last data/planning session:** 2026-04-03 — Golden Dataset v2.0 (cases 09–31); QA-4 + Phase 24b identified; Negative Evidence Gate and Temporal Context added to Phase 19/22 scope; external reviewer recommendations analysed.
+**Branch:** master
+**Tests:** 314/314 passing
 
 ---
 
@@ -55,21 +55,24 @@ Cases 1-2 use existing repo data. Cases 4-5 cover MLI PPT / low-substance risk. 
 
 ## How to Resume Next Session
 
-Phase 17 is complete and merged to master. Start Phase 18 on a new branch.
+Phase 18 is complete and merged to master (v0.21.0). Start Phase 19 directly.
 
 ```
-git checkout master
-git pull
-git checkout -b feature/phase-18-uc2-vendor
-npm run build    ← zero errors
-npm test         ← 302/302 passing
+git checkout -b feature/phase-19-dd-module
+npm run build    ← zero errors required
+npm test         ← 314/314 passing
 npm start        ← web UI at http://localhost:3000
 ```
 
-Phase 18 — UC2 Third-party Vendor Workflow:
-- `classify_vendor_risk` tool in `WhtEnvironment.ts`
-- Document checklist per payment type (dividend / interest / royalty)
-- No-DDQ path for unrelated third parties (lighter standard: residence cert + declaration)
+**Important notes:**
+- `npm run eval` will only work correctly for cases 01–08b (original 9 cases). Cases 09–12 have new fields (`sttr_topup_applies`) that the harness doesn't handle yet. Cases 13–31 have placeholder rates. Do NOT run eval until QA-4.
+- `scripts/generate_eu27_cases.js` generates cases 13–31 deterministically — untracked, to be committed in QA-4.
+
+Phase 19 — Due Diligence Module + Negative Evidence Gate:
+- DD checklist tool per payment type (dividend / interest / royalty)
+- DD gap analysis added to `WhtReport`
+- Agent must explicitly flag missing KSeF ID, board meeting logs, payroll proofs
+- Negative Evidence Gate: missing evidence must lower confidence, not be ignored
 
 Phase 17 summary (v0.20.0):
 - `DRAFT ONLY` banner + grey-out (`report-low` CSS class) for LOW confidence report cards
@@ -92,13 +95,15 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 | 14 | Ghost Activation | `TreatyVerifierAgent` in live agent flow; `last_verified` in RAG output; confidence → LOW on rate mismatch | ✓ v0.17.0 |
 | 15 | QA-3: Evals + Negative Tests | `data/golden_cases/` (9 cases); `scripts/runEvals.ts`; Triangulation Rule; negative tests | ✓ v0.18.0 |
 | 16 | Legal Source Hierarchy | `source_type` param; `legal_hierarchy` in RAG results + `Citation`; Zod `SourceTypeSchema`; filter in Retriever | ✓ v0.19.0 |
-| **17** | **Confidence UX + HITL** | UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft on UNCERTAIN/LOW | **Next** |
-| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW |
-| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
-| 19 | Due Diligence Module | DD checklist tool per payment type; DD gap analysis in `WhtReport` |
-| 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` in treaties.json |
+| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; `DRAFT ONLY` banner; auto-`review_status: 'draft'` on UNCERTAIN/LOW | ✓ v0.20.0 |
+| — | Data & Planning (v0.20.1) | Golden Dataset v2.0 (cases 09–31); taxonomy + registry updated; QA-4 + Phase 24b defined | ✓ v0.20.1 |
+| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path | ✓ v0.21.0 |
+| **19** | **Due Diligence Module + Negative Evidence Gate** | DD checklist per payment type; DD gap analysis; explicit flagging of missing KSeF ID / board logs / payroll proofs | **Next** |
+| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist per payment type; DD gap analysis in `WhtReport`; explicit flagging of missing KSeF ID, board logs, payroll proofs |
+| QA-4 | Eval Harness v2.0 | Update `runEvals.ts` for v2.0 case structure; `active`/`scaffold` status filter; EU27 rate verification for cases 13–31 |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json |
 | 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache |
-| 22 | Production Hardening | Session persistence; SSE reconnect; rate limiting; memory pruning (`maxMessageHistory`) |
+| 22 | Production Hardening + Temporal Context | Session persistence; SSE reconnect; rate limiting; `payment_year` parameter; STTR/KSeF temporal gating |
 
 ### Arc 2 — WHT Professional Features (Phases 23–26)
 
@@ -107,9 +112,10 @@ Roadmap restructured after a full strategy review (2026-04-02). Expanded from 7 
 | 23a | Intangibles — Legal & Data Layer | Art. 21.1.2a framework; treaty classification rules (Art. 7 vs Art. 12); MDR hallmarks (Art. 86a-86o Ord.pod.); RAG source enrichment; IC vs. 3rd-party paths |
 | 23b | Intangibles — Code Layer | New `payment_type` options; `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook in `WhtReport` |
 | 23c | GAAR Tool | Art. 119a Ordynacja podatkowa analysis; GAAR risk flag in `WhtReport`; separate tool (TBD scope) |
-| 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow |
+| 24 | Legal Source Management Workflow | Source update protocol; new source onboarding guide; `last_verified` update workflow; NSA/CJEU case law RAG ingestion (Danish Cases, NSA II FSK 27/23) |
+| 24b | PIT & Hybrid Entities Expansion | `recipient_type: 'ENTITY' \| 'INDIVIDUAL' \| 'PARTNERSHIP'`; Art. 29/30a PIT WHT; IFT-1/1R form guidance; UK LLP transparency; B2B ghost detection |
 | 25 | Jurisdiction Expansion | treaties.json 36 → 50+ countries |
-| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria; CHANGELOG v1.0; MBA prototype declaration |
+| 26 | WHT v1.0 Major Review | End-to-end demo (UC1 + UC2); all acceptance criteria; CHANGELOG v1.0; MBA prototype declaration; Legal Memo output format |
 
 ### Arc 3 — Tax OS Foundation (Phases 27–29)
 
@@ -133,6 +139,16 @@ official Polish treaty PDFs (DzU references).
 ---
 
 ## Completed Phases (full history)
+
+### Phase 18 — UC2 Third-party Vendor Workflow (v0.21.0 — 2026-04-03)
+- `VENDOR_ROUTING_JURISDICTIONS` set (15 countries) + `classifyVendorRisk()` method in `WhtEnvironment.ts`
+- Deterministic risk tier: related party→HIGH/FULL; routing jurisdiction→HIGH/ENHANCED; royalty→MEDIUM/STANDARD; >PLN 2M→MEDIUM/STANDARD; otherwise→LOW/SIMPLIFIED
+- Progressive document checklist: LOW=3, MEDIUM=5, HIGH=8+ items
+- New Goal (priority 5) in `BeneficialOwnerAgent.ts`: routes agent to call `classify_vendor_risk` first for unrelated-party transactions
+- New tool `classify_vendor_risk` with JSON Schema; dispatch case + `vendor_risk` finding key
+- `eslint.config.js`: `scripts/*.js` added to ignores (CommonJS generator scripts)
+- Design guide updated: sections 17 (Deterministic Verdict Computation), 18 (Force-Draft HITL), 19 (Risk-Routing Tool Pattern)
+- 12 new tests → 314/314
 
 ### Phase 17 — Confidence UX + HITL (v0.20.0 — 2026-04-03)
 - `DRAFT ONLY` banner added to report card when `data_confidence === 'LOW'` (red, with explanation text)

@@ -196,6 +196,33 @@ interface SubstanceResult {
   source: string;
 }
 
+// ── Phase 18: Vendor risk classification constants ────────────────────────────
+//
+// Jurisdictions that require enhanced due diligence for unrelated-party vendors
+// per MF Objaśnienia §4 and general WHT practice.  These are holding / routing
+// jurisdictions where KAS routinely challenges substance claims.
+//
+// Note: this set is intentionally separate from KNOWN_ROUTING_JURISDICTIONS in
+// BeneficialOwnerAgent.ts — that set drives conduit_risk on finished reports;
+// this one drives proactive risk classification BEFORE the full analysis.
+const VENDOR_ROUTING_JURISDICTIONS = new Set([
+  'cyprus',
+  'netherlands',
+  'luxembourg',
+  'ireland',
+  'malta',
+  'hong kong',
+  'singapore',
+  'switzerland',
+  'united arab emirates',
+  'cayman islands',
+  'british virgin islands',
+  'jersey',
+  'guernsey',
+  'liechtenstein',
+  'bermuda',
+]);
+
 // ── WhtEnvironment ────────────────────────────────────────────────────────────
 
 export interface WhtEnvironmentOptions {
@@ -1322,16 +1349,196 @@ export class WhtEnvironment {
   // When the knowledge base has not been built (rag:build not run), or in simulate
   // mode, returns { available: false } rather than throwing.
 
+  // ── classifyVendorRisk ───────────────────────────────────────────────────────
+  //
+  // Phase 18 — UC2 Third-party Vendor Workflow.
+  //
+  // Determines the required due diligence tier for a payment recipient BEFORE
+  // running the full beneficial owner analysis.  Implements the MF Objaśnienia
+  // §4 distinction between related-party (highest standard) and unrelated-party
+  // (lower standard) due diligence.
+  //
+  // Risk tiers:
+  //   HIGH   — always for related parties; also for routing jurisdictions or
+  //             royalties/dividends to holding structures regardless of party type
+  //   MEDIUM — unrelated party with payment > PLN 2M, or royalty payment
+  //   LOW    — unrelated party, below PLN 2M threshold, non-routing country
+  //
+  // The method is synchronous — no external calls needed.  The risk tier and
+  // document checklist are derived entirely from the input parameters.
+  classifyVendorRisk(
+    entityName: string,
+    country: string,
+    incomeType: string,
+    annualPaymentPln: number,
+    relatedParty: boolean
+  ): string {
+    // ── Parameter validation ─────────────────────────────────────────────────
+    const VALID_INCOME = new Set(['dividend', 'interest', 'royalty']);
+    if (!VALID_INCOME.has(incomeType.toLowerCase())) {
+      return JSON.stringify({
+        error: `Unsupported income_type "${incomeType}". Must be one of: dividend, interest, royalty.`,
+      });
+    }
+    if (annualPaymentPln < 0) {
+      return JSON.stringify({
+        error: `annual_payment_pln must be 0 or greater. Pass 0 if unknown. Received: ${annualPaymentPln}.`,
+      });
+    }
+
+    const PLN_2M = 2_000_000;
+    const normalisedCountry = normalise(country);
+    const isRoutingJurisdiction = VENDOR_ROUTING_JURISDICTIONS.has(normalisedCountry);
+    // Conservative: unknown amount (0) is treated as exceeding the threshold
+    const exceedsThreshold = annualPaymentPln === 0 || annualPaymentPln > PLN_2M;
+
+    // ── Tier determination ───────────────────────────────────────────────────
+    //
+    // Rules follow MF Objaśnienia §4:
+    //   - Related party → always FULL (highest standard regardless of other factors)
+    //   - Unrelated + routing jurisdiction → ENHANCED (routing countries require
+    //     substance verification even for third parties)
+    //   - Unrelated + royalty (regardless of amount) → MEDIUM (IP ownership claims
+    //     require some substantiation; royalty is highest-risk income type)
+    //   - Unrelated + payment > PLN 2M → MEDIUM (Pay and Refund threshold concern)
+    //   - Unrelated + below PLN 2M + non-routing + not royalty → LOW (simplified path)
+
+    type RiskTier = 'HIGH' | 'MEDIUM' | 'LOW';
+    type DueDiligenceStandard = 'FULL' | 'ENHANCED' | 'STANDARD' | 'SIMPLIFIED';
+
+    let riskTier: RiskTier;
+    let dueDiligenceStandard: DueDiligenceStandard;
+    let requiresSubstanceInterview: boolean;
+    const riskNotes: string[] = [];
+
+    if (relatedParty) {
+      riskTier = 'HIGH';
+      dueDiligenceStandard = 'FULL';
+      requiresSubstanceInterview = true;
+      riskNotes.push(
+        'Related party — highest due diligence standard applies (Art. 26 CIT + MF Objaśnienia §4).'
+      );
+      riskNotes.push(
+        'Full substance assessment mandatory — call check_entity_substance after this tool.'
+      );
+    } else if (isRoutingJurisdiction) {
+      riskTier = 'HIGH';
+      dueDiligenceStandard = 'ENHANCED';
+      requiresSubstanceInterview = true;
+      riskNotes.push(
+        `${country} is a known routing / holding jurisdiction — enhanced due diligence required ` +
+          'even for unrelated parties (KAS practice).'
+      );
+    } else if (incomeType === 'royalty') {
+      // Royalties to non-routing unrelated parties: MEDIUM — IP ownership claim must be
+      // substantiated even below the PLN 2M threshold.
+      riskTier = 'MEDIUM';
+      dueDiligenceStandard = 'STANDARD';
+      requiresSubstanceInterview = false;
+      riskNotes.push(
+        'Royalty payment — IP ownership documentation and description of business activity required.'
+      );
+      if (exceedsThreshold) {
+        riskNotes.push(
+          'Payment also exceeds PLN 2M — standard due diligence with full activity evidence required.'
+        );
+      }
+    } else if (exceedsThreshold) {
+      riskTier = 'MEDIUM';
+      dueDiligenceStandard = 'STANDARD';
+      requiresSubstanceInterview = false;
+      riskNotes.push(
+        'Payment exceeds PLN 2M threshold — standard due diligence with recipient activity evi­dence required.'
+      );
+    } else {
+      riskTier = 'LOW';
+      dueDiligenceStandard = 'SIMPLIFIED';
+      requiresSubstanceInterview = false;
+      riskNotes.push(
+        'Unrelated party, below PLN 2M, non-routing jurisdiction — simplified due diligence path applies.'
+      );
+    }
+
+    // ── Document checklist ───────────────────────────────────────────────────
+    //
+    // Progressive checklist: each higher tier adds items to the tier below it.
+    // Based on MF Objaśnienia §4 requirements for remitters.
+    const documentChecklist: string[] = [
+      'Valid certificate of tax residency (CFR) — issued by the recipient country tax authority',
+      'Written beneficial owner declaration from the recipient (Art. 26 §1 CIT)',
+      'Copy of the relevant invoice and contract',
+    ];
+
+    if (riskTier === 'MEDIUM' || riskTier === 'HIGH') {
+      documentChecklist.push(
+        "Description of recipient's business activity (e.g. company registration extract, website evidence)"
+      );
+      documentChecklist.push(
+        'Evidence of own operating costs — payroll report or office lease (if available)'
+      );
+    }
+
+    if (incomeType === 'royalty' && (riskTier === 'MEDIUM' || riskTier === 'HIGH')) {
+      documentChecklist.push(
+        'IP ownership documentation — patent registration, copyright certificate, or licensing chain'
+      );
+    }
+
+    if (riskTier === 'HIGH') {
+      documentChecklist.push(
+        'Corporate group structure chart (showing position in ownership chain)'
+      );
+      documentChecklist.push("Recipient's financial statements for the last 2 years");
+      if (relatedParty) {
+        documentChecklist.push(
+          'Full Due Diligence Questionnaire (DDQ) — completed and signed by the recipient'
+        );
+      }
+      if (incomeType === 'royalty') {
+        documentChecklist.push(
+          'DEMPE analysis confirming the recipient controls the intangible — OECD BEPS Actions 8–10 (Ch. VI TP Guidelines)'
+        );
+      }
+    }
+
+    // Pay and Refund relief options apply when related party AND threshold exceeded
+    if (relatedParty && exceedsThreshold) {
+      documentChecklist.push(
+        'Relief option A — Opinion on WHT Exemption from KAS (Art. 26b CIT): apply ≥6 months in advance; valid 36 months'
+      );
+      documentChecklist.push(
+        'Relief option B — WH-OS Management Statement (Art. 26 §7a CIT): personal liability of board signatories; valid 2 months'
+      );
+    }
+
+    return JSON.stringify({
+      entity: entityName,
+      country,
+      income_type: incomeType,
+      annual_payment_pln: annualPaymentPln === 0 ? 'unknown' : annualPaymentPln,
+      related_party: relatedParty,
+      risk_tier: riskTier,
+      due_diligence_standard: dueDiligenceStandard,
+      requires_substance_interview: requiresSubstanceInterview,
+      pay_and_refund_applies: relatedParty && exceedsThreshold,
+      document_checklist: documentChecklist,
+      risk_notes: riskNotes,
+      legal_basis:
+        'Art. 26 Polish CIT Act; MF Objaśnienia podatkowe z 3 lipca 2025 r. §4 (due diligence standards)',
+      source: 'WHT vendor risk classification — MF Objaśnienia §4 due diligence tiers',
+    });
+  }
+
   // Maps SourceType strings to a numeric authority rank.
   // 1 = highest authority (primary legislation).
   // Used to let the agent and downstream tools compare source authority.
   private static readonly LEGAL_HIERARCHY: Readonly<Record<string, number>> = {
-    statute:    1,
-    directive:  2,
-    treaty:     2,
+    statute: 1,
+    directive: 2,
+    treaty: 2,
     convention: 2,
-    guidance:   3,
-    oecd:       3,
+    guidance: 3,
+    oecd: 3,
     commentary: 4,
   };
 
@@ -1379,10 +1586,12 @@ export class WhtEnvironment {
           ...(c.last_verified !== undefined ? { last_verified: c.last_verified } : {}),
           // Phase 16: surface the authority tier so the agent and downstream
           // consumers know what kind of source backed this chunk.
-          ...(c.source_type !== undefined ? {
-            source_type: c.source_type,
-            legal_hierarchy: WhtEnvironment.LEGAL_HIERARCHY[c.source_type] ?? 99,
-          } : {}),
+          ...(c.source_type !== undefined
+            ? {
+                source_type: c.source_type,
+                legal_hierarchy: WhtEnvironment.LEGAL_HIERARCHY[c.source_type] ?? 99,
+              }
+            : {}),
         })),
       });
     } catch (err) {

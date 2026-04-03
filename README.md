@@ -30,8 +30,8 @@ For full setup (optional Python service, Gemini FactChecker) see [Setup](#setup)
 
 ## Status
 
-![Tests](https://img.shields.io/badge/tests-284%20passing-brightgreen)
-![Phase](https://img.shields.io/badge/phase-16%20complete-blue)
+![Tests](https://img.shields.io/badge/tests-302%20passing-brightgreen)
+![Phase](https://img.shields.io/badge/phase-17%20complete-blue)
 ![Status](https://img.shields.io/badge/status-active%20prototype-yellow)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey)
 
@@ -193,6 +193,8 @@ runWhtAnalysis()                        ← single entry point (web + CLI)
 
 Treaty data: 36 countries (EU-27 + UK, Switzerland, Norway, USA, Canada, Japan, Singapore, UAE, Australia, India). All rates marked `verified: false` — populated from professional commentary, pending confirmation against treaty PDFs (Phase 20).
 
+Golden dataset: 31 cases total — 9 original active cases (01–08b), 4 stress-test cases (09–12, 2026 scenarios), 18 EU27 baseline scaffolds (13–31, placeholder rates). Eval harness (`npm run eval`) runs the original 9 cases until QA-4 updates it for the v2.0 structure.
+
 ---
 
 ## Legal Knowledge RAG (Phase 9)
@@ -320,7 +322,7 @@ npm run ddq:service     # starts FastAPI service on port 8000 (requires Python 3
 # Type-check (zero errors required before any commit)
 npm run build
 
-# Unit tests — 284 tests, no API calls, ~5s
+# Unit tests — 302 tests, no API calls, ~5s
 npm test
 ```
 
@@ -362,17 +364,18 @@ npm test
 | 15 | QA-3: Evals + Negative Tests — `BoOverall`; golden dataset (9 cases); eval harness; Brazil treaty | v0.18.0 |
 | 16 | Legal Source Hierarchy — `source_type` param on `consult_legal_sources`; `legal_hierarchy` in RAG results; Zod domain-narrowing | v0.19.0 |
 | **17** | **Confidence UX + HITL** — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | **v0.20.0** |
+| **18** | **UC2 Third-party Vendor Workflow** — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path for LOW tier | **v0.21.0** |
 
 ### Upcoming — Arc 1: WHT Core Completion
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
-| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
-| 19 | Due Diligence Module | DD checklist tool per payment type; DD gap analysis in `WhtReport` |
-| 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` in treaties.json |
+| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist per payment type; DD gap analysis; explicit flagging of missing KSeF ID / board logs / payroll proofs |
+| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist per payment type; DD gap analysis; explicit flagging of missing KSeF ID / board logs / payroll proofs |
+| QA-4 | Eval Harness v2.0 | Update `runEvals.ts` for v2.0 case structure; case status filtering; EU27 rate verification for cases 13–31 |
+| 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json |
 | 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache |
-| 22 | Production Hardening | Session persistence; SSE reconnect; rate limiting; memory pruning |
+| 22 | Production Hardening + Temporal Context | Session persistence; SSE reconnect; rate limiting; `payment_year` parameter; STTR/KSeF temporal gating |
 
 ### Arc 2: WHT Professional Features
 
@@ -381,9 +384,10 @@ npm test
 | 23a | Intangibles — Legal & Data Layer | Art. 21.1.2a CIT framework; treaty classification; MDR hallmarks; RAG enrichment |
 | 23b | Intangibles — Code Layer | `ServiceClassifier.ts` AI questionnaire; `check_mdr_obligation` tool; PE hook |
 | 23c | GAAR Tool | Art. 119a Ordynacja podatkowa risk flag; separate tool |
-| 24 | Legal Source Management | Source update protocol; `last_verified` workflow |
+| 24 | Legal Source Management | Source update protocol; `last_verified` workflow; NSA/CJEU case law RAG ingestion |
+| 24b | PIT & Hybrid Entities Expansion | `recipient_type` on `AgentInput`; Art. 29/30a PIT WHT; IFT-1/1R form guidance; UK LLP transparency; B2B ghost detection |
 | 25 | Jurisdiction Expansion | treaties.json 36 → 50+ countries |
-| 26 | WHT v1.0 Major Review | End-to-end demo; all acceptance criteria; CHANGELOG v1.0 |
+| 26 | WHT v1.0 Major Review | End-to-end demo; all acceptance criteria; CHANGELOG v1.0; Legal Memo output format |
 
 ### Arc 3: Tax OS Foundation
 
