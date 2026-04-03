@@ -48,7 +48,7 @@ E — Environment ► concrete tool implementations; data sources
 ```
 src/agents/BeneficialOwnerAgent.ts
   │
-  ├── WHT_GOALS (const)         — G: 7 goals with priorities
+  ├── WHT_GOALS (const)         — G: 8 goals with priorities
   ├── WHT_PERSONA (const)       — G: agent persona string
   ├── buildWhtTools()           — A: tool definitions with JSON Schema
   ├── runWhtAnalysis()          — orchestrates GAME setup + runAgent()
@@ -105,7 +105,8 @@ runAgent() dispatch switch
     ├── 'check_entity_substance'    await env.checkEntitySubstance(entity, country)
     ├── 'analyse_dempe'             await env.analyseDempe(entity, country, ipType)
     ├── 'fact_check_substance'      await env.factCheckSubstance(entity, country, claims)
-    └── 'consult_legal_sources'     await env.consultLegalSources(query, concept_ids?, module?)
+    ├── 'consult_legal_sources'     await env.consultLegalSources(query, concept_ids?, module?)
+    └── 'classify_vendor_risk'      env.classifyVendorRisk(entity, country, type, amount, relatedParty)
 ```
 
 Three methods are `async` because they call external services:
@@ -294,7 +295,7 @@ The note attached to each confidence level explicitly states the limitation.
 
 ## 9. Test Coverage Map
 
-All 302 tests run without network calls. The test boundary is `WhtEnvironment` — the
+All 314 tests run without network calls. The test boundary is `WhtEnvironment` — the
 Environment class is tested exhaustively; the agent loop and LLM are not unit tested.
 
 The table below shows key coverage areas. Per-file counts grow as phases add tests —
@@ -303,7 +304,7 @@ see `CHANGELOG.md` for the precise delta per phase.
 ```
 Test file                            Count  What it covers
 ───────────────────────────────────  ─────  ──────────────────────────────────────────
-WhtEnvironment.test.ts               ~84   All tool implementations (simulate + live modes)
+WhtEnvironment.test.ts               ~96   All tool implementations (simulate + live modes)
                                             Parameter validation (invalid enum, out-of-range)
                                             Country alias resolution (UK, USA, Czechia, etc.)
                                             Regression guards (valid inputs do not return errors)

@@ -30,8 +30,8 @@ For full setup (optional Python service, Gemini FactChecker) see [Setup](#setup)
 
 ## Status
 
-![Tests](https://img.shields.io/badge/tests-302%20passing-brightgreen)
-![Phase](https://img.shields.io/badge/phase-17%20complete-blue)
+![Tests](https://img.shields.io/badge/tests-314%20passing-brightgreen)
+![Phase](https://img.shields.io/badge/phase-18%20complete-blue)
 ![Status](https://img.shields.io/badge/status-active%20prototype-yellow)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey)
 

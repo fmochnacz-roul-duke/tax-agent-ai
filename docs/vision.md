@@ -4,7 +4,7 @@
 > Agent. It guides phase prioritisation and design decisions. It is a living document — update it
 > when the vision changes, not just when a phase completes.
 >
-> **Last updated: 2026-04-03 (v0.20.0 — Phase 17 complete; acceptance criteria updated)**
+> **Last updated: 2026-04-03 (v0.21.0 — Phase 18 complete; UC2 acceptance criterion met)**
 
 ---
 
@@ -70,7 +70,7 @@ content licences from US or UK entities.
 
 ---
 
-## Honest current state (as of v0.20.0 — Phase 17 complete, Phase 18 next)
+## Honest current state (as of v0.21.0 — Phase 18 complete, Phase 19 next)
 
 ### What genuinely works
 
@@ -98,6 +98,7 @@ content licences from US or UK entities.
 | Eval harness + golden cases | ✅ Phase 15 | 9 golden cases; `scripts/runEvals.ts`; Triangulation Rule |
 | Legal source hierarchy | ✅ Phase 16 | `source_type` filter on RAG tool; `legal_hierarchy` in `Citation`; Zod `SourceTypeSchema` |
 | Confidence UX + auto-HITL | ✅ Phase 17 | `DRAFT ONLY` banner; LOW grey-out; force-draft on UNCERTAIN/LOW in registry |
+| UC2 vendor risk classification | ✅ Phase 18 | `classify_vendor_risk` tool; risk-routing Goal; LOW/MEDIUM/HIGH tiers; progressive document checklist (3/5/8+ items) |
 
 ### Remaining gaps by arc
 
@@ -110,7 +111,7 @@ content licences from US or UK entities.
 | No eval harness / golden cases | 15 ✅ | Resolved v0.18.0 — 9 golden cases + `runEvals.ts` + Triangulation Rule |
 | Legal source hierarchy not reflected in tool | 16 ✅ | Resolved v0.19.0 — `source_type` filter + `legal_hierarchy` in Citation |
 | No UI signal for LOW confidence | 17 ✅ | Resolved v0.20.0 — `DRAFT ONLY` banner + grey-out + force-draft on UNCERTAIN/LOW |
-| No third-party vendor workflow (UC2) | 18 | No lighter-touch path for unrelated vendors; no risk classification |
+| No third-party vendor workflow (UC2) | 18 ✅ | Resolved v0.21.0 — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist |
 | No Due Diligence checklist tool | 19 | DD requirements not surfaced per payment type |
 | Treaty rates unverified | 20 | All 36 countries still `verified: false` in treaties.json |
 | No batch processing | 21 | One entity at a time only; no CSV input |
@@ -137,7 +138,7 @@ A "Beneficial Owner Scanner" that a tax team can actually use must meet all of t
 - [x] Report includes a "reviewed and approved by" field that a professional fills in *(Phase 12b)*
 - [ ] Treaty rates verified against at least the top 10 commercially relevant treaties *(Phase 20)*
 - [ ] Output format suitable for a tax file (not just developer-readable JSON) *(Phase 26)*
-- [ ] Intercompany and third-party workflows are explicitly different *(Phase 18)*
+- [x] Intercompany and third-party workflows are explicitly different *(Phase 18)*
 - [ ] Eval harness confirms correct `bo_overall` on curated golden cases *(Phase 15)*
 - [ ] Citations include specific Art./Sec. references (e.g. Art. 26 ust. 1 CIT) *(Phase 16)*
 - [ ] Management fees / technical services covered (Art. 21 ust. 1 pkt 2a CIT) *(Phase 23)*
@@ -338,18 +339,19 @@ The Tax OS modules share:
 Phases 1–17 complete. The sequence below explains the current arc priority ordering.
 
 ```
-DONE (v0.20.0):
-  Phases 1–17, QA-1, QA-2, QA-3, DOCS-1, DOCS-2, DOCS-3, GITHUB-1
+DONE (v0.21.0):
+  Phases 1–18, QA-1, QA-2, QA-3, DOCS-1, DOCS-2, DOCS-3, GITHUB-1
   Treaty mechanics, web UI, RAG, substance interview, entity registry,
   human review, citations, Zod validation, treaty verifier (live),
-  eval harness (9 golden cases), legal source hierarchy, confidence UX + HITL.
-  Tool is production-capable for UC1 intercompany analysis.
+  eval harness (9 golden cases), legal source hierarchy, confidence UX + HITL,
+  UC2 vendor risk classification (classify_vendor_risk, progressive checklist).
+  Tool is production-capable for UC1 intercompany and UC2 third-party analysis.
 
-NEXT (Phase 18 — UC2 Third-party Vendor Workflow):
-  Distinct lighter-touch path for unrelated vendors.
-  Risk classification, document checklist, no-DDQ path.
+NEXT (Phase 19 — Due Diligence Module + Negative Evidence Gate):
+  DD checklist per payment type; DD gap analysis in WhtReport;
+  explicit flagging of missing KSeF ID, board logs, payroll proofs.
 
-THEN (Phases 19–22 — Core completion):
+THEN (Phases QA-4, 20–22 — Core completion):
   Due Diligence module, data quality pass, batch processing,
   production hardening. Order is impact-driven.
 

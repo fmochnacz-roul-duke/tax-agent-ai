@@ -324,6 +324,35 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ---
 
+### v0.21.0 — Phase 18: UC2 Third-party Vendor Workflow
+
+**What:**
+- `VENDOR_ROUTING_JURISDICTIONS` set (15 countries) added to `WhtEnvironment.ts`
+- `classifyVendorRisk()` method — deterministic risk tier derivation (no LLM):
+  - `related_party: true` → **HIGH** / FULL due diligence
+  - Unrelated + routing jurisdiction → **HIGH** / ENHANCED
+  - Unrelated + royalty → **MEDIUM** / STANDARD
+  - Unrelated + `annualPaymentPln > 2,000,000` → **MEDIUM** / STANDARD
+  - Otherwise → **LOW** / SIMPLIFIED
+- Progressive document checklist: LOW = 3 items (CFR + BO declaration + contract); MEDIUM = 5 items (+ DDQ lite + financial statements); HIGH = 8+ items (+ group chart + DEMPE for royalties)
+- `pay_and_refund_applies: true` only for related party transactions
+- `requires_substance_interview: true` for MEDIUM and HIGH tiers
+- Legal basis: Art. 26 Polish CIT Act; MF Objaśnienia podatkowe z 3 lipca 2025 r. §4
+- New Goal (priority 5) in `BeneficialOwnerAgent.ts`: routes agent to call `classify_vendor_risk` first for unrelated-party transactions; LOW tier → skip `check_entity_substance`
+- `classify_vendor_risk` tool definition (5 required params); dispatch case; `FINDING_KEY_FOR_TOOL` entry
+- `eslint.config.js`: `scripts/*.js` added to ignores (fixes ESLint on CommonJS generator scripts)
+- `docs/agent-design-guide.md`: sections 17 (Deterministic Verdict Computation), 18 (Force-Draft HITL), 19 (Risk-Routing Tool Pattern)
+
+**Key decisions:**
+- Risk classification is synchronous and deterministic — no LLM call. Risk routing is a compliance rule, not a judgment call. Deterministic logic is auditable, testable, and never hallucinates.
+- Related parties always bypass the routing tool — `related_party: true` is always HIGH regardless of jurisdiction, because MF Objaśnienia §4 applies the full due diligence standard to all intercompany payments above PLN 2M.
+- The Goal instructs the agent to skip `check_entity_substance` for LOW-tier unrelated vendors — the lighter MF Objaśnienia standard for unrelated parties does not require full substance analysis.
+- Routing jurisdictions are intentionally broad (15 countries including the Netherlands and Switzerland) — over-caution is better than under-caution in a compliance tool.
+
+**12 new tests — 314/314 passing.**
+
+---
+
 ## Planned phases
 
 ### v0.20.1 — Data & Planning Session (2026-04-03)
@@ -348,12 +377,11 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ---
 
-### Arc 1 — WHT Core Completion (Phases 18–22)
+### Arc 1 — WHT Core Completion (Phases 19–22)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **18** | **UC2 Third-party Vendor Workflow** | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path; CSV batch schema defined |
-| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist per payment type (dividend, royalty, management fee); DD gap analysis in report; **explicit flagging of missing evidence** (no KSeF ID → WARNING, no board logs → WARNING, no payroll filing → WARNING) |
+| **19** | **Due Diligence Module + Negative Evidence Gate** | DD checklist per payment type (dividend, royalty, management fee); DD gap analysis in report; **explicit flagging of missing evidence** (no KSeF ID → WARNING, no board logs → WARNING, no payroll filing → WARNING) |
 | QA-4 | Eval Harness v2.0 | Update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); add `status: 'active' \| 'scaffold' \| 'planned'` to case metadata; only `active` cases run in CI; verify EU27 rates against `treaties.json`; commit `generate_eu27_cases.js` |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |
 | 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache hits |

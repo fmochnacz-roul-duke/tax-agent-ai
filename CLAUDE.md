@@ -61,8 +61,8 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | DOCS-3 | Documentation polish — `CONTRIBUTING.md`; quickstart + disclaimer up top; `docs/README.md` index; `docs/FAQ.md`; `SECURITY.md` gaps; README badges + roadmap sync | ✓ Complete |
 | 16 | Legal Source Hierarchy — `source_type` on `consult_legal_sources`; `source_type`+`legal_hierarchy` in RAG results + `Citation`; Zod `SourceTypeSchema`; `source_type` filter in `Retriever` | ✓ Complete |
 | 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | ✓ Complete |
-| **18** | **UC2 Third-party Vendor Workflow** — `classify_vendor_risk` tool; document checklist; no-DDQ path | **Next** |
-| 19 | Due Diligence Module + Negative Evidence Gate — DD checklist per payment type; DD gap analysis; agent must explicitly flag missing KSeF ID, board logs, payroll proofs | Planned |
+| 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path for LOW tier | ✓ Complete |
+| **19** | **Due Diligence Module + Negative Evidence Gate** — DD checklist per payment type; DD gap analysis; agent must explicitly flag missing KSeF ID, board logs, payroll proofs | **Next** |
 | QA-4 | Eval Harness v2.0 — update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); case status filtering (`active`/`scaffold`); EU27 rate verification for cases 13–31 | Planned |
 | 20 | Data quality — verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report | Planned |
@@ -112,8 +112,8 @@ src/
   agents/
     BeneficialOwnerAgent.ts     ← WHT agent (GAME); exports runWhtAnalysis(), AgentInput, WhtReport, Citation
     BeneficialOwnerAgent.test.ts ← Phase 13 + QA-2: 36 tests (validateInput, computeReportConfidence, parseFindings)
-    WhtEnvironment.ts           ← All 9 tool implementations; simulate: true/false; DDQ service + FactChecker
-    WhtEnvironment.test.ts      ← Unit tests for all tool implementations (74 tests)
+    WhtEnvironment.ts           ← All 10 tool implementations; simulate: true/false; DDQ service + FactChecker
+    WhtEnvironment.test.ts      ← Unit tests for all tool implementations (~96 tests)
     FactCheckerAgent.ts         ← Phase 7: Gemini REST API + Google Search grounding; simulate fallback
     FactCheckerAgent.test.ts    ← 8 tests, simulate mode
     TreatyVerifierAgent.ts      ← Phase 12a: Gemini rate verification; verifyRate() + simulate fallback
