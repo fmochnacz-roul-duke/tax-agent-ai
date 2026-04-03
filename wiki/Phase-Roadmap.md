@@ -353,6 +353,29 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ---
 
+### v0.22.0 — Phase 19: Due Diligence Module + Negative Evidence Gate
+
+**What:**
+- `data/due_diligence_checklists.json` — required documents per payment type (dividend / interest / royalty); each item has `id`, `name`, `description`, `mandatory: boolean`, `critical: boolean`
+- `checkDueDiligence()` method in `WhtEnvironment.ts` — loads checklist, normalises document IDs, returns gap analysis
+- Status derivation (deterministic, no LLM): `INSUFFICIENT` = critical doc absent; `PARTIAL` = non-critical mandatory docs missing; `COMPLETE` = all mandatory docs provided
+- Critical documents: `board_meeting_minutes` (all income types), `ksef_id` (interest + royalty), `ip_ownership_documentation` + `payroll_proofs` + `rd_expenditure_records` (royalty only)
+- `DdGapAnalysis` interface exported: `status / provided_count / required_count / gaps[] / critical_missing[]`
+- `WhtReport.dd_gap_analysis?: DdGapAnalysis` — present when `check_due_diligence` was called
+- `provided_documents?: string[]` added to `AgentInputSchema` — analysts can supply document IDs up front
+- New Goal "Check due diligence documentation" (priority 4.5); new tool `check_due_diligence` (11th tool)
+- **Negative Evidence Gate** in `computeReportConfidence()`: INSUFFICIENT → LOW unconditionally; PARTIAL → caps at MEDIUM
+- Scaffolding cleanup: `src/module1`, `src/module2`, `src/module3` removed; 5 npm scripts removed
+
+**Key decisions:**
+- Gate is checked BEFORE fact-check results — absent documents cannot be overridden by a CONFIRMS fact-check. This is the "Garbage In, Gospel Out" defence.
+- Critical items are defined in the JSON data file, not hardcoded in TypeScript — the legal requirements can be updated without touching code.
+- Document IDs are normalised (lowercase + spaces → underscores) so the agent can pass "board meeting minutes" or "board_meeting_minutes" and both match.
+
+**12 new tests — 326/326 passing.**
+
+---
+
 ## Planned phases
 
 ### v0.20.1 — Data & Planning Session (2026-04-03)
@@ -377,15 +400,15 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 
 ---
 
-### Arc 1 — WHT Core Completion (Phases 19–22)
+### Arc 1 — WHT Core Completion (Phases 20–22)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **19** | **Due Diligence Module + Negative Evidence Gate** | DD checklist per payment type (dividend, royalty, management fee); DD gap analysis in report; **explicit flagging of missing evidence** (no KSeF ID → WARNING, no board logs → WARNING, no payroll filing → WARNING) |
-| QA-4 | Eval Harness v2.0 | Update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); add `status: 'active' \| 'scaffold' \| 'planned'` to case metadata; only `active` cases run in CI; verify EU27 rates against `treaties.json`; commit `generate_eu27_cases.js` |
+| **QA-4** | **Eval Harness v2.0** | Update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); `active`/`scaffold` status filter; EU27 rate verification for cases 13–31; commit `generate_eu27_cases.js` | **Next** |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |
-| 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache hits |
-| 22 | Production Hardening + Temporal Context | Session persistence (Redis); SSE reconnect; rate limiting; memory pruning; `payment_year` parameter on `AgentInput`; warn when 2026 mandates (STTR/KSeF) applied to historical payments |
+| 21 | Batch Processing | `scripts/runBatch.ts`; `--batch payments.csv` CLI; sequential processing; timestamped output dir + summary CSV |
+| 22a | Temporal Context | `payment_year` parameter on `AgentInput`; STTR/KSeF temporal gating |
+| 22b | Production Hardening | Session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) |
 
 ### Arc 2 — WHT Professional Features (Phases 23a–26)
 

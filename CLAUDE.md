@@ -243,6 +243,49 @@ dedicated sweep. New files created in a phase must always include it.
 - Always run build + tests before merging
 - **Push to GitHub at the end of every session** (`git push`) — `git commit` is local only; GitHub does not update until you push
 
+### Session-end knowledge checklist (run at the END of every session before closing)
+
+This checklist ensures every knowledge file stays consistent. Apply it every time, not just when code changed. Frank should not have to ask for these updates — they are part of every session.
+
+**Tier 0 — Always (takes 2 minutes):**
+- [ ] `SESSION.md` — current status block updated (phase, version, test count, branch, date)
+- [ ] `SESSION.md` — "How to Resume" section reflects next phase with correct branch name + test count
+- [ ] `SESSION.md` — completed phase added to Completed Phases history with full bullet list
+- [ ] `SESSION.md` — Revised Roadmap table updated (completed = ✓ vX.X.X, next = **bold**)
+- [ ] `CLAUDE.md` — phase roadmap table updated (completed → ✓ Complete)
+- [ ] `CLAUDE.md` — test count updated in TypeScript section AND npm scripts table
+- [ ] Memory index updated in `~/.claude/projects/.../memory/project_context.md`
+
+**Tier 1 — Code sessions (when TypeScript/Python was written):**
+- [ ] `CHANGELOG.md` — v0.X.X entry with all changes listed under named sub-sections
+- [ ] `docs/agent-design-guide.md` — new section added if a new architectural pattern was introduced
+- [ ] `docs/api.md` — updated if new types exported from `BeneficialOwnerAgent.ts` or server endpoints added
+- [ ] `docs/architecture.md` — updated if a new component, file, or data flow was added
+- [ ] `wiki/Architecture.md` — updated to match `docs/architecture.md` (higher-level version)
+
+**Tier 2 — Every session (takes 5 minutes):**
+- [ ] `README.md` — roadmap table: last completed phase bold + version; next phase bold; no duplicate rows
+- [ ] `wiki/Phase-Roadmap.md` — completed phase moved from Planned to Completed section with full detail
+- [ ] `wiki/Home.md` — current version and test count updated if changed
+- [ ] `docs/vision.md` — "Last updated" line updated; new strategic insights added if vision evolved
+
+**Tier 3 — Data/planning sessions only:**
+- [ ] `wiki/Tax-Taxonomy.md` — updated if new concept IDs added to taxonomy
+- [ ] `wiki/Legal-Sources.md` — updated if new sources added to `data/legal_sources_registry.json`
+- [ ] `data/knowledge_base/sources/TEMPLATE.md` — reviewed if a new RAG source was created
+- [ ] RAG rebuild reminder noted if source files were modified
+
+**Tier 4 — Strategic/vision sessions only:**
+- [ ] `docs/vision.md` — SWOT/SOAR findings section updated with new insights
+- [ ] `docs/vision.md` — acceptance criteria reviewed if phase scope changed significantly
+- [ ] `docs/FAQ.md` — new entries added for questions that came up in the session
+
+**Cross-consistency checks (spot-check before pushing):**
+- Phase number consistency: CLAUDE.md roadmap table = SESSION.md roadmap = README.md roadmap = wiki/Phase-Roadmap.md
+- Test count consistency: CLAUDE.md TypeScript section = CLAUDE.md npm scripts table = SESSION.md status block
+- Version consistency: CHANGELOG.md latest version = SESSION.md status = docs/vision.md Last updated
+- Next phase consistency: SESSION.md "How to Resume" = CLAUDE.md roadmap **bold** = README.md **bold** = wiki **bold**
+
 ### Agent design
 - Follow the GAME framework: Goals / Actions / Memory / Environment
 - All tool implementations go in an Environment class — never inline in the loop

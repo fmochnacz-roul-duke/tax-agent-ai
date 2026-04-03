@@ -4,7 +4,7 @@
 > Agent. It guides phase prioritisation and design decisions. It is a living document — update it
 > when the vision changes, not just when a phase completes.
 >
-> **Last updated: 2026-04-03 (v0.21.0 — Phase 18 complete; UC2 acceptance criterion met)**
+> **Last updated: 2026-04-03 (v0.22.0 — Phase 19 complete; DD Module + Negative Evidence Gate)**
 
 ---
 
@@ -434,3 +434,103 @@ Phase 10 (substance interview) closed the XTB Malta gap. Any entity can now be a
 Report confidence cannot reach HIGH on rate-dependent conclusions until Phase 20 verifies the top-10 treaties.
 
 **New gap opened (Phase 23):** If XTB Malta charges management fees or advisory fees (not pure interest), those payments fall under Art. 21 ust. 1 pkt 2a CIT — not currently in scope. Phase 23 adds this analysis layer.
+
+---
+
+## Strategic review — SWOT/SOAR findings (2026-04-03)
+
+An external strategic review of the project was conducted in April 2026. The findings below
+are recorded here so they shape future phase priorities and design decisions.
+They are **not** retrospective — they are standing guidance for every future session.
+
+---
+
+### Repositioning decision: Co-Pilot over Auto-Pilot
+
+The tool is deliberately positioned as a **tax research co-pilot**, not an autonomous agent.
+This is not a limitation — it is the correct professional positioning for a compliance tool.
+
+**What this means in practice:**
+- Reports are always "suitable for professional review" — never "ready for filing" without a human sign-off
+- HITL (review workflow, Phase 12b) is a core user story, not a workaround
+- Substance interview (Phase 10) positions the analyst as an active participant
+- DRAFT ONLY status for LOW/UNCERTAIN confidence is a compliance safety gate
+
+**Language standard (apply to all future user-facing text):**
+- Web UI: "Here is the first-layer analysis for your review"
+- Report conclusion: "This analysis is a research input — professional review required before filing"
+- README: frames the tool as an assistant, not a replacement for professional judgment
+- The vision statement already reflects this. Maintain it in all future phases.
+
+---
+
+### SWOT summary
+
+**Strengths (protect and leverage):**
+- Exceptional documentation — the strongest asset for the MBA research context; makes every design decision explainable
+- Architectural excellence — GAME framework, MATE principles, clean separation of concerns; the architecture is a reusable platform
+- High-quality codebase — `strict: true`, Zod validation, 326 tests, deterministic verdict computation
+- Advanced AI integration — multi-agent (Gemini + OpenAI), RAG, SSE streaming, HITL workflow
+
+**Weaknesses (mitigate in planning):**
+- Solo developer dependency — session context must be fully documented in CLAUDE.md + SESSION.md; every knowledge file must be updated before the session ends
+- High barrier to entry — complex setup (env vars, Python service, RAG build) limits adoption; Phase 22b simplifies this
+- Static knowledge core — tax law changes monthly; no automated update pipeline; Phase 24 addresses partially
+- Limited explainability — report format is not yet structured for auditor review (see Blind Spots below)
+
+**Opportunities (prioritise in roadmap):**
+- Strategic advisory positioning — evolving from "What is the WHT rate?" toward "What is the most tax-efficient compliant structure?" is the higher-value proposition; relevant for Phase 26 (v1.0 review)
+- Tax OS foundation — GAME + MATE + HITL patterns are reusable; the architecture is already a platform; formalise in Phase 27
+- AI in professional services boom — co-pilot framing is timely and differentiating
+
+**Threats (design defensively):**
+- Rapid legal change — MF Objaśnienia, NSA rulings, KSeF timelines, STTR create knowledge decay; add `last_verified` staleness warning to reports when >6 months (Phase 24)
+- Platform dependency — OpenAI/Gemini API changes can break functionality; keep simulate fallbacks working and test them
+- Regulatory uncertainty — if AI-generated tax advice is regulated, co-pilot framing is the safer positioning
+
+---
+
+### Three blind spots — design implications
+
+**Blind Spot 1: Auditor's perspective missing.**
+Current reports are structured for the analyst, not the auditor. An auditor needs:
+- Explicit acknowledgement of what evidence was NOT considered (Phase 19 DD gap analysis begins to address this)
+- A documented decision trail for each of the three BO conditions (why PASS or FAIL)
+- A clear flag when the analysis relied on simulated or unverified data (Phase 17 DRAFT ONLY is the start)
+
+*Design implication:* Phase 26 Legal Memo output should follow Polish tax opinion standard:
+Facts → Legal Framework → Application → Conclusion (FLAC). This is the format KAS reviewers
+and courts expect.
+
+**Blind Spot 2: Garbage In, Gospel Out problem.**
+The system assumes input quality. Phase 19 (Negative Evidence Gate) addresses missing documents.
+It cannot detect inaccurate inputs or user misrepresentation of what documents they actually hold.
+
+*Design implication:* The DD checklist should eventually include a self-certification step where the
+analyst confirms each document was physically reviewed, not just listed. The HITL review workflow
+(Phase 12b) is the current compensating control — reviewers should be trained to verify the document
+list before signing off.
+
+**Blind Spot 3: Static Knowledge Trap.**
+The knowledge base (RAG sources, treaties.json) has no automated update mechanism. Tax law in Poland
+changes frequently (KSeF mandate timelines, STTR implementing legislation, NSA judgments).
+
+*Design implication:* Phase 24 (Legal Source Management Workflow) is a maintenance requirement, not
+optional. Additionally: add a "knowledge freshness" warning to reports when a RAG source
+`last_verified` date is more than 6 months old. This is a one-line check in `consultLegalSources()`.
+
+---
+
+### SOAR — Aspirations and Results focus
+
+**Aspirations:**
+- Become the trusted standard for first-layer WHT BO analysis in Polish in-house tax teams
+- Enable a tax professional to be "10× more effective" — more thorough analysis in less time with full audit trail
+- Establish the GAME + MATE + HITL framework as a reusable Tax OS platform (Phase 27–29)
+
+**Results to aim for at v1.0 (Phase 26):**
+- End-to-end demo: UC1 (intercompany royalty — Orange S.A.) + UC2 (third-party vendor — XTB Malta)
+- All acceptance criteria in this document verified
+- Legal Memo (FLAC format) output alongside the JSON report
+- MBA prototype declaration: this tool demonstrates that AI-assisted compliance is viable,
+  auditable, and professionally defensible when designed with HITL and deterministic gates

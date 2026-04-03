@@ -341,7 +341,7 @@ npm test
 
 ## Roadmap
 
-### Completed (v0.1 – v0.20)
+### Completed (v0.1 – v0.22)
 
 | Phase | Description | Tag |
 |---|---|---|
@@ -363,19 +363,19 @@ npm test
 | 14 | Ghost Activation — TreatyVerifierAgent in live flow; `last_verified` in RAG output; confidence drops on rate mismatch | v0.17.0 |
 | 15 | QA-3: Evals + Negative Tests — `BoOverall`; golden dataset (9 cases); eval harness; Brazil treaty | v0.18.0 |
 | 16 | Legal Source Hierarchy — `source_type` param on `consult_legal_sources`; `legal_hierarchy` in RAG results; Zod domain-narrowing | v0.19.0 |
-| **17** | **Confidence UX + HITL** — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | **v0.20.0** |
-| **18** | **UC2 Third-party Vendor Workflow** — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path for LOW tier | **v0.21.0** |
+| 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | v0.20.0 |
+| 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path for LOW tier | v0.21.0 |
+| **19** | **Due Diligence Module + Negative Evidence Gate** — `check_due_diligence` tool; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate in confidence scoring; INSUFFICIENT → LOW; PARTIAL → MEDIUM | **v0.22.0** |
 
 ### Upcoming — Arc 1: WHT Core Completion
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist per payment type; DD gap analysis; explicit flagging of missing KSeF ID / board logs / payroll proofs |
-| 19 | Due Diligence Module + Negative Evidence Gate | DD checklist per payment type; DD gap analysis; explicit flagging of missing KSeF ID / board logs / payroll proofs |
-| QA-4 | Eval Harness v2.0 | Update `runEvals.ts` for v2.0 case structure; case status filtering; EU27 rate verification for cases 13–31 |
+| **QA-4** | **Eval Harness v2.0** | Update `runEvals.ts` for v2.0 case structure; `active`/`scaffold` status filter; EU27 rate verification for cases 13–31 |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json |
-| 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache |
-| 22 | Production Hardening + Temporal Context | Session persistence; SSE reconnect; rate limiting; `payment_year` parameter; STTR/KSeF temporal gating |
+| 21 | Batch Processing | `scripts/runBatch.ts`; sequential processing; timestamped output dir + summary CSV |
+| 22a | Temporal Context | `payment_year` on `AgentInput`; STTR/KSeF temporal gating |
+| 22b | Production Hardening | Session persistence (`express-session`); SSE reconnect; rate limiting (`express-rate-limit`) |
 
 ### Arc 2: WHT Professional Features
 

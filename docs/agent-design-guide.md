@@ -777,3 +777,76 @@ the checklist to the user without any further reasoning.
 - Related-party transactions always bypass routing (full path is non-negotiable)
 - The `requires_substance_interview` field is the single flag the agent reads to decide
   whether to call `check_entity_substance`
+
+---
+
+## 20. Negative Evidence Gate Pattern (Phase 19)
+
+When absence of evidence is itself a material finding, implement a gate tool that explicitly
+checks what documentation has NOT been provided — and feed the result into the confidence
+scoring logic. Without this gate, the agent can complete a full BO analysis with simulated
+substance data and no documentation, and return MEDIUM confidence that looks credible but
+is based on nothing. This is the "Garbage In, Gospel Out" failure mode.
+
+**The pattern:**
+
+```typescript
+// data/due_diligence_checklists.json defines required docs + criticality per income type:
+{
+  "royalty": {
+    "required_docs": [
+      { "id": "board_meeting_minutes", "mandatory": true, "critical": true },
+      { "id": "payroll_proofs",        "mandatory": true, "critical": true },
+      { "id": "ksef_id",               "mandatory": true, "critical": true }
+    ]
+  }
+}
+
+// Tool implementation: deterministic, no LLM, loads from the JSON data file
+checkDueDiligence(incomeType: string, providedDocuments: string[]): string {
+  const mandatoryItems = checklist.required_docs.filter(d => d.mandatory);
+  const normProvided = new Set(providedDocuments.map(id => id.toLowerCase().trim().replace(/\s+/g,'_')));
+  const gaps = mandatoryItems.filter(d => !normProvided.has(d.id));
+  const criticalMissing = gaps.filter(d => d.critical);
+  const status = criticalMissing.length > 0 ? 'INSUFFICIENT'
+    : gaps.length > 0 ? 'PARTIAL' : 'COMPLETE';
+  return JSON.stringify({ status, gaps: gaps.map(d => d.name),
+    critical_missing: criticalMissing.map(d => d.name), ... });
+}
+```
+
+**Injecting the gate into `computeReportConfidence()`:**
+
+```typescript
+// Checked second (after treaty rate mismatch) — BEFORE fact-check results.
+// Absent documents override all positive signals.
+const ddGapsRaw = findings['dd_gaps'];
+let ddPartialFlag = false;
+if (ddGapsRaw !== undefined) {
+  const ddGaps = JSON.parse(ddGapsRaw);
+  if (ddGaps.status === 'INSUFFICIENT') return 'LOW';   // unconditional
+  if (ddGaps.status === 'PARTIAL')      ddPartialFlag = true; // caps at MEDIUM
+}
+// ... later, when all other checks pass ...
+return ddPartialFlag ? 'MEDIUM' : 'HIGH';
+```
+
+**Why INSUFFICIENT is unconditional:**
+- Missing `board_meeting_minutes` → cannot confirm independent decision-making (BO Condition iii)
+- Missing `ksef_id` → transaction documentation incomplete; report unsafe for filing
+- Missing `payroll_proofs` for royalty → DEMPE cannot be confirmed; substance claim unverifiable
+- Fact-check CONFIRMS or strong RAG grounding cannot compensate for absent primary documents
+
+**Status derivation:**
+| Status | Trigger | Confidence effect |
+|---|---|---|
+| `COMPLETE` | All mandatory docs provided | No impact |
+| `PARTIAL` | Non-critical mandatory doc(s) missing | Caps at MEDIUM |
+| `INSUFFICIENT` | Any critical doc missing | Forces LOW (unconditional) |
+
+**Design rules:**
+- Gate tool must be deterministic — status derives from presence/absence, never LLM judgment
+- Critical items are defined in the data file, not hardcoded in TypeScript — keeps the gate updateable without code changes
+- Gate check in `computeReportConfidence()` must precede any early-return path that could produce HIGH
+- Add `provided_documents?: string[]` to `AgentInput` so analysts supply IDs up front; surface them in `buildTaskString()` so the agent sees them in the first user message
+- The tool returns a full checklist with `provided` flags — useful for UI display without additional computation
