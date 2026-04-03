@@ -1163,3 +1163,142 @@ test('classifyVendorRisk: result always includes source field', () => {
 
   assert.ok(result['source'], 'result must include a source field for provenance');
 });
+
+// ── checkDueDiligence (Phase 19) ───────────────────────────────────────────────
+//
+// Tests for the Negative Evidence Gate.  Every case is synchronous and reads
+// from data/due_diligence_checklists.json — no LLM or HTTP calls involved.
+
+test('checkDueDiligence: all mandatory dividend docs provided → COMPLETE', () => {
+  // Supply every mandatory document ID listed in the dividend checklist.
+  const result = parse(
+    env.checkDueDiligence('dividend', [
+      'certificate_of_residence',
+      'bo_declaration',
+      'corporate_structure_chart',
+      'board_meeting_minutes',
+      'annual_financial_statements',
+    ])
+  );
+
+  assert.equal(result['status'], 'COMPLETE');
+  assert.deepEqual(result['gaps'], [], 'no gaps expected when all mandatory docs provided');
+  assert.deepEqual(result['critical_missing'], [], 'no critical missing expected');
+});
+
+test('checkDueDiligence: missing board_meeting_minutes for royalty → INSUFFICIENT', () => {
+  // board_meeting_minutes is a critical item for royalties.
+  // Its absence must trigger INSUFFICIENT regardless of other docs.
+  const result = parse(
+    env.checkDueDiligence('royalty', [
+      'certificate_of_residence',
+      'bo_declaration',
+      'license_agreement',
+      'ip_ownership_documentation',
+      'payroll_proofs',
+      'rd_expenditure_records',
+      'ksef_id',
+      // board_meeting_minutes deliberately omitted
+    ])
+  );
+
+  assert.equal(result['status'], 'INSUFFICIENT');
+  const criticalMissing = result['critical_missing'] as string[];
+  assert.ok(
+    criticalMissing.some((name) => name.toLowerCase().includes('board')),
+    'board_meeting_minutes must appear in critical_missing'
+  );
+});
+
+test('checkDueDiligence: empty provided_documents → INSUFFICIENT for any income type', () => {
+  // Passing an empty array means no documents at all → always INSUFFICIENT
+  // because every checklist has at least one critical item.
+  const royalty = parse(env.checkDueDiligence('royalty', []));
+  const interest = parse(env.checkDueDiligence('interest', []));
+  const dividend = parse(env.checkDueDiligence('dividend', []));
+
+  assert.equal(royalty['status'], 'INSUFFICIENT', 'royalty with no docs must be INSUFFICIENT');
+  assert.equal(interest['status'], 'INSUFFICIENT', 'interest with no docs must be INSUFFICIENT');
+  assert.equal(dividend['status'], 'INSUFFICIENT', 'dividend with no docs must be INSUFFICIENT');
+});
+
+test('checkDueDiligence: missing non-critical doc for dividend → PARTIAL', () => {
+  // annual_financial_statements is mandatory but NOT critical for dividends.
+  // Missing it should produce PARTIAL (not INSUFFICIENT).
+  const result = parse(
+    env.checkDueDiligence('dividend', [
+      'certificate_of_residence',
+      'bo_declaration',
+      'corporate_structure_chart',
+      'board_meeting_minutes',
+      // annual_financial_statements omitted — mandatory but not critical
+    ])
+  );
+
+  assert.equal(result['status'], 'PARTIAL');
+  assert.deepEqual(result['critical_missing'], [], 'no critical items should be missing');
+  assert.ok((result['gaps'] as string[]).length > 0, 'gaps array must contain the missing doc');
+});
+
+test('checkDueDiligence: missing ksef_id for interest → INSUFFICIENT', () => {
+  // ksef_id is critical for interest payments.
+  const result = parse(
+    env.checkDueDiligence('interest', [
+      'certificate_of_residence',
+      'bo_declaration',
+      'loan_agreement',
+      'board_meeting_minutes',
+      'annual_financial_statements',
+      // ksef_id omitted
+    ])
+  );
+
+  assert.equal(result['status'], 'INSUFFICIENT');
+  const criticalMissing = result['critical_missing'] as string[];
+  assert.ok(
+    criticalMissing.some((name) => name.toLowerCase().includes('ksef')),
+    'ksef_id must appear in critical_missing for interest'
+  );
+});
+
+test('checkDueDiligence: invalid income_type returns error', () => {
+  const result = parse(env.checkDueDiligence('management_fee', []));
+
+  assert.ok(result['error'], 'invalid income_type must return an error field');
+  assert.ok(
+    (result['error'] as string).includes('dividend, interest, royalty'),
+    'error must list valid income types'
+  );
+});
+
+test('checkDueDiligence: result always includes source field', () => {
+  const result = parse(env.checkDueDiligence('dividend', ['certificate_of_residence']));
+
+  assert.ok(result['source'], 'result must include a source field for provenance');
+});
+
+test('checkDueDiligence: checklist array present with provided flags', () => {
+  // The returned checklist should show each item with a boolean provided flag.
+  const result = parse(
+    env.checkDueDiligence('dividend', ['certificate_of_residence', 'bo_declaration'])
+  );
+
+  const checklist = result['checklist'] as Array<Record<string, unknown>>;
+  assert.ok(Array.isArray(checklist), 'checklist must be an array');
+
+  const certItem = checklist.find((item) => item['id'] === 'certificate_of_residence');
+  assert.ok(certItem !== undefined, 'certificate_of_residence must appear in checklist');
+  assert.equal(
+    certItem['provided'],
+    true,
+    'provided flag must be true for certificate_of_residence'
+  );
+
+  const boardItem = checklist.find((item) => item['id'] === 'board_meeting_minutes');
+  assert.ok(boardItem !== undefined, 'board_meeting_minutes must appear in checklist');
+  assert.equal(
+    boardItem['provided'],
+    false,
+    'provided flag must be false for board_meeting_minutes'
+  );
+});

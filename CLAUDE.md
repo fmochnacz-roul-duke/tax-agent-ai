@@ -62,7 +62,7 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 16 | Legal Source Hierarchy — `source_type` on `consult_legal_sources`; `source_type`+`legal_hierarchy` in RAG results + `Citation`; Zod `SourceTypeSchema`; `source_type` filter in `Retriever` | ✓ Complete |
 | 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | ✓ Complete |
 | 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; risk-routing goal; progressive document checklist; no-DDQ path for LOW tier | ✓ Complete |
-| **19** | **Due Diligence Module + Negative Evidence Gate** — DD checklist per payment type; DD gap analysis; agent must explicitly flag missing KSeF ID, board logs, payroll proofs | **Next** |
+| 19 | Due Diligence Module + Negative Evidence Gate — `check_due_diligence` tool; `data/due_diligence_checklists.json`; `DdGapAnalysis` on `WhtReport`; Negative Evidence Gate in confidence scoring | ✓ Complete |
 | QA-4 | Eval Harness v2.0 — update `runEvals.ts` for v2.0 case structure (`sttr_topup_applies`, `rate_basis`); case status filtering (`active`/`scaffold`); EU27 rate verification for cases 13–31 | Planned |
 | 20 | Data quality — verify top-10 treaty rates against official PDFs; `verified: true` in treaties.json | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report; `scripts/runBatch.ts`; sequential processing; timestamped output dir + summary CSV | Planned |
@@ -146,8 +146,9 @@ python/
   run.py         ← uvicorn entry point; starts service on port 8000
 
 data/
-  treaties.json              ← Live treaty database: 36 countries, rates, MLI flags
-  mli_flags_legend.md        ← Explanation of 10 MLI flag codes
+  treaties.json                   ← Live treaty database: 36 countries, rates, MLI flags
+  due_diligence_checklists.json   ← Phase 19: required DD docs per payment type (dividend/interest/royalty)
+  mli_flags_legend.md             ← Explanation of 10 MLI flag codes
   poland_dtt_list.csv        ← Full 91-country Polish treaty list with MLI cross-check
   example_input.json         ← Alpine Holdings demo (Luxembourg, dividend)
   orange_polska_royalty.json ← Orange S.A. real-world case (France, royalty)
@@ -186,7 +187,7 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run tax:agent` | CLI agent — requires `--input <file>` |
 | `npm run ddq:service` | Python DDQ extraction service on port 8000 (optional) |
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
-| `npm test` | Unit tests — 314 tests, no API calls, ~5s |
+| `npm test` | Unit tests — 326 tests, no API calls, ~5s |
 | `npm run lint` | ESLint + Prettier check across all TS files |
 | `npm run eval` | Run golden dataset evaluation harness (31 cases total; 9 active in harness — v2.0 harness pending QA-4) — requires `OPENAI_API_KEY` |
 | `npm run test:coverage` | c8 coverage report (text + lcov) |
@@ -202,7 +203,7 @@ See `.env.example` for the complete configuration file with comments.
 ### TypeScript
 - `strict: true` is on — never use `any`; use `unknown` and narrow explicitly
 - Always run `npm run build` before committing — zero errors required
-- Always run `npm test` — all tests must pass (update count in this file after each phase)
+- Always run `npm test` — all tests must pass (update count in this file after each phase: currently 326)
 - Use `async/await` for all LLM calls and all Environment methods that call external services
 - All functions must have explicit return types
 

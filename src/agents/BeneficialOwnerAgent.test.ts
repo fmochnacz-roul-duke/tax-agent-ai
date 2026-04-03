@@ -341,6 +341,85 @@ test('computeReportConfidence: HIGH when multiple citations — picks the RAG on
   assert.equal(computeReportConfidence(findings, citations), 'HIGH');
 });
 
+// ── computeReportConfidence — Phase 19: Negative Evidence Gate ───────────────
+
+test('computeReportConfidence: LOW when dd_gaps status is INSUFFICIENT', () => {
+  // A missing critical document (e.g. board_meeting_minutes) must force LOW
+  // regardless of substance or RAG quality.
+  const findings = {
+    dd_gaps: JSON.stringify({
+      status: 'INSUFFICIENT',
+      critical_missing: ['Board meeting minutes (dividend decision)'],
+      gaps: ['Board meeting minutes (dividend decision)'],
+      provided_count: 4,
+      required_count: 5,
+    }),
+    entity_substance: JSON.stringify({ confidence: 'HIGH' }),
+  };
+  const citations = [
+    { tool: 'consult_legal_sources', chunk_count: 3, top_score: 0.8, source: 'test' },
+  ];
+  assert.equal(computeReportConfidence(findings, citations), 'LOW');
+});
+
+test('computeReportConfidence: MEDIUM when dd_gaps status is PARTIAL (would otherwise be HIGH)', () => {
+  // A missing non-critical mandatory document caps confidence at MEDIUM.
+  // We supply verified rates and strong RAG so the only limit is the PARTIAL flag.
+  const findings = {
+    dd_gaps: JSON.stringify({
+      status: 'PARTIAL',
+      critical_missing: [],
+      gaps: ['Audited annual financial statements (last 2 years)'],
+      provided_count: 4,
+      required_count: 5,
+    }),
+    wht_rate: JSON.stringify({ rate: 5, verified: true }),
+    entity_substance: JSON.stringify({ confidence: 'HIGH' }),
+  };
+  const citations = [
+    { tool: 'consult_legal_sources', chunk_count: 3, top_score: 0.8, source: 'test' },
+  ];
+  assert.equal(computeReportConfidence(findings, citations), 'MEDIUM');
+});
+
+test('computeReportConfidence: HIGH when dd_gaps status is COMPLETE', () => {
+  // All documents provided — COMPLETE status should not prevent HIGH.
+  const findings = {
+    dd_gaps: JSON.stringify({
+      status: 'COMPLETE',
+      critical_missing: [],
+      gaps: [],
+      provided_count: 5,
+      required_count: 5,
+    }),
+    wht_rate: JSON.stringify({ rate: 5, verified: true }),
+    entity_substance: JSON.stringify({ confidence: 'HIGH' }),
+  };
+  const citations = [
+    { tool: 'consult_legal_sources', chunk_count: 3, top_score: 0.8, source: 'test' },
+  ];
+  assert.equal(computeReportConfidence(findings, citations), 'HIGH');
+});
+
+test('computeReportConfidence: INSUFFICIENT overrides CONFIRMS fact-check', () => {
+  // Even when fact-check confirms substance claims, missing critical DD docs → LOW.
+  const findings = {
+    dd_gaps: JSON.stringify({
+      status: 'INSUFFICIENT',
+      critical_missing: ['KSeF invoice identifier'],
+      gaps: ['KSeF invoice identifier'],
+      provided_count: 5,
+      required_count: 6,
+    }),
+    fact_check_result: JSON.stringify({ overall_assessment: 'CONFIRMS' }),
+    wht_rate: JSON.stringify({ rate: 5, verified: true }),
+  };
+  const citations = [
+    { tool: 'consult_legal_sources', chunk_count: 3, top_score: 0.8, source: 'test' },
+  ];
+  assert.equal(computeReportConfidence(findings, citations), 'LOW');
+});
+
 // ── parseFindings ─────────────────────────────────────────────────────────────
 
 test('parseFindings: parses all values that are valid JSON strings', () => {
