@@ -215,6 +215,44 @@
     .badge-MEDIUM { background: #451a03; color: #fb923c; }
     .badge-LOW    { background: #450a0a; color: #f87171; }
 
+    /* Phase 17: LOW-confidence report card — grey-out to signal it is draft-only */
+    .report-low {
+      opacity: 0.75;
+      border-color: #450a0a;
+    }
+    .report-low h3 { color: #f87171; }
+
+    /* Phase 17: banners inside the report card */
+    .draft-watermark {
+      background: #450a0a;
+      color: #f87171;
+      border: 1px solid #7f1d1d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    .conduit-banner {
+      background: #451a03;
+      color: #fb923c;
+      border: 1px solid #7c2d12;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+    .uncertain-banner {
+      background: #1c2460;
+      color: #93b4ff;
+      border: 1px solid #1e3a8a;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
     /* ── Progress column ──────────────────────────────────────────────────── */
     #progress-col {
       width: 340px;
@@ -510,10 +548,13 @@
     .tier-WEAK     { background: #451a03; color: #fb923c; }
     .tier-CONDUIT  { background: #450a0a; color: #f87171; }
 
-    /* BO outcome */
+    /* BO outcome — registry rows + Phase 17 report card */
     .bo-PASS      { background: #14532d; color: #4ade80; }
     .bo-FAIL      { background: #450a0a; color: #f87171; }
+    .bo-CONFIRMED { background: #14532d; color: #4ade80; }
+    .bo-REJECTED  { background: #450a0a; color: #f87171; }
     .bo-UNCERTAIN { background: #1c2460; color: #93b4ff; }
+    .bo-NO_TREATY { background: #2a1c40; color: #d0a0f0; }
 
     /* Review status */
     .rev-draft      { background: var(--surface); color: var(--text-dim); border: 1px solid var(--border); }
@@ -1051,19 +1092,51 @@ function adjustParams() {
 
 function displayReport(report) {
   const confidenceClass = 'badge-' + report.data_confidence;
+  const isLow       = report.data_confidence === 'LOW';
+  const isUncertain = report.bo_overall === 'UNCERTAIN';
+
+  // Phase 17: "DRAFT ONLY" banner — shown whenever data_confidence is LOW.
+  // The report has not been verified with real DDQ data or confirmed treaty rates
+  // and must not be used for filing or client advice without professional review.
+  const draftBanner = isLow
+    ? `<div class="draft-watermark">&#9888; DRAFT ONLY — not for filing or client advice. Substance data is simulated and treaty rates are unverified.</div>`
+    : '';
+
+  // Phase 17: UNCERTAIN banner — shown when the BO test is inconclusive.
+  const uncertainBanner = isUncertain
+    ? `<div class="uncertain-banner">&#8505; Beneficial owner status is UNCERTAIN. Human review is required before this report can be relied on.</div>`
+    : '';
+
+  // Phase 17: conduit risk banner — shown when the conduit_risk flag is set.
+  const conduitBanner = report.conduit_risk
+    ? `<div class="conduit-banner">&#9888; Conduit risk detected. This entity may be an intermediate structure — investigate whether an ultimate beneficial owner exists in another jurisdiction.</div>`
+    : '';
+
+  // Phase 17: bo_overall badge — displayed alongside the confidence badge.
+  const boBadge = report.bo_overall
+    ? `<span class="badge-confidence bo-${escapeHtml(report.bo_overall)}" style="margin-left: 8px;">BO: ${escapeHtml(report.bo_overall)}</span>`
+    : '';
+
+  // Grey-out the entire card for LOW confidence so it is visually distinct
+  // from a HIGH/MEDIUM report that a reviewer could act on.
+  const cardClass = isLow ? 'report-card report-low' : 'report-card';
 
   const html = `
-    <div class="report-card">
+    <div class="${cardClass}">
       <h3>ANALYSIS COMPLETE</h3>
+      ${draftBanner}
       <div class="conclusion">${escapeHtml(report.conclusion)}</div>
       <div class="meta">
         <div>
           <span>Data confidence: </span>
           <span class="badge-confidence ${confidenceClass}">${report.data_confidence}</span>
+          ${boBadge}
           <span style="color: var(--text-dim); font-size: 11px; margin-left: 6px;">${escapeHtml(report.data_confidence_note)}</span>
         </div>
         <div>Generated: ${new Date(report.generated_at).toLocaleString()}</div>
       </div>
+      ${uncertainBanner}
+      ${conduitBanner}
     </div>
     <div style="margin-top: 10px; font-size: 11px; color: var(--text-dim);">
       Report saved to disk. Start a new analysis or ask a follow-up question.

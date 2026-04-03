@@ -59,9 +59,9 @@ back to simulation automatically. FactChecker is live when `GEMINI_API_KEY` is s
 | 14 | Ghost Activation — wire TreatyVerifierAgent into live flow; surface `last_verified`; confidence drops on rate mismatch | ✓ Complete |
 | 15 | QA-3: Evals + Negative Tests — `BoOverall` type; `bo_overall`+`conduit_risk` on `WhtReport`; `data/golden_cases/` (9 cases); `scripts/runEvals.ts`; Triangulation Rule; 8 negative tests; Brazil in treaties.json | ✓ Complete |
 | DOCS-3 | Documentation polish — `CONTRIBUTING.md`; quickstart + disclaimer up top; `docs/README.md` index; `docs/FAQ.md`; `SECURITY.md` gaps; README badges + roadmap sync | ✓ Complete |
-| **16** | **Legal Source Hierarchy** — `source_type` on `consult_legal_sources`; `source_type`+`legal_hierarchy` in RAG results + `Citation`; Zod `SourceTypeSchema`; `source_type` filter in `Retriever` | **Next** |
-| 17 | Confidence UX + HITL — UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft registry on UNCERTAIN | Planned |
-| 18 | UC2 Third-party Vendor Workflow — `classify_vendor_risk` tool; document checklist; no-DDQ path | Planned |
+| 16 | Legal Source Hierarchy — `source_type` on `consult_legal_sources`; `source_type`+`legal_hierarchy` in RAG results + `Citation`; Zod `SourceTypeSchema`; `source_type` filter in `Retriever` | ✓ Complete |
+| 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | ✓ Complete |
+| **18** | **UC2 Third-party Vendor Workflow** — `classify_vendor_risk` tool; document checklist; no-DDQ path | **Next** |
 | 19 | Due Diligence Module — DD checklist tool per payment type; DD gap analysis in report | Planned |
 | 20 | Data quality — verify top-10 treaty rates against official sources; `verified: true` in treaties.json | Planned |
 | 21 | Batch processing — `--batch payments.csv` CLI; multi-entity summary report | Planned |
@@ -126,7 +126,7 @@ src/
     SubstanceInterviewer.ts   ← Phase 10: 5-question interview state machine; compiles DDQ text
     SubstanceExtractor.ts     ← Phase 10: TypeScript LLM extractor — DDQ text → SubstanceResult JSON
     EntityRegistry.ts         ← Phase 11+12b: JSON-backed registry; upsert + audit trail + review workflow
-    EntityRegistry.test.ts    ← 38 unit tests (save/findBy/listAll/updateReviewStatus)
+    EntityRegistry.test.ts    ← 48 unit tests (save/findBy/listAll/updateReviewStatus/force-draft)
 
   public/
     index.html    ← Phase 8: single-file conversational chat UI (HTML + CSS + vanilla JS)
@@ -194,7 +194,7 @@ See `.env.example` for the complete configuration file with comments.
 | `npm run tax:agent` | CLI agent — requires `--input <file>` |
 | `npm run ddq:service` | Python DDQ extraction service on port 8000 (optional) |
 | `npm run build` | TypeScript type-check (no output files) — run before every commit |
-| `npm test` | Unit tests — 298 tests, no API calls, ~5s |
+| `npm test` | Unit tests — 302 tests, no API calls, ~5s |
 | `npm run lint` | ESLint + Prettier check across all TS files |
 | `npm run eval` | Run golden dataset evaluation harness (9 cases, Triangulation Rule) — requires `OPENAI_API_KEY` |
 | `npm run test:coverage` | c8 coverage report (text + lcov) |

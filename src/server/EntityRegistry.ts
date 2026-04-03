@@ -45,11 +45,15 @@ import * as os from 'os';
 //   reviewed    — a professional has read it (not yet ready to act on)
 //   signed_off  — a professional has approved it; safe to act on
 //
-// New entries default to 'draft'.  Phase 15 exception: if an incoming report
-// carries bo_overall === 'REJECTED', the status is forced back to 'draft' even
-// when the entry was previously 'reviewed' or 'signed_off'.  A REJECTED verdict
-// may reflect a conduit structure requiring investigation of the ultimate BO —
-// an existing sign-off is no longer valid until a human has reviewed the new result.
+// New entries default to 'draft'.  Phase 15/17 exception: certain incoming
+// report conditions force the status back to 'draft' even when the entry was
+// previously 'reviewed' or 'signed_off':
+//   REJECTED      — may reflect a conduit structure; ultimate BO needs investigation
+//   UNCERTAIN     — BO verdict is inconclusive; signing off would be premature
+//   LOW confidence — data is unverified (simulated substance, unverified rates);
+//                    the report is for analysis only, not for filing or advice
+// All three conditions reset any prior professional sign-off so a reviewer must
+// re-examine the entry before it can progress to 'reviewed' or 'signed_off' again.
 export type ReviewStatus = 'draft' | 'reviewed' | 'signed_off';
 
 // RegistryEntry is what gets stored per entity/country pair.
@@ -134,12 +138,14 @@ export class EntityRegistry {
       entity_name: report.entity_name,
       country: report.country,
       income_type: report.income_type,
-      // Force 'draft' on REJECTED verdicts: the conduit_risk flag may have fired,
-      // and a human must verify whether an ultimate BO exists in another jurisdiction.
-      // All other statuses are preserved — a sign-off is never cleared automatically
-      // unless the new analysis produces a REJECTED verdict.
+      // Force 'draft' on any condition that makes the report unsafe to act on.
+      // See the ReviewStatus comment block above for the full rationale.
       review_status:
-        report.bo_overall === 'REJECTED' ? 'draft' : (existing?.review_status ?? 'draft'),
+        report.bo_overall === 'REJECTED' ||
+        report.bo_overall === 'UNCERTAIN' ||
+        report.data_confidence === 'LOW'
+          ? 'draft'
+          : (existing?.review_status ?? 'draft'),
       data_confidence: report.data_confidence,
       // Spread optional fields only when they have values
       ...(substanceTier !== undefined ? { substance_tier: substanceTier } : {}),

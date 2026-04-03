@@ -518,35 +518,40 @@ describe('EntityRegistry.save() — force-draft on REJECTED', () => {
     assert.equal(entry.review_status, 'draft');
   });
 
-  it('re-analysis with CONFIRMED preserves signed_off status', () => {
-    const first = makeReport({ bo_overall: 'CONFIRMED' });
+  it('re-analysis with CONFIRMED + HIGH preserves signed_off status', () => {
+    // Phase 17: only CONFIRMED + high-quality data should preserve a sign-off.
+    // Use HIGH confidence here so LOW does not also trigger the force-draft rule.
+    const first = makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'HIGH' });
     registry.save(first);
     registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'analyst');
 
-    const second = makeReport({ bo_overall: 'CONFIRMED' });
+    const second = makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'HIGH' });
     const entry = registry.save(second);
 
-    // Non-REJECTED — sign-off is preserved.
+    // CONFIRMED + HIGH — sign-off is preserved.
     assert.equal(entry.review_status, 'signed_off');
   });
 
-  it('re-analysis with UNCERTAIN preserves signed_off status', () => {
-    const first = makeReport({ bo_overall: 'CONFIRMED' });
+  it('re-analysis with UNCERTAIN resets signed_off to draft', () => {
+    // Phase 17: UNCERTAIN verdict means the BO test is inconclusive.
+    // A prior sign-off must be cleared so a human re-examines the entry.
+    const first = makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'HIGH' });
     registry.save(first);
     registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'analyst');
 
-    const second = makeReport({ bo_overall: 'UNCERTAIN' });
+    const second = makeReport({ bo_overall: 'UNCERTAIN', data_confidence: 'MEDIUM' });
     const entry = registry.save(second);
 
-    assert.equal(entry.review_status, 'signed_off');
+    assert.equal(entry.review_status, 'draft');
   });
 
-  it('re-analysis with NO_TREATY preserves signed_off status', () => {
-    const first = makeReport({ bo_overall: 'CONFIRMED' });
+  it('re-analysis with NO_TREATY + HIGH preserves signed_off status', () => {
+    // NO_TREATY is a definitive (non-risky) verdict — preserves sign-off when data is good.
+    const first = makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'HIGH' });
     registry.save(first);
     registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off', 'analyst');
 
-    const second = makeReport({ bo_overall: 'NO_TREATY' });
+    const second = makeReport({ bo_overall: 'NO_TREATY', data_confidence: 'HIGH' });
     const entry = registry.save(second);
 
     assert.equal(entry.review_status, 'signed_off');
@@ -557,5 +562,64 @@ describe('EntityRegistry.save() — force-draft on REJECTED', () => {
     const report = makeReport({ bo_overall: undefined });
     const entry = registry.save(report);
     assert.equal(entry.review_status, 'draft');
+  });
+});
+
+// ── Phase 17: force-draft on UNCERTAIN and LOW confidence ─────────────────────
+//
+// Phase 17 extends the force-draft logic introduced in Phase 15 (REJECTED).
+// UNCERTAIN verdicts and LOW confidence reports are also unsafe to act on
+// without professional review — an existing sign-off must be cleared.
+//
+describe('EntityRegistry.save() — Phase 17 force-draft rules', () => {
+  let tmpPath: string;
+  let registry: EntityRegistry;
+
+  beforeEach(() => {
+    tmpPath = makeTempPath();
+    registry = new EntityRegistry(tmpPath);
+  });
+
+  afterEach(() => {
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+  });
+
+  it('re-analysis with UNCERTAIN bo_overall resets signed_off to draft', () => {
+    // Sign off on a confirmed result, then re-run and get UNCERTAIN.
+    registry.save(makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'HIGH' }));
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off');
+
+    const entry = registry.save(makeReport({ bo_overall: 'UNCERTAIN', data_confidence: 'MEDIUM' }));
+
+    assert.equal(entry.review_status, 'draft');
+  });
+
+  it('re-analysis with LOW data_confidence resets signed_off to draft', () => {
+    // Sign off on a high-confidence result, then re-run with LOW confidence.
+    registry.save(makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'HIGH' }));
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off');
+
+    // LOW confidence — substance is simulated; sign-off should not survive.
+    const entry = registry.save(makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'LOW' }));
+
+    assert.equal(entry.review_status, 'draft');
+  });
+
+  it('LOW data_confidence forces draft even when bo_overall is CONFIRMED', () => {
+    // The confidence rule is independent of bo_overall.
+    // Even a CONFIRMED BO verdict with LOW confidence is not sign-off-worthy.
+    const entry = registry.save(makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'LOW' }));
+
+    assert.equal(entry.review_status, 'draft');
+  });
+
+  it('CONFIRMED + MEDIUM preserves signed_off status', () => {
+    // MEDIUM confidence is acceptable for a sign-off — only LOW forces draft.
+    registry.save(makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'MEDIUM' }));
+    registry.updateReviewStatus('Alpine Holdings S.A.', 'Luxembourg', 'signed_off');
+
+    const entry = registry.save(makeReport({ bo_overall: 'CONFIRMED', data_confidence: 'MEDIUM' }));
+
+    assert.equal(entry.review_status, 'signed_off');
   });
 });

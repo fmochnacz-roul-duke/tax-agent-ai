@@ -360,13 +360,14 @@ npm test
 | DOCS-2 | `last_verified` frontmatter on RAG source files; `docs/api.md`; architecture docs | v0.16.0 |
 | 14 | Ghost Activation — TreatyVerifierAgent in live flow; `last_verified` in RAG output; confidence drops on rate mismatch | v0.17.0 |
 | 15 | QA-3: Evals + Negative Tests — `BoOverall`; golden dataset (9 cases); eval harness; Brazil treaty | v0.18.0 |
-| **16** | **Legal Source Hierarchy** — `source_type` param on `consult_legal_sources`; `legal_hierarchy` in RAG results; Zod domain-narrowing | **v0.19.0** |
+| 16 | Legal Source Hierarchy — `source_type` param on `consult_legal_sources`; `legal_hierarchy` in RAG results; Zod domain-narrowing | v0.19.0 |
+| **17** | **Confidence UX + HITL** — `DRAFT ONLY` banner + grey-out for LOW confidence; `bo_overall` + conduit risk in report card; force-draft on UNCERTAIN/LOW | **v0.20.0** |
 
 ### Upcoming — Arc 1: WHT Core Completion
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| 17 | Confidence UX + HITL | UI grey-out for LOW confidence; "Draft Only" watermark; auto-draft registry on UNCERTAIN/LOW |
+| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
 | 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path |
 | 19 | Due Diligence Module | DD checklist tool per payment type; DD gap analysis in `WhtReport` |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` in treaties.json |
