@@ -297,21 +297,40 @@ Each phase corresponds to a git tag. Completed phases are available as GitHub Re
 - `source_type` filter leaves chunks without a type in the result set (absence = unclassified, not excluded). This is deliberate — future sources that haven't been tagged yet will still surface.
 - `legal_hierarchy` is a plain number, not an enum, so it can be compared arithmetically by the agent (statute=1 < guidance=3 → statute takes precedence).
 - `'any'` as a tool parameter sentinel converts to `undefined` at the dispatch boundary — the Retriever never sees the string `'any'`.
-- RAG knowledge base rebuild (`npm run rag:build`) needed to propagate `source_type` to the pre-built chunks index.
+- RAG knowledge base rebuild (`npm run rag:build`) needed to propagate `source_type` to the pre-built chunks index. *(Completed at start of Phase 17 session.)*
 - `SourceTypeSchema` is exported so future tools (e.g. `check_mdr_obligation`) can reuse the same validated enum without re-declaring it.
 
 **14 new tests — 298/298 passing.**
 
 ---
 
+### v0.20.0 — Phase 17: Confidence UX + HITL
+
+**What:**
+- `DRAFT ONLY` banner added to the report card whenever `data_confidence === 'LOW'` — red, prominent, explains that substance is simulated and rates unverified
+- `report-low` CSS class applied to the report card: reduced opacity + red border, signals report is for analysis only
+- `bo_overall` badge displayed in the report card alongside the confidence badge (CONFIRMED=green, REJECTED=red, UNCERTAIN=blue, NO_TREATY=purple)
+- UNCERTAIN banner shown when `bo_overall === 'UNCERTAIN'` — prompts reviewer that BO test is inconclusive
+- Conduit risk banner shown when `conduit_risk === true` — alerts that an intermediate structure may exist
+- `EntityRegistry.save()`: force-draft rule extended from REJECTED (Phase 15) to also cover UNCERTAIN `bo_overall` and LOW `data_confidence`
+
+**Key decisions:**
+- UNCERTAIN verdicts must reset any prior sign-off — signing off on an inconclusive BO test is inconsistent with the due diligence standard.
+- LOW confidence forces draft regardless of `bo_overall` — simulated data is not sufficient for a professional sign-off even when the BO test passes.
+- MEDIUM confidence does not force draft — only LOW.
+- NO_TREATY + HIGH/MEDIUM preserves sign-off — a definitive no-treaty finding with verified data is actionable.
+
+**4 new tests, 3 Phase 15 tests corrected — 302/302 passing.**
+
+---
+
 ## Planned phases
 
-### Arc 1 — WHT Core Completion (Phases 17–22)
+### Arc 1 — WHT Core Completion (Phases 18–22)
 
 | Phase | Title | Key deliverable |
 |---|---|---|
-| **17** | **Confidence UX + HITL** | UI grey-out for LOW confidence; "Draft Only" watermark; auto-`review_status: 'draft'` on UNCERTAIN/LOW |
-| 18 | UC2 Third-party Vendor Workflow | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path; CSV batch schema defined |
+| **18** | **UC2 Third-party Vendor Workflow** | `classify_vendor_risk` tool; document checklist per payment type; no-DDQ path; CSV batch schema defined |
 | 19 | Due Diligence Module | DD checklist tool per payment type (dividend, royalty, management fee); DD gap analysis in report |
 | 20 | Data Quality Pass | Verify top-10 treaty rates against official sources; `verified: true` + `verified_at` in treaties.json; distinguish runtime vs. static verification in UI |
 | 21 | Batch Processing | `--batch payments.csv` CLI; multi-entity summary report; registry cache hits |

@@ -43,7 +43,7 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 
 ---
 
-## Current status (v0.19.0)
+## Current status (v0.20.0)
 
 | Phase | Description | Status |
 |---|---|---|
@@ -67,12 +67,12 @@ Polish entity → unrelated foreign vendor (software licences, content fees, Saa
 | 15 | QA-3 Evals — `bo_overall`, `conduit_risk`, golden dataset (9 cases), eval harness | ✅ v0.18.0 |
 | DOCS-3 | Documentation polish — CONTRIBUTING.md, docs index, FAQ, README badges | ✅ v0.19.0 |
 | 16 | Legal Source Hierarchy — `source_type` filter on RAG tool; `legal_hierarchy` in Citation | ✅ v0.19.0 |
-| **17** | **Confidence UX + HITL** — LOW grey-out; "Draft Only" watermark; auto-draft on UNCERTAIN | **Next** |
-| 18–22 | UC2, DD Module, Data Quality, Batch, Production Hardening | Planned |
+| 17 | Confidence UX + HITL — `DRAFT ONLY` banner + grey-out; `bo_overall` badge; conduit risk banner; force-draft on UNCERTAIN/LOW | ✅ v0.20.0 |
+| **18–22** | **UC2, DD Module, Data Quality, Batch, Production Hardening** | **Next: 18** |
 | 23–26 | Intangibles layer, GAAR tool, Jurisdiction expansion, WHT v1.0 | Planned |
 | 27–29 | Tax OS Foundation — GLOBAL VISION, EU engine, Module 2 | Vision |
 
-**Tests: 298/298 passing. Build: zero errors.**
+**Tests: 302/302 passing. Build: zero errors.**
 
 ---
 
@@ -87,7 +87,7 @@ npm start
 npm run tax:agent -- --input data/orange_polska_royalty.json
 
 # Tests (no API keys needed)
-npm test         # 298/298 tests, ~5s
+npm test         # 302/302 tests, ~5s
 npm run build    # TypeScript type-check — zero errors required
 
 # Code quality
