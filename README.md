@@ -1,3 +1,7 @@
+> **Note:** This public repository served as the research prototype for the *AI and Digital Transformation in International Tax* MBA project. It is preserved here as a showcase of the project's architecture and development up to v0.23.0. Further development is continuing in a private repository.
+
+---
+
 # tax-agent-ai — WHT Beneficial Owner Co-Pilot
 
 > **Module 1 of Tax OS** — a working prototype demonstrating AI-assisted research applied to Polish withholding tax compliance.

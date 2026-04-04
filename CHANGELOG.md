@@ -5,6 +5,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.24.0] - 2026-04-04
+
+### Added
+- Created new private repository `tax-os-core` for future development to protect intellectual property.
+
+### Changed
+- Renamed `origin` git remote to `public`.
+- Pointed `origin` git remote to the new private repository `tax-os-core`.
+- Added an archival notice to the `README.md` of the public repository.
+- **Project Status:** The public `tax-agent-ai` repository is now a feature-frozen showcase. All new development will occur in the private `tax-os-core` repository.
+
+---
+
 ## [v0.23.0] — 2026-04-03 — QA-4: Eval Harness v2.0
 
 ### QA-4 — Evaluation Harness v2.0

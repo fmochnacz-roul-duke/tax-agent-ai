@@ -1,3 +1,20 @@
+---
+## Project State Handover: Public to Private Transition
+
+**What happened:** We have transitioned the project from a single public repository to a public/private hybrid model.
+
+-   The original repository, `tax-agent-ai`, is now a **public showcase**. It is frozen as of this update and should not receive new feature commits. Its purpose is to act as a portfolio piece.
+-   A new **private repository**, `tax-os-core`, has been created. It contains an exact copy of the entire project history.
+
+**Your New Workflow:**
+
+-   **ALL future development must happen in the `tax-os-core` project.**
+-   Your local repository is already configured. Your standard workflow (`git pull`, `git push`, creating branches) will now automatically point to the new private repository.
+-   Do not push any new features to the `public` remote. The only change that will be pushed to the public repo is this final archival notice.
+
+This change protects the project's future intellectual property while preserving the valuable public showcase of the work done so far. There are no technical changes to the code itself.
+---
+
 # tax-agent-ai — Claude Context
 
 ## What This Project Is
